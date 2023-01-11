@@ -1,9 +1,10 @@
-using BlazorWASMCustomAuth.Server.Services;
+
 using Microsoft.Extensions.Configuration;
-using BlazorWASMCustomAuth.Server.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using BlazorWASMCustomAuth.Security.Infrastructure;
+using BlazorWASMCustomAuth.Security.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 

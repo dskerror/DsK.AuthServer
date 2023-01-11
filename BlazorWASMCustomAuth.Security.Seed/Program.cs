@@ -9,12 +9,28 @@ internal class Program
         var db = new SecurityTablesTestContext();
         db.Database.Migrate(); //CREATES DATABASE IF IT DOESNT EXISTS
 
+        var adminPermission = new Permission()
+        {
+            PermissionName = "Admin",
+            PermissionDescription = "Admin Permission"
+        };
+        db.Permissions.Add(adminPermission);
+        db.SaveChanges();
+
         var adminRole = new Role()
         {
-            RoleName = "admin",
-            RoleDescription = "admin"
-        };
+            RoleName = "Admin",
+            RoleDescription = "Admin Role"
+        };        
         db.Roles.Add(adminRole);
+        db.SaveChanges();
+
+        var adminRolePermission = new RolePermission()
+        {
+            RoleId = adminRole.Id,
+            PermissionId = adminPermission.Id
+        };
+        db.RolePermissions.Add(adminRolePermission);
         db.SaveChanges();
 
 

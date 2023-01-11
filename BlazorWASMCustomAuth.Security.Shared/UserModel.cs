@@ -26,8 +26,9 @@ namespace BlazorWASMCustomAuth.Security.Shared
 
 
 		//
-		public string? HashedPassword { get; set; }		
-		public string? AuthenticationProvider { get; set; }
+		public string? HashedPassword { get; set; }
+        public string? Salt { get; set; }
+        public string? AuthenticationProviderName { get; set; }
 		public string? MappedUser { get; set; }
 
 	}

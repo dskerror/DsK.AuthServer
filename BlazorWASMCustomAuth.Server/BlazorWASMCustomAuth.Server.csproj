@@ -8,13 +8,9 @@
 
   <ItemGroup>
     <Compile Remove="Security\**" />
-    <Compile Remove="Services\Interfaces\**" />
     <Content Remove="Security\**" />
-    <Content Remove="Services\Interfaces\**" />
     <EmbeddedResource Remove="Security\**" />
-    <EmbeddedResource Remove="Services\Interfaces\**" />
     <None Remove="Security\**" />
-    <None Remove="Services\Interfaces\**" />
   </ItemGroup>
 
   <ItemGroup>
