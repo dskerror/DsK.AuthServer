@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
+
+public partial class UserAuthenticationProvider
+{
+    public int Id { get; set; }
+
+    public int UserId { get; set; }
+
+    public int AuthenticationProviderId { get; set; }
+
+    public string MappedUsername { get; set; } = null!;
+
+    public virtual AuthenticationProvider AuthenticationProvider { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
+
+    public virtual ICollection<UserAuthenticationProviderToken> UserAuthenticationProviderTokens { get; } = new List<UserAuthenticationProviderToken>();
+}

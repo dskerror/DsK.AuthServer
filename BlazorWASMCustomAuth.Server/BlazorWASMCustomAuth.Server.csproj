@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Security\**" />
+    <Compile Remove="Services\Interfaces\**" />
+    <Content Remove="Security\**" />
+    <Content Remove="Services\Interfaces\**" />
+    <EmbeddedResource Remove="Security\**" />
+    <EmbeddedResource Remove="Services\Interfaces\**" />
+    <None Remove="Security\**" />
+    <None Remove="Services\Interfaces\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="7.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorWASMCustomAuth.PagingSortingFiltering\BlazorWASMCustomAuth.PagingSortingFiltering.csproj" />
+    <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Infrastructure\BlazorWASMCustomAuth.Security.Infrastructure.csproj" />
+    <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Shared\BlazorWASMCustomAuth.Security.Shared.csproj" />
+    <ProjectReference Include="..\BlazorWASMCustomAuth.Shared\BlazorWASMCustomAuth.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

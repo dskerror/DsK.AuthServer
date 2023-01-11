@@ -1,0 +1,80 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Client", "BlazorWASMCustomAuth.Client\BlazorWASMCustomAuth.Client.csproj", "{BAD409FC-D2D2-4B2F-B758-3E1AFCB329FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Server", "BlazorWASMCustomAuth.Server\BlazorWASMCustomAuth.Server.csproj", "{F3E9DA8E-7702-4F2F-803C-F20EB2E2CB1B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Security.Shared", "BlazorWASMCustomAuth.Security.Shared\BlazorWASMCustomAuth.Security.Shared.csproj", "{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.PagingSortingFiltering", "BlazorWASMCustomAuth.PagingSortingFiltering\BlazorWASMCustomAuth.PagingSortingFiltering.csproj", "{3C3CD645-B958-47BC-9A67-6CCD7496D082}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWASMCustomAuth.Security.EntityFramework", "BlazorWASMCustomAuth.Security.EntityFramework\BlazorWASMCustomAuth.Security.EntityFramework.csproj", "{970D96B2-64F4-4213-96FF-3AFBDD4034D6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{F6A64274-6076-44AA-A8AF-62B41081733D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{5FB5D57A-01CE-4EEB-89C8-7B2AC6FE4BCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWASMCustomAuth.Security.Seed", "BlazorWASMCustomAuth.Security.Seed\BlazorWASMCustomAuth.Security.Seed.csproj", "{5915C629-E0F3-4C0D-9B2E-529E0227D368}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWASMCustomAuth.Security.Infrastructure", "BlazorWASMCustomAuth.Security.Infrastructure\BlazorWASMCustomAuth.Security.Infrastructure.csproj", "{679A4C74-F5A9-4AD2-B6CB-1E6390E11CF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWASMCustomAuth.Shared", "BlazorWASMCustomAuth.Shared\BlazorWASMCustomAuth.Shared.csproj", "{1733BC89-CE4F-4978-9B87-E4F7FD1DCC1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BAD409FC-D2D2-4B2F-B758-3E1AFCB329FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAD409FC-D2D2-4B2F-B758-3E1AFCB329FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAD409FC-D2D2-4B2F-B758-3E1AFCB329FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAD409FC-D2D2-4B2F-B758-3E1AFCB329FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3E9DA8E-7702-4F2F-803C-F20EB2E2CB1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3E9DA8E-7702-4F2F-803C-F20EB2E2CB1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3E9DA8E-7702-4F2F-803C-F20EB2E2CB1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3E9DA8E-7702-4F2F-803C-F20EB2E2CB1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C3CD645-B958-47BC-9A67-6CCD7496D082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C3CD645-B958-47BC-9A67-6CCD7496D082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C3CD645-B958-47BC-9A67-6CCD7496D082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C3CD645-B958-47BC-9A67-6CCD7496D082}.Release|Any CPU.Build.0 = Release|Any CPU
+		{970D96B2-64F4-4213-96FF-3AFBDD4034D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{970D96B2-64F4-4213-96FF-3AFBDD4034D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{970D96B2-64F4-4213-96FF-3AFBDD4034D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{970D96B2-64F4-4213-96FF-3AFBDD4034D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5915C629-E0F3-4C0D-9B2E-529E0227D368}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5915C629-E0F3-4C0D-9B2E-529E0227D368}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5915C629-E0F3-4C0D-9B2E-529E0227D368}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5915C629-E0F3-4C0D-9B2E-529E0227D368}.Release|Any CPU.Build.0 = Release|Any CPU
+		{679A4C74-F5A9-4AD2-B6CB-1E6390E11CF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{679A4C74-F5A9-4AD2-B6CB-1E6390E11CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{679A4C74-F5A9-4AD2-B6CB-1E6390E11CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{679A4C74-F5A9-4AD2-B6CB-1E6390E11CF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1733BC89-CE4F-4978-9B87-E4F7FD1DCC1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1733BC89-CE4F-4978-9B87-E4F7FD1DCC1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1733BC89-CE4F-4978-9B87-E4F7FD1DCC1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1733BC89-CE4F-4978-9B87-E4F7FD1DCC1B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BAD409FC-D2D2-4B2F-B758-3E1AFCB329FF} = {5FB5D57A-01CE-4EEB-89C8-7B2AC6FE4BCC}
+		{F3E9DA8E-7702-4F2F-803C-F20EB2E2CB1B} = {5FB5D57A-01CE-4EEB-89C8-7B2AC6FE4BCC}
+		{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7} = {F6A64274-6076-44AA-A8AF-62B41081733D}
+		{970D96B2-64F4-4213-96FF-3AFBDD4034D6} = {F6A64274-6076-44AA-A8AF-62B41081733D}
+		{5915C629-E0F3-4C0D-9B2E-529E0227D368} = {F6A64274-6076-44AA-A8AF-62B41081733D}
+		{679A4C74-F5A9-4AD2-B6CB-1E6390E11CF8} = {F6A64274-6076-44AA-A8AF-62B41081733D}
+		{1733BC89-CE4F-4978-9B87-E4F7FD1DCC1B} = {5FB5D57A-01CE-4EEB-89C8-7B2AC6FE4BCC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09193D87-55E9-428E-B303-D3EC67366ACD}
+	EndGlobalSection
+EndGlobal
