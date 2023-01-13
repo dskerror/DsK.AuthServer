@@ -1,7 +1,6 @@
 ﻿using BlazorWASMCustomAuth.PagingSortingFiltering;
 using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
-using BlazorWASMCustomAuth.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,12 +28,11 @@ namespace BlazorWASMCustomAuth.Server.Controllers
                 return NotFound();
 
             return Ok(tokenModel);
-
         }
 
         [HttpPost]
         [Route("RefreshToken")]
-        public IActionResult ActivateAccessTokenByRefresh(TokenModel refreshToken)
+        public IActionResult RefreshToken(TokenModel refreshToken)
         {
             var resultTokenModel = SecurityService.RefreshToken(refreshToken);
             if (refreshToken == null)
@@ -45,19 +43,29 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         }
 
 
-        //[HttpPost]
-        //[Route("UserCreate")]
-        //public IActionResult UserCreate(UserCreateModel user)
-        //{
-        //    return Ok(SecurityService.UserCreate(user));
-        //}
+        [HttpPost]
+        [Authorize(Roles = "admin,UserCreate")]
+        [Route("UserCreate")]
+        public IActionResult UserCreate(UserCreateModel user)
+        {
+            return Ok(SecurityService.UserCreate(user));
+        }
 
-        //[HttpPost]
-        //[Route("UserCreateLocalPassword")]
-        //public IActionResult UserCreateLocalPassword(UserCreateLocalPasswordModel userCreateLocalPasswordModel)
-        //{
-        //    return Ok(SecurityService.UserCreateLocalPassword(userCreateLocalPasswordModel));
-        //}
+        [HttpPost]
+        [Authorize(Roles = "admin,UserCreateLocalPassword")]
+        [Route("UserCreateLocalPassword")]
+        public IActionResult UserCreateLocalPassword(UserCreateLocalPasswordModel userCreateLocalPasswordModel)
+        {
+            return Ok(SecurityService.UserCreateLocalPassword(userCreateLocalPasswordModel));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin,UserChangeLocalPassword")]
+        [Route("UserChangeLocalPassword")]
+        public IActionResult UserChangeLocalPassword(UserChangeLocalPasswordModel userChangeLocalPasswordModel)
+        {
+            return Ok(SecurityService.UserChangeLocalPassword(userChangeLocalPasswordModel));
+        }
 
         [HttpGet]
         //[Authorize(Roles = "admin,UserGet")]

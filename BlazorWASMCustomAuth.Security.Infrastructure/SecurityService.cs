@@ -30,13 +30,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
         public TokenModel UserLogin(UserLoginModel model)
         {
-            var user = GetUserByUsername(model);
+            var user = GetUser(model.Username, model.Password);
 
             if (user is null)
                 return new TokenModel("", "");
             else if (AuthenticateUser(user))
             {
                 var token = GenerateAuthenticationToken(user);
+                UpdateRefreshTokenInDB(user.Username, token.Token, user.RefreshToken);
                 return token;
             }
             else
@@ -44,22 +45,23 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return new TokenModel("", "");
             }
         }
-        private UserModel GetUserByUsername(UserLoginModel userLogin)
+        private UserModel GetUser(string username, string password = "", int userid = 0)
         {
-            var userDt = dm.ExecDataTableSP("sp_UserLogin", "Username", userLogin.Username ?? "");
+            var userDt = dm.ExecDataTableSP("sp_UserGet", "Username", username ?? "", "Id", userid);
 
             if (userDt.Rows.Count == 1)
             {
                 UserModel user = new UserModel()
                 {
                     Id = int.Parse(userDt.Rows[0]["id"].ToString() ?? ""),
-                    Username = userLogin.Username,
-                    Password = userLogin.Password,
+                    Username = userDt.Rows[0]["Username"].ToString(),
+                    Password = password,
                     HashedPassword = userDt.Rows[0]["HashedPassword"].ToString(),
                     Salt = userDt.Rows[0]["Salt"].ToString(),
                     AuthenticationProviderName = userDt.Rows[0]["AuthenticationProviderName"].ToString(),
                     MappedUser = userDt.Rows[0]["MappedUsername"].ToString(),
-                    Permissions = GetUserPermissions(userLogin.Username ?? "")
+                    RefreshToken = userDt.Rows[0]["RefreshToken"].ToString(),
+                    Permissions = GetUserPermissions(userDt.Rows[0]["Username"].ToString())
                 };
                 return user;
             }
@@ -118,7 +120,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var newJwtToken = new JwtSecurityToken(
                     issuer: _tokenSettings.Issuer,
                     audience: _tokenSettings.Audience,
-                    expires: DateTime.UtcNow.AddMinutes(2),
+                    expires: DateTime.UtcNow.AddDays(1),
                     signingCredentials: credentials,
                     claims: userClaims
             );
@@ -128,15 +130,16 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             user.RefreshToken = refreshToken;
 
-            UpdateRefreshTokenInDB(user);
-            //SAVE REFRESH TOKEN TO DB
-
             return new TokenModel(token, refreshToken);
         }
 
-        private void UpdateRefreshTokenInDB(UserModel user)
+        private void UpdateRefreshTokenInDB(string username, string token, string refreshtoken, string newrefreshtoken = "")
         {
-            dm.ExecScalarSP("sp_UserUpdateRefreshToken", "Username", user.Username ?? "", "RefreshToken", user.RefreshToken ?? "");
+            dm.ExecScalarSP("sp_UserUpdateRefreshToken",
+                "Username", username ?? "", 
+                "Token", token ?? "", 
+                "RefreshToken", refreshtoken ?? "", 
+                "NewRefreshToken", newrefreshtoken ?? "");
         }
 
         private string GenerateRefreshToken()
@@ -194,26 +197,55 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
 
 
-        //public DatabaseExecResult UserCreate(UserCreateModel user)
-        //{
-        //	var userExistsDT = dm.ExecDataTableSP("sp_UserCreate_VerifyIfExists", "Username", user.Username ?? "", "Email", user.Email ?? "");
+        public DatabaseExecResult UserCreate(UserCreateModel user)
+        {
+            var userExistsDT = dm.ExecDataTableSP("sp_UserCreate_VerifyIfExists", "Username", user.Username ?? "", "Email", user.Email ?? "");
 
-        //	if (userExistsDT.Rows.Count == 0)
-        //	{
-        //		return dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.Name ?? "");
-        //	}
+            if (userExistsDT.Rows.Count == 0)
+            {
+                return dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.Name ?? "");
+            }
 
-        //	return new DatabaseExecResult(new object());
-        //}
-        //public DatabaseExecResult UserCreateLocalPassword(UserCreateLocalPasswordModel u)
-        //{
-        //	//TODO : Implement Password Complexity Rules
-        //	//TODO : Implement Previously Used Password Constraint
+            return new DatabaseExecResult("") { HasError = true, Message = "User already exists.", Exception = null};
+        }
 
-        //	var ramdomSalt = SecurityHelpers.RandomizeSalt;
+        public DatabaseExecResult UserCreateLocalPassword(UserCreateLocalPasswordModel u)
+        {
+            //TODO : Implement Password Complexity Rules
+            //TODO : Implement Previously Used Password Constraint
 
-        //          return dm.ExecScalarSP("sp_UserPasswordCreate", "UserId", u.UserId, "Password", SecurityHelpers.HashPasword(u.Password, ramdomSalt), "Salt", Convert.ToHexString(ramdomSalt));
-        //}
+            var ramdomSalt = SecurityHelpers.RandomizeSalt;
+
+            return dm.ExecScalarSP("sp_UserPasswordCreate", 
+                "UserId", u.UserId,
+                "HashedPassword", SecurityHelpers.HashPasword(u.Password, ramdomSalt), 
+                "Salt", Convert.ToHexString(ramdomSalt));
+        }
+
+
+        public DatabaseExecResult UserChangeLocalPassword(UserChangeLocalPasswordModel u)
+        {
+            //TODO : Implement Password Complexity Rules
+            //TODO : Implement Previously Used Password Constraint
+    
+            var user = GetUser("",u.OldPassword,u.UserId);
+
+            if (user is null)
+                return new DatabaseExecResult("") { HasError = true, Message = "User or password incorrect." };
+            else if (AuthenticateUser(user))
+            {
+                var ramdomSalt = SecurityHelpers.RandomizeSalt;
+
+                return dm.ExecScalarSP("sp_UserPasswordChange",
+                    "UserId", u.UserId,
+                    "HashedPassword", SecurityHelpers.HashPasword(u.NewPassword, ramdomSalt),
+                    "Salt", Convert.ToHexString(ramdomSalt));
+            } else
+            {
+                return new DatabaseExecResult("") { HasError = true, Message = "User or password incorrect" };
+            }
+        
+        }
         //public List<PermissionModel> GetPermissionList()
         //{
         //	var list = new List<PermissionModel>();
@@ -289,7 +321,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return null;
             }
 
-            var username = claimsPrincipal.Claims.Where(_ => _.ValueType == "UserName").Select(_ => _.Value).FirstOrDefault();
+            var username = claimsPrincipal.Claims.Where(_ => _.Type == "UserName").Select(_ => _.Value).FirstOrDefault();
             //var email = claimsPrincipal.Claims.Where(_ => _.Type == ClaimTypes.Email).Select(_ => _.Value).FirstOrDefault();
             if (string.IsNullOrEmpty(username))
             {
@@ -297,12 +329,13 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
 
 
-            var user = GetUserByUsername(new UserLoginModel() { Username = username });
+            var user = GetUser(username);
 
             if (user.RefreshToken == tokenModel.RefreshToken)
-            {
-                return GenerateAuthenticationToken(user);
-
+            {   
+                var newtoken =  GenerateAuthenticationToken(user);
+                UpdateRefreshTokenInDB(user.Username, newtoken.Token, tokenModel.RefreshToken, newtoken.RefreshToken);
+                return newtoken;
             }
             else
             {

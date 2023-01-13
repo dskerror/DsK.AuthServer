@@ -6,7 +6,7 @@
 		{
 			HasError = false;
 			Message = "";
-			Exception = new Exception();
+			Exception = null;
 			this.Result = result;
 		}
 
