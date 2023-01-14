@@ -9,7 +9,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
 	public class SecuredController : ControllerBase
 	{
 		[HttpGet]
-		[Authorize(Roles = "admin,permiso1")]
+		[Authorize(Roles = "admin,secured.permission1")]
 		[Route("get")]
 		public IActionResult Get()
 		{	
@@ -17,7 +17,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Roles = "admin,permiso2")]
+		[Authorize(Roles = "admin,secured.permission2")]
 		[Route("get-claims")]
 		public IActionResult GetUserClaims()
 		{
@@ -30,7 +30,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Roles = "admin,permiso3")]
+		[Authorize(Roles = "admin,secured.permission3")]
 		[Route("todos")]
 		public IActionResult GetTodos()
 		{	

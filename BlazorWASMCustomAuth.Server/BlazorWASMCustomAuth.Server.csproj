@@ -30,4 +30,8 @@
     <ProjectReference Include="..\BlazorWASMCustomAuth.Shared\BlazorWASMCustomAuth.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class migration1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,7 +59,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    RoleName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     RoleDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
                 },
                 constraints: table =>
@@ -76,6 +76,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_UserAuthenticationProviderDefault", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,7 +241,8 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     UserAuthenticationProviderId = table.Column<int>(type: "int", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TokenCreatedDateTime = table.Column<DateTime>(type: "datetime", nullable: false)
+                    TokenCreatedDateTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    TokenRefreshedDateTime = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -253,17 +255,18 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserAuthenticationProviders",
+                table: "UserAuthenticationProviders",
+                columns: new[] { "UserId", "AuthenticationProviderId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserAuthenticationProviders_AuthenticationProviderId",
                 table: "UserAuthenticationProviders",
                 column: "AuthenticationProviderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAuthenticationProviders_UserId",
-                table: "UserAuthenticationProviders",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserAuthenticationProviderTokens_UserAuthenticationProviderId",
+                name: "IX_UserAuthenticationProviderTokens",
                 table: "UserAuthenticationProviderTokens",
                 column: "UserAuthenticationProviderId");
 

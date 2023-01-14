@@ -15,5 +15,7 @@ public partial class UserAuthenticationProviderToken
 
     public DateTime TokenCreatedDateTime { get; set; }
 
+    public DateTime TokenRefreshedDateTime { get; set; }
+
     public virtual UserAuthenticationProvider UserAuthenticationProvider { get; set; } = null!;
 }

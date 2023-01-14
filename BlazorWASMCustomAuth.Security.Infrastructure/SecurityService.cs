@@ -1,6 +1,5 @@
 ﻿using BlazorWASMCustomAuth.Database;
 using BlazorWASMCustomAuth.PagingSortingFiltering;
-using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Shared.Security;
 using Microsoft.Extensions.Options;
@@ -67,7 +66,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
             return new UserModel();
         }
-
         private bool AuthenticateUser(UserModel user)
         {
             if (user is null) return false;
@@ -77,7 +75,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             else
                 return VerifyPassword(user.Password ?? "", user.HashedPassword ?? "", user.Salt ?? "");
         }
-
         bool VerifyPassword(string password, string hash, string salt)
         {
             byte[] bytesalt = Convert.FromHexString(salt);
@@ -87,7 +84,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, bytesalt, iterations, hashAlgorithm, keySize);
             return hashToCompare.SequenceEqual(Convert.FromHexString(hash));
         }
-
         private bool ValidateWithDomain(string username, string password)
         {
 #pragma warning disable IDE0063 // Use simple 'using' statement
@@ -101,7 +97,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 #pragma warning restore CA1416 // Validate platform compatibility
 #pragma warning restore IDE0063 // Use simple 'using' statement
         }
-
         private TokenModel GenerateAuthenticationToken(UserModel user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key ?? ""));
@@ -132,16 +127,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return new TokenModel(token, refreshToken);
         }
-
         private void UpdateRefreshTokenInDB(string username, string token, string refreshtoken, string newrefreshtoken = "")
         {
             dm.ExecScalarSP("sp_UserUpdateRefreshToken",
-                "Username", username ?? "", 
-                "Token", token ?? "", 
-                "RefreshToken", refreshtoken ?? "", 
+                "Username", username ?? "",
+                "Token", token ?? "",
+                "RefreshToken", refreshtoken ?? "",
                 "NewRefreshToken", newrefreshtoken ?? "");
         }
-
         private string GenerateRefreshToken()
         {
             var key = new Byte[32];
@@ -151,9 +144,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return Convert.ToBase64String(key);
             }
         }
-
-
-
         private List<string> GetUserPermissions(string? username)
         {
             List<string> permissions = new List<string>();
@@ -167,7 +157,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return permissions;
         }
-
         public UsersGetDTO UsersGet(PagingSortingFilteringRequest request)
         {
             var usersCountResult = dm.ExecScalarSP("sp_UsersCountGet");
@@ -195,8 +184,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             response.UserList = list;
             return response;
         }
-
-
         public DatabaseExecResult UserCreate(UserCreateModel user)
         {
             var userExistsDT = dm.ExecDataTableSP("sp_UserCreate_VerifyIfExists", "Username", user.Username ?? "", "Email", user.Email ?? "");
@@ -206,9 +193,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.Name ?? "");
             }
 
-            return new DatabaseExecResult("") { HasError = true, Message = "User already exists.", Exception = null};
+            return new DatabaseExecResult("") { HasError = true, Message = "User already exists.", Exception = null };
         }
-
         public DatabaseExecResult UserCreateLocalPassword(UserCreateLocalPasswordModel u)
         {
             //TODO : Implement Password Complexity Rules
@@ -216,19 +202,17 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             var ramdomSalt = SecurityHelpers.RandomizeSalt;
 
-            return dm.ExecScalarSP("sp_UserPasswordCreate", 
+            return dm.ExecScalarSP("sp_UserPasswordCreate",
                 "UserId", u.UserId,
-                "HashedPassword", SecurityHelpers.HashPasword(u.Password, ramdomSalt), 
+                "HashedPassword", SecurityHelpers.HashPasword(u.Password, ramdomSalt),
                 "Salt", Convert.ToHexString(ramdomSalt));
         }
-
-
         public DatabaseExecResult UserChangeLocalPassword(UserChangeLocalPasswordModel u)
         {
             //TODO : Implement Password Complexity Rules
             //TODO : Implement Previously Used Password Constraint
-    
-            var user = GetUser("",u.OldPassword,u.UserId);
+
+            var user = GetUser("", u.OldPassword, u.UserId);
 
             if (user is null)
                 return new DatabaseExecResult("") { HasError = true, Message = "User or password incorrect." };
@@ -240,64 +224,63 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                     "UserId", u.UserId,
                     "HashedPassword", SecurityHelpers.HashPasword(u.NewPassword, ramdomSalt),
                     "Salt", Convert.ToHexString(ramdomSalt));
-            } else
+            }
+            else
             {
                 return new DatabaseExecResult("") { HasError = true, Message = "User or password incorrect" };
             }
-        
+
         }
-        //public List<PermissionModel> GetPermissionList()
-        //{
-        //	var list = new List<PermissionModel>();
-        //	var permissionListDt = dm.ExecDataTableSP("sp_PermissionList");
-        //	foreach (DataRow permission in permissionListDt.Rows)
-        //	{
-        //		list.Add(new PermissionModel()
-        //		{
-        //			Id = int.Parse(permission["Id"].ToString() ?? ""),
-        //			PermissionName = permission["PermissionName"].ToString(),
-        //			PermissionDescription = permission["PermissionDescription"].ToString()
-        //		});
-        //	}
+        public List<PermissionModel> PermissionsGet()
+        {
+            var list = new List<PermissionModel>();
+            var permissionsGetDt = dm.ExecDataTableSP("sp_PermissionsGet");
+            foreach (DataRow permission in permissionsGetDt.Rows)
+            {
+                list.Add(new PermissionModel()
+                {
+                    Id = int.Parse(permission["Id"].ToString() ?? ""),
+                    PermissionName = permission["PermissionName"].ToString(),
+                    PermissionDescription = permission["PermissionDescription"].ToString()
+                });
+            }
 
-        //	return list;
-        //}
-        //public List<RoleModel> GetRoleList()
-        //{
-        //	var list = new List<RoleModel>();
-        //	var roleListDt = dm.ExecDataTableSP("sp_RoleList");
-        //	foreach (DataRow role in roleListDt.Rows)
-        //	{
-        //		list.Add(new RoleModel()
-        //		{
-        //			Id = int.Parse(role["Id"].ToString() ?? ""),
-        //			RoleName = role["RoleName"].ToString(),
-        //			RoleDescription = role["RoleDescription"].ToString()
-        //		});
-        //	}
+            return list;
+        }
+        public List<RoleModel> RolesGet()
+        {
+            var list = new List<RoleModel>();
+            var rolesGetDt = dm.ExecDataTableSP("sp_RolesGet");
+            foreach (DataRow role in rolesGetDt.Rows)
+            {
+                list.Add(new RoleModel()
+                {
+                    Id = int.Parse(role["Id"].ToString() ?? ""),
+                    RoleName = role["RoleName"].ToString(),
+                    RoleDescription = role["RoleDescription"].ToString()
+                });
+            }
+            return list;
+        }
+        public List<RolePermissionModel> RolePermissionsGet()
+        {
+            var list = new List<RolePermissionModel>();
+            var olePermissionsGetDt = dm.ExecDataTableSP("sp_RolePermissionsGet");
+            foreach (DataRow role in olePermissionsGetDt.Rows)
+            {
+                list.Add(new RolePermissionModel()
+                {
+                    RoleId = int.Parse(role["RoleId"].ToString() ?? ""),
+                    RoleName = role["RoleName"].ToString(),
+                    RoleDescription = role["RoleDescription"].ToString(),
+                    PermissionId = int.Parse(role["PermissionId"].ToString() ?? ""),
+                    PermissionName = role["PermissionName"].ToString(),
+                    PermissionDescription = role["PermissionDescription"].ToString()
+                });
+            }
 
-        //	return list;
-        //}
-        //public List<RolePermissionModel> RolePermissionList()
-        //{
-        //	var list = new List<RolePermissionModel>();
-        //	var rolePermissionListDt = dm.ExecDataTableSP("sp_RolePermissionList");
-        //	foreach (DataRow role in rolePermissionListDt.Rows)
-        //	{
-        //		list.Add(new RolePermissionModel()
-        //		{
-        //			RoleId = int.Parse(role["RoleId"].ToString() ?? ""),
-        //			RoleName = role["RoleName"].ToString(),
-        //			RoleDescription = role["RoleDescription"].ToString(),
-        //			PermissionId = int.Parse(role["PermissionId"].ToString() ?? ""),
-        //			PermissionName = role["PermissionName"].ToString(),
-        //			PermissionDescription = role["PermissionDescription"].ToString()
-        //		});
-        //	}
-
-        //	return list;
-        //}
-
+            return list;
+        }
         public TokenModel RefreshToken(TokenModel tokenModel)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -332,8 +315,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var user = GetUser(username);
 
             if (user.RefreshToken == tokenModel.RefreshToken)
-            {   
-                var newtoken =  GenerateAuthenticationToken(user);
+            {
+                var newtoken = GenerateAuthenticationToken(user);
                 UpdateRefreshTokenInDB(user.Username, newtoken.Token, tokenModel.RefreshToken, newtoken.RefreshToken);
                 return newtoken;
             }
@@ -349,6 +332,5 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
 
         }
-
     }
 }

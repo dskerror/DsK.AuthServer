@@ -1,4 +1,4 @@
-﻿namespace BlazorWASMCustomAuth.Server.Models
+﻿namespace BlazorWASMCustomAuth.Security.Shared
 {
     public class RoleModel
     {

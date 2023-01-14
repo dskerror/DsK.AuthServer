@@ -8,6 +8,7 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using BlazorWASMCustomAuth.Shared.Security;
+using System.Net.Http.Headers;
 
 namespace BlazorWASMCustomAuth.Client.Services
 {
@@ -26,7 +27,7 @@ namespace BlazorWASMCustomAuth.Client.Services
 		}
 		public async Task<bool> LoginAsync(UserLoginModel model)
 		{
-			var response = await _httpClient.PostAsJsonAsync<UserLoginModel>("/api/security/login", model);
+			var response = await _httpClient.PostAsJsonAsync<UserLoginModel>("/api/security/userlogin", model);
 			if (!response.IsSuccessStatusCode)
 			{
 				return false;
@@ -41,10 +42,10 @@ namespace BlazorWASMCustomAuth.Client.Services
 			((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
 			return true;
 		}
-
         public async Task<UsersGetDTO> UsersGet(PagingSortingFilteringRequest request)
         {
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+			var token = await _localStorageService.GetItemAsync<string>("token");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
             //return await _httpClient.GetFromJsonAsync<List<string>>("/test/todos");
 
             var response = await _httpClient.GetAsync("/api/Security/UsersGet");
@@ -73,7 +74,6 @@ namespace BlazorWASMCustomAuth.Client.Services
 
             }
         }
-
         public async Task<bool> LogoutAsync()
 		{
 			await _localStorageService.RemoveItemAsync("token");

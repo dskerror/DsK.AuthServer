@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 {
     [DbContext(typeof(SecurityTablesTestContext))]
-    [Migration("20230111144217_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20230113201347_migration1")]
+    partial class migration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,8 +36,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Property<string>("AuthenticationProviderName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("AuthenticationProviderName");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -110,8 +109,8 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     b.Property<string>("RoleName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
@@ -204,18 +203,21 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     b.HasIndex("AuthenticationProviderId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "UserId", "AuthenticationProviderId" }, "IX_UserAuthenticationProviders")
+                        .IsUnique();
 
                     b.ToTable("UserAuthenticationProviders");
                 });
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.UserAuthenticationProviderDefault", b =>
                 {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("AuthenticationProviderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.HasKey("UserId");
 
                     b.ToTable("UserAuthenticationProviderDefault", (string)null);
                 });
@@ -239,12 +241,15 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Property<DateTime>("TokenCreatedDateTime")
                         .HasColumnType("datetime");
 
+                    b.Property<DateTime>("TokenRefreshedDateTime")
+                        .HasColumnType("datetime");
+
                     b.Property<int>("UserAuthenticationProviderId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserAuthenticationProviderId");
+                    b.HasIndex(new[] { "UserAuthenticationProviderId" }, "IX_UserAuthenticationProviderTokens");
 
                     b.ToTable("UserAuthenticationProviderTokens");
                 });

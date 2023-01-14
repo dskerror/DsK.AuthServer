@@ -12,7 +12,6 @@ namespace BlazorWASMCustomAuth.Server.Controllers
     public class SecurityController : ControllerBase
     {
         private readonly SecurityService SecurityService;
-
         public SecurityController(SecurityService securityService)
         {
             SecurityService = securityService;
@@ -42,7 +41,6 @@ namespace BlazorWASMCustomAuth.Server.Controllers
             return Ok(resultTokenModel);
         }
 
-
         [HttpPost]
         [Authorize(Roles = "admin,UserCreate")]
         [Route("UserCreate")]
@@ -68,33 +66,35 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "admin,UserGet")]
+        [Authorize(Roles = "admin,UsersGet")]
         [Route("UsersGet")]
         public IActionResult UsersGet([FromQuery] PagingSortingFilteringRequest request)
         {
             return Ok(SecurityService.UsersGet(request));
         }
 
+        [HttpGet]
+        [Authorize(Roles = "admin,PermissionsGet")]
+        [Route("PermissionsGet")]
+        public IActionResult PermissionsGet()
+        {
+            return Ok(SecurityService.PermissionsGet());
+        }
 
-        //[HttpGet]
-        //[Route("PermissionList")]
-        //public IActionResult PermissionList()
-        //{
-        //    return Ok(SecurityService.GetPermissionList());
-        //}
+        [HttpGet]
+        [Authorize(Roles = "admin,RolesGet")]
+        [Route("RolesGet")]
+        public IActionResult RolesGet()
+        {
+            return Ok(SecurityService.RolesGet());
+        }
 
-        //[HttpGet]
-        //[Route("RoleList")]
-        //public IActionResult RoleList()
-        //{
-        //    return Ok(SecurityService.GetRoleList());
-        //}
-
-        //[HttpGet]
-        //[Route("RolePermissionList")]
-        //public IActionResult RolePermissionList()
-        //{
-        //    return Ok(SecurityService.RolePermissionList());
-        //}
+        [HttpGet]
+        [Authorize(Roles = "admin,RolePermissionsGet")]
+        [Route("RolePermissionsGet")]
+        public IActionResult RolePermissionsGet()
+        {
+            return Ok(SecurityService.RolePermissionsGet());
+        }
     }
 }
