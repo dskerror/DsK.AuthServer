@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using BlazorWASMCustomAuth.Shared.Security;
 using System.Net.Http.Headers;
 
 namespace BlazorWASMCustomAuth.Client.Services
@@ -42,6 +41,24 @@ namespace BlazorWASMCustomAuth.Client.Services
 			((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
 			return true;
 		}
+
+        public async Task<bool> UserCreate(UserCreateModel model)
+        {
+            var response = await _httpClient.PostAsJsonAsync<UserCreateModel>("/api/security/usercreate", model);
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+            }
+            TokenModel tokenModel = await response.Content.ReadFromJsonAsync<TokenModel>() ?? new TokenModel("", "");
+            if (tokenModel == null)
+            {
+                return false;
+            }
+            await _localStorageService.SetItemAsync("token", tokenModel.Token);
+            await _localStorageService.SetItemAsync("refreshToken", tokenModel.RefreshToken);
+            ((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
+            return true;
+        }
         public async Task<UsersGetDTO> UsersGet(PagingSortingFilteringRequest request)
         {
 			var token = await _localStorageService.GetItemAsync<string>("token");

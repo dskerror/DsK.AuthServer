@@ -1,7 +1,6 @@
 ﻿using BlazorWASMCustomAuth.Database;
 using BlazorWASMCustomAuth.PagingSortingFiltering;
 using BlazorWASMCustomAuth.Security.Shared;
-using BlazorWASMCustomAuth.Shared.Security;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -29,7 +28,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
         public TokenModel UserLogin(UserLoginModel model)
         {
-            var user = GetUser(model.Username, model.Password);
+            var user = UserGet(model.Username, model.Password);
 
             if (user is null)
                 return new TokenModel("", "");
@@ -44,7 +43,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return new TokenModel("", "");
             }
         }
-        private UserModel GetUser(string username, string password = "", int userid = 0)
+        private UserModel UserGet(string username, string password = "", int userid = 0)
         {
             var userDt = dm.ExecDataTableSP("sp_UserGet", "Username", username ?? "", "Id", userid);
 
@@ -212,7 +211,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             //TODO : Implement Password Complexity Rules
             //TODO : Implement Previously Used Password Constraint
 
-            var user = GetUser("", u.OldPassword, u.UserId);
+            var user = UserGet("", u.OldPassword, u.UserId);
 
             if (user is null)
                 return new DatabaseExecResult("") { HasError = true, Message = "User or password incorrect." };
@@ -312,7 +311,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
 
 
-            var user = GetUser(username);
+            var user = UserGet(username);
 
             if (user.RefreshToken == tokenModel.RefreshToken)
             {

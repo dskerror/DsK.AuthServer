@@ -1,0 +1,56 @@
+﻿@page "/admin/usercreate"
+@inject SecurityService securityService;
+@inject NavigationManager _navigationManager;
+@using BlazorWASMCustomAuth.Security.Shared;
+@using BlazorWASMCustomAuth.PagingSortingFiltering;
+@using System.Security.Claims;
+
+@*<AuthorizeView>
+    <Authorized>*@
+<h2>Create User</h2>
+
+    <NavLink href="/admin/user">Go Back</NavLink>
+
+<form>
+    <div class="form-group">
+        <label for="Username">Username</label>
+        <input type="text" class="form-control" id="Username" placeholder="Enter Username" @bind-value="@userCreateModel.Username">
+    </div>
+        <div class="form-group">
+        <label for="Email">Email address</label>
+        <input type="email" class="form-control" id="Email" placeholder="Enter email" @bind-value="@userCreateModel.Email">
+    </div>
+    <div class="form-group">
+        <label for="FullName">Full Name</label>
+        <input type="text" class="form-control" id="FullName" placeholder="Enter Full Name" @bind-value="@userCreateModel.Name">        
+    </div>
+
+    <button onclick="@TryUserCreate" class="btn btn-primary">Submit</button>
+</form>
+
+    
+@*    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>*@
+
+
+    @code {
+        [CascadingParameter]
+        private Task<AuthenticationState> authenticationState { get; set; }
+    private UserCreateModel userCreateModel = new UserCreateModel();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        
+    }
+
+    private async Task TryUserCreate()
+    {
+        await securityService.UserCreate(userCreateModel);
+    }
+}

@@ -1,54 +1,55 @@
 ﻿@page "/admin/users"
 @inject SecurityService securityService;
 @inject NavigationManager _navigationManager;
-@using BlazorWASMCustomAuth.Shared.Security;
+@using BlazorWASMCustomAuth.Security.Shared;
 @using BlazorWASMCustomAuth.PagingSortingFiltering;
 @using System.Security.Claims;
 
 @*<AuthorizeView>
     <Authorized>*@
-        <h2>Users</h2>
-        @if (response == null)
-        {
-            <h3>Loading...</h3>
-        }
-        else
-        {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <td>Id</td>
-                        <td>Username</td>
-                        <td>Name</td>
-                        <td>Email</td>
-                        <td>View</td>
-                        <td>Edit</td>
-                        <td>Delete</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in response.UserList)
-                    {
-                        <tr>
-                            <td>@user.Id</td>
-                            <td>@user.Username</td>
-                            <td>@user.Name</td>
-                            <td>@user.Email</td>
-                            <td>X</td>
-                            <td>X</td>
-                            <td>X</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+<h2>Users</h2>
+@if (response == null)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <NavLink href="/admin/usercreate">Create User</NavLink>
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Id</td>
+                <td>Username</td>
+                <td>Name</td>
+                <td>Email</td>
+                <td>View</td>
+                <td>Edit</td>
+                <td>Delete</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in response.UserList)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Username</td>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>X</td>
+                    <td>X</td>
+                    <td>X</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-            <ul>
-                <li>Current Page : @response.CurrentPage</li>
-                <li>Total Pages : @response.TotalPages</li>
-                <li>Page Size : @response.PageSize</li>
-                <li>Total Rows : @response.TotalRows</li>
-            </ul>
-        }
+    <ul>
+        <li>Current Page : @response.CurrentPage</li>
+        <li>Total Pages : @response.TotalPages</li>
+        <li>Page Size : @response.PageSize</li>
+        <li>Total Rows : @response.TotalRows</li>
+    </ul>
+}
 @*    </Authorized>
     <NotAuthorized>
         <Login />

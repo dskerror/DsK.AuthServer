@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlazorWASMCustomAuth.Shared.Security
+namespace BlazorWASMCustomAuth.Security.Shared
 {
     public class UsersGetDTO : PagingSortingFilteringResponse
     {

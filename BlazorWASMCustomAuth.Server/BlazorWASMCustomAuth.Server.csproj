@@ -27,7 +27,6 @@
     <ProjectReference Include="..\BlazorWASMCustomAuth.PagingSortingFiltering\BlazorWASMCustomAuth.PagingSortingFiltering.csproj" />
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Infrastructure\BlazorWASMCustomAuth.Security.Infrastructure.csproj" />
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Shared\BlazorWASMCustomAuth.Security.Shared.csproj" />
-    <ProjectReference Include="..\BlazorWASMCustomAuth.Shared\BlazorWASMCustomAuth.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

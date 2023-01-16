@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazorWASMCustomAuth.Security.EntityFramework\BlazorWASMCustomAuth.Security.EntityFramework.csproj" />
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Infrastructure\BlazorWASMCustomAuth.Security.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -42,7 +42,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,UserCreate")]
+        //[Authorize(Roles = "admin,UserCreate")]
         [Route("UserCreate")]
         public IActionResult UserCreate(UserCreateModel user)
         {
@@ -50,7 +50,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,UserCreateLocalPassword")]
+        //[Authorize(Roles = "admin,UserCreateLocalPassword")]
         [Route("UserCreateLocalPassword")]
         public IActionResult UserCreateLocalPassword(UserCreateLocalPasswordModel userCreateLocalPasswordModel)
         {
@@ -58,7 +58,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,UserChangeLocalPassword")]
+        //[Authorize(Roles = "admin,UserChangeLocalPassword")]
         [Route("UserChangeLocalPassword")]
         public IActionResult UserChangeLocalPassword(UserChangeLocalPasswordModel userChangeLocalPasswordModel)
         {
@@ -66,15 +66,23 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin,UsersGet")]
+        //[Authorize(Roles = "admin,UsersGet")]
         [Route("UsersGet")]
         public IActionResult UsersGet([FromQuery] PagingSortingFilteringRequest request)
         {
             return Ok(SecurityService.UsersGet(request));
         }
 
+        //[HttpGet]
+        //[Authorize(Roles = "admin,UserGet")]
+        //[Route("UserGet")]
+        //public IActionResult UserGet([FromQuery] int id)
+        //{
+        //    return Ok(SecurityService.UserGet(id));
+        //}
+
         [HttpGet]
-        [Authorize(Roles = "admin,PermissionsGet")]
+        //[Authorize(Roles = "admin,PermissionsGet")]
         [Route("PermissionsGet")]
         public IActionResult PermissionsGet()
         {
@@ -82,7 +90,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin,RolesGet")]
+        //[Authorize(Roles = "admin,RolesGet")]
         [Route("RolesGet")]
         public IActionResult RolesGet()
         {
@@ -90,7 +98,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin,RolePermissionsGet")]
+        //[Authorize(Roles = "admin,RolePermissionsGet")]
         [Route("RolePermissionsGet")]
         public IActionResult RolePermissionsGet()
         {
