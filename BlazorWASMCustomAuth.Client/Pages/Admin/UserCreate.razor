@@ -7,28 +7,47 @@
 
 @*<AuthorizeView>
     <Authorized>*@
-<h2>Create User</h2>
-
-    <NavLink href="/admin/user">Go Back</NavLink>
+<h3><NavLink href="/admin/users">Users</NavLink> > Create User</h3>
 
 <form>
-    <div class="form-group">
-        <label for="Username">Username</label>
-        <input type="text" class="form-control" id="Username" placeholder="Enter Username" @bind-value="@userCreateModel.Username">
-    </div>
-        <div class="form-group">
-        <label for="Email">Email address</label>
-        <input type="email" class="form-control" id="Email" placeholder="Enter email" @bind-value="@userCreateModel.Email">
-    </div>
-    <div class="form-group">
-        <label for="FullName">Full Name</label>
-        <input type="text" class="form-control" id="FullName" placeholder="Enter Full Name" @bind-value="@userCreateModel.Name">        
+    <div class="row">
+        <div class="col-6">
+            <div class="mb-3">
+                <label for="Username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="Username" placeholder="Username" @bind-value="@userCreateModel.Username" @onfocusout="@VerifyUser">
+            </div>
+        </div>
+        <div class="col-6"></div>
     </div>
 
-    <button onclick="@TryUserCreate" class="btn btn-primary">Submit</button>
+    <div class="row">
+        <div class="col-6">
+            <div class="mb-3">
+                <label for="Email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="Email" placeholder="Email" @bind-value="@userCreateModel.Email">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <div class="mb-3">
+                <label for="FullName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="FullName" placeholder="FullName" @bind-value="@userCreateModel.Name">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+
+    <div class="form-group">
+        <button onclick="@TryUserCreate" class="btn btn-primary">Submit</button>
+    </div>
+
 </form>
 
-    
+
 @*    </Authorized>
     <NotAuthorized>
         <Login />
@@ -36,21 +55,49 @@
 </AuthorizeView>*@
 
 
-    @code {
-        [CascadingParameter]
-        private Task<AuthenticationState> authenticationState { get; set; }
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
     private UserCreateModel userCreateModel = new UserCreateModel();
+    private APIResult apiresult;
 
 
 
-    protected override async Task OnInitializedAsync()
-    {
+    //protected override async Task OnInitializedAsync()
+    //{
 
-        
-    }
+
+    //}
 
     private async Task TryUserCreate()
     {
-        await securityService.UserCreate(userCreateModel);
+        apiresult = await securityService.UserCreate(userCreateModel);
+        //var modelValidation = userCreateModel.ValidateModel();
+        //if (modelValidation.IsValid)
+        //{
+        //    apiresult = await securityService.UserCreate(userCreateModel);
+        //}
+        //else
+        //{
+
+        //}
+
+    }
+
+    private async Task VerifyUser()
+    {
+        //var validation = userCreateModel.ValidateModel();
+        //if (!validation.IsValid)
+        //{
+        //    foreach(var message in validation.ValidationMessages)
+        //    {
+        //        if(message.PropertyName == "Username")
+        //        {
+        //            //message
+        //        }
+        //    }
+        //}
+
+        //call service to check if user already exists
     }
 }

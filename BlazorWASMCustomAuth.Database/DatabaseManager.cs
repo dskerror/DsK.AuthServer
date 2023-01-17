@@ -120,18 +120,18 @@ namespace BlazorWASMCustomAuth.Database
         /// <param name="qry">Query text</param>
         /// <param name="args">Any number of parameter name/value pairs and/or SQLParameter arguments</param>
         /// <returns>The number of rows affected</returns>
-        public DatabaseExecResult ExecNonQueryNEW(string qry, params object[] args)
+        public DbResult ExecNonQueryNEW(string qry, params object[] args)
         {
             //var result = new DatabaseExecResult();
             using (SqlCommand cmd = CreateCommand(qry, CommandType.Text, args))
             {
                 try
                 {
-                    return new DatabaseExecResult(cmd.ExecuteNonQuery());
+                    return new DbResult(cmd.ExecuteNonQuery());
                 }
                 catch (Exception ex)
                 {
-                    return new DatabaseExecResult(cmd.ExecuteNonQuery(), ex);
+                    return new DbResult(cmd.ExecuteNonQuery(), ex);
                 }
             }
         }
@@ -158,17 +158,17 @@ namespace BlazorWASMCustomAuth.Database
         /// <param name="qry">Query text</param>
         /// <param name="args">Any number of parameter name/value pairs and/or SQLParameter arguments</param>
         /// <returns>Value of first column and first row of the results</returns>
-        public DatabaseExecResult ExecScalarNEW(string qry, params object[] args)
+        public DbResult ExecScalarNEW(string qry, params object[] args)
         {
             using (SqlCommand cmd = CreateCommand(qry, CommandType.Text, args))
             {
                 try
                 {
-                    return new DatabaseExecResult(cmd.ExecuteScalar());
+                    return new DbResult(cmd.ExecuteScalar());
                 }
                 catch (Exception ex)
                 {
-                    return new DatabaseExecResult(cmd.ExecuteScalar(), ex);
+                    return new DbResult(cmd.ExecuteScalar(), ex);
                 }
             }
         }
@@ -180,17 +180,17 @@ namespace BlazorWASMCustomAuth.Database
         /// <param name="qry">Query text</param>
         /// <param name="args">Any number of parameter name/value pairs and/or SQLParameter arguments</param>
         /// <returns>Value of first column and first row of the results</returns>
-        public DatabaseExecResult ExecScalarSP(string qry, params object[] args)
+        public DbResult ExecScalarSP(string qry, params object[] args)
         {
             using (SqlCommand cmd = CreateCommand(qry, CommandType.StoredProcedure, args))
             {
                 try
                 {
-                    return new DatabaseExecResult(cmd.ExecuteScalar());
+                    return new DbResult(cmd.ExecuteScalar());
                 }
                 catch (Exception ex)
                 {
-                    return new DatabaseExecResult(cmd.ExecuteScalar(), ex);
+                    return new DbResult(cmd.ExecuteScalar(), ex);
                 }
             }
         }

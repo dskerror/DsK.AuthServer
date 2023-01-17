@@ -1,6 +1,7 @@
 ﻿using BlazorWASMCustomAuth.Database;
 using BlazorWASMCustomAuth.PagingSortingFiltering;
 using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Validations;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -49,7 +50,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             if (userDt.Rows.Count == 1)
             {
-                UserModel user = new UserModel()
+                UserModel user = new ()
                 {
                     Id = int.Parse(userDt.Rows[0]["id"].ToString() ?? ""),
                     Username = userDt.Rows[0]["Username"].ToString(),
@@ -183,18 +184,71 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             response.UserList = list;
             return response;
         }
-        public DatabaseExecResult UserCreate(UserCreateModel user)
+        public APIResult UserCreate(UserCreateModel user)
         {
-            var userExistsDT = dm.ExecDataTableSP("sp_UserCreate_VerifyIfExists", "Username", user.Username ?? "", "Email", user.Email ?? "");
+            APIResult result;
+            try
+            {
+                result = new APIResult("");
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
+
+            result.ModelValidationResult = user.ValidateModel();
+            if (result.HasError)
+            {
+                result.Message = "See Model Validations";
+                return result;
+            }
+
+            var UserExists = UserVerifyExistsByUsername(user.Username);
+            if (UserExists)
+            {
+                result.Message = "Username already exists.";
+                result.HasError = true;
+                return result;
+            }
+
+            var EmailExists = UserVerifyExistsByEmail(user.Email);
+            if (EmailExists)
+            {
+                result.Message = "Email already exists.";
+                result.HasError = true;
+                return result;
+            }
+
+            var dbresult = dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.Name ?? "");
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+
+            return result;
+        }
+        public bool UserVerifyExistsByUsername(string username)
+        {
+            var userExistsDT = dm.ExecDataTableSP("sp_User_VerifyExistsByUsername", "Username", username);
 
             if (userExistsDT.Rows.Count == 0)
             {
-                return dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.Name ?? "");
+                return false;
             }
-
-            return new DatabaseExecResult("") { HasError = true, Message = "User already exists.", Exception = null };
+            return true;
         }
-        public DatabaseExecResult UserCreateLocalPassword(UserCreateLocalPasswordModel u)
+        public bool UserVerifyExistsByEmail(string email)
+        {
+            var userExistsDT = dm.ExecDataTableSP("sp_User_VerifyExistsByEmail", "Email", email);
+
+            if (userExistsDT.Rows.Count == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        public DbResult UserCreateLocalPassword(UserCreateLocalPasswordModel u)
         {
             //TODO : Implement Password Complexity Rules
             //TODO : Implement Previously Used Password Constraint
@@ -206,7 +260,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 "HashedPassword", SecurityHelpers.HashPasword(u.Password, ramdomSalt),
                 "Salt", Convert.ToHexString(ramdomSalt));
         }
-        public DatabaseExecResult UserChangeLocalPassword(UserChangeLocalPasswordModel u)
+        public DbResult UserChangeLocalPassword(UserChangeLocalPasswordModel u)
         {
             //TODO : Implement Password Complexity Rules
             //TODO : Implement Previously Used Password Constraint
@@ -214,7 +268,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var user = UserGet("", u.OldPassword, u.UserId);
 
             if (user is null)
-                return new DatabaseExecResult("") { HasError = true, Message = "User or password incorrect." };
+                return new DbResult("") { HasError = true}; //, Message = "User or password incorrect." 
             else if (AuthenticateUser(user))
             {
                 var ramdomSalt = SecurityHelpers.RandomizeSalt;
@@ -226,7 +280,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
             else
             {
-                return new DatabaseExecResult("") { HasError = true, Message = "User or password incorrect" };
+                return new DbResult("") { HasError = true }; //, Message = "User or password incorrect"
             }
 
         }

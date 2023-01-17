@@ -46,7 +46,8 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         [Route("UserCreate")]
         public IActionResult UserCreate(UserCreateModel user)
         {
-            return Ok(SecurityService.UserCreate(user));
+            var result = SecurityService.UserCreate(user);
+            return Ok(result);
         }
 
         [HttpPost]
