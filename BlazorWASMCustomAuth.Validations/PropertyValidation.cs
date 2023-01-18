@@ -42,7 +42,7 @@ namespace BlazorWASMCustomAuth.Validations
         public static PropertyValidationResult IsNumber(string PropertyName, string PropertyValue)
         {
             var result = new PropertyValidationResult();
-
+            result.PropertyName = PropertyName;
 
             if (PropertyValue.All(char.IsDigit))
             {
@@ -53,7 +53,7 @@ namespace BlazorWASMCustomAuth.Validations
                 result.IsValid = false;
                 result.Message = $"{PropertyName} isn't a number";
             }
-        
+
             return result;
         }
 
@@ -61,7 +61,7 @@ namespace BlazorWASMCustomAuth.Validations
         public static PropertyValidationResult IsBool(string PropertyName, string PropertyValue)
         {
             var result = new PropertyValidationResult();
-      
+            result.PropertyName = PropertyName;
             Boolean temp;
             if (Boolean.TryParse(PropertyValue, out temp))
             {
@@ -78,7 +78,7 @@ namespace BlazorWASMCustomAuth.Validations
         public static PropertyValidationResult IsDate(string PropertyName, string PropertyValue)
         {
             var result = new PropertyValidationResult();
-
+            result.PropertyName = PropertyName;
             DateTime temp;
             if (DateTime.TryParse(PropertyValue, out temp))
             {
@@ -96,6 +96,7 @@ namespace BlazorWASMCustomAuth.Validations
         public static PropertyValidationResult CantContainSpace(string PropertyName, string PropertyValue)
         {
             var result = new PropertyValidationResult();
+            result.PropertyName = PropertyName;
             if (PropertyValue.Contains(" "))
             {
                 result.IsValid = false;

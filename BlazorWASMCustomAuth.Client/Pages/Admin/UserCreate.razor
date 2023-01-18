@@ -9,12 +9,13 @@
     <Authorized>*@
 <h3><NavLink href="/admin/users">Users</NavLink> > Create User</h3>
 
-<form>
+<div>
     <div class="row">
         <div class="col-6">
             <div class="mb-3">
                 <label for="Username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="Username" placeholder="Username" @bind-value="@userCreateModel.Username" @onfocusout="@VerifyUser">
+                <div class="">@ValidationUsernameMessage</div>
             </div>
         </div>
         <div class="col-6"></div>
@@ -24,7 +25,8 @@
         <div class="col-6">
             <div class="mb-3">
                 <label for="Email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="Email" placeholder="Email" @bind-value="@userCreateModel.Email">
+                <input type="email" class="form-control" id="Email" placeholder="Email" @bind-value="@userCreateModel.Email" @onfocusout="@VerifyEmail">
+                <div class="">@ValidationEmailMessage</div>
             </div>
         </div>
         <div class="col-6"></div>
@@ -34,19 +36,17 @@
         <div class="col-6">
             <div class="mb-3">
                 <label for="FullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="FullName" placeholder="FullName" @bind-value="@userCreateModel.Name">
+                <input type="text" class="form-control" id="FullName" placeholder="FullName" @bind-value="@userCreateModel.FullName" @onfocusout="@VerifyFullName">
+                <div class="">@ValidationFullNameMessage</div>
             </div>
         </div>
         <div class="col-6"></div>
     </div>
 
-
     <div class="form-group">
-        <button onclick="@TryUserCreate" class="btn btn-primary">Submit</button>
+        <button type="button" onclick="@TryUserCreate" class="btn btn-primary">Submit</button>
     </div>
-
-</form>
-
+</div>
 
 @*    </Authorized>
     <NotAuthorized>
@@ -59,19 +59,23 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
     private UserCreateModel userCreateModel = new UserCreateModel();
-    private APIResult apiresult;
+
+    private string ValidationUsernameMessage = "";
+    private string ValidationEmailMessage = "";
+    private string ValidationFullNameMessage = "";
+    //private APIResult apiresult;
 
 
 
     //protected override async Task OnInitializedAsync()
     //{
 
-
     //}
 
     private async Task TryUserCreate()
     {
-        apiresult = await securityService.UserCreate(userCreateModel);
+        await securityService.UserCreate(userCreateModel);
+
         //var modelValidation = userCreateModel.ValidateModel();
         //if (modelValidation.IsValid)
         //{
@@ -86,18 +90,67 @@
 
     private async Task VerifyUser()
     {
-        //var validation = userCreateModel.ValidateModel();
-        //if (!validation.IsValid)
-        //{
-        //    foreach(var message in validation.ValidationMessages)
-        //    {
-        //        if(message.PropertyName == "Username")
-        //        {
-        //            //message
-        //        }
-        //    }
-        //}
+        var validation = userCreateModel.ValidateModel();
+        if (!validation.IsValid)
+        {
+            foreach (var message in validation.ValidationMessages)
+            {
+                if (message.PropertyName == "Username")
+                {
+                    ValidationUsernameMessage = message.Message;
+                    return;
+                }
+            }
+        }
 
-        //call service to check if user already exists
+        var userExists = await securityService.UserVerifyExistsByUsername(userCreateModel.Username ?? "");
+        if (userExists)
+        {
+            ValidationUsernameMessage = "Username already exists.";
+            return;
+        }
+
+        ValidationUsernameMessage = "";
+    }
+    private async Task VerifyEmail()
+    {
+        var validation = userCreateModel.ValidateModel();
+        if (!validation.IsValid)
+        {
+            foreach (var message in validation.ValidationMessages)
+            {
+                if (message.PropertyName == "Email")
+                {
+                    ValidationEmailMessage = message.Message;
+                    return;
+                }
+            }
+        }
+
+        var userExists = await securityService.UserVerifyExistsByEmail(userCreateModel.Email ?? "");
+        if (userExists)
+        {
+            ValidationEmailMessage = "Email already exists.";
+            return;
+        }
+
+        ValidationEmailMessage = "";
+    }
+    private void VerifyFullName()
+    {
+        var validation = userCreateModel.ValidateModel();
+        if (!validation.IsValid)
+        {
+            foreach (var message in validation.ValidationMessages)
+            {
+                if (message.PropertyName == "FullName")
+                {
+                    ValidationFullNameMessage = message.Message;
+                    return;
+                }
+            }
+        }
+
+        ValidationFullNameMessage = "";
     }
 }

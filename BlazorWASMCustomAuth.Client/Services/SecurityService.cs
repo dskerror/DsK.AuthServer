@@ -42,16 +42,74 @@ namespace BlazorWASMCustomAuth.Client.Services
             ((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
             return true;
         }
-        public async Task<APIResult> UserCreate(UserCreateModel model)
+
+        public async Task UserCreate(UserCreateModel model)
         {
             var response = await _httpClient.PostAsJsonAsync<UserCreateModel>("/api/security/usercreate", model);
 
             if (!response.IsSuccessStatusCode)
             {
-                return new APIResult("") { HasError = true, Message = response.StatusCode.ToString() };
+                int xx = 1;
             }
-            var apiResult = await response.Content.ReadFromJsonAsync<APIResult>() ?? new APIResult("");
-            return apiResult;
+            var x = await response.Content.ReadFromJsonAsync<UserCreateModel>();
+
+            //return true;
+        }
+
+        public async Task<bool> UserVerifyExistsByUsername(string username)
+        {
+
+
+            var response = await _httpClient.GetAsync($"/api/Security/UserVerifyExistsByUsername?Username={username}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var responseAsString = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                var responseObject = JsonSerializer.Deserialize<bool>(responseAsString, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    IncludeFields = true
+                });
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                return true;
+            }
+        }
+
+        public async Task<bool> UserVerifyExistsByEmail(string email)
+        {
+
+
+            var response = await _httpClient.GetAsync($"/api/Security/UserVerifyExistsByEmail?Email={email}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var responseAsString = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                var responseObject = JsonSerializer.Deserialize<bool>(responseAsString, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    IncludeFields = true
+                });
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                return true;
+            }
         }
         public async Task<UsersGetDTO> UsersGet(PagingSortingFilteringRequest request)
         {

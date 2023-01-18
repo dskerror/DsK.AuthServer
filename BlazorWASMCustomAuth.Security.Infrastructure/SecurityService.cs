@@ -184,49 +184,50 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             response.UserList = list;
             return response;
         }
-        public APIResult UserCreate(UserCreateModel user)
+        public UserCreateModel UserCreate(UserCreateModel user)
         {
-            APIResult result;
-            try
-            {
-                result = new APIResult("");
-            }
-            catch (Exception ex)
-            {
+            return user;
+            //APIResult result;
+            //try
+            //{
+            //    result = new APIResult("");
+            //}
+            //catch (Exception ex)
+            //{
 
-                throw;
-            }
+            //    throw;
+            //}
             
 
-            result.ModelValidationResult = user.ValidateModel();
-            if (result.HasError)
-            {
-                result.Message = "See Model Validations";
-                return result;
-            }
+            //result.ModelValidationResult = user.ValidateModel();
+            //if (result.HasError)
+            //{
+            //    result.Message = "See Model Validations";
+            //    return result;
+            //}
 
-            var UserExists = UserVerifyExistsByUsername(user.Username);
-            if (UserExists)
-            {
-                result.Message = "Username already exists.";
-                result.HasError = true;
-                return result;
-            }
+            //var UserExists = UserVerifyExistsByUsername(user.Username);
+            //if (UserExists)
+            //{
+            //    result.Message = "Username already exists.";
+            //    result.HasError = true;
+            //    return result;
+            //}
 
-            var EmailExists = UserVerifyExistsByEmail(user.Email);
-            if (EmailExists)
-            {
-                result.Message = "Email already exists.";
-                result.HasError = true;
-                return result;
-            }
+            //var EmailExists = UserVerifyExistsByEmail(user.Email);
+            //if (EmailExists)
+            //{
+            //    result.Message = "Email already exists.";
+            //    result.HasError = true;
+            //    return result;
+            //}
 
-            var dbresult = dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.Name ?? "");
-            result.Result = dbresult.Result;
-            result.HasError = dbresult.HasError;
-            result.Exception = dbresult.Exception;
+            //var dbresult = dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.Name ?? "");
+            //result.Result = dbresult.Result;
+            //result.HasError = dbresult.HasError;
+            //result.Exception = dbresult.Exception;
 
-            return result;
+            //return result;
         }
         public bool UserVerifyExistsByUsername(string username)
         {

@@ -45,9 +45,9 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         //[Authorize(Roles = "admin,UserCreate")]
         [Route("UserCreate")]
         public IActionResult UserCreate(UserCreateModel user)
-        {
+        {            
             var result = SecurityService.UserCreate(user);
-            return Ok(result);
+            return Ok(result);            
         }
 
         [HttpPost]
@@ -72,6 +72,22 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         public IActionResult UsersGet([FromQuery] PagingSortingFilteringRequest request)
         {
             return Ok(SecurityService.UsersGet(request));
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "admin,UserUserVerifyExistsByUsernamesGet")]
+        [Route("UserVerifyExistsByUsername")]
+        public IActionResult UserVerifyExistsByUsername([FromQuery] string username)
+        {
+            return Ok(SecurityService.UserVerifyExistsByUsername(username));
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "admin,UserUserVerifyExistsByUsernamesGet")]
+        [Route("UserVerifyExistsByEmail")]
+        public IActionResult UserVerifyExistsByEmail([FromQuery] string email)
+        {
+            return Ok(SecurityService.UserVerifyExistsByEmail(email));
         }
 
         //[HttpGet]
