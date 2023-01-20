@@ -82,7 +82,7 @@ namespace BlazorWASMCustomAuth.Database
                 {
                     SqlParameter parm = new SqlParameter();
                     parm.ParameterName = (string)args[i];
-                    parm.Value = args[++i];
+                    parm.Value = (object)args[++i] ?? DBNull.Value;
                     cmd.Parameters.Add(parm);
                 }
                 else if (args[i] is SqlParameter)
@@ -124,6 +124,28 @@ namespace BlazorWASMCustomAuth.Database
         {
             //var result = new DatabaseExecResult();
             using (SqlCommand cmd = CreateCommand(qry, CommandType.Text, args))
+            {
+                try
+                {
+                    return new DbResult(cmd.ExecuteNonQuery());
+                }
+                catch (Exception ex)
+                {
+                    return new DbResult(cmd.ExecuteNonQuery(), ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes a Stored Procedure that returns no results
+        /// </summary>
+        /// <param name="qry">Query text</param>
+        /// <param name="args">Any number of parameter name/value pairs and/or SQLParameter arguments</param>
+        /// <returns>The number of rows affected</returns>
+        public DbResult ExecNonQuerySP(string qry, params object[] args)
+        {
+            //var result = new DatabaseExecResult();
+            using (SqlCommand cmd = CreateCommand(qry, CommandType.StoredProcedure, args))
             {
                 try
                 {
