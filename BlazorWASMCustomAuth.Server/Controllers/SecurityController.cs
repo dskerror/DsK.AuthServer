@@ -21,6 +21,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         [Route("UserLogin")]
         public IActionResult UserLogin(UserLoginModel model)
         {
+            //implement captcha
             var tokenModel = SecurityService.UserLogin(model);
 
             if (tokenModel == null)
@@ -34,7 +35,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         public IActionResult RefreshToken(TokenModel refreshToken)
         {
             var resultTokenModel = SecurityService.RefreshToken(refreshToken);
-            if (refreshToken == null)
+            if (resultTokenModel == null)
             {
                 return NotFound();
             }
@@ -55,15 +56,8 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         [Route("UserCreateLocalPassword")]
         public IActionResult UserCreateLocalPassword(UserCreateLocalPasswordModel userCreateLocalPasswordModel)
         {
+            //TODO : Create another method for user to change their own passwords
             return Ok(SecurityService.UserCreateLocalPassword(userCreateLocalPasswordModel));
-        }
-
-        [HttpPost]
-        //[Authorize(Roles = "admin,UserChangeLocalPassword")]
-        [Route("UserChangeLocalPassword")]
-        public IActionResult UserChangeLocalPassword(UserChangeLocalPasswordModel userChangeLocalPasswordModel)
-        {
-            return Ok(SecurityService.UserChangeLocalPassword(userChangeLocalPasswordModel));
         }
 
         [HttpGet]
@@ -106,6 +100,15 @@ namespace BlazorWASMCustomAuth.Server.Controllers
             return Ok(SecurityService.PermissionsGet());
         }
 
+        [HttpPost]
+        //[Authorize(Roles = "admin,PermissionCreate")]
+        [Route("PermissionCreate")]
+        public IActionResult PermissionCreate(PermissionCreateModel model)
+        {
+            var result = SecurityService.PermissionCreate(model);
+            return Ok(result);
+        }
+
         [HttpGet]
         //[Authorize(Roles = "admin,RolesGet")]
         [Route("RolesGet")]
@@ -113,6 +116,25 @@ namespace BlazorWASMCustomAuth.Server.Controllers
         {
             return Ok(SecurityService.RolesGet());
         }
+
+        [HttpPost]
+        //[Authorize(Roles = "admin,RoleCreate")]
+        [Route("RoleCreate")]
+        public IActionResult RoleCreate(RoleCreateModel model)
+        {
+            var result = SecurityService.RoleCreate(model);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "admin,RoleCreate")]
+        [Route("RoleUpate")]
+        public IActionResult RoleUpate(RoleModel model)
+        {
+            var result = SecurityService.RoleUpdate(model);
+            return Ok(result);
+        }
+
 
         [HttpGet]
         //[Authorize(Roles = "admin,RolePermissionsGet")]

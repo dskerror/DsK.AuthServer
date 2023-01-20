@@ -1,14 +1,14 @@
 ﻿using BlazorWASMCustomAuth.Validations;
+using System.Runtime.CompilerServices;
 
 namespace BlazorWASMCustomAuth.Security.Shared
 {
 	public class UserCreateModel
-	{
+    {
 		public string Username { get; set; }
 		public string FullName { get; set; }
 		public string Email { get; set; }
-
-		public UserCreateModel()
+        public UserCreateModel()
 		{
 			Username = "";
             FullName = "";
@@ -17,23 +17,23 @@ namespace BlazorWASMCustomAuth.Security.Shared
 
 		public ModelValidation ValidateModel()
 		{
-			var mv = new ModelValidation();
+            ModelValidation modelValidation = new ModelValidation();
 
-            mv.Validate(PropertyValidation.StringMinLength("Username", Username, 3));
-            mv.Validate(PropertyValidation.StringMaxLength("Username", Username, 256));
-			mv.Validate(PropertyValidation.Required("Username", Username));
-            mv.Validate(PropertyValidation.CantContainSpace("Username", Username));
+            modelValidation.Validate(PropertyValidation.StringMinLength("Username", Username, 3));
+            modelValidation.Validate(PropertyValidation.StringMaxLength("Username", Username, 256));
+			modelValidation.Validate(PropertyValidation.Required("Username", Username));
+            modelValidation.Validate(PropertyValidation.CantContainSpace("Username", Username));
 
+            modelValidation.Validate(PropertyValidation.StringMinLength("FullName", FullName, 3));
+            modelValidation.Validate(PropertyValidation.StringMaxLength("FullName", FullName, 256));
+			modelValidation.Validate(PropertyValidation.Required("FullName", FullName));
 
-            mv.Validate(PropertyValidation.StringMinLength("FullName", FullName, 3));
-            mv.Validate(PropertyValidation.StringMaxLength("FullName", FullName, 256));
-			mv.Validate(PropertyValidation.Required("FullName", FullName));
+            modelValidation.Validate(PropertyValidation.StringMinLength("Email", Email, 6));
+            modelValidation.Validate(PropertyValidation.StringMaxLength("Email", Email, 256));
+            modelValidation.Validate(PropertyValidation.Required("Email", Email));
+            modelValidation.Validate(PropertyValidation.IsEmail("Email", Email));
 
-            mv.Validate(PropertyValidation.StringMinLength("Email", Email, 6));
-            mv.Validate(PropertyValidation.StringMaxLength("Email", Email, 256));
-            mv.Validate(PropertyValidation.Required("Email", Email));
-
-            return mv;
+            return modelValidation;
 		}
 	}
 }

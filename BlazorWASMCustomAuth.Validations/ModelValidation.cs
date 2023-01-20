@@ -15,13 +15,11 @@ namespace BlazorWASMCustomAuth.Validations
         }
         public bool IsValid { get; set; }
         public List<ModelValidationMessage> ValidationMessages { get; private set; }
-
         public void AddMessage(string propertyName, string message) 
         {
             ModelValidationMessage mve = new ModelValidationMessage(propertyName, message);
             ValidationMessages.Add(mve);
         }
-
         public void Validate(PropertyValidationResult propertyValidationResult)
         {
             if (!propertyValidationResult.IsValid)
@@ -29,6 +27,19 @@ namespace BlazorWASMCustomAuth.Validations
                 IsValid = false;
                 AddMessage(propertyValidationResult.PropertyName, propertyValidationResult.Message);
             }
+        }
+        public string GetMessage(string PropertyName)
+        {
+            string validationMessage = string.Empty;
+
+            foreach (var message in ValidationMessages)
+            {
+                if (message.PropertyName == PropertyName)
+                {
+                    validationMessage += message.Message;
+                }
+            }
+            return validationMessage;
         }
     }
 

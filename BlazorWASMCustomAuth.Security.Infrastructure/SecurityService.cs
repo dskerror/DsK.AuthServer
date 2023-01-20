@@ -29,76 +29,174 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
         public TokenModel UserLogin(UserLoginModel model)
         {
-            var user = UserGet(model.Username, model.Password);
+            if (model.Username.IsNullOrEmpty() || model.Password.IsNullOrEmpty())
+                return null;
 
-            if (user is null)
-                return new TokenModel("", "");
-            else if (AuthenticateUser(user))
+            bool IsUserAuthenticated = AuthenticateUser(model.Username, model.Password);
+
+            if (!IsUserAuthenticated)
+                return null;
+
+            var token = GenerateAuthenticationToken(model.Username);
+            UpdateRefreshTokenInDB(model.Username, token.Token, token.RefreshToken);
+            return token;
+        }
+        private bool AuthenticateUser(string username, string password, string authenticationProviderName = "")
+        {
+            if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
+                return false;
+
+            if (authenticationProviderName.IsNullOrEmpty())
+                authenticationProviderName = GetDefaultAuthenticationProviderName(username);
+
+            bool IsUserAuthenticated = false;
+            switch (authenticationProviderName)
             {
-                var token = GenerateAuthenticationToken(user);
-                UpdateRefreshTokenInDB(user.Username, token.Token, user.RefreshToken);
-                return token;
+                case "Active Directory":
+                    IsUserAuthenticated = AuthenticateUserWithDomain(username, password);
+                    break;
+                default: //Local
+                    IsUserAuthenticated = AuthenticateUserWithLocalPassword(username, password);
+                    break;
             }
-            else
+            return IsUserAuthenticated;
+        }
+        private string GetDefaultAuthenticationProviderName(string username)
+        {
+            string result;
+            try
             {
-                return new TokenModel("", "");
+                var dbresult = dm.ExecScalarSP("sp_UserGetDefaultAuthenticationProveder", "Username", username);
+                if (dbresult.HasError || dbresult.Result == null)
+                    return null;
+
+                result = dbresult.Result.ToString();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
-        private UserModel UserGet(string username, string password = "", int userid = 0)
+        private UserModel UserGet(string username)
         {
-            var userDt = dm.ExecDataTableSP("sp_UserGet", "Username", username ?? "", "Id", userid);
+            UserModel user = new UserModel();
 
-            if (userDt.Rows.Count == 1)
+            var UserDt = dm.ExecDataTableSP("sp_UserList", "Username", username);
+            foreach (DataRow dr in UserDt.Rows)
             {
-                UserModel user = new ()
-                {
-                    Id = int.Parse(userDt.Rows[0]["id"].ToString() ?? ""),
-                    Username = userDt.Rows[0]["Username"].ToString(),
-                    Password = password,
-                    HashedPassword = userDt.Rows[0]["HashedPassword"].ToString(),
-                    Salt = userDt.Rows[0]["Salt"].ToString(),
-                    AuthenticationProviderName = userDt.Rows[0]["AuthenticationProviderName"].ToString(),
-                    MappedUser = userDt.Rows[0]["MappedUsername"].ToString(),
-                    RefreshToken = userDt.Rows[0]["RefreshToken"].ToString(),
-                    Permissions = GetUserPermissions(userDt.Rows[0]["Username"].ToString())
-                };
-                return user;
+                user.Id = int.Parse(dr["Id"].ToString() ?? "");
+                user.Name = dr["Name"].ToString();
+                user.Username = dr["Username"].ToString();
+                user.Email = dr["Email"].ToString();
+                user.Permissions = GetUserPermissions(username);
             }
-            return new UserModel();
-        }
-        private bool AuthenticateUser(UserModel user)
-        {
-            if (user is null) return false;
 
-            if (user.AuthenticationProviderName == "Active Directory")
-                return ValidateWithDomain(user.MappedUser ?? "", user.Password ?? "");
-            else
-                return VerifyPassword(user.Password ?? "", user.HashedPassword ?? "", user.Salt ?? "");
+            return user;
         }
-        bool VerifyPassword(string password, string hash, string salt)
+        private string GetMappedUsername(string username)
         {
-            byte[] bytesalt = Convert.FromHexString(salt);
+            string result;
+            try
+            {
+                var dbresult = dm.ExecScalarSP("sp_UserGetMappedUsername", "AuthenticationProviderName", "Local", "Username", username);
+                if (dbresult.HasError || dbresult.Result == null)
+                    return null;
+
+                result = dbresult.Result.ToString();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        private string GetPasswordHashed(string username)
+        {
+            string result;
+            try
+            {
+                var dbresult = dm.ExecScalarSP("sp_UserGetPasswordHashed", "Username", username);
+                if (dbresult.HasError || dbresult.Result == null)
+                    return null;
+
+                result = dbresult.Result.ToString();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        private string GetPasswordSalt(string username)
+        {
+            string result;
+            try
+            {
+                var dbresult = dm.ExecScalarSP("sp_UserGetPasswordSalt", "Username", username);
+                if (dbresult.HasError || dbresult.Result == null)
+                    return null;
+
+                result = dbresult.Result.ToString();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        private bool AuthenticateUserWithLocalPassword(string username, string password)
+        {
+            if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
+                return false;
+
+            string mappedUserName = GetMappedUsername(username);
+            if (mappedUserName == null)
+                mappedUserName = username;
+
+            string HashedPassword = GetPasswordHashed(username);
+            if (HashedPassword == null)
+                return false;
+
+            string SaltPassword = GetPasswordSalt(username);
+            if (SaltPassword == null)
+                return false;
+
+            byte[] bytesalt = Convert.FromHexString(SaltPassword);
             const int keySize = 64;
             const int iterations = 350000;
             HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
             var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, bytesalt, iterations, hashAlgorithm, keySize);
-            return hashToCompare.SequenceEqual(Convert.FromHexString(hash));
+            return hashToCompare.SequenceEqual(Convert.FromHexString(HashedPassword));
         }
-        private bool ValidateWithDomain(string username, string password)
+        private bool AuthenticateUserWithDomain(string username, string password)
         {
+            if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
+                return false;
+
+            string mappedUserName = dm.ExecScalarSP("sp_UserGetMappedUsername", "AuthenticationProviderName", "Active Directory", "Username", username).Result.ToString();
+            if (mappedUserName == null)
+                mappedUserName = username;
+
 #pragma warning disable IDE0063 // Use simple 'using' statement
 #pragma warning disable CA1416 // Validate platform compatibility
             using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "DOMAIN", "USERNAME", "PASSWORD"))
             {
                 // validate the credentials
-                bool isValid = pc.ValidateCredentials(username, password);
+                bool isValid = pc.ValidateCredentials(mappedUserName, password);
                 return isValid;
             }
 #pragma warning restore CA1416 // Validate platform compatibility
 #pragma warning restore IDE0063 // Use simple 'using' statement
+
         }
-        private TokenModel GenerateAuthenticationToken(UserModel user)
+        private TokenModel GenerateAuthenticationToken(string username)
         {
+            if (username.IsNullOrEmpty())
+                return null;
+
+            var user = UserGet(username);
+
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key ?? ""));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
@@ -122,8 +220,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             string token = new JwtSecurityTokenHandler().WriteToken(newJwtToken);
             string refreshToken = GenerateRefreshToken();
-
-            user.RefreshToken = refreshToken;
 
             return new TokenModel(token, refreshToken);
         }
@@ -170,7 +266,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
 
             var list = new List<UserDTO>();
-            var UserListDt = dm.ExecDataTableSP("sp_UsersGet", "PageSize", response.PageSize, "OffSet", response.OffSet());
+            var UserListDt = dm.ExecDataTableSP("sp_UserList", "PageSize", response.PageSize, "OffSet", response.OffSet());
             foreach (DataRow users in UserListDt.Rows)
             {
                 list.Add(new UserDTO()
@@ -184,111 +280,85 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             response.UserList = list;
             return response;
         }
-        public UserCreateModel UserCreate(UserCreateModel user)
+        public APIResult UserCreate(UserCreateModel user)
         {
-            return user;
-            //APIResult result;
-            //try
-            //{
-            //    result = new APIResult("");
-            //}
-            //catch (Exception ex)
-            //{
+            APIResult result = new APIResult(user);
 
-            //    throw;
-            //}
-            
+            result.ModelValidationResult = user.ValidateModel();
 
-            //result.ModelValidationResult = user.ValidateModel();
-            //if (result.HasError)
-            //{
-            //    result.Message = "See Model Validations";
-            //    return result;
-            //}
+            if (!result.ModelValidationResult.IsValid)
+            {
+                result.HasError = true;
+                result.Message = "See Model Validations";
+                return result;
+            }
 
-            //var UserExists = UserVerifyExistsByUsername(user.Username);
-            //if (UserExists)
-            //{
-            //    result.Message = "Username already exists.";
-            //    result.HasError = true;
-            //    return result;
-            //}
+            var UserExists = UserVerifyExistsByUsername(user.Username);
+            if (UserExists)
+            {
+                result.Message = "Username already exists.";
+                result.HasError = true;
+                return result;
+            }
 
-            //var EmailExists = UserVerifyExistsByEmail(user.Email);
-            //if (EmailExists)
-            //{
-            //    result.Message = "Email already exists.";
-            //    result.HasError = true;
-            //    return result;
-            //}
+            var EmailExists = UserVerifyExistsByEmail(user.Email);
+            if (EmailExists)
+            {
+                result.Message = "Email already exists.";
+                result.HasError = true;
+                return result;
+            }
 
-            //var dbresult = dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.Name ?? "");
-            //result.Result = dbresult.Result;
-            //result.HasError = dbresult.HasError;
-            //result.Exception = dbresult.Exception;
+            var dbresult = dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.FullName ?? "");
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "User Created";
 
-            //return result;
+            return result;
         }
         public bool UserVerifyExistsByUsername(string username)
         {
-            var userExistsDT = dm.ExecDataTableSP("sp_User_VerifyExistsByUsername", "Username", username);
+            var dt = dm.ExecDataTableSP("sp_UserList", "Username", username);
 
-            if (userExistsDT.Rows.Count == 0)
-            {
+            if (dt.Rows.Count == 0)
                 return false;
-            }
+
             return true;
         }
         public bool UserVerifyExistsByEmail(string email)
         {
-            var userExistsDT = dm.ExecDataTableSP("sp_User_VerifyExistsByEmail", "Email", email);
+            var dt = dm.ExecDataTableSP("sp_UserList", "Email", email);
 
-            if (userExistsDT.Rows.Count == 0)
-            {
+            if (dt.Rows.Count == 0)
                 return false;
-            }
+
             return true;
         }
-        public DbResult UserCreateLocalPassword(UserCreateLocalPasswordModel u)
+        public APIResult UserCreateLocalPassword(UserCreateLocalPasswordModel u)
         {
             //TODO : Implement Password Complexity Rules
             //TODO : Implement Previously Used Password Constraint
+
+            APIResult result = new APIResult(u);
 
             var ramdomSalt = SecurityHelpers.RandomizeSalt;
 
-            return dm.ExecScalarSP("sp_UserPasswordCreate",
+            var dbresult = dm.ExecScalarSP("sp_UserPasswordCreate",
                 "UserId", u.UserId,
                 "HashedPassword", SecurityHelpers.HashPasword(u.Password, ramdomSalt),
                 "Salt", Convert.ToHexString(ramdomSalt));
-        }
-        public DbResult UserChangeLocalPassword(UserChangeLocalPasswordModel u)
-        {
-            //TODO : Implement Password Complexity Rules
-            //TODO : Implement Previously Used Password Constraint
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Password Created";
 
-            var user = UserGet("", u.OldPassword, u.UserId);
-
-            if (user is null)
-                return new DbResult("") { HasError = true}; //, Message = "User or password incorrect." 
-            else if (AuthenticateUser(user))
-            {
-                var ramdomSalt = SecurityHelpers.RandomizeSalt;
-
-                return dm.ExecScalarSP("sp_UserPasswordChange",
-                    "UserId", u.UserId,
-                    "HashedPassword", SecurityHelpers.HashPasword(u.NewPassword, ramdomSalt),
-                    "Salt", Convert.ToHexString(ramdomSalt));
-            }
-            else
-            {
-                return new DbResult("") { HasError = true }; //, Message = "User or password incorrect"
-            }
-
+            return result;
         }
         public List<PermissionModel> PermissionsGet()
         {
             var list = new List<PermissionModel>();
-            var permissionsGetDt = dm.ExecDataTableSP("sp_PermissionsGet");
+            var permissionsGetDt = dm.ExecDataTableSP("sp_PermissionList");
             foreach (DataRow permission in permissionsGetDt.Rows)
             {
                 list.Add(new PermissionModel()
@@ -301,10 +371,48 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return list;
         }
+        public APIResult PermissionCreate(PermissionCreateModel model)
+        {
+            APIResult result = new APIResult(model);
+
+            result.ModelValidationResult = model.ValidateModel();
+
+            if (!result.ModelValidationResult.IsValid)
+            {
+                result.HasError = true;
+                result.Message = "See Model Validations";
+                return result;
+            }
+
+            var UserExists = PermissionVerifyExistsByPermissionName(model.PermissionName);
+            if (UserExists)
+            {
+                result.Message = "Permission already exists.";
+                result.HasError = true;
+                return result;
+            }
+
+            var dbresult = dm.ExecScalarSP("sp_PermissionCreate", "PermissionName", model.PermissionName, "PermissionDescription", model.PermissionDescription);
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Permission Created";
+
+            return result;
+        }
+        public bool PermissionVerifyExistsByPermissionName(string permissionName)
+        {
+            var dt = dm.ExecDataTableSP("sp_PermissionList", "PermissionName", permissionName);
+
+            if (dt.Rows.Count == 0)
+                return false;
+
+            return true;
+        }
         public List<RoleModel> RolesGet()
         {
             var list = new List<RoleModel>();
-            var rolesGetDt = dm.ExecDataTableSP("sp_RolesGet");
+            var rolesGetDt = dm.ExecDataTableSP("sp_RoleList");
             foreach (DataRow role in rolesGetDt.Rows)
             {
                 list.Add(new RoleModel()
@@ -316,11 +424,80 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
             return list;
         }
+        public APIResult RoleCreate(RoleCreateModel model)
+        {
+            APIResult result = new APIResult(model);
+
+            result.ModelValidationResult = model.ValidateModel();
+
+            if (!result.ModelValidationResult.IsValid)
+            {
+                result.HasError = true;
+                result.Message = "See Model Validations";
+                return result;
+            }
+
+            var UserExists = RoleVerifyExistsByRoleName(model.RoleName);
+            if (UserExists)
+            {
+                result.Message = "Role already exists.";
+                result.HasError = true;
+                return result;
+            }
+
+            var dbresult = dm.ExecScalarSP("sp_RoleCreate", "RoleName", model.RoleName, "RoleDescription", model.RoleDescription);
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Role Created";
+
+            return result;
+        }
+
+        public APIResult RoleUpdate(RoleModel model)
+        {
+            APIResult result = new APIResult(model);
+
+            result.ModelValidationResult = model.ValidateModel();
+
+            if (!result.ModelValidationResult.IsValid)
+            {
+                result.HasError = true;
+                result.Message = "See Model Validations";
+                return result;
+            }
+
+            var UserExists = RoleVerifyExistsByRoleName(model.RoleName);
+            if (UserExists)
+            {
+                result.Message = "Role already exists.";
+                result.HasError = true;
+                return result;
+            }
+
+            var dbresult = dm.ExecScalarSP("sp_RoleUpdate", "Id", model.Id, "RoleName", model.RoleName, "RoleDescription", model.RoleDescription);
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Role Updated";
+
+            return result;
+        }
+
+        public bool RoleVerifyExistsByRoleName(string roleName)
+        {
+            var dt = dm.ExecDataTableSP("sp_RoleList", "RoleName", roleName);
+
+            if (dt.Rows.Count == 0)
+                return false;
+
+            return true;
+        }
         public List<RolePermissionModel> RolePermissionsGet()
         {
             var list = new List<RolePermissionModel>();
-            var olePermissionsGetDt = dm.ExecDataTableSP("sp_RolePermissionsGet");
-            foreach (DataRow role in olePermissionsGetDt.Rows)
+            var dt = dm.ExecDataTableSP("sp_RolePermissionsGet");
+            foreach (DataRow role in dt.Rows)
             {
                 list.Add(new RolePermissionModel()
                 {
@@ -335,56 +512,68 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return list;
         }
-        public TokenModel RefreshToken(TokenModel tokenModel)
+        public ClaimsPrincipal ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var claimsPrincipal = tokenHandler.ValidateToken(tokenModel.Token,
-            new TokenValidationParameters
+
+            try
             {
-                ValidateIssuer = true,
-                ValidIssuer = _tokenSettings.Issuer,
-                ValidateAudience = true,
-                ValidAudience = _tokenSettings.Audience,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key)),
-                ValidateLifetime = false
-            }, out SecurityToken validatedToken);
+                var claimsPrincipal = tokenHandler.ValidateToken(token,
+                new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = _tokenSettings.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = _tokenSettings.Audience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key)),
+                    ValidateLifetime = false
+                }, out SecurityToken validatedToken);
 
 
-            var jwtToken = validatedToken as JwtSecurityToken;
+                var jwtToken = validatedToken as JwtSecurityToken;
 
-            if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256))
+                if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256))
+                    return null;
+
+                return claimsPrincipal;
+            }
+            catch (Exception)
             {
                 return null;
             }
+        }
+        public string GetUsernameFromClaimsPrincipal(ClaimsPrincipal claimsPrincipal)
+        {
+            if (claimsPrincipal == null)
+                return null;
 
             var username = claimsPrincipal.Claims.Where(_ => _.Type == "UserName").Select(_ => _.Value).FirstOrDefault();
             //var email = claimsPrincipal.Claims.Where(_ => _.Type == ClaimTypes.Email).Select(_ => _.Value).FirstOrDefault();
             if (string.IsNullOrEmpty(username))
-            {
                 return null;
-            }
 
+            return username;
+        }
+        public TokenModel RefreshToken(TokenModel tokenModel)
+        {
+            //implement method that declines renewal depeding of token age.
 
-            var user = UserGet(username);
-
-            if (user.RefreshToken == tokenModel.RefreshToken)
-            {
-                var newtoken = GenerateAuthenticationToken(user);
-                UpdateRefreshTokenInDB(user.Username, newtoken.Token, tokenModel.RefreshToken, newtoken.RefreshToken);
-                return newtoken;
-            }
-            else
-            {
+            var claimsPrincipal = ValidateToken(tokenModel.Token);
+            if (claimsPrincipal == null)
                 return null;
-            }
-            //var currentUser = _myWorldDbContext.User.Where(_ => _.Email == email && _.RefreshToken == tokenModel.RefreshToken).FirstOrDefault();
-            //if (currentUser == null)
-            //{
-            //    return null;
-            //}
 
+            var username = GetUsernameFromClaimsPrincipal(claimsPrincipal);
+            if (username == null)
+                return null;
 
+            string refreshToken = dm.ExecScalarSP("sp_UserGetRefreshToken", "Username", username, "RefreshToken", tokenModel.RefreshToken).Result.ToString();
+            if (refreshToken == null || refreshToken != tokenModel.RefreshToken)
+                return null;
+
+            var newtoken = GenerateAuthenticationToken(username);
+            UpdateRefreshTokenInDB(username, newtoken.Token, tokenModel.RefreshToken, newtoken.RefreshToken);
+            return newtoken;
         }
     }
 }

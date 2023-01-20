@@ -18,18 +18,7 @@ namespace BlazorWASMCustomAuth.Security.Shared
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
         public bool TwoFactorEnabled { get; set; }
-
-        public string? RefreshToken { get; set; }
-
-        //
         public List<string> Permissions { get; set; }
-
-
-		//
-		public string? HashedPassword { get; set; }
-        public string? Salt { get; set; }
-        public string? AuthenticationProviderName { get; set; }
-		public string? MappedUser { get; set; }
 
 	}
 }

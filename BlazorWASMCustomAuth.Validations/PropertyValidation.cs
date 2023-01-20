@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,7 +39,24 @@ namespace BlazorWASMCustomAuth.Validations
             }
             return result;
         }
+        public static PropertyValidationResult IsEmail(string PropertyName, string PropertyValue)
+        {
+            var result = new PropertyValidationResult();
+            result.PropertyName = PropertyName;
 
+            try
+            {
+                var emailAddress = new MailAddress(PropertyValue);
+                result.IsValid = true;
+            }
+            catch
+            {
+                result.IsValid = false;
+                result.Message = $"{PropertyName} is not a valid email.";
+            }
+           
+            return result;
+        }
         public static PropertyValidationResult IsNumber(string PropertyName, string PropertyValue)
         {
             var result = new PropertyValidationResult();
@@ -56,8 +74,6 @@ namespace BlazorWASMCustomAuth.Validations
 
             return result;
         }
-
-
         public static PropertyValidationResult IsBool(string PropertyName, string PropertyValue)
         {
             var result = new PropertyValidationResult();
@@ -92,7 +108,6 @@ namespace BlazorWASMCustomAuth.Validations
 
             return result;
         }
-
         public static PropertyValidationResult CantContainSpace(string PropertyName, string PropertyValue)
         {
             var result = new PropertyValidationResult();
@@ -109,7 +124,6 @@ namespace BlazorWASMCustomAuth.Validations
 
             return result;
         }
-
         public static PropertyValidationResult StringLenghtBetween(string PropertyName, string PropertyValue, int minLength, int maxLength)
         {
             var result = new PropertyValidationResult();
@@ -185,7 +199,6 @@ namespace BlazorWASMCustomAuth.Validations
             }
             return result;
         }
-
         public static PropertyValidationResult GreaterNumber(string PropertyName, int PropertyValue, int lowerNumber)
         {
             var result = new PropertyValidationResult();
@@ -201,7 +214,6 @@ namespace BlazorWASMCustomAuth.Validations
             }
             return result;
         }
-
         public static PropertyValidationResult NotEqualNumber(string PropertyName, int PropertyValue, int otherNumber)
         {
             var result = new PropertyValidationResult();
@@ -217,7 +229,6 @@ namespace BlazorWASMCustomAuth.Validations
             }
             return result;
         }
-
         public static PropertyValidationResult EqualNumber(string PropertyName, int PropertyValue, int otherNumber)
         {
             var result = new PropertyValidationResult();

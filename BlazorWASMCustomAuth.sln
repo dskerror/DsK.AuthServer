@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Databa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other", "Other", "{64824439-A7C7-4B83-9D21-BDAE2A9F1E81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWASMCustomAuth.Validations", "BlazorWASMCustomAuth.Validations\BlazorWASMCustomAuth.Validations.csproj", "{C4A03498-5405-42EE-B52B-F748885CE613}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Validations", "BlazorWASMCustomAuth.Validations\BlazorWASMCustomAuth.Validations.csproj", "{C4A03498-5405-42EE-B52B-F748885CE613}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

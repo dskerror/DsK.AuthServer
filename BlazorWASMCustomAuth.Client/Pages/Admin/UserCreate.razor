@@ -14,7 +14,7 @@
         <div class="col-6">
             <div class="mb-3">
                 <label for="Username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="Username" placeholder="Username" @bind-value="@userCreateModel.Username" @onfocusout="@VerifyUser">
+                <input type="text" class="form-control" id="Username" placeholder="Username" @bind-value="@userCreateModel.Username" @onfocusout="@ValidateUsername">
                 <div class="">@ValidationUsernameMessage</div>
             </div>
         </div>
@@ -25,7 +25,7 @@
         <div class="col-6">
             <div class="mb-3">
                 <label for="Email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="Email" placeholder="Email" @bind-value="@userCreateModel.Email" @onfocusout="@VerifyEmail">
+                <input type="email" class="form-control" id="Email" placeholder="Email" @bind-value="@userCreateModel.Email" @onfocusout="@ValidateEmail">
                 <div class="">@ValidationEmailMessage</div>
             </div>
         </div>
@@ -36,7 +36,7 @@
         <div class="col-6">
             <div class="mb-3">
                 <label for="FullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="FullName" placeholder="FullName" @bind-value="@userCreateModel.FullName" @onfocusout="@VerifyFullName">
+                <input type="text" class="form-control" id="FullName" placeholder="FullName" @bind-value="@userCreateModel.FullName" @onfocusout="@ValidateFullName">
                 <div class="">@ValidationFullNameMessage</div>
             </div>
         </div>
@@ -88,31 +88,26 @@
 
     }
 
-    private async Task VerifyUser()
+    private async Task<bool> ValidateUsername()
     {
         var validation = userCreateModel.ValidateModel();
-        if (!validation.IsValid)
+        ValidationUsernameMessage = validation.GetMessage("Username");
+        if (ValidationUsernameMessage == "")
         {
-            foreach (var message in validation.ValidationMessages)
-            {
-                if (message.PropertyName == "Username")
-                {
-                    ValidationUsernameMessage = message.Message;
-                    return;
-                }
-            }
+            return false;
         }
 
         var userExists = await securityService.UserVerifyExistsByUsername(userCreateModel.Username ?? "");
         if (userExists)
         {
             ValidationUsernameMessage = "Username already exists.";
-            return;
+            return false;
         }
 
         ValidationUsernameMessage = "";
+        return true;
     }
-    private async Task VerifyEmail()
+    private async Task ValidateEmail()
     {
         var validation = userCreateModel.ValidateModel();
         if (!validation.IsValid)
@@ -136,7 +131,7 @@
 
         ValidationEmailMessage = "";
     }
-    private void VerifyFullName()
+    private void ValidateFullName()
     {
         var validation = userCreateModel.ValidateModel();
         if (!validation.IsValid)
