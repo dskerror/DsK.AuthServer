@@ -280,11 +280,11 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             response.UserList = list;
             return response;
         }
-        public APIResult UserCreate(UserCreateModel user)
+        public APIResult UserCreate(UserCreateModel model)
         {
-            APIResult result = new APIResult(user);
+            APIResult result = new APIResult(model);
 
-            result.ModelValidationResult = user.ValidateModel();
+            result.ModelValidationResult = model.ValidateModel();
 
             if (!result.ModelValidationResult.IsValid)
             {
@@ -293,7 +293,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var UserExists = UserVerifyExistsByUsername(user.Username);
+            var UserExists = UserVerifyExistsByUsername(model.Username);
             if (UserExists)
             {
                 result.Message = "Username already exists.";
@@ -301,7 +301,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var EmailExists = UserVerifyExistsByEmail(user.Email);
+            var EmailExists = UserVerifyExistsByEmail(model.Email);
             if (EmailExists)
             {
                 result.Message = "Email already exists.";
@@ -309,11 +309,78 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var dbresult = dm.ExecScalarSP("sp_UserCreate", "Username", user.Username ?? "", "Email", user.Email ?? "", "Name", user.FullName ?? "");
+            var dbresult = dm.ExecScalarSP("sp_UserCreate", 
+                "Username", model.Username ?? "", 
+                "Email", model.Email ?? "", 
+                "Name", model.FullName ?? "");
             result.Result = dbresult.Result;
             result.HasError = dbresult.HasError;
             result.Exception = dbresult.Exception;
             result.Message = "User Created";
+
+            return result;
+        }
+
+        public APIResult UserUpdate(UserUpdateModel model)
+        {
+            APIResult result = new APIResult(model);
+
+            result.ModelValidationResult = model.ValidateModel();
+
+            if (!result.ModelValidationResult.IsValid)
+            {
+                result.HasError = true;
+                result.Message = "See Model Validations";
+                return result;
+            }
+
+            var EmailExists = UserVerifyExistsByEmail(model.Email);
+            if (EmailExists)
+            {
+                result.Message = "Email already exists.";
+                result.HasError = true;
+                return result;
+            }
+
+            DateTime? LockoutEnd = null;
+
+            try
+            {
+                LockoutEnd = DateTime.Parse("");
+            }
+            catch (Exception)
+            {
+                //ignore - ugly
+            }
+            
+
+            var dbresult = dm.ExecScalarSP("sp_UserUpdate", 
+                "Id", model.Id,
+                "Email", model.Email, 
+                "Name", model.Name,
+                "EmailConfirmed", model.EmailConfirmed,
+                "LockoutEnd", model.LockoutEnd,
+                "LockoutEnabled", model.LockoutEnabled,
+                "AccessFailedCount", model.AccessFailedCount,
+                "TwoFactorEnabled",model.TwoFactorEnabled
+                );
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "User Updated";
+
+            return result;
+        }
+        public APIResult UserDelete(int id)
+        {
+            APIResult result = new APIResult(id);
+            //TODO: cascade delete or disable user?
+            //var dbresult = dm.ExecScalarSP("sp_UserDelete", "Id", id);
+            //result.Result = dbresult.Result;
+            //result.HasError = dbresult.HasError;
+            //result.Exception = dbresult.Exception;
+            //result.Message = "User Deleted";
+            ////TODO: Find if no record was update to give error message in this and other update methods
 
             return result;
         }
@@ -400,6 +467,48 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
+        public APIResult PermissionUpdate(PermissionModel model)
+        {
+            APIResult result = new APIResult(model);
+
+            result.ModelValidationResult = model.ValidateModel();
+
+            if (!result.ModelValidationResult.IsValid)
+            {
+                result.HasError = true;
+                result.Message = "See Model Validations";
+                return result;
+            }
+
+            var UserExists = PermissionVerifyExistsByPermissionName(model.PermissionName);
+            if (UserExists)
+            {
+                result.Message = "Permission already exists.";
+                result.HasError = true;
+                return result;
+            }
+
+            var dbresult = dm.ExecScalarSP("sp_PermissionUpdate", "Id", model.Id, "PermissionName", model.PermissionName, "PermissionDescription", model.PermissionDescription);
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Permission Updated";
+
+            return result;
+        }
+        public APIResult PermissionDelete(int id)
+        {
+            APIResult result = new APIResult(id);
+
+            var dbresult = dm.ExecScalarSP("sp_PermissionDelete", "Id", id);
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Permission Deleted";
+            //TODO: Find if no record was update to give error message in this and other update methods
+
+            return result;
+        }
         public bool PermissionVerifyExistsByPermissionName(string permissionName)
         {
             var dt = dm.ExecDataTableSP("sp_PermissionList", "PermissionName", permissionName);
@@ -453,7 +562,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-
         public APIResult RoleUpdate(RoleModel model)
         {
             APIResult result = new APIResult(model);
@@ -480,10 +588,23 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             result.HasError = dbresult.HasError;
             result.Exception = dbresult.Exception;
             result.Message = "Role Updated";
+            //TODO: Find if no record was update to give error message in this and other update methods
 
             return result;
         }
+        public APIResult RoleDelete(int id)
+        {
+            APIResult result = new APIResult(id);
 
+            var dbresult = dm.ExecScalarSP("sp_RoleDelete", "Id", id);
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Role Deleted";
+            //TODO: Find if no record was update to give error message in this and other update methods
+
+            return result;
+        }
         public bool RoleVerifyExistsByRoleName(string roleName)
         {
             var dt = dm.ExecDataTableSP("sp_RoleList", "RoleName", roleName);
