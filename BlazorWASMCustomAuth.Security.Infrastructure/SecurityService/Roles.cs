@@ -55,7 +55,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var dbresult = dm.ExecScalarSP("sp_RoleCreate", "RoleName", model.RoleName, "RoleDescription", model.RoleDescription);
+            var dbresult = dm.ExecNonQuerySP("sp_RoleCreate", "RoleName", model.RoleName, "RoleDescription", model.RoleDescription);
             result.Result = dbresult.Result;
             result.HasError = dbresult.HasError;
             result.Exception = dbresult.Exception;
@@ -84,7 +84,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var dbresult = dm.ExecScalarSP("sp_RoleUpdate", "Id", model.Id, "RoleName", model.RoleName, "RoleDescription", model.RoleDescription);
+            var dbresult = dm.ExecNonQuerySP("sp_RoleUpdate", "Id", model.Id, "RoleName", model.RoleName, "RoleDescription", model.RoleDescription);
             result.Result = dbresult.Result;
             result.HasError = dbresult.HasError;
             result.Exception = dbresult.Exception;
@@ -97,7 +97,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             APIResult result = new APIResult(id);
 
-            var dbresult = dm.ExecScalarSP("sp_RoleDelete", "Id", id);
+            var dbresult = dm.ExecNonQuerySP("sp_RoleDelete", "Id", id);
             result.Result = dbresult.Result;
             result.HasError = dbresult.HasError;
             result.Exception = dbresult.Exception;

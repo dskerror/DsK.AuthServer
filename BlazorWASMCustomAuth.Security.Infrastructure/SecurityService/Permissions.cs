@@ -56,7 +56,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var dbresult = dm.ExecScalarSP("sp_PermissionCreate", "PermissionName", model.PermissionName, "PermissionDescription", model.PermissionDescription);
+            var dbresult = dm.ExecNonQuerySP("sp_PermissionCreate", "PermissionName", model.PermissionName, "PermissionDescription", model.PermissionDescription);
             result.Result = dbresult.Result;
             result.HasError = dbresult.HasError;
             result.Exception = dbresult.Exception;
@@ -97,7 +97,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             APIResult result = new APIResult(id);
 
-            var dbresult = dm.ExecScalarSP("sp_PermissionDelete", "Id", id);
+            var dbresult = dm.ExecNonQuerySP("sp_PermissionDelete", "Id", id);
             result.Result = dbresult.Result;
             result.HasError = dbresult.HasError;
             result.Exception = dbresult.Exception;

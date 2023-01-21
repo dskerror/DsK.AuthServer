@@ -38,5 +38,49 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return list;
         }
+
+        public APIResult RolePermissionCreate(RolePermissionDto model)
+        {
+            APIResult result = new APIResult(model);
+
+            var UserExists = VerifyRolePermissionExists(model.RoleId, model.PermissionId);
+            if (UserExists)
+            {
+                result.Message = "Permission already exists in Role.";
+                result.HasError = true;
+                return result;
+            }
+
+            var dbresult = dm.ExecNonQuerySP("sp_RolePermissionCreate", "RoleId", model.RoleId, "PermissionId", model.PermissionId);
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Role Permission Created";
+
+            return result;
+        }
+        
+        public APIResult RolePermissionDelete(RolePermissionDto model)
+        {
+            APIResult result = new APIResult(model);
+
+            var dbresult = dm.ExecNonQuerySP("sp_RolePermissionDelete", "RoleId", model.RoleId, "PermissionId", model.PermissionId);
+            result.Result = dbresult.Result;
+            result.HasError = dbresult.HasError;
+            result.Exception = dbresult.Exception;
+            result.Message = "Permission Deleted";            
+
+            return result;
+        }
+
+        public bool VerifyRolePermissionExists(int roleId, int permissionId)
+        {
+            var dt = dm.ExecDataTableSP("sp_RolePermissionList", "RoleId", roleId, "PermissionId", permissionId);
+
+            if (dt.Rows.Count == 0)
+                return false;
+
+            return true;
+        }
     }
 }

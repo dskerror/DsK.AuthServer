@@ -23,6 +23,23 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         {
             return Ok(SecurityService.RolePermissionsGet());
         }
+
+
+        [HttpPost]
+        //[Authorize(Roles = "admin,RoleCreate")]
+        public IActionResult RolePermissionCreate(RolePermissionDto model)
+        {
+            var result = SecurityService.RolePermissionCreate(model);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        //[Authorize(Roles = "admin,RoleDelete")]
+        public IActionResult RolePermissionDelete(RolePermissionDto model)
+        {
+            var result = SecurityService.RolePermissionDelete(model);
+            return Ok(result);
+        }
     }
 }
 

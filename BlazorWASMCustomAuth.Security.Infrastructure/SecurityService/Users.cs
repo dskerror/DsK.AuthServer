@@ -19,64 +19,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        private UserModel UserGetBy(string column, string value)
-        {
-            UserModel user = new UserModel();
-
-            var UserDt = dm.ExecDataTableSP("sp_UserList", column, value);
-            foreach (DataRow dr in UserDt.Rows)
-            {
-                user.Id = int.Parse(dr["Id"].ToString() ?? "");
-                user.Name = dr["Name"].ToString();
-                user.Username = dr["Username"].ToString();
-                user.Email = dr["Email"].ToString();
-                user.Permissions = GetUserPermissions(dr["Username"].ToString());
-            }
-
-            if (user.Id == 0)
-                return null;
-            return user;
-        }
-        private List<string> GetUserPermissions(string? username)
-        {
-            List<string> permissions = new List<string>();
-
-            var userPermissionsDt = dm.ExecDataTableSP("sp_UserPermissions", "Username", username ?? "");
-
-            foreach (DataRow permission in userPermissionsDt.Rows)
-            {
-                permissions.Add(permission[0].ToString() ?? "");
-            }
-
-            return permissions;
-        }
-        public UsersGetDTO UsersGet(PagingSortingFilteringRequest request)
-        {
-            var usersCountResult = dm.ExecScalarSP("sp_UsersCountGet");
-            var response = new UsersGetDTO();
-
-            response.TotalRows = (int)usersCountResult.Result;
-            if (request != null)
-            {
-                response.PageSize = request.PageSize;
-                response.CurrentPage = request.CurrentPage;
-            }
-
-            var list = new List<UserDTO>();
-            var UserListDt = dm.ExecDataTableSP("sp_UserList", "PageSize", response.PageSize, "OffSet", response.OffSet());
-            foreach (DataRow users in UserListDt.Rows)
-            {
-                list.Add(new UserDTO()
-                {
-                    Id = int.Parse(users["Id"].ToString() ?? ""),
-                    Name = users["Name"].ToString(),
-                    Username = users["Username"].ToString(),
-                    Email = users["Email"].ToString()
-                });
-            }
-            response.UserList = list;
-            return response;
-        }
         public APIResult UserCreate(UserCreateModel model)
         {
             APIResult result = new APIResult(model);
@@ -116,6 +58,33 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             result.Message = "User Created";
 
             return result;
+        }        
+        public UsersGetDTO UsersGet(PagingSortingFilteringRequest request)
+        {
+            var usersCountResult = dm.ExecScalarSP("sp_UsersCountGet");
+            var response = new UsersGetDTO();
+
+            response.TotalRows = (int)usersCountResult.Result;
+            if (request != null)
+            {
+                response.PageSize = request.PageSize;
+                response.CurrentPage = request.CurrentPage;
+            }
+
+            var list = new List<UserDTO>();
+            var UserListDt = dm.ExecDataTableSP("sp_UserList", "PageSize", response.PageSize, "OffSet", response.OffSet());
+            foreach (DataRow users in UserListDt.Rows)
+            {
+                list.Add(new UserDTO()
+                {
+                    Id = int.Parse(users["Id"].ToString() ?? ""),
+                    Name = users["Name"].ToString(),
+                    Username = users["Username"].ToString(),
+                    Email = users["Email"].ToString()
+                });
+            }
+            response.UserList = list;
+            return response;
         }
         public APIResult UserUpdate(UserUpdateModel model)
         {
@@ -207,6 +176,26 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return false;
 
             return true;
+        }
+
+
+        private UserModel UserGetBy(string column, string value)
+        {
+            UserModel user = new UserModel();
+
+            var UserDt = dm.ExecDataTableSP("sp_UserList", column, value);
+            foreach (DataRow dr in UserDt.Rows)
+            {
+                user.Id = int.Parse(dr["Id"].ToString() ?? "");
+                user.Name = dr["Name"].ToString();
+                user.Username = dr["Username"].ToString();
+                user.Email = dr["Email"].ToString();
+                user.Permissions = GetUserPermissions(dr["Username"].ToString());
+            }
+
+            if (user.Id == 0)
+                return null;
+            return user;
         }
     }
 }
