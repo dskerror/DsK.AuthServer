@@ -58,7 +58,7 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
-    private UserCreateModel userCreateModel = new UserCreateModel();
+    private UserCreateDto userCreateModel = new UserCreateDto();
 
     private string ValidationUsernameMessage = "";
     private string ValidationEmailMessage = "";

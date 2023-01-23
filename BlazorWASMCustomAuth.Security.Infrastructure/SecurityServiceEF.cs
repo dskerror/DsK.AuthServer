@@ -16,17 +16,17 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlazorWASMCustomAuth.Security.Infrastructure
+namespace BlazorWASMCustomAuth.SecurityEF.Infrastructure
 {
-    public partial class SecurityService
-    {
-        private DatabaseManager dm;
+    public partial class SecurityServiceEF
+    {   
         private readonly TokenSettingsModel _tokenSettings;
+        private readonly SecurityTablesTestContext db;
 
-        public SecurityService(IOptions<TokenSettingsModel> tokenSettings)
+        public SecurityServiceEF(IOptions<TokenSettingsModel> tokenSettings, SecurityTablesTestContext db)
         {
             _tokenSettings = tokenSettings.Value;
-            dm = new DatabaseManager("Server=.;Database=SecurityTablesTest;Trusted_Connection=True");
+            this.db = db;
         }
     }
 }

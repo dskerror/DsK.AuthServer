@@ -19,7 +19,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult UserCreate(UserCreateModel model)
+        public APIResult UserCreate(UserCreateDto model)
         {
             APIResult result = new APIResult(model);
 
@@ -86,7 +86,37 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             response.UserList = list;
             return response;
         }
-        public APIResult UserUpdate(UserUpdateModel model)
+        public APIResult UsersGetNew(PagingSortingFilteringRequest model)
+        {
+            APIResult result = new APIResult(model);
+
+            //var usersCountResult = dm.ExecScalarSP("sp_UsersCountGet");
+            //var response = new UsersGetDTO();
+
+            //response.TotalRows = (int)usersCountResult.Result;
+            //if (request != null)
+            //{
+            //    response.PageSize = request.PageSize;
+            //    response.CurrentPage = request.CurrentPage;
+            //}
+
+            var list = new List<UserModel>();
+            var UserListDt = dm.ExecDataTableSP("sp_UserList", model.SQLParameters()); //model.SQLParameters()
+            foreach (DataRow users in UserListDt.Rows)
+            {
+                list.Add(new UserModel()
+                {
+                    Id = int.Parse(users["Id"].ToString() ?? ""),
+                    Name = users["Name"].ToString(),
+                    Username = users["Username"].ToString(),
+                    Email = users["Email"].ToString()
+                });
+            }
+            result.Result = list;
+
+            return result;
+        }
+        public APIResult UserUpdate(UserUpdateDto model)
         {
             APIResult result = new APIResult(model);
 

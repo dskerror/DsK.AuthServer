@@ -3,17 +3,11 @@ using System.Runtime.CompilerServices;
 
 namespace BlazorWASMCustomAuth.Security.Shared
 {
-	public class UserCreateModel
+	public class UserCreateDto
     {
-		public string Username { get; set; }
-		public string FullName { get; set; }
-		public string Email { get; set; }
-        public UserCreateModel()
-		{
-			Username = "";
-            FullName = "";
-            Email = "";
-        }
+		public string? Username { get; set; }
+		public string? FullName { get; set; }
+		public string? Email { get; set; } 
 
 		public ModelValidation ValidateModel()
 		{

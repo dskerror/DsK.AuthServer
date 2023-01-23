@@ -20,7 +20,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         [HttpPost]
         //[Authorize(Roles = "admin,UserCreate")]
         //[Route("UserCreate")]
-        public IActionResult UserCreate(UserCreateModel model)
+        public IActionResult UserCreate(UserCreateDto model)
         {
             var result = SecurityService.UserCreate(model);
             return Ok(result);
@@ -34,9 +34,17 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             return Ok(SecurityService.UsersGet(request));
         }
 
+        [HttpGet]
+        //[Authorize(Roles = "admin,UsersGet")]
+        [Route("UsersGetNew")]
+        public IActionResult UsersGetNew([FromQuery] PagingSortingFilteringRequest model)
+        {
+            return Ok(SecurityService.UsersGetNew(model));
+        }
+
         [HttpPut]
         //[Authorize(Roles = "admin,UserDelete")]
-        public IActionResult UserUpdate(UserUpdateModel model)
+        public IActionResult UserUpdate(UserUpdateDto model)
         {
             var result = SecurityService.UserUpdate(model);
             return Ok(result);
@@ -49,16 +57,6 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             var result = SecurityService.UserDelete(id);
             return Ok(result);
         }
-
-        [HttpPost]
-        //[Authorize(Roles = "admin,UserCreateLocalPassword")]
-        [Route("CreateLocalPassword")]
-        public IActionResult UserCreateLocalPassword(UserCreateLocalPasswordModel userCreateLocalPasswordModel)
-        {
-            //TODO : Create another method for user to change their own passwords
-            return Ok(SecurityService.UserCreateLocalPassword(userCreateLocalPasswordModel));
-        }
-
     
 
         [HttpGet]

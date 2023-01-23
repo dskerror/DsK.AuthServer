@@ -43,15 +43,15 @@ namespace BlazorWASMCustomAuth.Client.Services
             return true;
         }
 
-        public async Task UserCreate(UserCreateModel model)
+        public async Task UserCreate(UserCreateDto model)
         {
-            var response = await _httpClient.PostAsJsonAsync<UserCreateModel>("/api/security/usercreate", model);
+            var response = await _httpClient.PostAsJsonAsync<UserCreateDto>("/api/security/usercreate", model);
 
             if (!response.IsSuccessStatusCode)
             {
                 int xx = 1;
             }
-            var x = await response.Content.ReadFromJsonAsync<UserCreateModel>();
+            var x = await response.Content.ReadFromJsonAsync<UserCreateDto>();
 
             //return true;
         }

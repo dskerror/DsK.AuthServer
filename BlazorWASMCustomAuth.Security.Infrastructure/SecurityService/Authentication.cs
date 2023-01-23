@@ -25,7 +25,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             if (model.Username.IsNullOrEmpty() || model.Password.IsNullOrEmpty())
                 return null;
 
-            bool IsUserAuthenticated = AuthenticateUser(model.Username, model.Password);
+            bool IsUserAuthenticated = AuthenticateUser(model);
 
             if (!IsUserAuthenticated)
                 return null;
@@ -33,8 +33,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var token = GenerateAuthenticationToken(model.Username);
             UpdateRefreshTokenInDB(model.Username, token.Token, token.RefreshToken);
             return token;
-        }
-        
+        }        
         public ClaimsPrincipal ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -90,7 +89,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             if (username == null)
                 return null;
 
-            string refreshToken = dm.ExecScalarSP("sp_UserGetRefreshToken", "Username", username, "RefreshToken", tokenModel.RefreshToken).Result.ToString();
+            string refreshToken = dm.ExecScalarSP("sp_UserTokenList", "RefreshToken", tokenModel.RefreshToken).Result.ToString();
             if (refreshToken == null || refreshToken != tokenModel.RefreshToken)
                 return null;
 
@@ -143,60 +142,23 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return Convert.ToBase64String(key);
             }
         }
-        private bool AuthenticateUser(string username, string password, string authenticationProviderName = "")
+        private bool AuthenticateUser(UserLoginModel model)
         {
-            if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
+            if (model.Username.IsNullOrEmpty() || model.Password.IsNullOrEmpty())
                 return false;
 
-            if (authenticationProviderName.IsNullOrEmpty())
-                authenticationProviderName = GetDefaultAuthenticationProviderName(username);
-
             bool IsUserAuthenticated = false;
-            switch (authenticationProviderName)
+            switch (model.AuthenticationProviderName)
             {
                 case "Active Directory":
-                    IsUserAuthenticated = AuthenticateUserWithDomain(username, password);
+                    IsUserAuthenticated = AuthenticateUserWithDomain(model.Username, model.Password);
                     break;
                 default: //Local
-                    IsUserAuthenticated = AuthenticateUserWithLocalPassword(username, password);
+                    IsUserAuthenticated = AuthenticateUserWithLocalPassword(model.Username, model.Password);
                     break;
             }
             return IsUserAuthenticated;
-        }
-        private string GetDefaultAuthenticationProviderName(string username)
-        {
-            string result;
-            try
-            {
-                var dbresult = dm.ExecScalarSP("sp_UserGetDefaultAuthenticationProveder", "Username", username);
-                if (dbresult.HasError || dbresult.Result == null)
-                    return null;
-
-                result = dbresult.Result.ToString();
-                return result;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-        private string GetMappedUsername(string username)
-        {
-            string result;
-            try
-            {
-                var dbresult = dm.ExecScalarSP("sp_UserGetMappedUsername", "AuthenticationProviderName", "Local", "Username", username);
-                if (dbresult.HasError || dbresult.Result == null)
-                    return null;
-
-                result = dbresult.Result.ToString();
-                return result;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
+        }        
         private string GetPasswordHashed(string username)
         {
             string result;
@@ -236,10 +198,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
                 return false;
 
-            string mappedUserName = GetMappedUsername(username);
-            if (mappedUserName == null)
-                mappedUserName = username;
-
             string HashedPassword = GetPasswordHashed(username);
             if (HashedPassword == null)
                 return false;
@@ -260,25 +218,23 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
                 return false;
 
-            string mappedUserName = dm.ExecScalarSP("sp_UserGetMappedUsername", "AuthenticationProviderName", "Active Directory", "Username", username).Result.ToString();
-            if (mappedUserName == null)
-                mappedUserName = username;
+            //TODO: Get AD credentials
 
-#pragma warning disable IDE0063 // Use simple 'using' statement
-#pragma warning disable CA1416 // Validate platform compatibility
+            #pragma warning disable IDE0063 // Use simple 'using' statement
+            #pragma warning disable CA1416 // Validate platform compatibility
             using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "DOMAIN", "USERNAME", "PASSWORD"))
             {
                 // validate the credentials
-                bool isValid = pc.ValidateCredentials(mappedUserName, password);
+                bool isValid = pc.ValidateCredentials(username, password);
                 return isValid;
             }
-#pragma warning restore CA1416 // Validate platform compatibility
-#pragma warning restore IDE0063 // Use simple 'using' statement
+            #pragma warning restore CA1416 // Validate platform compatibility
+            #pragma warning restore IDE0063 // Use simple 'using' statement
 
         }        
         private void UpdateRefreshTokenInDB(string username, string token, string refreshtoken, string newrefreshtoken = "")
         {
-            dm.ExecScalarSP("sp_UserUpdateRefreshToken",
+            dm.ExecScalarSP("sp_UserTokenUpdate",
                 "Username", username ?? "",
                 "Token", token ?? "",
                 "RefreshToken", refreshtoken ?? "",

@@ -3,13 +3,13 @@ using System;
 
 namespace BlazorWASMCustomAuth.Security.Shared
 {
-    public class UserUpdateModel
+    public class UserUpdateDto
     {
         public int Id { get; set; } 
 		public string? Name { get; set; }
         public string? Email { get; set; }
         public bool EmailConfirmed { get; set; }
-        public string LockoutEnd { get; set; }
+        public string? LockoutEnd { get; set; }
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
         public bool TwoFactorEnabled { get; set; }

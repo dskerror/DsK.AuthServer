@@ -1,4 +1,6 @@
-﻿In Visual Studio, select menu Tools -> NuGet Package Manger -> Package Manger Console and run the following command:
+﻿Set ef project as startup project
+In Visual Studio, select menu Tools -> NuGet Package Manger -> Package Manger Console and run the following command:
+
 Scaffold-DbContext "Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 
 

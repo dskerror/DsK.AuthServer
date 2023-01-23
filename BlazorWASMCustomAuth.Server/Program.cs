@@ -5,6 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
+using Microsoft.EntityFrameworkCore;
+using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+using BlazorWASMCustomAuth.SecurityEF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +19,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+builder.Services.AddDbContext<SecurityTablesTestContext>(options =>
+{
+	options.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
+});
+
 builder.Services.AddScoped<SecurityService>();
+builder.Services.AddScoped<SecurityServiceEF>();
+
 builder.Services.Configure<TokenSettingsModel>(builder.Configuration.GetSection("TokenSettings"));
 
 var IssuerSigningKey = builder.Configuration.GetSection("TokenSettings").GetValue<string>("Key") ?? "";
@@ -60,6 +70,8 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+
+
 
 app.UseHttpsRedirection();
 app.UseCors("myOrigins");
