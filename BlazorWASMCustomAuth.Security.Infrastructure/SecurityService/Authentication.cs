@@ -1,39 +1,42 @@
-﻿using BlazorWASMCustomAuth.Database;
-using BlazorWASMCustomAuth.PagingSortingFiltering;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Validations;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        
-        public TokenModel UserLogin(UserLoginModel model)
-        {
-            if (model.Username.IsNullOrEmpty() || model.Password.IsNullOrEmpty())
-                return null;
 
+        public APIResult UserLogin(UserLoginDto model)
+        {
+            APIResult result = new APIResult(model);
             bool IsUserAuthenticated = AuthenticateUser(model);
 
             if (!IsUserAuthenticated)
                 return null;
 
             var token = GenerateAuthenticationToken(model.Username);
-            UpdateRefreshTokenInDB(model.Username, token.Token, token.RefreshToken);
-            return token;
-        }        
+            
+            db.UserTokens.Add(new UserToken()
+            {
+                Token = token.Token,
+                RefreshToken = token.RefreshToken,
+                TokenRefreshedDateTime = DateTime.UtcNow,
+            });
+
+            db.SaveChanges();
+
+            result.Result = token;
+            return result;
+        }
         public ClaimsPrincipal ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -77,45 +80,64 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return username;
         }
-        public TokenModel RefreshToken(TokenModel tokenModel)
+        public APIResult RefreshToken(TokenModel model)
         {
+            APIResult result = new APIResult(model);
             //implement method that declines renewal depeding of token age.
 
-            var claimsPrincipal = ValidateToken(tokenModel.Token);
+            var claimsPrincipal = ValidateToken(model.Token);
             if (claimsPrincipal == null)
-                return null;
+            {
+                result.HasError = true;
+                result.Message = "Invalid Token";
+                return result;
+            }
+                
 
             var username = GetUsernameFromClaimsPrincipal(claimsPrincipal);
             if (username == null)
-                return null;
+            {
+                result.HasError = true;
+                result.Message = "Invalid Token";
+                return result;
+            }
+                
 
-            string refreshToken = dm.ExecScalarSP("sp_UserTokenList", "RefreshToken", tokenModel.RefreshToken).Result.ToString();
-            if (refreshToken == null || refreshToken != tokenModel.RefreshToken)
-                return null;
+            var userToken = db.UserTokens.Where(x=> x.RefreshToken == model.RefreshToken).FirstOrDefault();
+            
+            if (userToken == null || userToken.RefreshToken != model.RefreshToken)
+            {
+                result.HasError = true;
+                result.Message = "Invalid Token";
+                return result;
+            }
 
             var newtoken = GenerateAuthenticationToken(username);
-            UpdateRefreshTokenInDB(username, newtoken.Token, tokenModel.RefreshToken, newtoken.RefreshToken);
-            return newtoken;
+            userToken.RefreshToken = newtoken.RefreshToken;
+            userToken.Token = newtoken.Token;
+            userToken.TokenRefreshedDateTime = DateTime.UtcNow;
+            db.SaveChanges();
+            result.Result = userToken;
+            result.Message = "Token Refreshed";
+            return result;
         }
-   
-
 
         private TokenModel GenerateAuthenticationToken(string username)
         {
             if (username.IsNullOrEmpty())
                 return null;
-
-            var user = UserGetBy("username", username);
-
+            var user = db.Users.Where(x=>x.Username == username).FirstOrDefault();
+            
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key ?? ""));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
+            var userPermissions = GetUserPermissions(username);
             var userClaims = new List<Claim>();
             userClaims.Add(new Claim(ClaimTypes.Email, user.Email ?? ""));
             userClaims.Add(new Claim("UserId", user.Id.ToString()));
             userClaims.Add(new Claim("UserName", user.Username ?? ""));
 
-            foreach (var permission in user.Permissions)
+            foreach (var permission in userPermissions)
             {
                 userClaims.Add(new Claim(ClaimTypes.Role, permission));
             }
@@ -142,11 +164,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return Convert.ToBase64String(key);
             }
         }
-        private bool AuthenticateUser(UserLoginModel model)
+        private bool AuthenticateUser(UserLoginDto model)
         {
-            if (model.Username.IsNullOrEmpty() || model.Password.IsNullOrEmpty())
-                return false;
-
             bool IsUserAuthenticated = false;
             switch (model.AuthenticationProviderName)
             {
@@ -158,87 +177,45 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                     break;
             }
             return IsUserAuthenticated;
-        }        
-        private string GetPasswordHashed(string username)
-        {
-            string result;
-            try
-            {
-                var dbresult = dm.ExecScalarSP("sp_UserGetPasswordHashed", "Username", username);
-                if (dbresult.HasError || dbresult.Result == null)
-                    return null;
-
-                result = dbresult.Result.ToString();
-                return result;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
         }
-        private string GetPasswordSalt(string username)
-        {
-            string result;
-            try
-            {
-                var dbresult = dm.ExecScalarSP("sp_UserGetPasswordSalt", "Username", username);
-                if (dbresult.HasError || dbresult.Result == null)
-                    return null;
 
-                result = dbresult.Result.ToString();
-                return result;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
         private bool AuthenticateUserWithLocalPassword(string username, string password)
         {
-            if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
-                return false;
+            try
+            {
+                var userPassword = db.UserPasswords.Where(x => x.User.Username == username).FirstOrDefault();
 
-            string HashedPassword = GetPasswordHashed(username);
-            if (HashedPassword == null)
-                return false;
+                if (userPassword == null)
+                    return false; 
 
-            string SaltPassword = GetPasswordSalt(username);
-            if (SaltPassword == null)
-                return false;
+                byte[] bytesalt = Convert.FromHexString(userPassword.Salt);
+                const int keySize = 64;
+                const int iterations = 350000;
+                HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
+                var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, bytesalt, iterations, hashAlgorithm, keySize);
+                return hashToCompare.SequenceEqual(Convert.FromHexString(userPassword.HashedPassword));
 
-            byte[] bytesalt = Convert.FromHexString(SaltPassword);
-            const int keySize = 64;
-            const int iterations = 350000;
-            HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
-            var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, bytesalt, iterations, hashAlgorithm, keySize);
-            return hashToCompare.SequenceEqual(Convert.FromHexString(HashedPassword));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
         private bool AuthenticateUserWithDomain(string username, string password)
         {
-            if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
-                return false;
-
             //TODO: Get AD credentials
 
-            #pragma warning disable IDE0063 // Use simple 'using' statement
-            #pragma warning disable CA1416 // Validate platform compatibility
+#pragma warning disable IDE0063 // Use simple 'using' statement
+#pragma warning disable CA1416 // Validate platform compatibility
             using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "DOMAIN", "USERNAME", "PASSWORD"))
             {
                 // validate the credentials
                 bool isValid = pc.ValidateCredentials(username, password);
                 return isValid;
             }
-            #pragma warning restore CA1416 // Validate platform compatibility
-            #pragma warning restore IDE0063 // Use simple 'using' statement
+#pragma warning restore CA1416 // Validate platform compatibility
+#pragma warning restore IDE0063 // Use simple 'using' statement
 
-        }        
-        private void UpdateRefreshTokenInDB(string username, string token, string refreshtoken, string newrefreshtoken = "")
-        {
-            dm.ExecScalarSP("sp_UserTokenUpdate",
-                "Username", username ?? "",
-                "Token", token ?? "",
-                "RefreshToken", refreshtoken ?? "",
-                "NewRefreshToken", newrefreshtoken ?? "");
-        }
+        } 
     }
 }

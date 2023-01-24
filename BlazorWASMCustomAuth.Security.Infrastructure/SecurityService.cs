@@ -1,31 +1,20 @@
 ﻿using BlazorWASMCustomAuth.Database;
-using BlazorWASMCustomAuth.PagingSortingFiltering;
 using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
-using BlazorWASMCustomAuth.Validations;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.DirectoryServices.AccountManagement;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
-    {
-        private DatabaseManager dm;
+    {   
         private readonly TokenSettingsModel _tokenSettings;
+        private readonly SecurityTablesTestContext db;
+        private DatabaseManager dm;
 
-        public SecurityService(IOptions<TokenSettingsModel> tokenSettings)
+        public SecurityService(IOptions<TokenSettingsModel> tokenSettings, SecurityTablesTestContext db)
         {
             _tokenSettings = tokenSettings.Value;
+            this.db = db;
             dm = new DatabaseManager("Server=.;Database=SecurityTablesTest;Trusted_Connection=True");
         }
     }

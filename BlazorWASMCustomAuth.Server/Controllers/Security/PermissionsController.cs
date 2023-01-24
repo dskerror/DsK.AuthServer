@@ -19,21 +19,21 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpGet]
         //[Authorize(Roles = "admin,PermissionsGet")]
-        public IActionResult PermissionsGet()
+        public IActionResult PermissionsGet(int id = 0)
         {
-            return Ok(SecurityService.PermissionsGet());
+            return Ok(SecurityService.PermissionsGet(id));
         }
 
         [HttpPost]
         //[Authorize(Roles = "admin,PermissionCreate")]
-        public IActionResult PermissionCreate(PermissionCreateModel model)
+        public IActionResult PermissionCreate(PermissionCreateDto model)
         {
             var result = SecurityService.PermissionCreate(model);
             return Ok(result);
         }
         [HttpPut]
         //[Authorize(Roles = "admin,PermissionUpdate")]
-        public IActionResult PermissionUpdate(PermissionModel model)
+        public IActionResult PermissionUpdate(PermissionUpdateDto model)
         {
             var result = SecurityService.PermissionUpdate(model);
             return Ok(result);

@@ -1,119 +1,103 @@
-﻿using BlazorWASMCustomAuth.Database;
-using BlazorWASMCustomAuth.PagingSortingFiltering;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Validations;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.DirectoryServices.AccountManagement;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public List<RoleModel> RolesGet()
-        {
-            var list = new List<RoleModel>();
-            var rolesGetDt = dm.ExecDataTableSP("sp_RoleList");
-            foreach (DataRow role in rolesGetDt.Rows)
-            {
-                list.Add(new RoleModel()
-                {
-                    Id = int.Parse(role["Id"].ToString() ?? ""),
-                    RoleName = role["RoleName"].ToString(),
-                    RoleDescription = role["RoleDescription"].ToString()
-                });
-            }
-            return list;
-        }
-        public APIResult RoleCreate(RoleCreateModel model)
+        public APIResult RoleCreate(RoleCreateDto model)
         {
             APIResult result = new APIResult(model);
+            int recordsCreated = 0;
 
-            result.ModelValidationResult = model.ValidateModel();
+            var record = new Role()
+            {
+                RoleName = model.RoleName,
+                RoleDescription= model.RoleDescription
+            };
 
-            if (!result.ModelValidationResult.IsValid)
+            db.Roles.Add(record);
+
+            try
+            {
+                recordsCreated = db.SaveChanges();
+            }
+            catch (Exception ex)
             {
                 result.HasError = true;
-                result.Message = "See Model Validations";
-                return result;
+                result.Message = ex.InnerException.Message;
             }
 
-            var UserExists = RoleVerifyExistsByRoleName(model.RoleName);
-            if (UserExists)
+            result.Result = record;
+            if (recordsCreated == 1)
             {
-                result.Message = "Role already exists.";
-                result.HasError = true;
-                return result;
+                result.Message = "Record Created";
             }
-
-            var dbresult = dm.ExecNonQuerySP("sp_RoleCreate", "RoleName", model.RoleName, "RoleDescription", model.RoleDescription);
-            result.Result = dbresult.Result;
-            result.HasError = dbresult.HasError;
-            result.Exception = dbresult.Exception;
-            result.Message = "Role Created";
 
             return result;
         }
-        public APIResult RoleUpdate(RoleModel model)
+
+        public APIResult RolesGet(int id = 0)
+        {
+            APIResult result = new APIResult(id);
+            if (id == 0)
+                result.Result = db.Roles.ToList();
+            else
+                result.Result = db.Roles.Where(x => x.Id == id).FirstOrDefault();
+
+            return result;
+        }
+
+        public APIResult RoleUpdate(RoleUpdateDto model)
         {
             APIResult result = new APIResult(model);
+            int recordsUpdated = 0;
+            var record = db.Roles.FirstOrDefault(x => x.Id == model.Id);
 
-            result.ModelValidationResult = model.ValidateModel();
-
-            if (!result.ModelValidationResult.IsValid)
+            if (record != null)
             {
-                result.HasError = true;
-                result.Message = "See Model Validations";
-                return result;
+                record.RoleName = model.RoleName;
+                record.RoleDescription = model.RoleDescription;
             }
 
-            var UserExists = RoleVerifyExistsByRoleName(model.RoleName);
-            if (UserExists)
+            try
             {
-                result.Message = "Role already exists.";
+                recordsUpdated = db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
                 result.HasError = true;
-                return result;
+                result.Message = ex.InnerException.Message;
             }
 
-            var dbresult = dm.ExecNonQuerySP("sp_RoleUpdate", "Id", model.Id, "RoleName", model.RoleName, "RoleDescription", model.RoleDescription);
-            result.Result = dbresult.Result;
-            result.HasError = dbresult.HasError;
-            result.Exception = dbresult.Exception;
-            result.Message = "Role Updated";
-            //TODO: Find if no record was update to give error message in this and other update methods
+            result.Result = record;
+            if (recordsUpdated == 1)
+            {
+                result.Message = "Record Updated";
+            }
 
             return result;
         }
         public APIResult RoleDelete(int id)
         {
             APIResult result = new APIResult(id);
-
-            var dbresult = dm.ExecNonQuerySP("sp_RoleDelete", "Id", id);
-            result.Result = dbresult.Result;
-            result.HasError = dbresult.HasError;
-            result.Exception = dbresult.Exception;
-            result.Message = "Role Deleted";
-            //TODO: Find if no record was update to give error message in this and other update methods
+            int recordsDeleted = 0;
+            var record = db.Roles.Attach(new Role { Id = id });
+            record.State = EntityState.Deleted;
+            try
+            {
+                recordsDeleted = db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                result.Message = ex.Message;
+            }
 
             return result;
-        }
-        public bool RoleVerifyExistsByRoleName(string roleName)
-        {
-            var dt = dm.ExecDataTableSP("sp_RoleList", "RoleName", roleName);
-
-            if (dt.Rows.Count == 0)
-                return false;
-
-            return true;
         }
     }
 }

@@ -1,5 +1,3 @@
-
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -7,13 +5,14 @@ using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using BlazorWASMCustomAuth.Security.EntityFramework.Models;
-using BlazorWASMCustomAuth.SecurityEF.Infrastructure;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -25,7 +24,6 @@ builder.Services.AddDbContext<SecurityTablesTestContext>(options =>
 });
 
 builder.Services.AddScoped<SecurityService>();
-builder.Services.AddScoped<SecurityServiceEF>();
 
 builder.Services.Configure<TokenSettingsModel>(builder.Configuration.GetSection("TokenSettings"));
 
@@ -61,6 +59,11 @@ builder.Services.AddCors(options =>
                       });
 
 });
+
+//builder.Services.AddControllersWithViews()
+//    .AddJsonOptions(options =>
+//    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+//);
 
 var app = builder.Build();
 

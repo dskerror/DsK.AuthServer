@@ -19,7 +19,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         [Route("UserLogin")]
-        public IActionResult UserLogin(UserLoginModel model)
+        public IActionResult UserLogin(UserLoginDto model)
         {
             //implement captcha
             var tokenModel = SecurityService.UserLogin(model);

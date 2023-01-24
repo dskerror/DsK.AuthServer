@@ -31,11 +31,13 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<UserPermission> UserPermissions { get; set; }
 
+    public virtual DbSet<UserRole> UserRoles { get; set; }
+
     public virtual DbSet<UserToken> UserTokens { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -89,23 +91,6 @@ public partial class SecurityTablesTestContext : DbContext
             entity.Property(e => e.LockoutEnd).HasColumnType("date");
             entity.Property(e => e.Name).HasMaxLength(256);
             entity.Property(e => e.Username).HasMaxLength(256);
-
-            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UserRole",
-                    r => r.HasOne<Role>().WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_UserRoles_Roles"),
-                    l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_UserRoles_Users"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "RoleId").HasName("PK_UserRole");
-                        j.HasIndex(new[] { "RoleId" }, "IX_UserRole_RoleId");
-                    });
         });
 
         modelBuilder.Entity<UserLog>(entity =>
@@ -134,9 +119,7 @@ public partial class SecurityTablesTestContext : DbContext
 
         modelBuilder.Entity<UserPermission>(entity =>
         {
-            entity.HasKey(e => new { e.UserId, e.PermissionId }).HasName("PK_UserPermissions_1");
-
-            entity.HasIndex(e => e.PermissionId, "IX_UserPermissions_PermissionId");
+            entity.HasIndex(e => new { e.PermissionId, e.UserId }, "IX_UserPermissions").IsUnique();
 
             entity.HasOne(d => d.Permission).WithMany(p => p.UserPermissions)
                 .HasForeignKey(d => d.PermissionId)
@@ -147,6 +130,21 @@ public partial class SecurityTablesTestContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserPermissions_Users");
+        });
+
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasIndex(e => new { e.UserId, e.RoleId }, "IX_UserRoles").IsUnique();
+
+            entity.HasOne(d => d.Role).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserRoles_Roles");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserRoles_Users");
         });
 
         modelBuilder.Entity<UserToken>(entity =>

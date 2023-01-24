@@ -7,26 +7,18 @@ using System.Data;
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
-    {  
-        public List<string> GetUserPermissions(string? username)
-        {
-            List<string> permissions = new List<string>();
-
-            var userPermissionsDt = dm.ExecDataTableSP("sp_UserPermissions", "Username", username ?? "");
-
-            foreach (DataRow permission in userPermissionsDt.Rows)
-            {
-                permissions.Add(permission[0].ToString() ?? "");
-            }
-            return permissions;
-        }
-
-        public APIResult UserPermissionCreate(UserPermission model)
+    {
+        public APIResult UserRoleCreate(UserRoleCreateDto model)
         {
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
-          
-            db.UserPermissions.Add(model);
+            var record = new UserRole()
+            {
+                RoleId = model.RoleId,
+                UserId = model.UserId
+            }
+            ;
+            db.UserRoles.Add(record);
 
             try
             {
@@ -38,6 +30,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
+            result.Result = record;
             if (recordsCreated == 1)
             {
                 result.Message = "Record Created";
@@ -46,13 +39,19 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return result;
         }
 
-    
+        public APIResult UserRolesGet(int userId)
+        {
+            APIResult result = new APIResult(userId);
+            result.Result = db.UserRoles.Where(x => x.UserId == userId).Include(x => x.Role).ToList();
 
-        public APIResult UserPermissionDelete(int id)
+            return result;
+        }
+
+        public APIResult UserRoleDelete(int id)
         {
             APIResult result = new APIResult(id);
             int recordsDeleted = 0;
-            var record = db.UserPermissions.Attach(new UserPermission { Id = id });
+            var record = db.UserRoles.Attach(new UserRole { Id=id });
             record.State = EntityState.Deleted;
             try
             {

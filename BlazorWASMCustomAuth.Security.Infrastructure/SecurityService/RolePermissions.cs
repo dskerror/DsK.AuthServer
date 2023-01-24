@@ -1,86 +1,73 @@
-﻿using BlazorWASMCustomAuth.Database;
-using BlazorWASMCustomAuth.PagingSortingFiltering;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Validations;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.DirectoryServices.AccountManagement;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public List<RolePermissionModel> RolePermissionsGet()
-        {
-            var list = new List<RolePermissionModel>();
-            var dt = dm.ExecDataTableSP("sp_RolePermissionsGet");
-            foreach (DataRow role in dt.Rows)
-            {
-                list.Add(new RolePermissionModel()
-                {
-                    RoleId = int.Parse(role["RoleId"].ToString() ?? ""),
-                    RoleName = role["RoleName"].ToString(),
-                    RoleDescription = role["RoleDescription"].ToString(),
-                    PermissionId = int.Parse(role["PermissionId"].ToString() ?? ""),
-                    PermissionName = role["PermissionName"].ToString(),
-                    PermissionDescription = role["PermissionDescription"].ToString()
-                });
-            }
-
-            return list;
-        }
-
-        public APIResult RolePermissionCreate(RolePermissionDto model)
+        public APIResult RolePermissionCreate(RolePermission model)
         {
             APIResult result = new APIResult(model);
+            int recordsCreated = 0;
 
-            var UserExists = VerifyRolePermissionExists(model.RoleId, model.PermissionId);
-            if (UserExists)
+            var record = new RolePermission()
             {
-                result.Message = "Permission already exists in Role.";
+                RoleId = model.RoleId,
+                PermissionId = model.PermissionId
+            };
+
+            db.RolePermissions.Add(record);
+
+            try
+            {
+                recordsCreated = db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
                 result.HasError = true;
-                return result;
+                result.Message = ex.InnerException.Message;
             }
 
-            var dbresult = dm.ExecNonQuerySP("sp_RolePermissionCreate", "RoleId", model.RoleId, "PermissionId", model.PermissionId);
-            result.Result = dbresult.Result;
-            result.HasError = dbresult.HasError;
-            result.Exception = dbresult.Exception;
-            result.Message = "Role Permission Created";
+            result.Result = record;
+            if (recordsCreated == 1)
+            {
+                result.Message = "Record Created";
+            }
 
             return result;
         }
-        
-        public APIResult RolePermissionDelete(RolePermissionDto model)
+        public APIResult RolePermissionsGet(int id = 0)
+        {
+            APIResult result = new APIResult(id);
+            if (id == 0)
+                result.Result = db.RolePermissions.ToList();
+            else
+                result.Result = db.RolePermissions.Where(x => x.RoleId == id).FirstOrDefault();
+
+            return result;
+        }
+
+        public APIResult RolePermissionDelete(RolePermission model)
         {
             APIResult result = new APIResult(model);
+            int recordsDeleted = 0;
+            var record = db.RolePermissions.Attach(new RolePermission { RoleId = model.RoleId, PermissionId = model.PermissionId });
+            record.State = EntityState.Deleted;
 
-            var dbresult = dm.ExecNonQuerySP("sp_RolePermissionDelete", "RoleId", model.RoleId, "PermissionId", model.PermissionId);
-            result.Result = dbresult.Result;
-            result.HasError = dbresult.HasError;
-            result.Exception = dbresult.Exception;
-            result.Message = "Permission Deleted";            
-
+            try
+            {
+                recordsDeleted = db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                result.Message = ex.Message;
+            }
+            
             return result;
-        }
-
-        public bool VerifyRolePermissionExists(int roleId, int permissionId)
-        {
-            var dt = dm.ExecDataTableSP("sp_RolePermissionList", "RoleId", roleId, "PermissionId", permissionId);
-
-            if (dt.Rows.Count == 0)
-                return false;
-
-            return true;
         }
     }
 }

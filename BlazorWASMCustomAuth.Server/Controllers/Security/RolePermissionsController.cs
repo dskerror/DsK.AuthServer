@@ -1,4 +1,5 @@
 ﻿using BlazorWASMCustomAuth.PagingSortingFiltering;
+using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.AspNetCore.Authorization;
@@ -19,15 +20,15 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpGet]
         //[Authorize(Roles = "admin,RolePermissionsGet")]        
-        public IActionResult RolePermissionsGet()
+        public IActionResult RolePermissionsGet(int roleid = 0)
         {
-            return Ok(SecurityService.RolePermissionsGet());
+            return Ok(SecurityService.RolePermissionsGet(roleid));
         }
 
 
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
-        public IActionResult RolePermissionCreate(RolePermissionDto model)
+        public IActionResult RolePermissionCreate(RolePermission model)
         {
             var result = SecurityService.RolePermissionCreate(model);
             return Ok(result);
@@ -35,7 +36,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpDelete]
         //[Authorize(Roles = "admin,RoleDelete")]
-        public IActionResult RolePermissionDelete(RolePermissionDto model)
+        public IActionResult RolePermissionDelete(RolePermission model)
         {
             var result = SecurityService.RolePermissionDelete(model);
             return Ok(result);

@@ -28,7 +28,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in response.UserList)
+            @*@foreach (var user in response.UserList)
             {
                 <tr>
                     <td>@user.Id</td>
@@ -39,15 +39,15 @@ else
                     <td>X</td>
                     <td>X</td>
                 </tr>
-            }
+            }*@
         </tbody>
     </table>
 
     <ul>
-        <li>Current Page : @response.CurrentPage</li>
+        @*<li>Current Page : @response.CurrentPage</li>
         <li>Total Pages : @response.TotalPages</li>
         <li>Page Size : @response.PageSize</li>
-        <li>Total Rows : @response.TotalRows</li>
+        <li>Total Rows : @response.TotalRows</li>*@
     </ul>
 }
 @*    </Authorized>
@@ -62,15 +62,15 @@ else
     private Task<AuthenticationState> authenticationState { get; set; }
     private List<Claim> userClaims;
 
-    private UsersGetDTO response;
+    private string response = "ok";
 
-    protected override async Task OnInitializedAsync()
-    {
-        var auth = authenticationState.Result;
-        if (auth.User.Identity.IsAuthenticated)
-        {
-            userClaims = auth.User.Claims.ToList();
-        }
-        response = await securityService.UsersGet(new PagingSortingFilteringRequest());
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    var auth = authenticationState.Result;
+    //    if (auth.User.Identity.IsAuthenticated)
+    //    {
+    //        userClaims = auth.User.Claims.ToList();
+    //    }
+    //    response = await securityService.UsersGet(new PagingSortingFilteringRequest());
+    //}
 }

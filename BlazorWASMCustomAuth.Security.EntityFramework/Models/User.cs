@@ -29,5 +29,5 @@ public partial class User
 
     public virtual ICollection<UserPermission> UserPermissions { get; } = new List<UserPermission>();
 
-    public virtual ICollection<Role> Roles { get; } = new List<Role>();
+    public virtual ICollection<UserRole> UserRoles { get; } = new List<UserRole>();
 }

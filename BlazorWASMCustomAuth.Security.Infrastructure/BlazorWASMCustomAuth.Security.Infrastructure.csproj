@@ -19,4 +19,8 @@
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Shared\BlazorWASMCustomAuth.Security.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SecurityServiceEF\" />
+  </ItemGroup>
+
 </Project>

@@ -1,8 +1,5 @@
-﻿using BlazorWASMCustomAuth.PagingSortingFiltering;
-using BlazorWASMCustomAuth.Security.Infrastructure;
+﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
@@ -18,8 +15,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpPost]
-        //[Authorize(Roles = "admin,UserCreate")]
-        //[Route("UserCreate")]
+        //[Authorize(Roles = "admin,UserCreate")]        
         public IActionResult UserCreate(UserCreateDto model)
         {
             var result = SecurityService.UserCreate(model);
@@ -28,18 +24,9 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpGet]
         //[Authorize(Roles = "admin,UsersGet")]
-        //[Route("UsersGet")]
-        public IActionResult UsersGet([FromQuery] PagingSortingFilteringRequest request)
+        public IActionResult UsersGet(int id = 0)
         {
-            return Ok(SecurityService.UsersGet(request));
-        }
-
-        [HttpGet]
-        //[Authorize(Roles = "admin,UsersGet")]
-        [Route("UsersGetNew")]
-        public IActionResult UsersGetNew([FromQuery] PagingSortingFilteringRequest model)
-        {
-            return Ok(SecurityService.UsersGetNew(model));
+            return Ok(SecurityService.UsersGet(id));
         }
 
         [HttpPut]
@@ -57,25 +44,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             var result = SecurityService.UserDelete(id);
             return Ok(result);
         }
-    
 
-        [HttpGet]
-        //[Authorize(Roles = "admin,UserUserVerifyExistsByUsernamesGet")]
-        [Route("VerifyExistsByUsername")]
-        public IActionResult UserVerifyExistsByUsername([FromQuery] string username)
-        {
-            return Ok(SecurityService.UserVerifyExistsByUsername(username));
-        }
-
-        [HttpGet]
-        //[Authorize(Roles = "admin,UserUserVerifyExistsByUsernamesGet")]
-        [Route("VerifyExistsByEmail")]
-        public IActionResult UserVerifyExistsByEmail([FromQuery] string email)
-        {
-            return Ok(SecurityService.UserVerifyExistsByEmail(email));
-        }
-
-     
     }
 }
 
