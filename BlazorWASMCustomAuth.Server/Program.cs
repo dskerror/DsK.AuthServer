@@ -51,19 +51,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "myOrigins",
-                      builder =>
-                      {
-                          builder.AllowAnyOrigin();
-                          builder.AllowAnyHeader();
-                          builder.AllowAnyMethod();
-                      });
-
+        builder =>
+        {
+            builder.AllowAnyOrigin();
+            builder.AllowAnyHeader();
+            builder.AllowAnyMethod();
+        });
 });
-
-//builder.Services.AddControllersWithViews()
-//    .AddJsonOptions(options =>
-//    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
-//);
 
 var app = builder.Build();
 

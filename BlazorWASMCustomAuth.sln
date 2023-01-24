@@ -23,11 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{4C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Database", "BlazorWASMCustomAuth.Database\BlazorWASMCustomAuth.Database.csproj", "{505B3E32-1FEF-41B7-AD3D-954921A4B0B0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other", "Other", "{64824439-A7C7-4B83-9D21-BDAE2A9F1E81}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Validations", "BlazorWASMCustomAuth.Validations\BlazorWASMCustomAuth.Validations.csproj", "{C4A03498-5405-42EE-B52B-F748885CE613}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWASMCustomAuth.Security.EntityFramework", "BlazorWASMCustomAuth.Security.EntityFramework\BlazorWASMCustomAuth.Security.EntityFramework.csproj", "{CB6B4CE8-FDB0-4F65-8FE4-328752A3E962}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Security.EntityFramework", "BlazorWASMCustomAuth.Security.EntityFramework\BlazorWASMCustomAuth.Security.EntityFramework.csproj", "{CB6B4CE8-FDB0-4F65-8FE4-328752A3E962}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,10 +59,6 @@ Global
 		{505B3E32-1FEF-41B7-AD3D-954921A4B0B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{505B3E32-1FEF-41B7-AD3D-954921A4B0B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{505B3E32-1FEF-41B7-AD3D-954921A4B0B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4A03498-5405-42EE-B52B-F748885CE613}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4A03498-5405-42EE-B52B-F748885CE613}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4A03498-5405-42EE-B52B-F748885CE613}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4A03498-5405-42EE-B52B-F748885CE613}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB6B4CE8-FDB0-4F65-8FE4-328752A3E962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB6B4CE8-FDB0-4F65-8FE4-328752A3E962}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB6B4CE8-FDB0-4F65-8FE4-328752A3E962}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -82,7 +74,6 @@ Global
 		{5915C629-E0F3-4C0D-9B2E-529E0227D368} = {F6A64274-6076-44AA-A8AF-62B41081733D}
 		{679A4C74-F5A9-4AD2-B6CB-1E6390E11CF8} = {F6A64274-6076-44AA-A8AF-62B41081733D}
 		{505B3E32-1FEF-41B7-AD3D-954921A4B0B0} = {4C89BC74-E40D-4E14-A75F-8B1597B03E47}
-		{C4A03498-5405-42EE-B52B-F748885CE613} = {64824439-A7C7-4B83-9D21-BDAE2A9F1E81}
 		{CB6B4CE8-FDB0-4F65-8FE4-328752A3E962} = {F6A64274-6076-44AA-A8AF-62B41081733D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

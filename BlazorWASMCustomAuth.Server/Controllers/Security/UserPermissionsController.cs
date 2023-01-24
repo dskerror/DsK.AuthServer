@@ -30,6 +30,16 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             return Ok(SecurityService.GetUserPermissions(username));
         }
 
+        [HttpGet]
+        [Route("GetUserPermissionsNew")]
+        //[Authorize(Roles = "admin,RolesGet")]
+        public IActionResult UserPermissionGetNew(string username)
+        {
+            return Ok(SecurityService.GetUserPermissionsNew(username));
+        }
+
+        
+
         [HttpDelete]
         //[Authorize(Roles = "admin,RoleDelete")]
         public IActionResult UserPermissionDelete(int id)

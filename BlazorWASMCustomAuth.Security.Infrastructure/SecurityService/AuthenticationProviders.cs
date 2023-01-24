@@ -1,24 +1,19 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult UserCreate(UserCreateDto model)
+        public APIResult AuthenticationProvidersCreate(AuthenticationProvider model)
         {
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
 
-            var record = new User()
-            {
-                Username = model.Username,
-                Email = model.Email,
-                Name = model.FullName
-            };
+            db.AuthenticationProviders.Add(model);
 
-            db.Users.Add(record);
             try
             {
                 recordsCreated = db.SaveChanges();
@@ -29,7 +24,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            result.Result = record;
+            result.Result = recordsCreated;
             if (recordsCreated == 1)
             {
                 result.Message = "Record Created";
@@ -38,27 +33,31 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return result;
         }
 
-        public APIResult UsersGet(int id = 0)
+        public APIResult AuthenticationProvidersGet(int id = 0)
         {
             APIResult result = new APIResult(id);
             if (id == 0)
-                result.Result = db.Users.ToList();
+                result.Result = db.AuthenticationProviders.ToList();
             else
-                result.Result = db.Users.Where(x => x.Id == id).FirstOrDefault();
+                result.Result = db.AuthenticationProviders.Where(x => x.Id == id).FirstOrDefault();
 
             return result;
         }
 
-        public APIResult UserUpdate(UserUpdateDto model)
+        public APIResult AuthenticationProvidersUpdate(AuthenticationProvider model)
         {
             APIResult result = new APIResult(model);
             int recordsUpdated = 0;
-            var record = db.Users.FirstOrDefault(x => x.Id == model.Id);
+            var record = db.AuthenticationProviders.FirstOrDefault(x => x.Id == model.Id);
 
             if (record != null)
             {
-                record.Email = model.Email;
-                record.Name = model.Name;
+                record.AuthenticationProviderName = model.AuthenticationProviderName;
+                record.AuthenticationProviderType = model.AuthenticationProviderType;
+                record.Domain = model.Domain;
+                record.Username = model.Username;
+                record.Password = model.Password;
+
             }
 
             try
@@ -78,13 +77,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
 
             return result;
-
         }
-        public APIResult UserDelete(int id)
+        public APIResult AuthenticationProvidersDelete(int id)
         {
             APIResult result = new APIResult(id);
             int recordsDeleted = 0;
-            var record = db.Users.Attach(new User { Id = id });
+            var record = db.AuthenticationProviders.Attach(new AuthenticationProvider { Id = id });
             record.State = EntityState.Deleted;
             try
             {
@@ -100,4 +98,3 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
     }
 }
-

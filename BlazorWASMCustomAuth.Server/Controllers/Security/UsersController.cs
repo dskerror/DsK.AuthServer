@@ -10,7 +10,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
     {
         private readonly SecurityService SecurityService;
         public UsersController(SecurityService securityService)
-        {
+        {            
             SecurityService = securityService;
         }
 

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
-namespace BlazorWASMCustomAuth.Validations
+﻿namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public class APIResult
     {
@@ -14,12 +7,12 @@ namespace BlazorWASMCustomAuth.Validations
             HasError = false;
             Message = "";
             Exception = null;
-            Request = request;            
+            Request = request;
         }
         public object? Request { get; set; }
         public object? Result { get; set; }
         public string Message { get; set; }
         public bool HasError { get; set; }
-        public Exception? Exception { get; set; }        
+        public Exception? Exception { get; set; }
     }
 }

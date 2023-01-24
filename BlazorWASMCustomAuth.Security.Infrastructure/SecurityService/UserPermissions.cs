@@ -1,6 +1,5 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
-using BlazorWASMCustomAuth.Validations;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
@@ -19,6 +18,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 permissions.Add(permission[0].ToString() ?? "");
             }
             return permissions;
+        }
+
+        public APIResult GetUserPermissionsNew(string? username)
+        {
+            var x = db.Users.Where(x => x.Username == username).Include(x => x.UserRoles).ThenInclude(x => x.Role).ThenInclude(x => x.RolePermissions).ToList();
+            return new APIResult(x);
         }
 
         public APIResult UserPermissionCreate(UserPermission model)

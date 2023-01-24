@@ -1,6 +1,5 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
-using BlazorWASMCustomAuth.Validations;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
@@ -18,9 +17,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             var userPassword = new UserPassword()
             {
-                Id = model.UserId,
+                UserId = model.UserId,
                 HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt),
-                Salt = Convert.ToHexString(ramdomSalt)
+                Salt = Convert.ToHexString(ramdomSalt),
+                DateCreated = DateTime.UtcNow
             };
 
             db.UserPasswords.Add(userPassword);

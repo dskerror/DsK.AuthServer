@@ -1,6 +1,5 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
-using BlazorWASMCustomAuth.Validations;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
@@ -37,7 +36,49 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             result.Result = token;
             return result;
         }
-        public ClaimsPrincipal ValidateToken(string token)
+        public APIResult RefreshToken(TokenModel model)
+        {
+            APIResult result = new APIResult(model);
+            //implement method that declines renewal depeding of token age.
+
+            var claimsPrincipal = ValidateToken(model.Token);
+            if (claimsPrincipal == null)
+            {
+                result.HasError = true;
+                result.Message = "Invalid Token";
+                return result;
+            }
+
+
+            var username = GetUsernameFromClaimsPrincipal(claimsPrincipal);
+            if (username == null)
+            {
+                result.HasError = true;
+                result.Message = "Invalid Token";
+                return result;
+            }
+
+
+            var userToken = db.UserTokens.Where(x => x.RefreshToken == model.RefreshToken).FirstOrDefault();
+
+            if (userToken == null || userToken.RefreshToken != model.RefreshToken)
+            {
+                result.HasError = true;
+                result.Message = "Invalid Token";
+                return result;
+            }
+
+            var newtoken = GenerateAuthenticationToken(username);
+            userToken.RefreshToken = newtoken.RefreshToken;
+            userToken.Token = newtoken.Token;
+            userToken.TokenRefreshedDateTime = DateTime.UtcNow;
+            db.SaveChanges();
+            result.Result = userToken;
+            result.Message = "Token Refreshed";
+            return result;
+        }
+
+        private ClaimsPrincipal ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -68,7 +109,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return null;
             }
         }
-        public string GetUsernameFromClaimsPrincipal(ClaimsPrincipal claimsPrincipal)
+        private string GetUsernameFromClaimsPrincipal(ClaimsPrincipal claimsPrincipal)
         {
             if (claimsPrincipal == null)
                 return null;
@@ -80,48 +121,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return username;
         }
-        public APIResult RefreshToken(TokenModel model)
-        {
-            APIResult result = new APIResult(model);
-            //implement method that declines renewal depeding of token age.
-
-            var claimsPrincipal = ValidateToken(model.Token);
-            if (claimsPrincipal == null)
-            {
-                result.HasError = true;
-                result.Message = "Invalid Token";
-                return result;
-            }
-                
-
-            var username = GetUsernameFromClaimsPrincipal(claimsPrincipal);
-            if (username == null)
-            {
-                result.HasError = true;
-                result.Message = "Invalid Token";
-                return result;
-            }
-                
-
-            var userToken = db.UserTokens.Where(x=> x.RefreshToken == model.RefreshToken).FirstOrDefault();
-            
-            if (userToken == null || userToken.RefreshToken != model.RefreshToken)
-            {
-                result.HasError = true;
-                result.Message = "Invalid Token";
-                return result;
-            }
-
-            var newtoken = GenerateAuthenticationToken(username);
-            userToken.RefreshToken = newtoken.RefreshToken;
-            userToken.Token = newtoken.Token;
-            userToken.TokenRefreshedDateTime = DateTime.UtcNow;
-            db.SaveChanges();
-            result.Result = userToken;
-            result.Message = "Token Refreshed";
-            return result;
-        }
-
         private TokenModel GenerateAuthenticationToken(string username)
         {
             if (username.IsNullOrEmpty())
@@ -178,7 +177,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
             return IsUserAuthenticated;
         }
-
         private bool AuthenticateUserWithLocalPassword(string username, string password)
         {
             try

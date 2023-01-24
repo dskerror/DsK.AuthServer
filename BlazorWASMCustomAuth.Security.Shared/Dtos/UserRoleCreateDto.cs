@@ -1,7 +1,4 @@
-﻿using BlazorWASMCustomAuth.Validations;
-using System.ComponentModel.DataAnnotations;
-
-namespace BlazorWASMCustomAuth.Security.Shared
+﻿namespace BlazorWASMCustomAuth.Security.Shared
 {
     public class UserRoleCreateDto
     {

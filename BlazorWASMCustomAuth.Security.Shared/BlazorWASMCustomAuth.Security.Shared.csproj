@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlazorWASMCustomAuth.PagingSortingFiltering\BlazorWASMCustomAuth.PagingSortingFiltering.csproj" />
-    <ProjectReference Include="..\BlazorWASMCustomAuth.Validations\BlazorWASMCustomAuth.Validations.csproj" />
   </ItemGroup>
 
 </Project>

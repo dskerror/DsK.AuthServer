@@ -1,4 +1,4 @@
-﻿using BlazorWASMCustomAuth.Validations;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -8,22 +8,19 @@ namespace BlazorWASMCustomAuth.Security.Shared
     {
         [Required]
         [StringLength(256, MinimumLength = 3)]
+        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [DefaultValue("jsmith")]
         public string? Username { get; set; }
-
+         
         [Required]
         [StringLength(256, MinimumLength = 3)]
+        [DefaultValue("John Smith")]
         public string? FullName { get; set; }
 
         [Required]
         [StringLength(256, MinimumLength = 6)]
         [EmailAddress]
+        [DefaultValue("jsmith@gmail.com")]
         public string? Email { get; set; }
-
-        public ModelValidation ValidateModel()
-		{
-            ModelValidation modelValidation = new ModelValidation();
-            modelValidation.Validate(PropertyValidation.CantContainSpace("Username", Username));
-            return modelValidation;
-		}
 	}
 }

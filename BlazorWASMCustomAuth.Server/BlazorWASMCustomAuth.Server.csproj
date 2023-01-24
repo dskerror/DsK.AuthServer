@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\**" />
     <Compile Remove="Security\**" />
+    <Content Remove="Models\**" />
     <Content Remove="Security\**" />
+    <EmbeddedResource Remove="Models\**" />
     <EmbeddedResource Remove="Security\**" />
+    <None Remove="Models\**" />
     <None Remove="Security\**" />
   </ItemGroup>
 
@@ -28,10 +32,6 @@
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.EntityFramework\BlazorWASMCustomAuth.Security.EntityFramework.csproj" />
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Infrastructure\BlazorWASMCustomAuth.Security.Infrastructure.csproj" />
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Shared\BlazorWASMCustomAuth.Security.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
