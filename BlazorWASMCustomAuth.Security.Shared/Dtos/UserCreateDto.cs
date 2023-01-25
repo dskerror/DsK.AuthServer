@@ -15,7 +15,7 @@ namespace BlazorWASMCustomAuth.Security.Shared
         [Required]
         [StringLength(256, MinimumLength = 3)]
         [DefaultValue("John Smith")]
-        public string? FullName { get; set; }
+        public string? Name { get; set; }
 
         [Required]
         [StringLength(256, MinimumLength = 6)]

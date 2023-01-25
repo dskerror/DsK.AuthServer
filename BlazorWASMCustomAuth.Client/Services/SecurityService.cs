@@ -8,7 +8,6 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Net.Http.Headers;
-using BlazorWASMCustomAuth.Validations;
 
 namespace BlazorWASMCustomAuth.Client.Services
 {

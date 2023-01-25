@@ -24,6 +24,7 @@ builder.Services.AddDbContext<SecurityTablesTestContext>(options =>
 });
 
 builder.Services.AddScoped<SecurityService>();
+builder.Services.AddAutoMapper(typeof(UserProfile));
 
 builder.Services.Configure<TokenSettingsModel>(builder.Configuration.GetSection("TokenSettings"));
 

@@ -1,4 +1,5 @@
-﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿using AutoMapper;
+using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,12 +12,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
 
-            var record = new User()
-            {
-                Username = model.Username,
-                Email = model.Email,
-                Name = model.FullName
-            };
+            var record = new User();
+            Mapper.Map(model, record);
+            //var record = new User()
+            //{
+            //    Username = model.Username,
+            //    Email = model.Email,
+            //    Name = model.Name
+            //};
 
             db.Users.Add(record);
             try
