@@ -1,37 +1,55 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Data;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
-    {  
+    {
         public List<string> GetUserPermissions(string? username)
         {
-            List<string> permissions = new List<string>();
+            var permissionAllow = (from u in db.Users
+                                   join up in db.UserPermissions on u.Id equals up.UserId
+                                   join p in db.Permissions on up.PermissionId equals p.Id
+                                   where u.Username == username && up.Allow == true
+                                   select p.PermissionName).ToList();
 
-            var userPermissionsDt = dm.ExecDataTableSP("sp_UserPermissions", "Username", username ?? "");
 
-            foreach (DataRow permission in userPermissionsDt.Rows)
-            {
-                permissions.Add(permission[0].ToString() ?? "");
-            }
-            return permissions;
+            var permissionDeny = (from u in db.Users
+                                  join up in db.UserPermissions on u.Id equals up.UserId
+                                  join p in db.Permissions on up.PermissionId equals p.Id
+                                  where u.Username == username && up.Allow == false
+                                  select p.PermissionName).ToList();
+
+            var RolePermissions = (from u in db.Users
+                                   join ur in db.UserRoles on u.Id equals ur.UserId
+                                   join r in db.Roles on ur.RoleId equals r.Id
+                                   join rp in db.RolePermissions on r.Id equals rp.RoleId
+                                   join p in db.Permissions on rp.PermissionId equals p.Id
+                                   where u.Username == username
+                                   select p.PermissionName).ToList();
+
+            var finalList = permissionAllow.Concat(RolePermissions).Distinct().ToList();
+
+
+            var setToRemove = new HashSet<string>(permissionDeny);
+            finalList.RemoveAll(x => setToRemove.Contains(x));
+
+            //return new APIResult(finalList);
+            return finalList;
         }
 
-        public APIResult GetUserPermissionsNew(string? username)
-        {
-            var x = db.Users.Where(x => x.Username == username).Include(x => x.UserRoles).ThenInclude(x => x.Role).ThenInclude(x => x.RolePermissions).ToList();
-            return new APIResult(x);
-        }
-
-        public APIResult UserPermissionCreate(UserPermission model)
+        public APIResult UserPermissionCreate(UserPermissionCreateDto model)
         {
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
-          
-            db.UserPermissions.Add(model);
+
+            var record = new UserPermission();
+            Mapper.Map(model, record);
+
+            db.UserPermissions.Add(record);
 
             try
             {
@@ -45,13 +63,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             if (recordsCreated == 1)
             {
+                result.Result = record;
                 result.Message = "Record Created";
             }
 
             return result;
         }
 
-    
+
 
         public APIResult UserPermissionDelete(int id)
         {

@@ -11,12 +11,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
-            var record = new UserRole()
-            {
-                RoleId = model.RoleId,
-                UserId = model.UserId
-            }
-            ;
+
+            var record = new UserRole();
+            Mapper.Map(model, record);
+
             db.UserRoles.Add(record);
 
             try

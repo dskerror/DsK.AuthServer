@@ -28,7 +28,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
-        public IActionResult RolePermissionCreate(RolePermission model)
+        public IActionResult RolePermissionCreate(RolePermissionCreateDto model)
         {
             var result = SecurityService.RolePermissionCreate(model);
             return Ok(result);
@@ -36,7 +36,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpDelete]
         //[Authorize(Roles = "admin,RoleDelete")]
-        public IActionResult RolePermissionDelete(RolePermission model)
+        public IActionResult RolePermissionDelete(RolePermissionDeleteDto model)
         {
             var result = SecurityService.RolePermissionDelete(model);
             return Ok(result);

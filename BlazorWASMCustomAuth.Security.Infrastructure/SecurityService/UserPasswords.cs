@@ -20,7 +20,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 UserId = model.UserId,
                 HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt),
                 Salt = Convert.ToHexString(ramdomSalt),
-                DateCreated = DateTime.UtcNow
+                DateCreated = DateTime.Now
             };
 
             db.UserPasswords.Add(userPassword);

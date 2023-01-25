@@ -12,11 +12,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
 
-            var record = new Role()
-            {
-                RoleName = model.RoleName,
-                RoleDescription= model.RoleDescription
-            };
+            var record = new Role();
+            Mapper.Map(model, record);
 
             db.Roles.Add(record);
 
@@ -58,8 +55,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             if (record != null)
             {
-                record.RoleName = model.RoleName;
-                record.RoleDescription = model.RoleDescription;
+                Mapper.Map(model, record);
             }
 
             try

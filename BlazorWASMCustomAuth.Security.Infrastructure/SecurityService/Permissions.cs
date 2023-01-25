@@ -12,11 +12,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
 
-            var record = new Permission()
-            {
-                PermissionName = model.PermissionName,
-                PermissionDescription = model.PermissionDescription
-            };
+            var record = new Permission();
+            Mapper.Map(model, record);
 
             db.Permissions.Add(record);
 
@@ -57,8 +54,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             if (record != null)
             {
-                record.PermissionName = model.PermissionName;
-                record.PermissionDescription = model.PermissionDescription;
+                Mapper.Map(model, record);                
             }
 
             try

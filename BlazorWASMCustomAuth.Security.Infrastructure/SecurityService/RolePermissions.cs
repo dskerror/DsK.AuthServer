@@ -7,16 +7,13 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult RolePermissionCreate(RolePermission model)
+        public APIResult RolePermissionCreate(RolePermissionCreateDto model)
         {
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
 
-            var record = new RolePermission()
-            {
-                RoleId = model.RoleId,
-                PermissionId = model.PermissionId
-            };
+            var record = new RolePermission();
+            Mapper.Map(model, record);
 
             db.RolePermissions.Add(record);
 
@@ -49,11 +46,15 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return result;
         }
 
-        public APIResult RolePermissionDelete(RolePermission model)
+        public APIResult RolePermissionDelete(RolePermissionDeleteDto model)
         {
             APIResult result = new APIResult(model);
+
+            var recordToDelete = new RolePermission();
+            Mapper.Map(model, recordToDelete);
+
             int recordsDeleted = 0;
-            var record = db.RolePermissions.Attach(new RolePermission { RoleId = model.RoleId, PermissionId = model.PermissionId });
+            var record = db.RolePermissions.Attach(recordToDelete);
             record.State = EntityState.Deleted;
 
             try

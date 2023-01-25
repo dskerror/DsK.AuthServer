@@ -24,7 +24,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
-        public IActionResult AuthenticationProvidersCreate(AuthenticationProvider model)
+        public IActionResult AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
         {
             var result = SecurityService.AuthenticationProvidersCreate(model);
             return Ok(result);
@@ -32,7 +32,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPut]
         //[Authorize(Roles = "admin,RoleUpdate")]
-        public IActionResult AuthenticationProvidersUpdate(AuthenticationProvider model)
+        public IActionResult AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
         {
             var result = SecurityService.AuthenticationProvidersUpdate(model);
             return Ok(result);

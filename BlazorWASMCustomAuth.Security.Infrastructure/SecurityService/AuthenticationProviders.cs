@@ -7,12 +7,15 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult AuthenticationProvidersCreate(AuthenticationProvider model)
+        public APIResult AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
         {
             APIResult result = new APIResult(model);
             int recordsCreated = 0;
 
-            db.AuthenticationProviders.Add(model);
+            var record = new AuthenticationProvider();
+            Mapper.Map(model, record);
+
+            db.AuthenticationProviders.Add(record);
 
             try
             {
@@ -44,20 +47,15 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return result;
         }
 
-        public APIResult AuthenticationProvidersUpdate(AuthenticationProvider model)
+        public APIResult AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
         {
             APIResult result = new APIResult(model);
             int recordsUpdated = 0;
             var record = db.AuthenticationProviders.FirstOrDefault(x => x.Id == model.Id);
 
             if (record != null)
-            {
-                record.AuthenticationProviderName = model.AuthenticationProviderName;
-                record.AuthenticationProviderType = model.AuthenticationProviderType;
-                record.Domain = model.Domain;
-                record.Username = model.Username;
-                record.Password = model.Password;
-
+            {   
+                Mapper.Map(model, record);
             }
 
             try

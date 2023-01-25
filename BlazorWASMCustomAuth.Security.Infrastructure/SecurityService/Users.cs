@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,12 +13,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             var record = new User();
             Mapper.Map(model, record);
-            //var record = new User()
-            //{
-            //    Username = model.Username,
-            //    Email = model.Email,
-            //    Name = model.Name
-            //};
 
             db.Users.Add(record);
             try
@@ -40,18 +33,19 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-
         public APIResult UsersGet(int id = 0)
         {
             APIResult result = new APIResult(id);
+
             if (id == 0)
+
                 result.Result = db.Users.ToList();
+                
             else
                 result.Result = db.Users.Where(x => x.Id == id).FirstOrDefault();
 
             return result;
         }
-
         public APIResult UserUpdate(UserUpdateDto model)
         {
             APIResult result = new APIResult(model);
@@ -60,8 +54,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             if (record != null)
             {
-                record.Email = model.Email;
-                record.Name = model.Name;
+                Mapper.Map(model, record);
+                //record.Email = model.Email;
+                //record.Name = model.Name;
             }
 
             try
@@ -92,12 +87,15 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             try
             {
                 recordsDeleted = db.SaveChanges();
+                
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.Message = ex.Message;
             }
+
+            result.Result = recordsDeleted;
 
             return result;
         }

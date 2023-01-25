@@ -28,7 +28,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             {
                 Token = token.Token,
                 RefreshToken = token.RefreshToken,
-                TokenRefreshedDateTime = DateTime.UtcNow,
+                TokenRefreshedDateTime = DateTime.Now,
             });
 
             db.SaveChanges();
@@ -71,7 +71,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var newtoken = GenerateAuthenticationToken(username);
             userToken.RefreshToken = newtoken.RefreshToken;
             userToken.Token = newtoken.Token;
-            userToken.TokenRefreshedDateTime = DateTime.UtcNow;
+            userToken.TokenRefreshedDateTime = DateTime.Now;
             db.SaveChanges();
             result.Result = userToken;
             result.Message = "Token Refreshed";
