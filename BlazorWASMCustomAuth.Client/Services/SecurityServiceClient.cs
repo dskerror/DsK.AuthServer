@@ -8,15 +8,16 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Net.Http.Headers;
+using BlazorWASMCustomAuth.Security.Infrastructure;
 
 namespace BlazorWASMCustomAuth.Client.Services
 {
-    public class SecurityService
+    public class SecurityServiceClient
     {
         private readonly AuthenticationStateProvider _customAuthenticationProvider;
         private readonly ILocalStorageService _localStorageService;
         private readonly HttpClient _httpClient;
-        public SecurityService(ILocalStorageService localStorageService,
+        public SecurityServiceClient(ILocalStorageService localStorageService,
             AuthenticationStateProvider customAuthenticationProvider,
             HttpClient httpClient)
         {
@@ -42,17 +43,17 @@ namespace BlazorWASMCustomAuth.Client.Services
             return true;
         }
 
-        public async Task UserCreate(UserCreateDto model)
+        public async Task<APIResultNew<UserDto>> UserCreate(UserCreateDto model)
         {
-            var response = await _httpClient.PostAsJsonAsync<UserCreateDto>("/api/security/usercreate", model);
+            var response = await _httpClient.PostAsJsonAsync("/api/security/users", model);
 
             if (!response.IsSuccessStatusCode)
             {
-                int xx = 1;
+                return null;
             }
-            var x = await response.Content.ReadFromJsonAsync<UserCreateDto>();
+            var result = await response.Content.ReadFromJsonAsync<APIResultNew<UserDto>>();
 
-            //return true;
+            return result;
         }
 
         public async Task<bool> UserVerifyExistsByUsername(string username)
@@ -110,38 +111,37 @@ namespace BlazorWASMCustomAuth.Client.Services
                 return true;
             }
         }
-        //public async Task<UsersGetDTO> UsersGet(PagingSortingFilteringRequest request)
-        //{
-        //    var token = await _localStorageService.GetItemAsync<string>("token");
-        //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-        //    //return await _httpClient.GetFromJsonAsync<List<string>>("/test/todos");
+        public async Task<APIResultNew<List<UserDto>>> UsersGet()
+        {
+            var token = await _localStorageService.GetItemAsync<string>("token");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);            
 
-        //    var response = await _httpClient.GetAsync("/api/Security/UsersGet");
-        //    if (!response.IsSuccessStatusCode)
-        //    {
-        //        return null;
-        //    }
+            var response = await _httpClient.GetAsync("/api/Security/users");
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
 
-        //    var responseAsString = await response.Content.ReadAsStringAsync();
+            var responseAsString = await response.Content.ReadAsStringAsync();
 
-        //    try
-        //    {
-        //        var responseObject = JsonSerializer.Deserialize<UsersGetDTO>(responseAsString, new JsonSerializerOptions
-        //        {
-        //            PropertyNameCaseInsensitive = true,
-        //            ReferenceHandler = ReferenceHandler.Preserve,
-        //            IncludeFields = true
-        //        });
-        //        return responseObject;
-        //    }
-        //    catch (Exception ex)
-        //    {
+            try
+            {
+                var responseObject = JsonSerializer.Deserialize<APIResultNew<List<UserDto>>>(responseAsString, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    IncludeFields = true
+                });
+                
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
 
-        //        Console.Write(ex.Message);
-        //        return null;
-
-        //    }
-        //}
+                Console.Write(ex.Message);
+                return null;
+            }
+        }
         public async Task<bool> LogoutAsync()
         {
             await _localStorageService.RemoveItemAsync("token");

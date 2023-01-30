@@ -1,14 +1,15 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult UserCreate(UserCreateDto model)
+        public APIResultNew<UserDto> UserCreate(UserCreateDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResultNew<UserDto> result = new APIResultNew<UserDto>();
             int recordsCreated = 0;
 
             var record = new User();
@@ -25,24 +26,28 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            result.Result = record;
-            if (recordsCreated == 1)
-            {
+            result.Result = Mapper.Map(record, result.Result);
+            if (recordsCreated == 1)            
                 result.Message = "Record Created";
-            }
-
+            
             return result;
         }
-        public APIResult UsersGet(int id = 0)
+        public APIResultNew<List<UserDto>> UsersGet(int id = 0)
         {
-            APIResult result = new APIResult(id);
+            var result = new APIResultNew<List<UserDto>>();
 
             if (id == 0)
+            {
+                var userList = db.Users.ToList();
+                result.Result = Mapper.Map<List<User>, List<UserDto>>(userList);
 
-                result.Result = db.Users.ToList();
-                
+            }
+
             else
-                result.Result = db.Users.Where(x => x.Id == id).FirstOrDefault();
+            {
+                var userList = db.Users.Where(x => x.Id == id).ToList();
+                result.Result = Mapper.Map<List<User>, List<UserDto>>(userList);
+            }
 
             return result;
         }

@@ -6,7 +6,10 @@
     </div>
 
     <main>
-        <div class="top-row px-4">            
+        <div class="top-row px-4">    
+            <MudThemeProvider />
+            <MudDialogProvider />
+            <MudSnackbarProvider />
             <AuthorizeView>
                 <Authorized>
                     Hi @context.User.Identity.Name

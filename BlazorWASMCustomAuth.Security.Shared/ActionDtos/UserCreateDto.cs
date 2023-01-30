@@ -8,7 +8,7 @@ namespace BlazorWASMCustomAuth.Security.Shared
     {
         [Required]
         [StringLength(256, MinimumLength = 3)]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Username can't contain spaces.")]
         [DefaultValue("jsmith")]
         public string? Username { get; set; }
          

@@ -1,6 +1,5 @@
 ﻿@page "/admin/users"
-@inject SecurityService securityService;
-@inject NavigationManager _navigationManager;
+
 @using BlazorWASMCustomAuth.Security.Shared;
 @using BlazorWASMCustomAuth.PagingSortingFiltering;
 @using System.Security.Claims;
@@ -8,7 +7,7 @@
 @*<AuthorizeView>
     <Authorized>*@
 <h2>Users</h2>
-@if (response == null)
+@if (!_loaded)
 {
     <h3>Loading...</h3>
 }
@@ -28,7 +27,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @*@foreach (var user in response.UserList)
+            @foreach (var user in users)
             {
                 <tr>
                     <td>@user.Id</td>
@@ -39,7 +38,7 @@ else
                     <td>X</td>
                     <td>X</td>
                 </tr>
-            }*@
+            }
         </tbody>
     </table>
 
@@ -55,22 +54,3 @@ else
         <Login />
     </NotAuthorized>
 </AuthorizeView>*@
-
-
-@code {
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationState { get; set; }
-    private List<Claim> userClaims;
-
-    private string response = "ok";
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    var auth = authenticationState.Result;
-    //    if (auth.User.Identity.IsAuthenticated)
-    //    {
-    //        userClaims = auth.User.Claims.ToList();
-    //    }
-    //    response = await securityService.UsersGet(new PagingSortingFilteringRequest());
-    //}
-}

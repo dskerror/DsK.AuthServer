@@ -1,151 +1,52 @@
 ﻿@page "/admin/usercreate"
-@inject SecurityService securityService;
-@inject NavigationManager _navigationManager;
-@using BlazorWASMCustomAuth.Security.Shared;
-@using BlazorWASMCustomAuth.PagingSortingFiltering;
-@using System.Security.Claims;
 
 @*<AuthorizeView>
     <Authorized>*@
 <h3><NavLink href="/admin/users">Users</NavLink> > Create User</h3>
 
-<div>
-    <div class="row">
-        <div class="col-6">
-            <div class="mb-3">
-                <label for="Username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="Username" placeholder="Username" @bind-value="@userCreateModel.Username"> @*@onfocusout="@ValidateUsername"*@
-                <div class="">@ValidationUsernameMessage</div>
-            </div>
+
+<EditForm Model="userCreateModel" OnSubmit="Create" class="card card-body bg-light mt-5">
+    <DataAnnotationsValidator />
+    <h3>Create Employee</h3>
+    <hr />
+    <ValidationSummary />
+    <div class="form-group row">
+        <label for="Username" class="col-sm-2 col-form-label">Username</label>
+        <div class="col-sm-10">
+            <InputText id="Username" class="form-control" placeholder="Username" @bind-Value="userCreateModel.Username" />
+            <ValidationMessage For="@(() => userCreateModel.Username)" />
         </div>
-        <div class="col-6"></div>
+    </div>
+    <div class="form-group row">
+        <label for="Email" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+            <InputText id="Email" class="form-control" placeholder="Email" @bind-Value="userCreateModel.Email" />
+            <ValidationMessage For="@(() => userCreateModel.Email)" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="Name" class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-10">
+            <InputText id="Name" class="form-control" placeholder="Name" @bind-Value="userCreateModel.Name" />
+            <ValidationMessage For="@(() => userCreateModel.Name)" />
+        </div>
     </div>
 
     <div class="row">
-        <div class="col-6">
-            <div class="mb-3">
-                <label for="Email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="Email" placeholder="Email" @bind-value="@userCreateModel.Email"> @*@onfocusout="@ValidateEmail"*@
-                <div class="">@ValidationEmailMessage</div>
-            </div>
+        <div class="col-md-12 text-right">
+            <button type="submit" class="btn btn-success">Create</button>
         </div>
-        <div class="col-6"></div>
     </div>
 
-    <div class="row">
-        <div class="col-6">
-            <div class="mb-3">
-                <label for="FullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="FullName" placeholder="FullName" @bind-value="@userCreateModel.Name"> @*@onfocusout="@ValidateFullName"*@
-                <div class="">@ValidationFullNameMessage</div>
-            </div>
-        </div>
-        <div class="col-6"></div>
-    </div>
 
-    <div class="form-group">
-        <button type="button" onclick="@TryUserCreate" class="btn btn-primary">Submit</button>
-    </div>
-</div>
+
+</EditForm>
+
+<Notification @ref=_notification />
+
 
 @*    </Authorized>
     <NotAuthorized>
         <Login />
     </NotAuthorized>
 </AuthorizeView>*@
-
-
-@code {
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationState { get; set; }
-    private UserCreateDto userCreateModel = new UserCreateDto();
-
-    private string ValidationUsernameMessage = "";
-    private string ValidationEmailMessage = "";
-    private string ValidationFullNameMessage = "";
-    //private APIResult apiresult;
-
-
-
-    //protected override async Task OnInitializedAsync()
-    //{
-
-    //}
-
-    private async Task TryUserCreate()
-    {
-        await securityService.UserCreate(userCreateModel);
-
-        //var modelValidation = userCreateModel.ValidateModel();
-        //if (modelValidation.IsValid)
-        //{
-        //    apiresult = await securityService.UserCreate(userCreateModel);
-        //}
-        //else
-        //{
-
-        //}
-
-    }
-
-    //private async Task<bool> ValidateUsername()
-    //{
-    //    var validation = userCreateModel.ValidateModel();
-    //    ValidationUsernameMessage = validation.GetMessage("Username");
-    //    if (ValidationUsernameMessage == "")
-    //    {
-    //        return false;
-    //    }
-
-    //    var userExists = await securityService.UserVerifyExistsByUsername(userCreateModel.Username ?? "");
-    //    if (userExists)
-    //    {
-    //        ValidationUsernameMessage = "Username already exists.";
-    //        return false;
-    //    }
-
-    //    ValidationUsernameMessage = "";
-    //    return true;
-    //}
-    //private async Task ValidateEmail()
-    //{
-    //    var validation = userCreateModel.ValidateModel();
-    //    if (!validation.IsValid)
-    //    {
-    //        foreach (var message in validation.ValidationMessages)
-    //        {
-    //            if (message.PropertyName == "Email")
-    //            {
-    //                ValidationEmailMessage = message.Message;
-    //                return;
-    //            }
-    //        }
-    //    }
-
-    //    var userExists = await securityService.UserVerifyExistsByEmail(userCreateModel.Email ?? "");
-    //    if (userExists)
-    //    {
-    //        ValidationEmailMessage = "Email already exists.";
-    //        return;
-    //    }
-
-    //    ValidationEmailMessage = "";
-    //}
-    //private void ValidateFullName()
-    //{
-    //    var validation = userCreateModel.ValidateModel();
-    //    if (!validation.IsValid)
-    //    {
-    //        foreach (var message in validation.ValidationMessages)
-    //        {
-    //            if (message.PropertyName == "Name")
-    //            {
-    //                ValidationFullNameMessage = message.Message;
-    //                return;
-    //            }
-    //        }
-    //    }
-
-    //    ValidationFullNameMessage = "";
-    //}
-}
