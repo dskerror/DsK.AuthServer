@@ -1,0 +1,180 @@
+[HttpGet]
+public async Task<ActionResult<IEnumerable<YourModel>>> Get(int page = 1, int pageSize = 10, string sortOrder = "asc", string search = "")
+{
+    var query = _context.YourModel.AsQueryable();
+
+    if (!string.IsNullOrEmpty(search))
+    {
+        query = query.Where(m => m.SomeProperty.Contains(search));
+    }
+
+    switch (sortOrder)
+    {
+        case "desc":
+            query = query.OrderByDescending(m => m.SomeProperty);
+            break;
+        default:
+            query = query.OrderBy(m => m.SomeProperty);
+            break;
+    }
+
+    var pagedData = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return pagedData;
+}
+
+
+
+
+
+
+---------------
+
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Some Property
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in items)
+        {
+            <tr>
+                <td>
+                    @item.SomeProperty
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<Pagination TotalCount="@totalCount" PageSize="pageSize" CurrentPage="currentPage" OnPageChanged="OnPageChanged"></Pagination>
+
+<input type="text" @bind="search" />
+<button type="button" class="btn btn-primary" @onclick="Search">Search</button>
+
+<select @bind="sortOrder">
+    <option value="asc">Ascending</option>
+    <option value="desc">Descending</option>
+</select>
+<button type="button" class="btn btn-primary" @onclick="Sort">Sort</button>
+
+@code {
+    private int pageSize = 10;
+    private int currentPage = 1;
+    private string search = string.Empty;
+    private string sortOrder = "asc";
+    private int totalCount = 0;
+    private List<YourModel> items = new List<YourModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        items = await GetData(currentPage, pageSize, sortOrder, search);
+        totalCount = await GetCount(search);
+    }
+
+    private async Task<List<YourModel>> GetData(int page, int pageSize, string sortOrder, string search)
+    {
+        // call the API using HttpClient or any other HTTP client
+        return await httpClient.GetJsonAsync<List<YourModel>>($"api/YourModels?page={page}&pageSize={pageSize}&sortOrder={sortOrder}&search={search}");
+    }
+
+    private async Task<int> GetCount(string search)
+    {
+        // call the API using HttpClient or any other HTTP client
+        return await httpClient.GetJsonAsync<int>($"api/YourModels/count?search={search}");
+    }
+
+    private void OnPageChanged(int newPage)
+    {
+        currentPage = newPage;
+        LoadData();
+    }
+
+    private async void Search()
+    {
+        currentPage = 1;
+        await LoadData();
+    }
+
+    private async void Sort()
+    {
+        currentPage = 1;
+        await LoadData();
+    }
+}
+
+
+
+-----------
+
+
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+      <a class="page-link" @onclick="() => CurrentPage--" tabindex="-1">Previous</a>
+    </li>
+
+    @for (var i = 1; i <= TotalPages; i++)
+    {
+        <li class="page-item @(i == CurrentPage ? "active" : "")">
+            <a class="page-link" @onclick="() => SetPage(i)">@i</a>
+        </li>
+    }
+
+    <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+      <a class="page-link" @onclick="() => CurrentPage++">Next</a>
+    </li>
+  </ul>
+</nav>
+
+@code {
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int TotalCount { get; set; }
+    [Parameter] public int PageSize { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+
+    private int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+
+    private void SetPage(int page)
+    {
+        if (page < 1 || page > TotalPages)
+        {
+            return;
+        }
+
+        CurrentPage = page;
+        OnPageChanged.InvokeAsync(page);
+    }
+}
+
+
+
+-------------
+
+
+[HttpGet("count")]
+public async Task<ActionResult<int>> Count([FromQuery] string filter)
+{
+    var items = await _context.Items.ToListAsync();
+    if (!string.IsNullOrWhiteSpace(filter))
+    {
+        items = items.Where(item => item.Name.Contains(filter)).ToList();
+    }
+
+    return items.Count;
+}

@@ -51,18 +51,15 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public APIResult UserUpdate(UserUpdateDto model)
+        public APIResult UserUpdate(UserDto model)
         {
             APIResult result = new APIResult(model);
             int recordsUpdated = 0;
             var record = db.Users.FirstOrDefault(x => x.Id == model.Id);
 
-            if (record != null)
-            {
+            if (record != null)           
                 Mapper.Map(model, record);
-                //record.Email = model.Email;
-                //record.Name = model.Name;
-            }
+          
 
             try
             {

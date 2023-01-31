@@ -31,7 +31,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPut]
         //[Authorize(Roles = "admin,UserDelete")]
-        public IActionResult UserUpdate(UserUpdateDto model)
+        public IActionResult UserUpdate(UserDto model)
         {
             var result = SecurityService.UserUpdate(model);
             return Ok(result);

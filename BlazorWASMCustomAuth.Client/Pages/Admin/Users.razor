@@ -1,5 +1,4 @@
 ﻿@page "/admin/users"
-
 @using BlazorWASMCustomAuth.Security.Shared;
 @using BlazorWASMCustomAuth.PagingSortingFiltering;
 @using System.Security.Claims;
@@ -13,8 +12,7 @@
 }
 else
 {
-    
-    <MudButton OnClick="CreateUser">Create User</MudButton>
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateUser" Class="mb-2">Create User</MudButton>
     <MudTable Items="users" Hover="true" Striped="true" Dense="true" Class="mb-2">
         <HeaderContent>
             <MudTh>Id</MudTh>
@@ -29,19 +27,19 @@ else
             <MudTd DataLabel="Id">@context.Id</MudTd>
             <MudTd DataLabel="Username">@context.Username</MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Email">@context.Email</MudTd>            
+            <MudTd DataLabel="Email">@context.Email</MudTd>
             <MudTd DataLabel="ViewUser">
                 <MudIconButton OnClick="() => ViewUser(context.Id)"
-                           Icon="@Icons.Material.Filled.Create"
+                           Icon="@Icons.Material.Filled.ViewColumn"
                            Color="Color.Primary"
                            Variant="Variant.Filled">
                 </MudIconButton>
             </MudTd>
             <MudTd DataLabel="EditUser">
                 <MudIconButton OnClick="() => EditUser(context.Id)"
-                               Icon="@Icons.Material.Filled.Edit"
-                               Color="Color.Primary"
-                               Variant="Variant.Filled">
+                           Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled">
                 </MudIconButton>
             </MudTd>
             <MudTd DataLabel="DeleteUser">

@@ -1,0 +1,60 @@
+﻿@page "/admin/useredit/{id:int}"
+
+@*<AuthorizeView>
+    <Authorized>*@
+<h3><NavLink href="/admin/users">Users</NavLink> > Edit User</h3>
+
+@if (!_loaded)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <EditForm Model="user" OnValidSubmit="EditUser">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <MudCard Class="mb-2">
+            <MudCardContent>
+
+                <MudTextField ReadOnly="true" Label="Username" @bind-Value="user.Username"
+                          For="@(()=>user.Username)">
+                </MudTextField>
+
+                <MudTextField Label="Email" @bind-Value="user.Email"
+                          For="@(()=>user.Email)">
+                </MudTextField>
+
+                <MudTextField Label="Name" @bind-Value="user.Name"
+                          For="@(()=>user.Name)">
+                </MudTextField>
+
+                <MudSwitch @bind-Checked="@user.EmailConfirmed" Label="Email Confirmed" Color="Color.Success" />
+
+                <MudDatePicker Label="Lockout End" Editable="true" @bind-Date="user.LockoutEnd" />
+
+                <MudSwitch @bind-Checked="@user.LockoutEnabled" Label="Lockout" Color="Color.Success" />
+
+                <MudTextField Label="Access Failed Count" @bind-Value="user.AccessFailedCount"
+                          For="@(()=>user.AccessFailedCount)">
+                </MudTextField>
+
+                <MudSwitch @bind-Checked="@user.TwoFactorEnabled" Label="Two Factor" Color="Color.Success" />
+
+            </MudCardContent>
+        </MudCard>
+
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <button type="submit" class="btn btn-success">Save Changes</button>
+            </div>
+        </div>
+
+    </EditForm>
+}
+
+
+@*    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>*@

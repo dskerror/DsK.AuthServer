@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Net.Http.Headers;
 using BlazorWASMCustomAuth.Security.Infrastructure;
+using AutoMapper;
 
 namespace BlazorWASMCustomAuth.Client.Services
 {
@@ -42,10 +43,21 @@ namespace BlazorWASMCustomAuth.Client.Services
             ((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
             return true;
         }
-
         public async Task<APIResultNew<UserDto>> UserCreate(UserCreateDto model)
         {
             var response = await _httpClient.PostAsJsonAsync("/api/security/users", model);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            var result = await response.Content.ReadFromJsonAsync<APIResultNew<UserDto>>();
+
+            return result;
+        }
+        public async Task<APIResultNew<UserDto>> UserEdit(UserDto model)
+        {   
+            var response = await _httpClient.PutAsJsonAsync("/api/security/users", model);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -83,7 +95,6 @@ namespace BlazorWASMCustomAuth.Client.Services
                 return true;
             }
         }
-
         public async Task<bool> UserVerifyExistsByEmail(string email)
         {
 
@@ -111,12 +122,12 @@ namespace BlazorWASMCustomAuth.Client.Services
                 return true;
             }
         }
-        public async Task<APIResultNew<List<UserDto>>> UsersGet()
+        public async Task<APIResultNew<List<UserDto>>> UsersGet(int id = 0)
         {
             var token = await _localStorageService.GetItemAsync<string>("token");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);            
 
-            var response = await _httpClient.GetAsync("/api/Security/users");
+            var response = await _httpClient.GetAsync($"/api/Security/users/?id={id}");
             if (!response.IsSuccessStatusCode)
             {
                 return null;
@@ -141,6 +152,19 @@ namespace BlazorWASMCustomAuth.Client.Services
                 Console.Write(ex.Message);
                 return null;
             }
+        }
+        public async Task<APIResultNew<UserDto>> UserGet(int id)
+        {
+            var result = await UsersGet(id);
+            var newResult = new APIResultNew<UserDto>
+            {
+                Exception = result.Exception,
+                HasError = result.HasError,
+                Message = result.Message,
+                Result = result.Result.FirstOrDefault()
+            };
+
+            return newResult;
         }
         public async Task<bool> LogoutAsync()
         {

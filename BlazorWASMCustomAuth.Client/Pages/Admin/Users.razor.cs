@@ -29,18 +29,17 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             {
                 users = response.Result;
                 _loaded = true;
-            }
-            
+            }            
         }
 
         private void EditUser(int id)
         {
-
+            _navigationManager.NavigateTo($"/admin/useredit/{id}");
         }
 
         private void ViewUser(int id)
         {
-
+            _navigationManager.NavigateTo($"/admin/userview/{id}");
         }
 
         private void DeleteUser(int id)
@@ -51,8 +50,6 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private void CreateUser()
         {
             _navigationManager.NavigateTo("/admin/usercreate");
-
-            //<NavLink href="/admin/usercreate">Create User</NavLink>
         }
     }
 }

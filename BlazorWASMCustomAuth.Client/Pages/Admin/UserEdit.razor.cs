@@ -6,38 +6,39 @@ using System.Security.Claims;
 using MudBlazor;
 using System.Drawing;
 using System.Security.Policy;
+using AutoMapper;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
-    public partial class UserCreate
+    public partial class UserEdit
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
-        private UserCreateDto userCreateModel = new UserCreateDto();
-        //private APIResult apiresult;
+        public UserDto user { get; set; }
+        [Parameter] public int id { get; set; }
+        private bool _loaded;
 
-
-
-        //protected override async Task OnInitializedAsync()
-        //{
-
-        //}
-
-        private async Task CreateUser()
+        protected override async Task OnInitializedAsync()
         {
-            var result = await securityService.UserCreate(userCreateModel);
+            var result = await securityService.UserGet(id);
+            if (result != null)
+            {
+                user = result.Result;
+                _loaded = true;
+            }
+        }
+
+        private async Task EditUser()
+        {
+            var result = await securityService.UserEdit(user);
 
             if (result != null)
                 if (result.HasError)
                     Snackbar.Add(result.Message, Severity.Error);
                 else
-                {
                     Snackbar.Add(result.Message, Severity.Normal);
-                    _navigationManager.NavigateTo($"/admin/useredit/{result.Result.Id}");
-                }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
-
         }
     }
 }

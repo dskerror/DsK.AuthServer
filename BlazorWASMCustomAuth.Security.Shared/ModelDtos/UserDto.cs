@@ -1,12 +1,19 @@
-﻿namespace BlazorWASMCustomAuth.Security.Shared;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BlazorWASMCustomAuth.Security.Shared;
 public partial class UserDto
 {
     public int Id { get; set; }
 
+   
     public string Username { get; set; } = null!;
 
+    [Required]
+    [StringLength(256, MinimumLength = 3)]
     public string Name { get; set; } = null!;
-
+    [Required]
+    [StringLength(256, MinimumLength = 6)]
+    [EmailAddress]
     public string Email { get; set; } = null!;
 
     public bool EmailConfirmed { get; set; }

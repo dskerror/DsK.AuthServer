@@ -1,5 +1,5 @@
-﻿namespace BlazorWASMCustomAuth.Security.Infrastructure
-{
+﻿namespace BlazorWASMCustomAuth.Security.Shared;
+
     public class APIResultNew<T> where T : class
     {
         public APIResultNew()
@@ -13,4 +13,4 @@
         public bool HasError { get; set; }
         public Exception? Exception { get; set; }
     }
-}
+

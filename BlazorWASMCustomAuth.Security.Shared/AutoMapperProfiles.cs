@@ -22,7 +22,7 @@ public class AutoMapperProfiles : Profile
         //           opt => opt.MapFrom(src => src.Email));
         //CreateMap<User, UserCreateDto>();
 
-        CreateMap<UserUpdateDto, User>().ReverseMap();
+        CreateMap<User, User>().ReverseMap().ForMember(dest => dest.Username, act => act.Ignore());
 
         //ModelDtos
         CreateMap<AuthenticationProviderDto, AuthenticationProvider>().ReverseMap();
