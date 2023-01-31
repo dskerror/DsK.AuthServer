@@ -32,5 +32,27 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             }
             
         }
+
+        private void EditUser(int id)
+        {
+
+        }
+
+        private void ViewUser(int id)
+        {
+
+        }
+
+        private void DeleteUser(int id)
+        {
+
+        }
+
+        private void CreateUser()
+        {
+            _navigationManager.NavigateTo("/admin/usercreate");
+
+            //<NavLink href="/admin/usercreate">Create User</NavLink>
+        }
     }
 }

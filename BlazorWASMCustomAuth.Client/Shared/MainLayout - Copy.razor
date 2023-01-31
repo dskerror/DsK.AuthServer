@@ -1,0 +1,28 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">    
+            <MudThemeProvider />
+            <MudDialogProvider />
+            <MudSnackbarProvider />
+            <AuthorizeView>
+                <Authorized>
+                    Hi @context.User.Identity.Name
+                    <NavLink href="/logout">Logout</NavLink>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink href="/login">Login</NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

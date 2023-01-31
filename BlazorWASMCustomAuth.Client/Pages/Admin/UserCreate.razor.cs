@@ -23,7 +23,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         //}
 
-        private async Task Create()
+        private async Task CreateUser()
         {
             var result = await securityService.UserCreate(userCreateModel);
 

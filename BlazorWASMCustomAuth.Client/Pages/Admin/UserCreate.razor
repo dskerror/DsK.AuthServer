@@ -5,40 +5,29 @@
 <h3><NavLink href="/admin/users">Users</NavLink> > Create User</h3>
 
 
-<EditForm Model="userCreateModel" OnSubmit="Create" class="card card-body bg-light mt-5">
+<EditForm Model="userCreateModel" OnValidSubmit="CreateUser">
     <DataAnnotationsValidator />
-    <h3>Create Employee</h3>
-    <hr />
     <ValidationSummary />
-    <div class="form-group row">
-        <label for="Username" class="col-sm-2 col-form-label">Username</label>
-        <div class="col-sm-10">
-            <InputText id="Username" class="form-control" placeholder="Username" @bind-Value="userCreateModel.Username" />
-            <ValidationMessage For="@(() => userCreateModel.Username)" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="Email" class="col-sm-2 col-form-label">Email</label>
-        <div class="col-sm-10">
-            <InputText id="Email" class="form-control" placeholder="Email" @bind-Value="userCreateModel.Email" />
-            <ValidationMessage For="@(() => userCreateModel.Email)" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="Name" class="col-sm-2 col-form-label">Name</label>
-        <div class="col-sm-10">
-            <InputText id="Name" class="form-control" placeholder="Name" @bind-Value="userCreateModel.Name" />
-            <ValidationMessage For="@(() => userCreateModel.Name)" />
-        </div>
-    </div>
+    <MudCard Class="mb-2">
+        <MudCardContent>
+            <MudTextField Label="Username" @bind-Value="userCreateModel.Username"
+                          For="@(()=>userCreateModel.Username)"
+                          HelperText="Can't contain spaces">
+            </MudTextField>
+            <MudTextField Label="Email" @bind-Value="userCreateModel.Email"
+                          For="@(()=>userCreateModel.Email)">
+            </MudTextField>
+            <MudTextField Label="Name" @bind-Value="userCreateModel.Name"
+                          For="@(()=>userCreateModel.Name)">
+            </MudTextField>
+        </MudCardContent>
+    </MudCard>
 
     <div class="row">
         <div class="col-md-12 text-right">
             <button type="submit" class="btn btn-success">Create</button>
         </div>
     </div>
-
-
 
 </EditForm>
 

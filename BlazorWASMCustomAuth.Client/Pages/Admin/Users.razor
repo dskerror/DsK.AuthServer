@@ -13,40 +13,52 @@
 }
 else
 {
-    <NavLink href="/admin/usercreate">Create User</NavLink>
-    <table class="table">
-        <thead>
-            <tr>
-                <td>Id</td>
-                <td>Username</td>
-                <td>Name</td>
-                <td>Email</td>
-                <td>View</td>
-                <td>Edit</td>
-                <td>Delete</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in users)
-            {
-                <tr>
-                    <td>@user.Id</td>
-                    <td>@user.Username</td>
-                    <td>@user.Name</td>
-                    <td>@user.Email</td>
-                    <td>X</td>
-                    <td>X</td>
-                    <td>X</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    
+    <MudButton OnClick="CreateUser">Create User</MudButton>
+    <MudTable Items="users" Hover="true" Striped="true" Dense="true" Class="mb-2">
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Username</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>View</MudTh>
+            <MudTh>Edit</MudTh>
+            <MudTh>Delete</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Username">@context.Username</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>            
+            <MudTd DataLabel="ViewUser">
+                <MudIconButton OnClick="() => ViewUser(context.Id)"
+                           Icon="@Icons.Material.Filled.Create"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled">
+                </MudIconButton>
+            </MudTd>
+            <MudTd DataLabel="EditUser">
+                <MudIconButton OnClick="() => EditUser(context.Id)"
+                               Icon="@Icons.Material.Filled.Edit"
+                               Color="Color.Primary"
+                               Variant="Variant.Filled">
+                </MudIconButton>
+            </MudTd>
+            <MudTd DataLabel="DeleteUser">
+                <MudIconButton OnClick="() => DeleteUser(context.Id)"
+                           Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled">
+                </MudIconButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
 
     <ul>
         @*<li>Current Page : @response.CurrentPage</li>
-        <li>Total Pages : @response.TotalPages</li>
-        <li>Page Size : @response.PageSize</li>
-        <li>Total Rows : @response.TotalRows</li>*@
+    <li>Total Pages : @response.TotalPages</li>
+    <li>Page Size : @response.PageSize</li>
+    <li>Total Rows : @response.TotalRows</li>*@
     </ul>
 }
 @*    </Authorized>
