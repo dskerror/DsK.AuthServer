@@ -5,12 +5,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult UserCreateLocalPassword(UserCreateLocalPasswordDto model)
+        public APIResult<string> UserCreateLocalPassword(UserCreateLocalPasswordDto model)
         {
             //TODO : Implement Password Complexity Rules
             //TODO : Implement Previously Used Password Constraint
 
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
 
             var ramdomSalt = SecurityHelpers.RandomizeSalt;
@@ -35,9 +35,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            result.Result = userPassword;
             if (recordsCreated == 1)
             {
+                result.Result = recordsCreated.ToString();
                 result.Message = "Record Created";
             }
 

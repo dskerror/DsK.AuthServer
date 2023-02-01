@@ -1,18 +1,18 @@
 ﻿namespace BlazorWASMCustomAuth.Security.Shared;
 
-    public class APIResult
+public class APIResult<T> where T : class
+{
+    public APIResult()
     {
-        public APIResult(object request)
-        {
-            HasError = false;
-            Message = "";
-            Exception = null;
-            Request = request;
-        }
-        public object? Request { get; set; }
-        public object? Result { get; set; }
-        public string Message { get; set; }
-        public bool HasError { get; set; }
-        public Exception? Exception { get; set; }
+        HasError = false;
+        Message = "";
+        Exception = null;
+        Paging = new PagingResponse();
     }
+    public T? Result { get; set; }
+    public string Message { get; set; }
+    public bool HasError { get; set; }
+    public PagingResponse Paging { get; set; }
+    public Exception? Exception { get; set; }
+}
 

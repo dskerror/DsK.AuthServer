@@ -1,66 +1,44 @@
 ﻿@page "/admin/users"
 @using BlazorWASMCustomAuth.Security.Shared;
-@using BlazorWASMCustomAuth.PagingSortingFiltering;
 @using System.Security.Claims;
 
-@*<AuthorizeView>
-    <Authorized>*@
 <h2>Users</h2>
-@if (!_loaded)
-{
-    <h3>Loading...</h3>
-}
-else
-{
-    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateUser" Class="mb-2">Create User</MudButton>
-    <MudTable Items="users" Hover="true" Striped="true" Dense="true" Class="mb-2">
-        <HeaderContent>
-            <MudTh>Id</MudTh>
-            <MudTh>Username</MudTh>
-            <MudTh>Name</MudTh>
-            <MudTh>Email</MudTh>
-            <MudTh>View</MudTh>
-            <MudTh>Edit</MudTh>
-            <MudTh>Delete</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Id">@context.Id</MudTd>
-            <MudTd DataLabel="Username">@context.Username</MudTd>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Email">@context.Email</MudTd>
-            <MudTd DataLabel="ViewUser">
-                <MudIconButton OnClick="() => ViewUser(context.Id)"
-                           Icon="@Icons.Material.Filled.ViewColumn"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled">
-                </MudIconButton>
-            </MudTd>
-            <MudTd DataLabel="EditUser">
-                <MudIconButton OnClick="() => EditUser(context.Id)"
+
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<UserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
+    <ToolBarContent>
+        <div class="justify-center mud-text-align-center">
+            <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateUser())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create User</MudButton>
+        </div>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="UserDto" SortLabel="Username">Username</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="UserDto" SortLabel="Name">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="UserDto" SortLabel="Email">Email</MudTableSortLabel></MudTh>
+        <MudTh>Details</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+        <MudTd DataLabel="Username">
+            <MudHighlighter Text="@context.Username" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudHighlighter Text="@context.Name" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="Email">
+            <MudHighlighter Text="@context.Email" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="Details">
+            <MudIconButton OnClick="() => ViewUser(context.Id)"
                            Icon="@Icons.Material.Filled.Edit"
                            Color="Color.Primary"
                            Variant="Variant.Filled">
-                </MudIconButton>
-            </MudTd>
-            <MudTd DataLabel="DeleteUser">
-                <MudIconButton OnClick="() => DeleteUser(context.Id)"
-                           Icon="@Icons.Material.Filled.Delete"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled">
-                </MudIconButton>
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
+            </MudIconButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
+    </PagerContent>
+</MudTable>
 
-    <ul>
-        @*<li>Current Page : @response.CurrentPage</li>
-    <li>Total Pages : @response.TotalPages</li>
-    <li>Page Size : @response.PageSize</li>
-    <li>Total Rows : @response.TotalRows</li>*@
-    </ul>
-}
-@*    </Authorized>
-    <NotAuthorized>
-        <Login />
-    </NotAuthorized>
-</AuthorizeView>*@

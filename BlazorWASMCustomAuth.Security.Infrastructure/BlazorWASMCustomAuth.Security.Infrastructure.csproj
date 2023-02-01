@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="7.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.24" />
   </ItemGroup>
 
   <ItemGroup>

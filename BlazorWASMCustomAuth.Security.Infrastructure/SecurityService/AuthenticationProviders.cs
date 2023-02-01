@@ -7,9 +7,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
+        public APIResult<string> AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
 
             var record = new AuthenticationProvider();
@@ -27,7 +27,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            result.Result = recordsCreated;
+            result.Result = recordsCreated.ToString();
             if (recordsCreated == 1)
             {
                 result.Message = "Record Created";
@@ -36,25 +36,31 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return result;
         }
 
-        public APIResult AuthenticationProvidersGet(int id = 0)
+        public APIResult<List<AuthenticationProviderDto>> AuthenticationProvidersGet(int id = 0)
         {
-            APIResult result = new APIResult(id);
+            APIResult<List<AuthenticationProviderDto>> result = new APIResult<List<AuthenticationProviderDto>>();
             if (id == 0)
-                result.Result = db.AuthenticationProviders.ToList();
+            {
+                var items = db.AuthenticationProviders.ToList();
+                result.Result = Mapper.Map<List<AuthenticationProvider>, List<AuthenticationProviderDto>>(items);
+            }
             else
-                result.Result = db.AuthenticationProviders.Where(x => x.Id == id).FirstOrDefault();
+            {
+                var items = db.AuthenticationProviders.Where(x => x.Id == id).ToList();
+                result.Result = Mapper.Map<List<AuthenticationProvider>, List<AuthenticationProviderDto>>(items);
+            }
 
             return result;
         }
 
-        public APIResult AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
+        public APIResult<string> AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
             int recordsUpdated = 0;
             var record = db.AuthenticationProviders.FirstOrDefault(x => x.Id == model.Id);
 
             if (record != null)
-            {   
+            {
                 Mapper.Map(model, record);
             }
 
@@ -68,23 +74,24 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            result.Result = record;
             if (recordsUpdated == 1)
             {
+                result.Result = recordsUpdated.ToString();
                 result.Message = "Record Updated";
             }
 
             return result;
         }
-        public APIResult AuthenticationProvidersDelete(int id)
+        public APIResult<string> AuthenticationProvidersDelete(int id)
         {
-            APIResult result = new APIResult(id);
+            APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
             var record = db.AuthenticationProviders.Attach(new AuthenticationProvider { Id = id });
             record.State = EntityState.Deleted;
             try
-            {
+            {   
                 recordsDeleted = db.SaveChanges();
+                result.Result = recordsDeleted.ToString();
             }
             catch (Exception ex)
             {

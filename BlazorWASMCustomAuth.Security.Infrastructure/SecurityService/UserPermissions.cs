@@ -41,9 +41,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return finalList;
         }
 
-        public APIResult UserPermissionCreate(UserPermissionCreateDto model)
+        public APIResult<string> UserPermissionCreate(UserPermissionCreateDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
 
             var record = new UserPermission();
@@ -63,7 +63,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             if (recordsCreated == 1)
             {
-                result.Result = record;
+                result.Result = recordsCreated.ToString();
                 result.Message = "Record Created";
             }
 
@@ -72,15 +72,16 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
 
 
-        public APIResult UserPermissionDelete(int id)
+        public APIResult<string> UserPermissionDelete(int id)
         {
-            APIResult result = new APIResult(id);
+            APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
             var record = db.UserPermissions.Attach(new UserPermission { Id = id });
             record.State = EntityState.Deleted;
             try
             {
                 recordsDeleted = db.SaveChanges();
+                result.Result = recordsDeleted.ToString();
             }
             catch (Exception ex)
             {

@@ -1,7 +1,6 @@
 ﻿
 using Blazored.LocalStorage;
 using BlazorWASMCustomAuth.Client.Security;
-using BlazorWASMCustomAuth.PagingSortingFiltering;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Json;
@@ -9,7 +8,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Net.Http.Headers;
 using BlazorWASMCustomAuth.Security.Infrastructure;
-using AutoMapper;
+using BlazorWASMCustomAuth.Client.Services.Requests;
 
 namespace BlazorWASMCustomAuth.Client.Services
 {
@@ -43,7 +42,7 @@ namespace BlazorWASMCustomAuth.Client.Services
             ((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
             return true;
         }
-        public async Task<APIResultNew<UserDto>> UserCreate(UserCreateDto model)
+        public async Task<APIResult<UserDto>> UserCreate(UserCreateDto model)
         {
             var response = await _httpClient.PostAsJsonAsync("/api/security/users", model);
 
@@ -51,11 +50,11 @@ namespace BlazorWASMCustomAuth.Client.Services
             {
                 return null;
             }
-            var result = await response.Content.ReadFromJsonAsync<APIResultNew<UserDto>>();
+            var result = await response.Content.ReadFromJsonAsync<APIResult<UserDto>>();
 
             return result;
         }
-        public async Task<APIResultNew<UserDto>> UserEdit(UserDto model)
+        public async Task<APIResult<UserDto>> UserEdit(UserDto model)
         {   
             var response = await _httpClient.PutAsJsonAsync("/api/security/users", model);
 
@@ -63,7 +62,7 @@ namespace BlazorWASMCustomAuth.Client.Services
             {
                 return null;
             }
-            var result = await response.Content.ReadFromJsonAsync<APIResultNew<UserDto>>();
+            var result = await response.Content.ReadFromJsonAsync<APIResult<UserDto>>();
 
             return result;
         }
@@ -122,7 +121,7 @@ namespace BlazorWASMCustomAuth.Client.Services
                 return true;
             }
         }
-        public async Task<APIResultNew<List<UserDto>>> UsersGet(int id = 0)
+        public async Task<APIResult<List<UserDto>>> UsersGet(int id = 0)
         {
             var token = await _localStorageService.GetItemAsync<string>("token");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);            
@@ -137,7 +136,7 @@ namespace BlazorWASMCustomAuth.Client.Services
 
             try
             {
-                var responseObject = JsonSerializer.Deserialize<APIResultNew<List<UserDto>>>(responseAsString, new JsonSerializerOptions
+                var responseObject = JsonSerializer.Deserialize<APIResult<List<UserDto>>>(responseAsString, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
                     ReferenceHandler = ReferenceHandler.Preserve,
@@ -153,10 +152,41 @@ namespace BlazorWASMCustomAuth.Client.Services
                 return null;
             }
         }
-        public async Task<APIResultNew<UserDto>> UserGet(int id)
+
+        public async Task<APIResult<List<UserDto>>> UsersGetPagedAsync(GetAllPagedUsersRequest request)
+        {
+            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetAllPaged(request.PageNumber, request.PageSize, request.SearchString, request.Orderby));
+            //return await response.ToPaginatedResult<UserDto>();
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var responseAsString = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                var responseObject = JsonSerializer.Deserialize<APIResult<List<UserDto>>>(responseAsString, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    IncludeFields = true
+                });
+
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+
+                Console.Write(ex.Message);
+                return null;
+            }
+        }
+
+        public async Task<APIResult<UserDto>> UserGet(int id)
         {
             var result = await UsersGet(id);
-            var newResult = new APIResultNew<UserDto>
+            var newResult = new APIResult<UserDto>
             {
                 Exception = result.Exception,
                 HasError = result.HasError,

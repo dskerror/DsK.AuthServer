@@ -14,9 +14,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
     public partial class SecurityService
     {
 
-        public APIResult UserLogin(UserLoginDto model)
+        public APIResult<TokenModel> UserLogin(UserLoginDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<TokenModel> result = new APIResult<TokenModel>();
             bool IsUserAuthenticated = AuthenticateUser(model);
 
             if (!IsUserAuthenticated)
@@ -36,9 +36,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             result.Result = token;
             return result;
         }
-        public APIResult RefreshToken(TokenModel model)
+        public APIResult<UserTokenDto> RefreshToken(TokenModel model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<UserTokenDto> result = new APIResult<UserTokenDto>();
             //implement method that declines renewal depeding of token age.
 
             var claimsPrincipal = ValidateToken(model.Token);
@@ -73,7 +73,11 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             userToken.Token = newtoken.Token;
             userToken.TokenRefreshedDateTime = DateTime.Now;
             db.SaveChanges();
-            result.Result = userToken;
+
+            UserTokenDto userTokenDto = new UserTokenDto();
+            Mapper.Map(userToken, userTokenDto);
+
+            result.Result = userTokenDto;
             result.Message = "Token Refreshed";
             return result;
         }

@@ -22,13 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazorWASMCustomAuth.PagingSortingFiltering\BlazorWASMCustomAuth.PagingSortingFiltering.csproj" />
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Infrastructure\BlazorWASMCustomAuth.Security.Infrastructure.csproj" />
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Shared\BlazorWASMCustomAuth.Security.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="Pages\Admin\UserCreate.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+    <Content Update="Pages\Admin\Users.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>

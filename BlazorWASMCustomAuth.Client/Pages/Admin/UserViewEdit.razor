@@ -1,0 +1,104 @@
+﻿@page "/admin/userviewedit/{id:int}"
+
+@*<AuthorizeView>
+    <Authorized>*@
+
+<MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
+
+@if (!_loaded)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    if (_EditMode)
+    {
+        <EditForm Model="user" OnValidSubmit="EditUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudCard Class="mb-2">
+                <MudCardContent>
+
+                    <MudTextField ReadOnly="true" Label="Username" @bind-Value="user.Username"
+                          For="@(()=>user.Username)">
+                    </MudTextField>
+
+                    <MudTextField Label="Email" @bind-Value="user.Email"
+                          For="@(()=>user.Email)">
+                    </MudTextField>
+
+                    <MudTextField Label="Name" @bind-Value="user.Name"
+                          For="@(()=>user.Name)">
+                    </MudTextField>
+
+                    <MudSwitch @bind-Checked="@user.EmailConfirmed" Label="Email Confirmed" Color="Color.Success" />
+
+                    <MudDatePicker Label="Lockout End" Editable="true" @bind-Date="user.LockoutEnd" />
+
+                    <MudSwitch @bind-Checked="@user.LockoutEnabled" Label="Lockout" Color="Color.Success" />
+
+                    <MudTextField Label="Access Failed Count" @bind-Value="user.AccessFailedCount"
+                          For="@(()=>user.AccessFailedCount)">
+                    </MudTextField>
+
+                    <MudSwitch @bind-Checked="@user.TwoFactorEnabled" Label="Two Factor" Color="Color.Success" />
+
+                </MudCardContent>
+            </MudCard>
+
+            @*            <div class="row">
+    <div class="col-md-12 text-right">
+    <button type="submit" class="btn btn-success">Save Changes</button>
+    </div>
+    </div>*@
+
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
+
+        </EditForm>
+
+    }
+    else
+    {
+        <EditForm Model="user">
+            <MudCard Class="mb-2">
+                <MudCardContent>
+
+                    <MudTextField ReadOnly="true" Label="Username" @bind-Value="user.Username"
+                          For="@(()=>user.Username)">
+                    </MudTextField>
+
+                    <MudTextField ReadOnly="true" Label="Email" @bind-Value="user.Email"
+                          For="@(()=>user.Email)">
+                    </MudTextField>
+
+                    <MudTextField ReadOnly="true" Label="Name" @bind-Value="user.Name"
+                          For="@(()=>user.Name)">
+                    </MudTextField>
+
+                    <MudSwitch ReadOnly="true" @bind-Checked="@user.EmailConfirmed" Label="Email Confirmed" Color="Color.Success" />
+
+                    <MudDatePicker ReadOnly="true" Label="Lockout End" Editable="true" @bind-Date="user.LockoutEnd" />
+
+                    <MudSwitch ReadOnly="true" @bind-Checked="@user.LockoutEnabled" Label="Lockout" Color="Color.Success" />
+
+                    <MudTextField ReadOnly="true" Label="Access Failed Count" @bind-Value="user.AccessFailedCount"
+                          For="@(()=>user.AccessFailedCount)">
+                    </MudTextField>
+
+                    <MudSwitch ReadOnly="true" @bind-Checked="@user.TwoFactorEnabled" Label="Two Factor" Color="Color.Success" />
+
+                </MudCardContent>
+            </MudCard>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="EnableEditMode" Class="mb-2">Edit</MudButton>
+        </EditForm>
+    }
+}
+
+
+@*    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>*@

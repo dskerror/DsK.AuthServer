@@ -7,9 +7,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult RoleCreate(RoleCreateDto model)
+        public APIResult<string> RoleCreate(RoleCreateDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
 
             var record = new Role();
@@ -27,29 +27,36 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            result.Result = record;
             if (recordsCreated == 1)
             {
+                result.Result = recordsCreated.ToString();
                 result.Message = "Record Created";
             }
 
             return result;
         }
 
-        public APIResult RolesGet(int id = 0)
+        public APIResult<List<RoleDto>> RolesGet(int id = 0)
         {
-            APIResult result = new APIResult(id);
+            APIResult<List<RoleDto>> result = new APIResult<List<RoleDto>>();
             if (id == 0)
-                result.Result = db.Roles.ToList();
+            {
+                var items = db.Roles.ToList();
+                result.Result = Mapper.Map<List<Role>, List<RoleDto>>(items);
+
+            }
             else
-                result.Result = db.Roles.Where(x => x.Id == id).FirstOrDefault();
+            {
+                var items = db.Roles.Where(x => x.Id == id).ToList();
+                result.Result = Mapper.Map<List<Role>, List<RoleDto>>(items);
+            }
 
             return result;
         }
 
-        public APIResult RoleUpdate(RoleUpdateDto model)
+        public APIResult<string> RoleUpdate(RoleUpdateDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
             int recordsUpdated = 0;
             var record = db.Roles.FirstOrDefault(x => x.Id == model.Id);
 
@@ -67,24 +74,25 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.HasError = true;
                 result.Message = ex.InnerException.Message;
             }
-
-            result.Result = record;
+                        
             if (recordsUpdated == 1)
             {
+                result.Result = recordsUpdated.ToString();
                 result.Message = "Record Updated";
             }
 
             return result;
         }
-        public APIResult RoleDelete(int id)
+        public APIResult<string> RoleDelete(int id)
         {
-            APIResult result = new APIResult(id);
+            APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
             var record = db.Roles.Attach(new Role { Id = id });
             record.State = EntityState.Deleted;
             try
             {
                 recordsDeleted = db.SaveChanges();
+                result.Result = recordsDeleted.ToString();
             }
             catch (Exception ex)
             {

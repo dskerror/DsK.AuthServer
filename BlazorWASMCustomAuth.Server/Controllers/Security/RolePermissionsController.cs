@@ -1,5 +1,4 @@
-﻿using BlazorWASMCustomAuth.PagingSortingFiltering;
-using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.AspNetCore.Authorization;

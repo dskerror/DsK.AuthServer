@@ -7,9 +7,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult RolePermissionCreate(RolePermissionCreateDto model)
+        public APIResult<string> RolePermissionCreate(RolePermissionCreateDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
 
             var record = new RolePermission();
@@ -27,28 +27,34 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            result.Result = record;
             if (recordsCreated == 1)
             {
+                result.Result = recordsCreated.ToString();
                 result.Message = "Record Created";
             }
 
             return result;
         }
-        public APIResult RolePermissionsGet(int id = 0)
+        public APIResult<List<RolePermissionDto>> RolePermissionsGet(int id = 0)
         {
-            APIResult result = new APIResult(id);
+            APIResult<List<RolePermissionDto>> result = new APIResult<List<RolePermissionDto>>();
             if (id == 0)
-                result.Result = db.RolePermissions.ToList();
+            {
+                var items = db.RolePermissions.ToList();
+                result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
+            }
             else
-                result.Result = db.RolePermissions.Where(x => x.RoleId == id).FirstOrDefault();
+            {
+                var items = db.RolePermissions.Where(x => x.RoleId == id).ToList();
+                result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
+            }
 
             return result;
         }
 
-        public APIResult RolePermissionDelete(RolePermissionDeleteDto model)
+        public APIResult<string> RolePermissionDelete(RolePermissionDeleteDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
 
             var recordToDelete = new RolePermission();
             Mapper.Map(model, recordToDelete);
@@ -60,13 +66,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             try
             {
                 recordsDeleted = db.SaveChanges();
+                result.Result = recordsDeleted.ToString();
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.Message = ex.Message;
             }
-            
+
             return result;
         }
     }

@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Server
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.Security.Shared", "BlazorWASMCustomAuth.Security.Shared\BlazorWASMCustomAuth.Security.Shared.csproj", "{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWASMCustomAuth.PagingSortingFiltering", "BlazorWASMCustomAuth.PagingSortingFiltering\BlazorWASMCustomAuth.PagingSortingFiltering.csproj", "{3C3CD645-B958-47BC-9A67-6CCD7496D082}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{F6A64274-6076-44AA-A8AF-62B41081733D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{5FB5D57A-01CE-4EEB-89C8-7B2AC6FE4BCC}"
@@ -39,10 +37,6 @@ Global
 		{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{839BC089-D4F9-456B-97E0-3AF4E9ECD9A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3C3CD645-B958-47BC-9A67-6CCD7496D082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3C3CD645-B958-47BC-9A67-6CCD7496D082}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3C3CD645-B958-47BC-9A67-6CCD7496D082}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3C3CD645-B958-47BC-9A67-6CCD7496D082}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5915C629-E0F3-4C0D-9B2E-529E0227D368}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5915C629-E0F3-4C0D-9B2E-529E0227D368}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5915C629-E0F3-4C0D-9B2E-529E0227D368}.Release|Any CPU.ActiveCfg = Release|Any CPU

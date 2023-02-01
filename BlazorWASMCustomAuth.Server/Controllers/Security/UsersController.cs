@@ -10,7 +10,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
     {
         private readonly SecurityService SecurityService;
         public UsersController(SecurityService securityService)
-        {            
+        {
             SecurityService = securityService;
         }
 
@@ -27,6 +27,14 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         public IActionResult UsersGet(int id = 0)
         {
             return Ok(SecurityService.UsersGet(id));
+        }
+
+        [HttpGet]
+        [Route("GetAllPaged")]
+        //[Authorize(Roles = "admin,UsersGet")]
+        public IActionResult GetAllPaged(int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        {
+            return Ok(SecurityService.UsersGetPaged(pageNumber, pageSize, searchString, orderBy));
         }
 
         [HttpPut]

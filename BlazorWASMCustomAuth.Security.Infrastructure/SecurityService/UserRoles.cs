@@ -7,9 +7,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult UserRoleCreate(UserRoleCreateDto model)
+        public APIResult<string> UserRoleCreate(UserRoleCreateDto model)
         {
-            APIResult result = new APIResult(model);
+            APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
 
             var record = new UserRole();
@@ -26,33 +26,34 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.HasError = true;
                 result.Message = ex.InnerException.Message;
             }
-
-            result.Result = record;
+                        
             if (recordsCreated == 1)
             {
+                result.Result = recordsCreated.ToString();
                 result.Message = "Record Created";
             }
 
             return result;
         }
 
-        public APIResult UserRolesGet(int userId)
+        public APIResult<List<UserRoleDto>> UserRolesGet(int userId)
         {
-            APIResult result = new APIResult(userId);
-            result.Result = db.UserRoles.Where(x => x.UserId == userId).Include(x => x.Role).ToList();
-
+            APIResult<List<UserRoleDto>> result = new APIResult<List<UserRoleDto>>();
+            var items = db.UserRoles.Where(x => x.UserId == userId).Include(x => x.Role).ToList();             
+            result.Result = Mapper.Map<List<UserRole>, List<UserRoleDto>>(items);
             return result;
         }
 
-        public APIResult UserRoleDelete(int id)
+        public APIResult<string> UserRoleDelete(int id)
         {
-            APIResult result = new APIResult(id);
+            APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
             var record = db.UserRoles.Attach(new UserRole { Id=id });
             record.State = EntityState.Deleted;
             try
             {
                 recordsDeleted = db.SaveChanges();
+                result.Result = recordsDeleted.ToString();
             }
             catch (Exception ex)
             {

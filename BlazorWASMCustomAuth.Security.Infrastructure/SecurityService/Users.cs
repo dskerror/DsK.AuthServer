@@ -1,15 +1,17 @@
-﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿using Azure.Core;
+using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 using System;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResultNew<UserDto> UserCreate(UserCreateDto model)
+        public APIResult<UserDto> UserCreate(UserCreateDto model)
         {
-            APIResultNew<UserDto> result = new APIResultNew<UserDto>();
+            APIResult<UserDto> result = new APIResult<UserDto>();
             int recordsCreated = 0;
 
             var record = new User();
@@ -27,14 +29,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
 
             result.Result = Mapper.Map(record, result.Result);
-            if (recordsCreated == 1)            
+            if (recordsCreated == 1)
                 result.Message = "Record Created";
-            
+
             return result;
         }
-        public APIResultNew<List<UserDto>> UsersGet(int id = 0)
+        public APIResult<List<UserDto>> UsersGet(int id = 0)
         {
-            var result = new APIResultNew<List<UserDto>>();
+            var result = new APIResult<List<UserDto>>();
 
             if (id == 0)
             {
@@ -51,15 +53,55 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public APIResult UserUpdate(UserDto model)
+
+        public APIResult<List<UserDto>> UsersGetPaged(int pageNumber, int pageSize, string searchString, string orderBy)
         {
-            APIResult result = new APIResult(model);
+            var result = new APIResult<List<UserDto>>();
+
+            string ordering = "Id";
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                string[] OrderBy = orderBy.Split(',');
+                ordering = string.Join(",", OrderBy);
+            }
+            result.Paging.CurrentPage = pageNumber;
+            pageNumber = pageNumber == 0 ? 1 : pageNumber;
+            pageSize = pageSize == 0 ? 10 : pageSize;
+            int count = 0;
+            List<User> items;
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                count = db.Users
+                    .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
+                    .Count();
+
+                items = db.Users.OrderBy(ordering)
+                    .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+            else
+            {
+                count = db.Users.Count();
+
+                items = db.Users.OrderBy(ordering)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+            result.Paging.TotalItems = count;
+            result.Result = Mapper.Map<List<User>, List<UserDto>>(items);
+            return result;
+        }
+        public APIResult<string> UserUpdate(UserDto model)
+        {
+            APIResult<string> result = new APIResult<string>();
             int recordsUpdated = 0;
             var record = db.Users.FirstOrDefault(x => x.Id == model.Id);
 
-            if (record != null)           
+            if (record != null)
                 Mapper.Map(model, record);
-          
 
             try
             {
@@ -71,7 +113,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            result.Result = record;
             if (recordsUpdated == 1)
             {
                 result.Message = "Record Updated";
@@ -80,16 +121,16 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return result;
 
         }
-        public APIResult UserDelete(int id)
+        public APIResult<string> UserDelete(int id)
         {
-            APIResult result = new APIResult(id);
+            APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
             var record = db.Users.Attach(new User { Id = id });
             record.State = EntityState.Deleted;
             try
             {
                 recordsDeleted = db.SaveChanges();
-                
+
             }
             catch (Exception ex)
             {
@@ -97,7 +138,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.Message;
             }
 
-            result.Result = recordsDeleted;
+            result.Result = recordsDeleted.ToString();
 
             return result;
         }

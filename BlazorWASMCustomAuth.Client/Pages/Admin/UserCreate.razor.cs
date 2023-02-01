@@ -32,8 +32,8 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                     Snackbar.Add(result.Message, Severity.Error);
                 else
                 {
-                    Snackbar.Add(result.Message, Severity.Normal);
-                    _navigationManager.NavigateTo($"/admin/useredit/{result.Result.Id}");
+                    Snackbar.Add(result.Message, Severity.Success);
+                    _navigationManager.NavigateTo($"/admin/userviewedit/{result.Result.Id}");
                 }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
