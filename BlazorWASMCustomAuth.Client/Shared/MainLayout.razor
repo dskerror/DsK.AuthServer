@@ -24,7 +24,10 @@
     </MudMainContent>
 </MudLayout>
 
+
+
 @code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     bool _drawerOpen = true;
 
     void DrawerToggle()
@@ -32,3 +35,7 @@
         _drawerOpen = !_drawerOpen;
     }
 }
+
+
+
+

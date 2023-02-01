@@ -29,6 +29,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 Token = token.Token,
                 RefreshToken = token.RefreshToken,
                 TokenRefreshedDateTime = DateTime.Now,
+                TokenCreatedDateTime= DateTime.Now
             });
 
             db.SaveChanges();

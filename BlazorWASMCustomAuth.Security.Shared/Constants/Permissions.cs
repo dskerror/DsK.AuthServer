@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
         [DisplayName("Roles")]
         [Description("Roles Permissions")]
         public static class Roles
-        {
+        {   
             public const string View = "Permissions.Roles.View";
             public const string Create = "Permissions.Roles.Create";
             public const string Edit = "Permissions.Roles.Edit";
