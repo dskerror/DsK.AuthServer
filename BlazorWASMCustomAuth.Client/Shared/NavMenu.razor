@@ -1,5 +1,15 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudListSubheader Class="mt-2 mb-n2">Admin</MudListSubheader>
-    <MudNavLink Href="/admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>    
+    <AuthorizeView>
+        <Authorized>
+            <MudListSubheader Class="mt-2 mb-n2">Admin</MudListSubheader>
+            <MudNavLink Href="/admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+
 </MudNavMenu>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+}
