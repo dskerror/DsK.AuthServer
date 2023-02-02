@@ -1,17 +1,39 @@
 ﻿@page "/admin/roles"
+@using BlazorWASMCustomAuth.Security.Shared;
+@using System.Security.Claims;
 
+<h2>Roles</h2>
 
-@*<AuthorizeView>
-    <Authorized>*@
-        <h2>Roles</h2>
-
-@*    </Authorized>
-    <NotAuthorized>
-        <Login />
-    </NotAuthorized>
-</AuthorizeView>*@
-
-@code {
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationState { get; set; }
-}
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<RoleDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
+    <ToolBarContent>
+        <div class="justify-center mud-text-align-center">
+            <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateRole())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Role</MudButton>
+        </div>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        
+        <MudTh><MudTableSortLabel T="RoleDto" SortLabel="RoleName">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="RoleDto" SortLabel="RoleDescription">Description</MudTableSortLabel></MudTh>
+        <MudTh>Details</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="RoleName">
+            <MudHighlighter Text="@context.RoleName" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="RoleDescription">
+            <MudHighlighter Text="@context.RoleDescription" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="Details">
+            <MudIconButton OnClick="() => ViewRole(context.Id)"
+                           Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled">
+            </MudIconButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
+    </PagerContent>
+</MudTable>

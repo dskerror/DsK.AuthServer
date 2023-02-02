@@ -1,0 +1,33 @@
+﻿@page "/admin/usercreate"
+
+@*<AuthorizeView>
+    <Authorized>*@
+<h3><NavLink href="/admin/roles">Roles</NavLink> > Create Role</h3>
+
+
+<EditForm Model="roleCreateModel" OnValidSubmit="CreateRole">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <MudCard Class="mb-2">
+        <MudCardContent>            
+            <MudTextField Label="RoleName" @bind-Value="roleCreateModel.RoleName"
+                          For="@(()=>roleCreateModel.RoleName)">
+            </MudTextField>
+            <MudTextField Label="RoleDescription" @bind-Value="roleCreateModel.RoleDescription"
+                          For="@(()=>roleCreateModel.RoleDescription)">
+            </MudTextField>
+        </MudCardContent>
+    </MudCard>
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button type="submit" class="btn btn-success">Create</button>
+        </div>
+    </div>
+</EditForm>
+
+@*    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>*@

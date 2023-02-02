@@ -5,143 +5,141 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System;
 
-namespace BlazorWASMCustomAuth.Security.Infrastructure
-{
-    public partial class SecurityService
-    {
-        public APIResult<UserDto> UserCreate(UserCreateDto model)
-        {
-            APIResult<UserDto> result = new APIResult<UserDto>();
-            int recordsCreated = 0;
+namespace BlazorWASMCustomAuth.Security.Infrastructure;
 
-            var record = new User();
+public partial class SecurityService
+{
+    public APIResult<UserDto> UserCreate(UserCreateDto model)
+    {
+        APIResult<UserDto> result = new APIResult<UserDto>();
+        int recordsCreated = 0;
+
+        var record = new User();
+        Mapper.Map(model, record);
+
+        db.Users.Add(record);
+        try
+        {
+            recordsCreated = db.SaveChanges();
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.Message = ex.InnerException.Message;
+        }
+
+        result.Result = Mapper.Map(record, result.Result);
+        if (recordsCreated == 1)
+            result.Message = "Record Created";
+
+        return result;
+    }
+    public APIResult<List<UserDto>> UsersGet(int id = 0)
+    {
+        var result = new APIResult<List<UserDto>>();
+
+        if (id == 0)
+        {
+            var userList = db.Users.ToList();
+            result.Result = Mapper.Map<List<User>, List<UserDto>>(userList);
+
+        }
+
+        else
+        {
+            var userList = db.Users.Where(x => x.Id == id).ToList();
+            result.Result = Mapper.Map<List<User>, List<UserDto>>(userList);
+        }
+
+        return result;
+    }
+    public APIResult<List<UserDto>> UsersGetPaged(int pageNumber, int pageSize, string searchString, string orderBy)
+    {
+        var result = new APIResult<List<UserDto>>();
+
+        string ordering = "Id";
+        if (!string.IsNullOrWhiteSpace(orderBy))
+        {
+            string[] OrderBy = orderBy.Split(',');
+            ordering = string.Join(",", OrderBy);
+        }
+        result.Paging.CurrentPage = pageNumber;
+        pageNumber = pageNumber == 0 ? 1 : pageNumber;
+        pageSize = pageSize == 0 ? 10 : pageSize;
+        int count = 0;
+        List<User> items;
+        if (!string.IsNullOrWhiteSpace(searchString))
+        {
+            count = db.Users
+                .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
+                .Count();
+
+            items = db.Users.OrderBy(ordering)
+                .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+        else
+        {
+            count = db.Users.Count();
+
+            items = db.Users.OrderBy(ordering)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+        result.Paging.TotalItems = count;
+        result.Result = Mapper.Map<List<User>, List<UserDto>>(items);
+        return result;
+    }
+    public APIResult<string> UserUpdate(UserDto model)
+    {
+        APIResult<string> result = new APIResult<string>();
+        int recordsUpdated = 0;
+        var record = db.Users.FirstOrDefault(x => x.Id == model.Id);
+
+        if (record != null)
             Mapper.Map(model, record);
 
-            db.Users.Add(record);
-            try
-            {
-                recordsCreated = db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.InnerException.Message;
-            }
-
-            result.Result = Mapper.Map(record, result.Result);
-            if (recordsCreated == 1)
-                result.Message = "Record Created";
-
-            return result;
-        }
-        public APIResult<List<UserDto>> UsersGet(int id = 0)
+        try
         {
-            var result = new APIResult<List<UserDto>>();
-
-            if (id == 0)
-            {
-                var userList = db.Users.ToList();
-                result.Result = Mapper.Map<List<User>, List<UserDto>>(userList);
-
-            }
-
-            else
-            {
-                var userList = db.Users.Where(x => x.Id == id).ToList();
-                result.Result = Mapper.Map<List<User>, List<UserDto>>(userList);
-            }
-
-            return result;
+            recordsUpdated = db.SaveChanges();
         }
-
-        public APIResult<List<UserDto>> UsersGetPaged(int pageNumber, int pageSize, string searchString, string orderBy)
+        catch (Exception ex)
         {
-            var result = new APIResult<List<UserDto>>();
-
-            string ordering = "Id";
-            if (!string.IsNullOrWhiteSpace(orderBy))
-            {
-                string[] OrderBy = orderBy.Split(',');
-                ordering = string.Join(",", OrderBy);
-            }
-            result.Paging.CurrentPage = pageNumber;
-            pageNumber = pageNumber == 0 ? 1 : pageNumber;
-            pageSize = pageSize == 0 ? 10 : pageSize;
-            int count = 0;
-            List<User> items;
-            if (!string.IsNullOrWhiteSpace(searchString))
-            {
-                count = db.Users
-                    .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
-                    .Count();
-
-                items = db.Users.OrderBy(ordering)
-                    .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-            }
-            else
-            {
-                count = db.Users.Count();
-
-                items = db.Users.OrderBy(ordering)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-            }
-            result.Paging.TotalItems = count;
-            result.Result = Mapper.Map<List<User>, List<UserDto>>(items);
-            return result;
+            result.HasError = true;
+            result.Message = ex.InnerException.Message;
         }
-        public APIResult<string> UserUpdate(UserDto model)
+
+        if (recordsUpdated == 1)
         {
-            APIResult<string> result = new APIResult<string>();
-            int recordsUpdated = 0;
-            var record = db.Users.FirstOrDefault(x => x.Id == model.Id);
-
-            if (record != null)
-                Mapper.Map(model, record);
-
-            try
-            {
-                recordsUpdated = db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.InnerException.Message;
-            }
-
-            if (recordsUpdated == 1)
-            {
-                result.Message = "Record Updated";
-            }
-
-            return result;
-
+            result.Message = "Record Updated";
         }
-        public APIResult<string> UserDelete(int id)
+
+        return result;
+
+    }
+    public APIResult<string> UserDelete(int id)
+    {
+        APIResult<string> result = new APIResult<string>();
+        int recordsDeleted = 0;
+        var record = db.Users.Attach(new User { Id = id });
+        record.State = EntityState.Deleted;
+        try
         {
-            APIResult<string> result = new APIResult<string>();
-            int recordsDeleted = 0;
-            var record = db.Users.Attach(new User { Id = id });
-            record.State = EntityState.Deleted;
-            try
-            {
-                recordsDeleted = db.SaveChanges();
+            recordsDeleted = db.SaveChanges();
 
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.Message;
-            }
-
-            result.Result = recordsDeleted.ToString();
-
-            return result;
         }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.Message = ex.Message;
+        }
+
+        result.Result = recordsDeleted.ToString();
+
+        return result;
     }
 }
 

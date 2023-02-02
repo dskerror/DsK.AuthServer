@@ -21,6 +21,14 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             return Ok(SecurityService.RolesGet(id));
         }
 
+        [HttpGet]
+        [Route("GetAllPaged")]
+        //[Authorize(Roles = "admin,RolesGet")]
+        public IActionResult GetAllPaged(int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        {
+            return Ok(SecurityService.RolesGetPaged(pageNumber, pageSize, searchString, orderBy));
+        }
+
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
         public IActionResult RoleCreate(RoleCreateDto model)

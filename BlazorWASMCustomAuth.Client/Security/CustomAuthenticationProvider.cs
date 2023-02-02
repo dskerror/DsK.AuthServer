@@ -14,7 +14,6 @@ namespace BlazorWASMCustomAuth.Client.Security
         }
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-
             string token = await _localStorageService.GetItemAsync<string>("token");
             if (string.IsNullOrEmpty(token))
             {
