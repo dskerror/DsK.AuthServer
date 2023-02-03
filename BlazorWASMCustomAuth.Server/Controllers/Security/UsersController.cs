@@ -24,17 +24,9 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpGet]
         //[Authorize(Roles = "admin,UsersGet")]
-        public IActionResult UsersGet(int id = 0)
+        public IActionResult UsersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
-            return Ok(SecurityService.UsersGet(id));
-        }
-
-        [HttpGet]
-        [Route("GetAllPaged")]
-        //[Authorize(Roles = "admin,UsersGet")]
-        public IActionResult GetAllPaged(int pageNumber, int pageSize, string searchString = null, string orderBy = null)
-        {
-            return Ok(SecurityService.UsersGetPaged(pageNumber, pageSize, searchString, orderBy));
+            return Ok(SecurityService.UsersGet(id, pageNumber, pageSize, searchString, orderBy));
         }
 
         [HttpPut]

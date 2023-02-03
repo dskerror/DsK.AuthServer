@@ -5,15 +5,15 @@ using MudBlazor;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
-    public partial class UserCreate
+    public partial class AuthenticationProviderCreate
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
-        private UserCreateDto model = new UserCreateDto();
-
+        private AuthenticationProviderCreateDto model = new AuthenticationProviderCreateDto();
+        
         private async Task Create()
         {
-            var result = await securityService.UserCreateAsync(model);
+            var result = await securityService.AuthenticationProviderCreateAsync(model);
 
             if (result != null)
                 if (result.HasError)
@@ -21,7 +21,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                 else
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    _navigationManager.NavigateTo($"/admin/userviewedit/{result.Result.Id}");
+                    _navigationManager.NavigateTo($"/admin/AuthenticationProviderViewEdit/{result.Result.Id}");
                 }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

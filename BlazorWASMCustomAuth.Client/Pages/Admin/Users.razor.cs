@@ -38,8 +38,8 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                 orderings = state.SortDirection != SortDirection.None ? new[] { $"{state.SortLabel} {state.SortDirection}" } : new[] { $"{state.SortLabel}" };
             }
 
-            var request = new GetAllPagedUsersRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = orderings };
-            var response = await securityService.UsersGetPagedAsync(request);
+            var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = orderings };
+            var response = await securityService.UsersGetAsync(request);
             if (!response.HasError)
             {
                 _totalItems = response.Paging.TotalItems;

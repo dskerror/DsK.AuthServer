@@ -1,12 +1,10 @@
-﻿using Azure.Core;
-using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
-using System;
+
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
-
 public partial class SecurityService
 {
     public APIResult<UserDto> UserCreate(UserCreateDto model)
@@ -18,6 +16,7 @@ public partial class SecurityService
         Mapper.Map(model, record);
 
         db.Users.Add(record);
+
         try
         {
             recordsCreated = db.SaveChanges();
@@ -28,32 +27,15 @@ public partial class SecurityService
             result.Message = ex.InnerException.Message;
         }
 
-        result.Result = Mapper.Map(record, result.Result);
         if (recordsCreated == 1)
+        {
+            result.Result = Mapper.Map(record, result.Result);
             result.Message = "Record Created";
-
-        return result;
-    }
-    public APIResult<List<UserDto>> UsersGet(int id = 0)
-    {
-        var result = new APIResult<List<UserDto>>();
-
-        if (id == 0)
-        {
-            var userList = db.Users.ToList();
-            result.Result = Mapper.Map<List<User>, List<UserDto>>(userList);
-
-        }
-
-        else
-        {
-            var userList = db.Users.Where(x => x.Id == id).ToList();
-            result.Result = Mapper.Map<List<User>, List<UserDto>>(userList);
         }
 
         return result;
     }
-    public APIResult<List<UserDto>> UsersGetPaged(int pageNumber, int pageSize, string searchString, string orderBy)
+    public APIResult<List<UserDto>> UsersGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
     {
         var result = new APIResult<List<UserDto>>();
 
@@ -78,6 +60,16 @@ public partial class SecurityService
                 .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .ToList();
+        }
+        else if (id != 0)
+        {
+            count = db.Users
+                .Where(u => u.Id == id)
+                .Count();
+
+            items = db.Users.OrderBy(ordering)
+                .Where(u => u.Id == id)                
                 .ToList();
         }
         else
@@ -112,13 +104,10 @@ public partial class SecurityService
             result.Message = ex.InnerException.Message;
         }
 
-        if (recordsUpdated == 1)
-        {
-            result.Message = "Record Updated";
-        }
+        if (recordsUpdated == 1)        
+            result.Message = "Record Updated";        
 
         return result;
-
     }
     public APIResult<string> UserDelete(int id)
     {
@@ -129,7 +118,6 @@ public partial class SecurityService
         try
         {
             recordsDeleted = db.SaveChanges();
-
         }
         catch (Exception ex)
         {

@@ -1,0 +1,42 @@
+﻿@page "/admin/AuthenticationProviderCreate"
+
+@*<AuthorizeView>
+    <Authorized>*@
+<h3><NavLink href="/admin/AuthenticationProviders">Authentication Providers</NavLink> > Create Authentication Provider</h3>
+
+
+<EditForm Model="model" OnValidSubmit="Create">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <MudCard Class="mb-2">
+        <MudCardContent>
+            <MudTextField Label="Authentication Provider Name" @bind-Value="model.AuthenticationProviderName"
+                          For="@(()=>model.AuthenticationProviderName)">
+            </MudTextField>
+            <MudTextField Label="Authentication Provider Type" @bind-Value="model.AuthenticationProviderType"
+                          For="@(()=>model.AuthenticationProviderType)">
+            </MudTextField>
+            <MudTextField Label="Domain" @bind-Value="model.Domain"
+                          For="@(()=>model.Domain)">
+            </MudTextField>
+            <MudTextField Label="Username" @bind-Value="model.Username"
+                          For="@(()=>model.Username)">
+            </MudTextField>
+            <MudTextField Label="Password" @bind-Value="model.Password"
+                          For="@(()=>model.Password)">
+            </MudTextField>
+        </MudCardContent>
+    </MudCard>
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button type="submit" class="btn btn-success">Create</button>
+        </div>
+    </div>
+</EditForm>
+
+@*    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>*@

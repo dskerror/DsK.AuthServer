@@ -1,15 +1,15 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 using System.Data;
 
-namespace BlazorWASMCustomAuth.Security.Infrastructure
-{
+namespace BlazorWASMCustomAuth.Security.Infrastructure{
     public partial class SecurityService
     {
-        public APIResult<string> AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
+        public APIResult<AuthenticationProviderDto> AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
         {
-            APIResult<string> result = new APIResult<string>();
+            APIResult<AuthenticationProviderDto> result = new APIResult<AuthenticationProviderDto>();
             int recordsCreated = 0;
 
             var record = new AuthenticationProvider();
@@ -26,43 +26,73 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.HasError = true;
                 result.Message = ex.InnerException.Message;
             }
-
-            result.Result = recordsCreated.ToString();
+            
             if (recordsCreated == 1)
             {
+                result.Result = Mapper.Map(record, result.Result);
                 result.Message = "Record Created";
             }
 
             return result;
         }
-
-        public APIResult<List<AuthenticationProviderDto>> AuthenticationProvidersGet(int id = 0)
+        public APIResult<List<AuthenticationProviderDto>> AuthenticationProvidersGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
         {
-            APIResult<List<AuthenticationProviderDto>> result = new APIResult<List<AuthenticationProviderDto>>();
-            if (id == 0)
+            var result = new APIResult<List<AuthenticationProviderDto>>();
+
+            string ordering = "Id";
+            if (!string.IsNullOrWhiteSpace(orderBy))
             {
-                var items = db.AuthenticationProviders.ToList();
-                result.Result = Mapper.Map<List<AuthenticationProvider>, List<AuthenticationProviderDto>>(items);
+                string[] OrderBy = orderBy.Split(',');
+                ordering = string.Join(",", OrderBy);
+            }
+            result.Paging.CurrentPage = pageNumber;
+            pageNumber = pageNumber == 0 ? 1 : pageNumber;
+            pageSize = pageSize == 0 ? 10 : pageSize;
+            int count = 0;
+            List<AuthenticationProvider> items;
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                count = db.AuthenticationProviders
+                    .Where(m => m.AuthenticationProviderName.Contains(searchString) || m.AuthenticationProviderType.Contains(searchString))
+                    .Count();
+
+                items = db.AuthenticationProviders.OrderBy(ordering)
+                    .Where(m => m.AuthenticationProviderName.Contains(searchString) || m.AuthenticationProviderType.Contains(searchString))
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+            else if (id != 0)
+            {
+                count = db.AuthenticationProviders
+                    .Where(u => u.Id == id)
+                    .Count();
+
+                items = db.AuthenticationProviders.OrderBy(ordering)
+                    .Where(u => u.Id == id)
+                    .ToList();
             }
             else
             {
-                var items = db.AuthenticationProviders.Where(x => x.Id == id).ToList();
-                result.Result = Mapper.Map<List<AuthenticationProvider>, List<AuthenticationProviderDto>>(items);
-            }
+                count = db.AuthenticationProviders.Count();
 
+                items = db.AuthenticationProviders.OrderBy(ordering)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+            result.Paging.TotalItems = count;
+            result.Result = Mapper.Map<List<AuthenticationProvider>, List<AuthenticationProviderDto>>(items);
             return result;
         }
-
         public APIResult<string> AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsUpdated = 0;
             var record = db.AuthenticationProviders.FirstOrDefault(x => x.Id == model.Id);
 
-            if (record != null)
-            {
-                Mapper.Map(model, record);
-            }
+            if (record != null)            
+                Mapper.Map(model, record);            
 
             try
             {
@@ -75,10 +105,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
 
             if (recordsUpdated == 1)
-            {
-                result.Result = recordsUpdated.ToString();
-                result.Message = "Record Updated";
-            }
+                result.Message = "Record Updated";            
 
             return result;
         }
@@ -89,15 +116,16 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var record = db.AuthenticationProviders.Attach(new AuthenticationProvider { Id = id });
             record.State = EntityState.Deleted;
             try
-            {   
-                recordsDeleted = db.SaveChanges();
-                result.Result = recordsDeleted.ToString();
+            {
+                recordsDeleted = db.SaveChanges();                
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.Message = ex.Message;
             }
+
+            result.Result = recordsDeleted.ToString();
 
             return result;
         }

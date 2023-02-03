@@ -1,5 +1,4 @@
-﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
-using BlazorWASMCustomAuth.Security.Infrastructure;
+﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,19 +14,19 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             SecurityService = securityService;
         }
 
-        [HttpGet]
-        //[Authorize(Roles = "admin,RolesGet")]
-        public IActionResult AuthenticationProvidersGet(int id = 0)
-        {
-            return Ok(SecurityService.AuthenticationProvidersGet(id));
-        }
-
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
         public IActionResult AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
         {
             var result = SecurityService.AuthenticationProvidersCreate(model);
             return Ok(result);
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "admin,RolesGet")]
+        public IActionResult AuthenticationProvidersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        {
+            return Ok(SecurityService.AuthenticationProvidersGet(id, pageNumber, pageSize, searchString, orderBy));
         }
 
         [HttpPut]

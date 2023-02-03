@@ -5,12 +5,11 @@ using System.Linq.Dynamic.Core;
 using System.Data;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
-
 public partial class SecurityService
 {
-    public APIResult<string> RoleCreate(RoleCreateDto model)
+    public APIResult<RoleDto> RoleCreate(RoleCreateDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResult<RoleDto> result = new APIResult<RoleDto>();
         int recordsCreated = 0;
 
         var record = new Role();
@@ -30,30 +29,13 @@ public partial class SecurityService
 
         if (recordsCreated == 1)
         {
-            result.Result = recordsCreated.ToString();
+            result.Result = Mapper.Map(record, result.Result);
             result.Message = "Record Created";
         }
 
         return result;
     }
-    public APIResult<List<RoleDto>> RolesGet(int id = 0)
-    {
-        APIResult<List<RoleDto>> result = new APIResult<List<RoleDto>>();
-        if (id == 0)
-        {
-            var items = db.Roles.ToList();
-            result.Result = Mapper.Map<List<Role>, List<RoleDto>>(items);
-
-        }
-        else
-        {
-            var items = db.Roles.Where(x => x.Id == id).ToList();
-            result.Result = Mapper.Map<List<Role>, List<RoleDto>>(items);
-        }
-
-        return result;
-    }
-    public APIResult<List<RoleDto>> RolesGetPaged(int pageNumber, int pageSize, string searchString, string orderBy)
+    public APIResult<List<RoleDto>> RolesGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
     {
         var result = new APIResult<List<RoleDto>>();
 
@@ -80,6 +62,16 @@ public partial class SecurityService
                 .Take(pageSize)
                 .ToList();
         }
+        else if (id != 0)
+        {
+            count = db.Roles
+                .Where(u => u.Id == id)
+                .Count();
+
+            items = db.Roles.OrderBy(ordering)
+                .Where(u => u.Id == id)
+                .ToList();
+        }
         else
         {
             count = db.Roles.Count();
@@ -100,9 +92,7 @@ public partial class SecurityService
         var record = db.Roles.FirstOrDefault(x => x.Id == model.Id);
 
         if (record != null)
-        {
             Mapper.Map(model, record);
-        }
 
         try
         {
@@ -113,12 +103,9 @@ public partial class SecurityService
             result.HasError = true;
             result.Message = ex.InnerException.Message;
         }
-                    
+
         if (recordsUpdated == 1)
-        {
-            result.Result = recordsUpdated.ToString();
             result.Message = "Record Updated";
-        }
 
         return result;
     }
@@ -130,14 +117,15 @@ public partial class SecurityService
         record.State = EntityState.Deleted;
         try
         {
-            recordsDeleted = db.SaveChanges();
-            result.Result = recordsDeleted.ToString();
+            recordsDeleted = db.SaveChanges();            
         }
         catch (Exception ex)
         {
             result.HasError = true;
             result.Message = ex.Message;
         }
+        
+        result.Result = recordsDeleted.ToString();
 
         return result;
     }

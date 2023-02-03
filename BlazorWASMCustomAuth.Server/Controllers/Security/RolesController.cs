@@ -14,27 +14,19 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             SecurityService = securityService;
         }
 
-        [HttpGet]
-        //[Authorize(Roles = "admin,RolesGet")]
-        public IActionResult RolesGet(int id = 0)
-        {
-            return Ok(SecurityService.RolesGet(id));
-        }
-
-        [HttpGet]
-        [Route("GetAllPaged")]
-        //[Authorize(Roles = "admin,RolesGet")]
-        public IActionResult GetAllPaged(int pageNumber, int pageSize, string searchString = null, string orderBy = null)
-        {
-            return Ok(SecurityService.RolesGetPaged(pageNumber, pageSize, searchString, orderBy));
-        }
-
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
         public IActionResult RoleCreate(RoleCreateDto model)
         {
             var result = SecurityService.RoleCreate(model);
             return Ok(result);
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "admin,RolesGet")]
+        public IActionResult RolesGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        {
+            return Ok(SecurityService.RolesGet(id, pageNumber, pageSize, searchString, orderBy));
         }
 
         [HttpPut]

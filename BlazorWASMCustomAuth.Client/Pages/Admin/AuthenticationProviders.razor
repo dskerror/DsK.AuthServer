@@ -1,0 +1,46 @@
+﻿@page "/admin/AuthenticationProviders"
+@using BlazorWASMCustomAuth.Security.Shared;
+@using System.Security.Claims;
+
+<h2>Roles</h2>
+
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<AuthenticationProviderDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
+    <ToolBarContent>
+        <div class="justify-center mud-text-align-center">
+            <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateAuthenticationProvider())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Authentication Provider</MudButton>
+        </div>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>        
+        <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="AuthenticationProviderName">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="AuthenticationProviderType">Type</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="Domain">Domain</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="Username">Username</MudTableSortLabel></MudTh>
+        <MudTh>Details</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="AuthenticationProviderName">
+            <MudHighlighter Text="@context.AuthenticationProviderName" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="AuthenticationProviderType">
+            <MudHighlighter Text="@context.AuthenticationProviderType" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="Domain">
+            <MudHighlighter Text="@context.Domain" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="Username">
+            <MudHighlighter Text="@context.Username" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="Details">
+            <MudIconButton OnClick="() => ViewAuthenticationProvider(context.Id)"
+                           Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled">
+            </MudIconButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
+    </PagerContent>
+</MudTable>

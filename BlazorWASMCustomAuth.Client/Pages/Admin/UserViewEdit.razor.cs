@@ -28,7 +28,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private async Task LoadData()
         {
-            var result = await securityService.UserGet(id);
+            var result = await securityService.UserGetAsync(id);
             if (result != null)
             {
                 user = result.Result;
@@ -38,7 +38,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private async Task EditUser()
         {
-            var result = await securityService.UserEdit(user);
+            var result = await securityService.UserEditAsync(user);
             DisableEditMode();
             if (result != null)
                 if (result.HasError)

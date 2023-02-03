@@ -12,10 +12,10 @@ using System.Security.Claims;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
-    public partial class Roles
+    public partial class AuthenticationProviders
     {
-        private IEnumerable<RoleDto> _pagedData;
-        private MudTable<RoleDto> _table;
+        private IEnumerable<AuthenticationProviderDto> _pagedData;
+        private MudTable<AuthenticationProviderDto> _table;
         private int _totalItems;
         private int _currentPage;
         private string _searchString = "";
@@ -24,10 +24,10 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         {
         }
 
-        private async Task<TableData<RoleDto>> ServerReload(TableState state)
+        private async Task<TableData<AuthenticationProviderDto>> ServerReload(TableState state)
         {         
             await LoadData(state.Page, state.PageSize, state);            
-            return new TableData<RoleDto> { TotalItems = _totalItems, Items = _pagedData };
+            return new TableData<AuthenticationProviderDto> { TotalItems = _totalItems, Items = _pagedData };
         }
 
         private async Task LoadData(int pageNumber, int pageSize, TableState state)
@@ -39,7 +39,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             }
 
             var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = orderings };
-            var response = await securityService.RolesGetAsync(request);
+            var response = await securityService.AuthenticationProvidersGetAsync(request);
             if (!response.HasError)
             {
                 _totalItems = response.Paging.TotalItems;
@@ -58,14 +58,14 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             _table.ReloadServerData();
         }
 
-        private void ViewRole(int id)
+        private void ViewAuthenticationProvider(int id)
         {
-            _navigationManager.NavigateTo($"/admin/roleviewedit/{id}");
+            _navigationManager.NavigateTo($"/admin/authenticationProviderViewEdit/{id}");
         }
 
-        private void CreateRole()
+        private void CreateAuthenticationProvider()
         {
-            _navigationManager.NavigateTo("/admin/rolecreate");
+            _navigationManager.NavigateTo("/admin/authenticationProviderCreate");
         }
     }
 }

@@ -5,20 +5,20 @@
 <h3><NavLink href="/admin/users">Users</NavLink> > Create User</h3>
 
 
-<EditForm Model="userCreateModel" OnValidSubmit="CreateUser">
+<EditForm Model="model" OnValidSubmit="Create">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <MudCard Class="mb-2">
         <MudCardContent>
-            <MudTextField Label="Username" @bind-Value="userCreateModel.Username"
-                          For="@(()=>userCreateModel.Username)"
+            <MudTextField Label="Username" @bind-Value="model.Username"
+                          For="@(()=>model.Username)"
                           HelperText="Can't contain spaces">
             </MudTextField>
-            <MudTextField Label="Email" @bind-Value="userCreateModel.Email"
-                          For="@(()=>userCreateModel.Email)">
+            <MudTextField Label="Email" @bind-Value="model.Email"
+                          For="@(()=>model.Email)">
             </MudTextField>
-            <MudTextField Label="Name" @bind-Value="userCreateModel.Name"
-                          For="@(()=>userCreateModel.Name)">
+            <MudTextField Label="Name" @bind-Value="model.Name"
+                          For="@(()=>model.Name)">
             </MudTextField>
         </MudCardContent>
     </MudCard>

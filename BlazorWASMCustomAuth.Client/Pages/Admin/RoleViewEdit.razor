@@ -1,4 +1,4 @@
-﻿@page "/admin/userviewedit/{id:int}"
+﻿@page "/admin/roleviewedit/{id:int}"
 
 @*<AuthorizeView>
     <Authorized>*@
@@ -18,7 +18,7 @@ else
             <ValidationSummary />
             <MudCard Class="mb-2">
                 <MudCardContent>
-                    <MudTextField Label="RoleName" @bind-Value="role.RoleName"
+                    <MudTextField ReadOnly="true" Label="RoleName" @bind-Value="role.RoleName"
                           For="@(()=>role.RoleName)">
                     </MudTextField>
                     <MudTextField Label="RoleDescription" @bind-Value="role.RoleDescription"
@@ -34,7 +34,10 @@ else
     {
         <EditForm Model="role">
             <MudCard Class="mb-2">
-                <MudCardContent>                    
+                <MudCardContent>
+                    <MudTextField ReadOnly="true" Label="RoleName" @bind-Value="role.RoleName"
+                          For="@(()=>role.RoleName)">
+                    </MudTextField>
                     <MudTextField ReadOnly="true" Label="RoleDescription" @bind-Value="role.RoleDescription"
                           For="@(()=>role.RoleDescription)">
                     </MudTextField>

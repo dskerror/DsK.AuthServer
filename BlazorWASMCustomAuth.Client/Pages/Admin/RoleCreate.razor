@@ -1,20 +1,20 @@
-﻿@page "/admin/usercreate"
+﻿@page "/admin/rolecreate"
 
 @*<AuthorizeView>
     <Authorized>*@
 <h3><NavLink href="/admin/roles">Roles</NavLink> > Create Role</h3>
 
 
-<EditForm Model="roleCreateModel" OnValidSubmit="CreateRole">
+<EditForm Model="model" OnValidSubmit="Create">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <MudCard Class="mb-2">
         <MudCardContent>            
-            <MudTextField Label="RoleName" @bind-Value="roleCreateModel.RoleName"
-                          For="@(()=>roleCreateModel.RoleName)">
+            <MudTextField Label="Role Name" @bind-Value="model.RoleName"
+                          For="@(()=>model.RoleName)">
             </MudTextField>
-            <MudTextField Label="RoleDescription" @bind-Value="roleCreateModel.RoleDescription"
-                          For="@(()=>roleCreateModel.RoleDescription)">
+            <MudTextField Label="Role Description" @bind-Value="model.RoleDescription"
+                          For="@(()=>model.RoleDescription)">
             </MudTextField>
         </MudCardContent>
     </MudCard>

@@ -2,9 +2,9 @@
 {
     public static class RoleEndpoints
     {
-        public static string GetAllPaged(int pageNumber, int pageSize, string searchString, string[] orderBy)
+        public static string Get(int id, int pageNumber, int pageSize, string searchString, string[] orderBy)
         {
-            var url = $"api/security/roles/GetAllPaged?pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy=";
+            var url = $"api/security/roles?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy=";
             if (orderBy?.Any() == true)
             {
                 foreach (var orderByPart in orderBy)
@@ -15,10 +15,9 @@
             }
             return url;
         }
-
-        public static string GetCount = "api/security/roles/count";
-        public static string Save = "api/security/roles";
+                
+        public static string Post = "api/security/roles";
+        public static string Put = "api/security/roles";
         public static string Delete = "api/security/roles";
-        
     }
 }
