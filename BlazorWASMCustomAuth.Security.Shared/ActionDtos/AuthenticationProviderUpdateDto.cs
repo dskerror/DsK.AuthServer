@@ -10,14 +10,11 @@ public partial class AuthenticationProviderUpdateDto
     public int Id { get; set; }
 
     [Required]
-    public string AuthenticationProviderName { get; set; } = null!;
-
-    [Required]
-    public string? AuthenticationProviderType { get; set; }
-
     public string? Domain { get; set; }
 
+    [Required]
     public string? Username { get; set; }
 
+    [Required]    
     public string? Password { get; set; }
 }

@@ -5,7 +5,7 @@ using MudBlazor;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
-    public partial class AuthenticationProviderEdit
+    public partial class AuthenticationProviderViewEdit
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 

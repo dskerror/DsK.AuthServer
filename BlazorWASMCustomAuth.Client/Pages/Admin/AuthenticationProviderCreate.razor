@@ -13,9 +13,14 @@
             <MudTextField Label="Authentication Provider Name" @bind-Value="model.AuthenticationProviderName"
                           For="@(()=>model.AuthenticationProviderName)">
             </MudTextField>
-            <MudTextField Label="Authentication Provider Type" @bind-Value="model.AuthenticationProviderType"
+            @*<MudTextField Label="Authentication Provider Type" @bind-Value="model.AuthenticationProviderType"
                           For="@(()=>model.AuthenticationProviderType)">
-            </MudTextField>
+            </MudTextField>*@
+            <MudSelect T="string" Label="AuthenticationProviderType" 
+                AnchorOrigin="Origin.BottomCenter" 
+                @bind-Value="model.AuthenticationProviderType">
+                <MudSelectItem Value="@("Active Directory")" />                
+            </MudSelect>
             <MudTextField Label="Domain" @bind-Value="model.Domain"
                           For="@(()=>model.Domain)">
             </MudTextField>
@@ -23,7 +28,7 @@
                           For="@(()=>model.Username)">
             </MudTextField>
             <MudTextField Label="Password" @bind-Value="model.Password"
-                          For="@(()=>model.Password)">
+                          For="@(()=>model.Password)" InputType="InputType.Password">
             </MudTextField>
         </MudCardContent>
     </MudCard>

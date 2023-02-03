@@ -88,8 +88,15 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure{
         public APIResult<string> AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
         {
             APIResult<string> result = new APIResult<string>();
+
             int recordsUpdated = 0;
             var record = db.AuthenticationProviders.FirstOrDefault(x => x.Id == model.Id);
+
+            if(record.AuthenticationProviderName == "Local")
+            {
+                result.HasError = true;
+                result.Message = "Local Authentication Provider can't be updated";
+            }
 
             if (record != null)            
                 Mapper.Map(model, record);            
@@ -113,11 +120,21 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure{
         {
             APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
-            var record = db.AuthenticationProviders.Attach(new AuthenticationProvider { Id = id });
-            record.State = EntityState.Deleted;
+
+            var record = db.AuthenticationProviders.FirstOrDefault(x => x.Id == id);
+
             try
             {
-                recordsDeleted = db.SaveChanges();                
+                if (record.AuthenticationProviderName == "Local")
+                {
+                    result.HasError = true;
+                    result.Message = "Local Authentication Provider can't be deleted";
+                } else
+                {
+                    db.Remove(record);
+                    recordsDeleted = db.SaveChanges();
+                }
+                
             }
             catch (Exception ex)
             {

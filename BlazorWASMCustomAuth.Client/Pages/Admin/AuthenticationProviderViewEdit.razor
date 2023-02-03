@@ -18,10 +18,10 @@ else
             <ValidationSummary />
             <MudCard Class="mb-2">
                 <MudCardContent>
-                    <MudTextField Label="Authentication Provider Name" @bind-Value="model.AuthenticationProviderName"
+                    <MudTextField ReadOnly="true" Label="Authentication Provider Name" @bind-Value="model.AuthenticationProviderName"
                           For="@(()=>model.AuthenticationProviderName)">
                     </MudTextField>
-                    <MudTextField Label="Authentication Provider Type" @bind-Value="model.AuthenticationProviderType"
+                    <MudTextField ReadOnly="true" Label="Authentication Provider Type" @bind-Value="model.AuthenticationProviderType"
                           For="@(()=>model.AuthenticationProviderType)">
                     </MudTextField>
                     <MudTextField Label="Domain" @bind-Value="model.Domain"
@@ -31,7 +31,7 @@ else
                           For="@(()=>model.Username)">
                     </MudTextField>
                     <MudTextField Label="Password" @bind-Value="model.Password"
-                          For="@(()=>model.Password)">
+                          For="@(()=>model.Password)" InputType="InputType.Password">
                     </MudTextField>
                 </MudCardContent>
             </MudCard>
@@ -56,12 +56,16 @@ else
                     <MudTextField ReadOnly="true" Label="Username" @bind-Value="model.Username"
                           For="@(()=>model.Username)">
                     </MudTextField>
-                    <MudTextField ReadOnly ="true" Label="Password" @bind-Value="model.Password"
-                                  For="@(()=>model.Password)">
+                    <MudTextField ReadOnly="true" Label="Password" @bind-Value="model.Password"
+                          For="@(()=>model.Password)" InputType="InputType.Password">
                     </MudTextField>
                 </MudCardContent>
             </MudCard>
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="EnableEditMode" Class="mb-2">Edit</MudButton>
+            @if (model.AuthenticationProviderName != "Local")
+            {
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="EnableEditMode" Class="mb-2">Edit</MudButton>
+            }
+
         </EditForm>
     }
 }
