@@ -9,31 +9,26 @@ internal class Program
     {
         var options = new DbContextOptions<SecurityTablesTestContext>();
         
-        var db = new SecurityTablesTestContext(new DbContextOptionsBuilder<SecurityTablesTestContext>().UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true").Options);
-        //Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
-        //Data Source=(localdb)\MSSQLLocalDB;
+        //var db = new SecurityTablesTestContext(new DbContextOptionsBuilder<SecurityTablesTestContext>().UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true").Options);
+        var db = new SecurityTablesTestContext(new DbContextOptionsBuilder<SecurityTablesTestContext>().UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true").Options);
         db.Database.Migrate(); //CREATES DATABASE IF IT DOESNT EXISTS
+        db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
 
+
+        CreateLocalAuthProvider(db);
         Permission adminPermission = CreateAdminPermission(db);
         Role adminRole = CreateAdminRole(db);
         AddAdminPermissionToAdminRole(db, adminPermission, adminRole);
         User adminUser = CreateAdminUser(db);
         AddAdminRoleToAdminUser(db, adminRole, adminUser);
-        AuthenticationProvider authProvider = CreateLocalAuthProvider(db);
+        
         CreateAdminUserPassword(db, adminUser);
 
-        IList<Permission> permissions = new List<Permission>() {
-            new Permission() { PermissionName = "PermissionsGet", PermissionDescription = "" },
-            new Permission() { PermissionName = "RefreshToken", PermissionDescription = "" },
-            new Permission() { PermissionName = "RolePermissionsGet", PermissionDescription = "" },
-            new Permission() { PermissionName = "RolesGet", PermissionDescription = "" },
-            new Permission() { PermissionName = "UserChangeLocalPassword", PermissionDescription = "" },
-            new Permission() { PermissionName = "UserCreate", PermissionDescription = "" },
-            new Permission() { PermissionName = "UserCreateLocalPassword", PermissionDescription = "" },
-            new Permission() { PermissionName = "UserLogin", PermissionDescription = "" },
-            new Permission() { PermissionName = "UsersGet", PermissionDescription = "" }
-         };
-        db.Permissions.AddRange(permissions);
+        var permissionList = BlazorWASMCustomAuth.Security.Shared.Constants.Access.GetRegisteredPermissions();
+        foreach (var permission in permissionList)
+        {
+            db.Permissions.Add(new Permission() { PermissionName = permission, PermissionDescription = "" });
+        }
         db.SaveChanges();
 
     }
@@ -57,7 +52,11 @@ internal class Program
     {
         var authProvider = new AuthenticationProvider()
         {
-            AuthenticationProviderName = "Local"
+            AuthenticationProviderName = "Local",
+            AuthenticationProviderType= "Local",
+            Domain="",
+            Username="",
+            Password=""
         };
         db.AuthenticationProviders.Add(authProvider);
         db.SaveChanges();

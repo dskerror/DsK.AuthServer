@@ -1,0 +1,8 @@
+﻿Set ef project as startup project
+In Visual Studio, select menu Tools -> NuGet Package Manger -> Package Manger Console and run the following command:
+
+Scaffold-DbContext "Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+
+
+Add-Migration: Creates a new migration class as per specified name with the Up() and Down() methods.
+Update-Database: Executes the last migration file created by the Add-Migration command and applies changes to the database schema.
