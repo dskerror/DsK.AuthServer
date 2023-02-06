@@ -1,5 +1,7 @@
 ﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
@@ -23,7 +25,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpGet]
-        //[Authorize(Roles = "admin,UsersGet")]
+        //[Authorize(Roles = $"{Access.Admin}, {Access.Users.View}")]
         public async Task<IActionResult> UsersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
             var result = await SecurityService.UsersGet(id, pageNumber, pageSize, searchString, orderBy);

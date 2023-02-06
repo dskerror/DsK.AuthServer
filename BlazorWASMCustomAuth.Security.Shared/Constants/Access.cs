@@ -11,6 +11,8 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
 {
     public static class Access
     {
+        public const string Admin = "Admin";
+
         [DisplayName("Authentication Providers")]
         [Description("Authentication Providers Permissions")]
         public static class AuthenticationProvider
