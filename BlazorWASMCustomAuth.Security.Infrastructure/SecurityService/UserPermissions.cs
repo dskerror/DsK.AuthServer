@@ -8,28 +8,28 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public List<string> GetUserPermissions(string? username)
+        public async Task<List<string>> GetUserPermissions(string? username)
         {
-            var permissionAllow = (from u in db.Users
+            var permissionAllow = await (from u in db.Users
                                    join up in db.UserPermissions on u.Id equals up.UserId
                                    join p in db.Permissions on up.PermissionId equals p.Id
                                    where u.Username == username && up.Allow == true
-                                   select p.PermissionName).ToList();
+                                   select p.PermissionName).ToListAsync();
 
 
-            var permissionDeny = (from u in db.Users
+            var permissionDeny = await (from u in db.Users
                                   join up in db.UserPermissions on u.Id equals up.UserId
                                   join p in db.Permissions on up.PermissionId equals p.Id
                                   where u.Username == username && up.Allow == false
-                                  select p.PermissionName).ToList();
+                                  select p.PermissionName).ToListAsync();
 
-            var RolePermissions = (from u in db.Users
+            var RolePermissions = await (from u in db.Users
                                    join ur in db.UserRoles on u.Id equals ur.UserId
                                    join r in db.Roles on ur.RoleId equals r.Id
                                    join rp in db.RolePermissions on r.Id equals rp.RoleId
                                    join p in db.Permissions on rp.PermissionId equals p.Id
                                    where u.Username == username
-                                   select p.PermissionName).ToList();
+                                   select p.PermissionName).ToListAsync();
 
             var finalList = permissionAllow.Concat(RolePermissions).Distinct().ToList();
 
@@ -41,7 +41,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return finalList;
         }
 
-        public APIResult<string> UserPermissionCreate(UserPermissionCreateDto model)
+        public async Task<APIResult<string>> UserPermissionCreate(UserPermissionCreateDto model)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
@@ -53,7 +53,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             try
             {
-                recordsCreated = db.SaveChanges();
+                recordsCreated = await db.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -72,7 +72,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
 
 
-        public APIResult<string> UserPermissionDelete(int id)
+        public async Task< APIResult<string>> UserPermissionDelete(int id)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
@@ -80,7 +80,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             record.State = EntityState.Deleted;
             try
             {
-                recordsDeleted = db.SaveChanges();
+                recordsDeleted = await db.SaveChangesAsync();
                 result.Result = recordsDeleted.ToString();
             }
             catch (Exception ex)

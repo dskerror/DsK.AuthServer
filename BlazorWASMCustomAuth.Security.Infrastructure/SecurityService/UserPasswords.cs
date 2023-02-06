@@ -5,7 +5,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult<string> UserCreateLocalPassword(UserCreateLocalPasswordDto model)
+        public async Task<APIResult<string>> UserCreateLocalPassword(UserCreateLocalPasswordDto model)
         {
             //TODO : Implement Password Complexity Rules
             //TODO : Implement Previously Used Password Constraint
@@ -27,7 +27,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             try
             {
-                recordsCreated = db.SaveChanges();
+                recordsCreated = await db.SaveChangesAsync();
             }
             catch (Exception ex)
             {

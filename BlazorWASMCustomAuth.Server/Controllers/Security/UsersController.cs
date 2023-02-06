@@ -16,32 +16,33 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         //[Authorize(Roles = "admin,UserCreate")]        
-        public IActionResult UserCreate(UserCreateDto model)
+        public async Task<IActionResult> UserCreate(UserCreateDto model)
         {
-            var result = SecurityService.UserCreate(model);
+            var result = await SecurityService.UserCreate(model);
             return Ok(result);
         }
 
         [HttpGet]
         //[Authorize(Roles = "admin,UsersGet")]
-        public IActionResult UsersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        public async Task<IActionResult> UsersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
-            return Ok(SecurityService.UsersGet(id, pageNumber, pageSize, searchString, orderBy));
+            var result = await SecurityService.UsersGet(id, pageNumber, pageSize, searchString, orderBy);
+            return Ok(result);
         }
 
         [HttpPut]
         //[Authorize(Roles = "admin,UserDelete")]
-        public IActionResult UserUpdate(UserDto model)
+        public async Task<IActionResult> UserUpdate(UserDto model)
         {
-            var result = SecurityService.UserUpdate(model);
+            var result = await SecurityService.UserUpdate(model);
             return Ok(result);
         }
 
         [HttpDelete]
         //[Authorize(Roles = "admin,UserDelete")]
-        public IActionResult UserDelete(int id)
+        public async Task<IActionResult> UserDelete(int id)
         {
-            var result = SecurityService.UserDelete(id);
+            var result = await SecurityService.UserDelete(id);
             return Ok(result);
         }
 

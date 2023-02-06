@@ -1,5 +1,6 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
@@ -14,7 +15,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
     public partial class SecurityService
     {
 
-        public APIResult<TokenModel> UserLogin(UserLoginDto model)
+        public async Task<APIResult<TokenModel>> UserLogin(UserLoginDto model)
         {
             APIResult<TokenModel> result = new APIResult<TokenModel>();
             bool IsUserAuthenticated = AuthenticateUser(model);
@@ -32,12 +33,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 TokenCreatedDateTime= DateTime.Now
             });
 
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             result.Result = token;
             return result;
         }
-        public APIResult<UserTokenDto> RefreshToken(TokenModel model)
+        public async Task<APIResult<UserTokenDto>> RefreshToken(TokenModel model)
         {
             APIResult<UserTokenDto> result = new APIResult<UserTokenDto>();
             //implement method that declines renewal depeding of token age.
@@ -60,7 +61,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
 
 
-            var userToken = db.UserTokens.Where(x => x.RefreshToken == model.RefreshToken).FirstOrDefault();
+            var userToken = await db.UserTokens.Where(x => x.RefreshToken == model.RefreshToken).FirstOrDefaultAsync();
 
             if (userToken == null || userToken.RefreshToken != model.RefreshToken)
             {
@@ -73,7 +74,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             userToken.RefreshToken = newtoken.RefreshToken;
             userToken.Token = newtoken.Token;
             userToken.TokenRefreshedDateTime = DateTime.Now;
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             UserTokenDto userTokenDto = new UserTokenDto();
             Mapper.Map(userToken, userTokenDto);

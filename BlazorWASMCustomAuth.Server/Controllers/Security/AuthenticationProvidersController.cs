@@ -16,32 +16,33 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
-        public IActionResult AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
+        public async Task<IActionResult> AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
         {
-            var result = SecurityService.AuthenticationProvidersCreate(model);
+            var result = await SecurityService.AuthenticationProvidersCreate(model);
             return Ok(result);
         }
 
         [HttpGet]
         //[Authorize(Roles = "admin,RolesGet")]
-        public IActionResult AuthenticationProvidersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        public async Task<IActionResult> AuthenticationProvidersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
-            return Ok(SecurityService.AuthenticationProvidersGet(id, pageNumber, pageSize, searchString, orderBy));
+            var result = SecurityService.AuthenticationProvidersGet(id, pageNumber, pageSize, searchString, orderBy);
+            return Ok(result);
         }
 
         [HttpPut]
         //[Authorize(Roles = "admin,RoleUpdate")]
-        public IActionResult AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
+        public async Task<IActionResult> AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
         {
-            var result = SecurityService.AuthenticationProvidersUpdate(model);
+            var result = await SecurityService.AuthenticationProvidersUpdate(model);
             return Ok(result);
         }
 
         [HttpDelete]
         //[Authorize(Roles = "admin,RoleDelete")]
-        public IActionResult AuthenticationProvidersDelete(int id)
+        public async Task<IActionResult> AuthenticationProvidersDelete(int id)
         {
-            var result = SecurityService.AuthenticationProvidersDelete(id);
+            var result = await SecurityService.AuthenticationProvidersDelete(id);
             return Ok(result);
         }
     }

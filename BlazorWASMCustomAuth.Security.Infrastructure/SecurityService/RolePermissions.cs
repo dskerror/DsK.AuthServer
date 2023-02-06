@@ -7,7 +7,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult<string> RolePermissionCreate(RolePermissionCreateDto model)
+        public async Task<APIResult<string>> RolePermissionCreate(RolePermissionCreateDto model)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
@@ -19,7 +19,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             try
             {
-                recordsCreated = db.SaveChanges();
+                recordsCreated = await db.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -35,12 +35,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public APIResult<List<RolePermissionDto>> RolePermissionsGet(int id = 0)
+        public async Task<APIResult<List<RolePermissionDto>>> RolePermissionsGet(int id = 0)
         {
             APIResult<List<RolePermissionDto>> result = new APIResult<List<RolePermissionDto>>();
             if (id == 0)
             {
-                var items = db.RolePermissions.ToList();
+                var items = await db.RolePermissions.ToListAsync();
                 result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
             }
             else
@@ -52,7 +52,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return result;
         }
 
-        public APIResult<string> RolePermissionDelete(RolePermissionDeleteDto model)
+        public async Task<APIResult<string>> RolePermissionDelete(RolePermissionDeleteDto model)
         {
             APIResult<string> result = new APIResult<string>();
 
@@ -65,7 +65,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             try
             {
-                recordsDeleted = db.SaveChanges();
+                recordsDeleted = await db.SaveChangesAsync();
                 result.Result = recordsDeleted.ToString();
             }
             catch (Exception ex)

@@ -16,24 +16,25 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
-        public IActionResult UserRoleCreate(UserRoleCreateDto model)
+        public async Task<IActionResult> UserRoleCreate(UserRoleCreateDto model)
         {
-            var result = SecurityService.UserRoleCreate(model);
+            var result = await SecurityService.UserRoleCreate(model);
             return Ok(result);
         }
 
         [HttpGet]
         //[Authorize(Roles = "admin,RolesGet")]
-        public IActionResult UserRolesGet(int userId = 0)
+        public async Task<IActionResult> UserRolesGet(int userId = 0)
         {
-            return Ok(SecurityService.UserRolesGet(userId));
+            var result = await SecurityService.UserRolesGet(userId);
+            return Ok(result);
         }
 
         [HttpDelete]
         //[Authorize(Roles = "admin,RoleDelete")]
-        public IActionResult UserRoleDelete(int id)
+        public async Task<IActionResult> UserRoleDelete(int id)
         {
-            var result = SecurityService.UserRoleDelete(id);
+            var result = await SecurityService.UserRoleDelete(id);
             return Ok(result);
         }
     }

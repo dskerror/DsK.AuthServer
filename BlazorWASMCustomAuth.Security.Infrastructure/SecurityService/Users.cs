@@ -7,7 +7,7 @@ using System.Linq.Dynamic.Core;
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
 {
-    public APIResult<UserDto> UserCreate(UserCreateDto model)
+    public async Task<APIResult<UserDto>> UserCreate(UserCreateDto model)
     {
         APIResult<UserDto> result = new APIResult<UserDto>();
         int recordsCreated = 0;
@@ -15,11 +15,11 @@ public partial class SecurityService
         var record = new User();
         Mapper.Map(model, record);
 
-        db.Users.Add(record);
+        await db.Users.AddAsync(record);
 
         try
         {
-            recordsCreated = db.SaveChanges();
+            recordsCreated = await db.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -35,7 +35,7 @@ public partial class SecurityService
 
         return result;
     }
-    public APIResult<List<UserDto>> UsersGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
+    public async Task<APIResult<List<UserDto>>> UsersGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
     {
         var result = new APIResult<List<UserDto>>();
 
@@ -52,51 +52,51 @@ public partial class SecurityService
         List<User> items;
         if (!string.IsNullOrWhiteSpace(searchString))
         {
-            count = db.Users
+            count = await db.Users
                 .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
-                .Count();
+                .CountAsync();
 
-            items = db.Users.OrderBy(ordering)
+            items = await db.Users.OrderBy(ordering)
                 .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .ToList();
+                .ToListAsync();
         }
         else if (id != 0)
         {
-            count = db.Users
+            count = await db.Users
                 .Where(u => u.Id == id)
-                .Count();
+                .CountAsync();
 
-            items = db.Users.OrderBy(ordering)
+            items = await db.Users.OrderBy(ordering)
                 .Where(u => u.Id == id)                
-                .ToList();
+                .ToListAsync();
         }
         else
         {
-            count = db.Users.Count();
+            count = await db.Users.CountAsync();
 
-            items = db.Users.OrderBy(ordering)
+            items = await db.Users.OrderBy(ordering)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .ToList();
+                .ToListAsync();
         }
         result.Paging.TotalItems = count;
         result.Result = Mapper.Map<List<User>, List<UserDto>>(items);
         return result;
     }
-    public APIResult<string> UserUpdate(UserDto model)
+    public async Task<APIResult<string>> UserUpdate(UserDto model)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
-        var record = db.Users.FirstOrDefault(x => x.Id == model.Id);
+        var record = await db.Users.FirstOrDefaultAsync(x => x.Id == model.Id);
 
         if (record != null)
             Mapper.Map(model, record);
 
         try
         {
-            recordsUpdated = db.SaveChanges();
+            recordsUpdated = await db.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -109,7 +109,7 @@ public partial class SecurityService
 
         return result;
     }
-    public APIResult<string> UserDelete(int id)
+    public async Task<APIResult<string>> UserDelete(int id)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsDeleted = 0;
@@ -117,7 +117,7 @@ public partial class SecurityService
         record.State = EntityState.Deleted;
         try
         {
-            recordsDeleted = db.SaveChanges();
+            recordsDeleted = await ddb.SaveChangesAsync();
         }
         catch (Exception ex)
         {

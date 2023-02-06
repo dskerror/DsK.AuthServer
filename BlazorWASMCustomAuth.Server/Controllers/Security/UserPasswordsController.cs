@@ -19,10 +19,11 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         [HttpPost]
         //[Authorize(Roles = "admin,UserCreateLocalPassword")]
         [Route("CreateLocalPassword")]
-        public IActionResult UserCreateLocalPassword(UserCreateLocalPasswordDto model)
+        public async Task<IActionResult> UserCreateLocalPassword(UserCreateLocalPasswordDto model)
         {
             //TODO : Create another method for user to change their own passwords
-            return Ok(SecurityService.UserCreateLocalPassword(model));
+            var result = await SecurityService.UserCreateLocalPassword(model);
+            return Ok(result);
         }
      
     }

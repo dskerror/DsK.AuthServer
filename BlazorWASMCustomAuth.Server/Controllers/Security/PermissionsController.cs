@@ -18,31 +18,32 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpGet]
         //[Authorize(Roles = "admin,PermissionsGet")]
-        public IActionResult PermissionsGet(int id = 0)
+        public async Task<IActionResult> PermissionsGet(int id = 0)
         {
-            return Ok(SecurityService.PermissionsGet(id));
+            var result = await SecurityService.PermissionsGet(id);
+            return Ok(result);
         }
 
         [HttpPost]
         //[Authorize(Roles = "admin,PermissionCreate")]
-        public IActionResult PermissionCreate(PermissionCreateDto model)
+        public async Task<IActionResult> PermissionCreate(PermissionCreateDto model)
         {
-            var result = SecurityService.PermissionCreate(model);
+            var result = await SecurityService.PermissionCreate(model);
             return Ok(result);
         }
         [HttpPut]
         //[Authorize(Roles = "admin,PermissionUpdate")]
-        public IActionResult PermissionUpdate(PermissionUpdateDto model)
+        public async Task<IActionResult> PermissionUpdate(PermissionUpdateDto model)
         {
-            var result = SecurityService.PermissionUpdate(model);
+            var result = await SecurityService.PermissionUpdate(model);
             return Ok(result);
         }
 
         [HttpDelete]
         //[Authorize(Roles = "admin,PermissionDelete")]
-        public IActionResult PermissionDelete(int id)
+        public async Task<IActionResult> PermissionDelete(int id)
         {
-            var result = SecurityService.PermissionDelete(id);
+            var result = await SecurityService.PermissionDelete(id);
             return Ok(result);
         }
     }

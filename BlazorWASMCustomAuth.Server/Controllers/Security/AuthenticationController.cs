@@ -18,10 +18,10 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         [Route("UserLogin")]
-        public IActionResult UserLogin(UserLoginDto model)
+        public async Task<IActionResult> UserLogin(UserLoginDto model)
         {
             //implement captcha
-            var tokenModel = SecurityService.UserLogin(model);
+            var tokenModel = await SecurityService.UserLogin(model);
 
             if (tokenModel == null)
                 return NotFound();
@@ -31,9 +31,9 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         [Route("RefreshToken")]
-        public IActionResult RefreshToken(TokenModel refreshToken)
+        public async Task<IActionResult> RefreshToken(TokenModel refreshToken)
         {
-            var resultTokenModel = SecurityService.RefreshToken(refreshToken);
+            var resultTokenModel = await SecurityService.RefreshToken(refreshToken);
             if (resultTokenModel == null)
             {
                 return NotFound();

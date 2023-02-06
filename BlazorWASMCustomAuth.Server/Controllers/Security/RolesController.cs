@@ -16,32 +16,33 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         //[Authorize(Roles = "admin,RoleCreate")]
-        public IActionResult RoleCreate(RoleCreateDto model)
+        public async Task<IActionResult> RoleCreate(RoleCreateDto model)
         {
-            var result = SecurityService.RoleCreate(model);
+            var result = await SecurityService.RoleCreate(model);
             return Ok(result);
         }
 
         [HttpGet]
         //[Authorize(Roles = "admin,RolesGet")]
-        public IActionResult RolesGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        public async Task<IActionResult> RolesGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
-            return Ok(SecurityService.RolesGet(id, pageNumber, pageSize, searchString, orderBy));
+            var result = await SecurityService.RolesGet(id, pageNumber, pageSize, searchString, orderBy);
+            return Ok(result);
         }
 
         [HttpPut]
         //[Authorize(Roles = "admin,RoleUpdate")]
-        public IActionResult RoleUpdate(RoleUpdateDto model)
+        public async Task<IActionResult> RoleUpdate(RoleUpdateDto model)
         {
-            var result = SecurityService.RoleUpdate(model);
+            var result = await SecurityService.RoleUpdate(model);
             return Ok(result);
         }
 
         [HttpDelete]
         //[Authorize(Roles = "admin,RoleDelete")]
-        public IActionResult RoleDelete(int id)
+        public async Task<IActionResult> RoleDelete(int id)
         {
-            var result = SecurityService.RoleDelete(id);
+            var result = await SecurityService.RoleDelete(id);
             return Ok(result);
         }
     }

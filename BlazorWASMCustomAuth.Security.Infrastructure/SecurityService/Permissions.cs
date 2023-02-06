@@ -7,7 +7,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public APIResult<string> PermissionCreate(PermissionCreateDto model)
+        public async Task<APIResult<string>> PermissionCreate(PermissionCreateDto model)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
@@ -19,7 +19,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             try
             {
-                recordsCreated = db.SaveChanges();
+                recordsCreated = await db.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -35,28 +35,27 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-
-        public APIResult<List<PermissionDto>> PermissionsGet (int id = 0)
+        public async Task<APIResult<List<PermissionDto>>> PermissionsGet (int id = 0)
         {
             APIResult<List<PermissionDto>> result = new APIResult<List<PermissionDto>>();
             if (id == 0)
             {
-                var items = db.Permissions.ToList();
+                var items = await db.Permissions.ToListAsync();
                 result.Result = Mapper.Map<List<Permission>, List<PermissionDto>>(items);
             }
             else
             {
-                var items = db.Permissions.Where(x => x.Id == id).ToList();
+                var items = await db.Permissions.Where(x => x.Id == id).ToListAsync();
                 result.Result = Mapper.Map<List<Permission>, List<PermissionDto>>(items);
             }
 
             return result;
         }
-        public APIResult<string> PermissionUpdate(PermissionUpdateDto model)
+        public async Task<APIResult<string>> PermissionUpdate(PermissionUpdateDto model)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsUpdated = 0;
-            var record = db.Permissions.FirstOrDefault(x => x.Id == model.Id);
+            var record = await db.Permissions.FirstOrDefaultAsync(x => x.Id == model.Id);
 
             if (record != null)
             {
@@ -65,7 +64,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             try
             {
-                recordsUpdated = db.SaveChanges();
+                recordsUpdated = await db.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -82,7 +81,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public APIResult<string> PermissionDelete(int id)
+        public async Task<APIResult<string>> PermissionDelete(int id)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
@@ -90,7 +89,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             record.State = EntityState.Deleted;
             try
             {
-                recordsDeleted = db.SaveChanges();
+                recordsDeleted = await db.SaveChangesAsync();
                 result.Result = recordsDeleted.ToString();
             }
             catch (Exception ex)
