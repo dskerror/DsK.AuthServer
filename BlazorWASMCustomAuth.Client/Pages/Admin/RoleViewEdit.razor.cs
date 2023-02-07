@@ -12,8 +12,10 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
         public RoleDto role { get; set; }
+        public List<RolePermissionGridDto> rolePermissions { get; set; }
         [Parameter] public int id { get; set; }
-        private bool _loaded;
+        private bool _loadedPermissionData;
+        private bool _loadedRolePermissionData;
         private bool _EditMode;
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
@@ -23,16 +25,27 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadData();
+            await LoadPermissionData();
+            await LoadRolePermissionData();
         }
 
-        private async Task LoadData()
+        private async Task LoadPermissionData()
         {
             var result = await securityService.RoleGetAsync(id);
             if (result != null)
             {
                 role = result.Result;
-                _loaded = true;
+                _loadedPermissionData = true;
+            }
+        }
+
+        private async Task LoadRolePermissionData()
+        {
+            var result = await securityService.RolePermissionsGetAsync(id);
+            if (result != null)
+            {
+                rolePermissions = result.Result;
+                _loadedRolePermissionData = true;
             }
         }
 
@@ -53,7 +66,8 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         {
             DisableEditMode();
             Snackbar.Add("Edit canceled", Severity.Warning);
-            await LoadData();
+            await LoadPermissionData();
+            await LoadRolePermissionData();
         }
 
         private void EnableEditMode()

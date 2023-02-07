@@ -23,7 +23,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             if (!IsUserAuthenticated)
                 return null;
 
-            var token = GenerateAuthenticationToken(model.Username);
+            var token = await GenerateAuthenticationToken(model.Username);
             
             db.UserTokens.Add(new UserToken()
             {
@@ -70,7 +70,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var newtoken = GenerateAuthenticationToken(username);
+            var newtoken = await GenerateAuthenticationToken(username);
             userToken.RefreshToken = newtoken.RefreshToken;
             userToken.Token = newtoken.Token;
             userToken.TokenRefreshedDateTime = DateTime.Now;
@@ -127,16 +127,16 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return username;
         }
-        private TokenModel GenerateAuthenticationToken(string username)
+        private async Task<TokenModel> GenerateAuthenticationToken(string username)
         {
             if (username.IsNullOrEmpty())
                 return null;
-            var user = db.Users.Where(x=>x.Username == username).FirstOrDefault();
+            var user = await db.Users.Where(x=>x.Username == username).FirstOrDefaultAsync();
             
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key ?? ""));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
-            var userPermissions = GetUserPermissions(username);
+            var userPermissions = await GetUserPermissions(username);
             var userClaims = new List<Claim>();
             userClaims.Add(new Claim(ClaimTypes.Email, user.Email ?? ""));
             userClaims.Add(new Claim("UserId", user.Id.ToString()));

@@ -35,22 +35,48 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public async Task<APIResult<List<RolePermissionDto>>> RolePermissionsGet(int id = 0)
+
+        public async Task<APIResult<List<RolePermissionGridDto>>> RolePermissionsGet(int roleId)
         {
-            APIResult<List<RolePermissionDto>> result = new APIResult<List<RolePermissionDto>>();
-            if (id == 0)
+
+            APIResult<List<RolePermissionGridDto>> result = new APIResult<List<RolePermissionGridDto>>();
+            var permissionList = await db.Permissions.ToListAsync();
+
+
+            var RolePermissionList = await (from r in db.Roles
+                                            join rp in db.RolePermissions on r.Id equals rp.RoleId
+                                            join p in db.Permissions on rp.PermissionId equals p.Id
+                                            where r.Id == roleId
+                                            select p.PermissionName).ToListAsync();
+
+            var permissionGrid = Mapper.Map<List<Permission>, List<RolePermissionGridDto>>(permissionList);
+
+            foreach (var permission in RolePermissionList)
             {
-                var items = await db.RolePermissions.ToListAsync();
-                result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
-            }
-            else
-            {
-                var items = db.RolePermissions.Where(x => x.RoleId == id).ToList();
-                result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
+                var value = permissionGrid.First(x => x.PermissionName == permission);
+                value.Enable = true;
             }
 
+            result.Result = permissionGrid;
             return result;
+
         }
+        //public async Task<APIResult<List<RolePermissionDto>>> RolePermissionsGet(int id = 0)
+        //{
+        //    APIResult<List<RolePermissionDto>> result = new APIResult<List<RolePermissionDto>>();
+        //    if (id == 0)
+        //    {
+        //        var items = await db.RolePermissions.ToListAsync();
+        //        result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
+        //    }
+        //    else
+        //    {
+        //        var items = db.RolePermissions.Where(x => x.RoleId == id).ToList();
+        //        result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
+        //    }
+
+        //    return result;
+        //}
 
         public async Task<APIResult<string>> RolePermissionDelete(RolePermissionDeleteDto model)
         {

@@ -117,7 +117,7 @@ public partial class SecurityService
         record.State = EntityState.Deleted;
         try
         {
-            recordsDeleted = await ddb.SaveChangesAsync();
+            recordsDeleted = await db.SaveChangesAsync();
         }
         catch (Exception ex)
         {

@@ -19,8 +19,11 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpGet]
         //[Authorize(Roles = "admin,RolePermissionsGet")]        
-        public async Task<IActionResult> RolePermissionsGet(int roleid = 0)
+        public async Task<IActionResult> RolePermissionsGet(int roleid)
         {
+            if(roleid == 0)            
+                return BadRequest();
+
             var result = await SecurityService.RolePermissionsGet(roleid);
             return Ok(result);
         }
