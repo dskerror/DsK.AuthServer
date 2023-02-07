@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using BlazorWASMCustomAuth.Client.Services;
 using System.Security.Claims;
 using MudBlazor;
+using System.Diagnostics;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
@@ -17,6 +18,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private bool _loadedPermissionData;
         private bool _loadedRolePermissionData;
         private bool _EditMode;
+        
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("Roles", href: "admin/roles"),
@@ -79,6 +81,11 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private void DisableEditMode()
         {
             _EditMode = false;
+        }
+
+        private void ToggleSwitch(ChangeEventArgs e, int permissionId)
+        {
+            Console.WriteLine($"RoleId : {id}, PermissionId: {permissionId}, Enabled: {e.Value}");            
         }
     }
 }

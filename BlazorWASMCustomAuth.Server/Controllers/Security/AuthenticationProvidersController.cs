@@ -26,7 +26,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         //[Authorize(Roles = "admin,RolesGet")]
         public async Task<IActionResult> AuthenticationProvidersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
-            var result = SecurityService.AuthenticationProvidersGet(id, pageNumber, pageSize, searchString, orderBy);
+            var result = await SecurityService.AuthenticationProvidersGet(id, pageNumber, pageSize, searchString, orderBy);
             return Ok(result);
         }
 

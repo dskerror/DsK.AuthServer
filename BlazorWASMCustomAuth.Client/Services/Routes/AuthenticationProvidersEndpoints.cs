@@ -4,7 +4,7 @@
     {
         public static string Get(int id, int pageNumber, int pageSize, string searchString, string[] orderBy)
         {
-            var url = $"api/security/AuthenticationProviders?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy=";
+            var url = $"api/security/AuthenticationProviders?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy=";            
             if (orderBy?.Any() == true)
             {
                 foreach (var orderByPart in orderBy)

@@ -19,10 +19,6 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private int _totalItems;
         private int _currentPage;
         private string _searchString = "";
-        
-        protected override async Task OnInitializedAsync()
-        {
-        }
 
         private async Task<TableData<AuthenticationProviderDto>> ServerReload(TableState state)
         {         
