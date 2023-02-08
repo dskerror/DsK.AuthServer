@@ -18,7 +18,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private bool _loadedPermissionData;
         private bool _loadedRolePermissionData;
         private bool _EditMode;
-        
+
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("Roles", href: "admin/roles"),
@@ -83,9 +83,18 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             _EditMode = false;
         }
 
-        private void ToggleSwitch(ChangeEventArgs e, int permissionId)
+        private async Task ToggleSwitch(ChangeEventArgs e, int permissionId)
         {
-            Console.WriteLine($"RoleId : {id}, PermissionId: {permissionId}, Enabled: {e.Value}");            
+            //Console.WriteLine($"RoleId : {id}, PermissionId: {permissionId}, Enabled: {e.Value}");
+
+            var result = await securityService.RolePermissionChangeAsync(id, permissionId, (bool)e.Value);
+            if (result != null)
+            {
+                if (!result.HasError)
+                {
+                    Snackbar.Add("Permission Changed", Severity.Warning);
+                }
+            }
         }
     }
 }

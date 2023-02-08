@@ -14,7 +14,7 @@ public partial class SecurityServiceClient
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.RolePermissionsEndpoints.Get(RoleId));
         if (!response.IsSuccessStatusCode)
-            return null;        
+            return null;
 
         var responseAsString = await response.Content.ReadAsStringAsync();
 
@@ -35,5 +35,22 @@ public partial class SecurityServiceClient
             Console.Write(ex.Message);
             return null;
         }
+    }
+
+    public async Task<APIResult<string>> RolePermissionChangeAsync(int roleId, int permissionId, bool permissionEnabled)
+    {
+        await PrepareBearerToken();
+        var model = new RolePermissionChangeDto()
+        {
+            PermissionId = permissionId,
+            RoleId = roleId,
+            PermissionEnabled = permissionEnabled
+        };
+        var response = await _httpClient.PostAsJsonAsync(Routes.RolePermissionsEndpoints.Post, model);
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
     }
 }

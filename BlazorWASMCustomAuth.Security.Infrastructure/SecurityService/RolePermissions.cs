@@ -7,34 +7,50 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public async Task<APIResult<string>> RolePermissionCreate(RolePermissionCreateDto model)
+        public async Task<APIResult<string>> RolePermissionChange(RolePermissionChangeDto model)
         {
             APIResult<string> result = new APIResult<string>();
-            int recordsCreated = 0;
-
+            int recordsModifiedCount = 0;
             var record = new RolePermission();
             Mapper.Map(model, record);
 
-            db.RolePermissions.Add(record);
-
-            try
+            if (model.PermissionEnabled)
             {
-                recordsCreated = await db.SaveChangesAsync();
+                db.RolePermissions.Add(record);
+                try
+                {
+                    recordsModifiedCount = await db.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    result.HasError = true;
+                    result.Message = ex.InnerException.Message;
+                }
+                if (recordsModifiedCount == 1)
+                {
+                    result.Result = recordsModifiedCount.ToString();
+                    result.Message = "Record Created";
+                }
             }
-            catch (Exception ex)
+            else
             {
-                result.HasError = true;
-                result.Message = ex.InnerException.Message;
-            }
+                var recordToDelete = db.RolePermissions.Attach(record);
+                recordToDelete.State = EntityState.Deleted;
 
-            if (recordsCreated == 1)
-            {
-                result.Result = recordsCreated.ToString();
-                result.Message = "Record Created";
+                try
+                {
+                    recordsModifiedCount = await db.SaveChangesAsync();
+                    result.Result = recordsModifiedCount.ToString();
+                }
+                catch (Exception ex)
+                {
+                    result.HasError = true;
+                    result.Message = ex.Message;
+                }
             }
-
             return result;
         }
+
 
         public async Task<APIResult<List<RolePermissionGridDto>>> RolePermissionsGet(int roleId)
         {
@@ -60,47 +76,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             result.Result = permissionGrid;
             return result;
 
-        }
-        //public async Task<APIResult<List<RolePermissionDto>>> RolePermissionsGet(int id = 0)
-        //{
-        //    APIResult<List<RolePermissionDto>> result = new APIResult<List<RolePermissionDto>>();
-        //    if (id == 0)
-        //    {
-        //        var items = await db.RolePermissions.ToListAsync();
-        //        result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
-        //    }
-        //    else
-        //    {
-        //        var items = db.RolePermissions.Where(x => x.RoleId == id).ToList();
-        //        result.Result = Mapper.Map<List<RolePermission>, List<RolePermissionDto>>(items);
-        //    }
-
-        //    return result;
-        //}
-
-        public async Task<APIResult<string>> RolePermissionDelete(RolePermissionDeleteDto model)
-        {
-            APIResult<string> result = new APIResult<string>();
-
-            var recordToDelete = new RolePermission();
-            Mapper.Map(model, recordToDelete);
-
-            int recordsDeleted = 0;
-            var record = db.RolePermissions.Attach(recordToDelete);
-            record.State = EntityState.Deleted;
-
-            try
-            {
-                recordsDeleted = await db.SaveChangesAsync();
-                result.Result = recordsDeleted.ToString();
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.Message;
-            }
-
-            return result;
         }
     }
 }
