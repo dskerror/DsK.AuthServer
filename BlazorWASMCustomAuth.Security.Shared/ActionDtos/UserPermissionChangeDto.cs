@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
 
-public partial class UserPermissionCreateDto
+public partial class UserPermissionChangeDto
 {
     public int UserId { get; set; }
 

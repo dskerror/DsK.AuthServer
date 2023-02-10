@@ -14,7 +14,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<RolePermissionChangeDto, RolePermission>().ReverseMap();        
         CreateMap<RoleCreateDto, Role>().ReverseMap();
         CreateMap<RoleUpdateDto, Role>().ReverseMap();
-        CreateMap<UserPermissionCreateDto, UserPermission>().ReverseMap();
+        CreateMap<UserPermissionChangeDto, UserPermission>().ReverseMap();
         CreateMap<UserCreateDto, User>().ReverseMap();
         CreateMap<UserRoleChangeDto, UserRole>().ReverseMap();
 

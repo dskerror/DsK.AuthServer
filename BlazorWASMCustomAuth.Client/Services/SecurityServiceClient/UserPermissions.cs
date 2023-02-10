@@ -8,10 +8,10 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<UserRoleGridDto>>> UserRolesGetAsync(int UserId)
+    public async Task<APIResult<List<UserPermissionGridDto>>> UserPermissionsGetAsync(int UserId)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.GetAsync(Routes.UserRolesEndpoints.Get(UserId));
+        var response = await _httpClient.GetAsync(Routes.UserPermissionEndpoints.Get(UserId));
         if (!response.IsSuccessStatusCode)
             return null;
 
@@ -19,7 +19,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonSerializer.Deserialize<APIResult<List<UserRoleGridDto>>>(responseAsString, new JsonSerializerOptions
+            var responseObject = JsonSerializer.Deserialize<APIResult<List<UserPermissionGridDto>>>(responseAsString, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
                 ReferenceHandler = ReferenceHandler.Preserve,
@@ -36,16 +36,16 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> UserRoleChangeAsync(int userId, int roleId, bool roleEnabled)
+    public async Task<APIResult<string>> UserPermissionChangeAsync(int userId, int permissionId, bool permissionEnabled)
     {
         await PrepareBearerToken();
-        var model = new UserRoleChangeDto()
-        {
+        var model = new UserPermissionChangeDto()
+        {            
             UserId = userId,
-            RoleId = roleId,
-            RoleEnabled = roleEnabled
+            PermissionId= permissionId,
+            Allow= permissionEnabled
         };
-        var response = await _httpClient.PostAsJsonAsync(Routes.UserRolesEndpoints.Post, model);
+        var response = await _httpClient.PostAsJsonAsync(Routes.UserPermissionEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;
 

@@ -9,10 +9,11 @@ namespace BlazorWASMCustomAuth.Client.Services;
 public partial class SecurityServiceClient
 {
 
-    public async Task<APIResult<List<UserRoleGridDto>>> UserRolesGetAsync(int UserId)
+
+    public async Task<APIResult<List<RolePermissionGridDto>>> RolePermissionsGetAsync(int RoleId)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.GetAsync(Routes.UserRolesEndpoints.Get(UserId));
+        var response = await _httpClient.GetAsync(Routes.RolePermissionsEndpoints.Get(RoleId));
         if (!response.IsSuccessStatusCode)
             return null;
 
@@ -20,7 +21,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonSerializer.Deserialize<APIResult<List<UserRoleGridDto>>>(responseAsString, new JsonSerializerOptions
+            var responseObject = JsonSerializer.Deserialize<APIResult<List<RolePermissionGridDto>>>(responseAsString, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
                 ReferenceHandler = ReferenceHandler.Preserve,
@@ -37,16 +38,16 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> UserRoleChangeAsync(int userId, int roleId, bool roleEnabled)
+    public async Task<APIResult<string>> RolePermissionChangeAsync(int roleId, int permissionId, bool permissionEnabled)
     {
         await PrepareBearerToken();
-        var model = new UserRoleChangeDto()
+        var model = new RolePermissionChangeDto()
         {
-            UserId = userId,
+            PermissionId = permissionId,
             RoleId = roleId,
-            RoleEnabled = roleEnabled
+            PermissionEnabled = permissionEnabled
         };
-        var response = await _httpClient.PostAsJsonAsync(Routes.UserRolesEndpoints.Post, model);
+        var response = await _httpClient.PostAsJsonAsync(Routes.RolePermissionsEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;
 

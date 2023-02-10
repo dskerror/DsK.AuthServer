@@ -13,6 +13,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         public UserDto user { get; set; }
         public List<UserRoleGridDto> userRoles { get; set; }
+        public List<UserPermissionGridDto> userPermissions { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loaded;
         private bool _EditMode;
@@ -26,6 +27,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         {
             await LoadUserData();
             await LoadUserRoles();
+            await LoadUserPermissions();
         }
 
         private async Task LoadUserData()
@@ -44,6 +46,16 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             if (result != null)
             {
                 userRoles = result.Result;
+                //_loadedRolePermissionData = true;
+            }
+        }
+
+        private async Task LoadUserPermissions()
+        {
+            var result = await securityService.UserPermissionsGetAsync(id);
+            if (result != null)
+            {
+                userPermissions = result.Result;
                 //_loadedRolePermissionData = true;
             }
         }
@@ -81,6 +93,20 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         }
 
         private async Task ToggleRoleSwitch(ChangeEventArgs e, int roleId)
+        {
+            //Console.WriteLine($"RoleId : {id}, PermissionId: {permissionId}, Enabled: {e.Value}");
+
+            var result = await securityService.UserRoleChangeAsync(id, roleId, (bool)e.Value);
+            if (result != null)
+            {
+                if (!result.HasError)
+                {
+                    Snackbar.Add("Role Changed", Severity.Warning);
+                }
+            }
+        }
+
+        private async Task TogglePermissionSwitch(ChangeEventArgs e, int roleId)
         {
             //Console.WriteLine($"RoleId : {id}, PermissionId: {permissionId}, Enabled: {e.Value}");
 
