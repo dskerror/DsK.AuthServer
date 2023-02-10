@@ -35,7 +35,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
             else
             {
-                var recordToDelete = db.UserRoles.Attach(record);
+                var recordFind = await db.UserRoles.Where(x=> x.UserId == model.UserId && x.RoleId == model.RoleId).FirstOrDefaultAsync();
+                var recordToDelete = db.UserRoles.Attach(recordFind);
                 recordToDelete.State = EntityState.Deleted;
 
                 try
