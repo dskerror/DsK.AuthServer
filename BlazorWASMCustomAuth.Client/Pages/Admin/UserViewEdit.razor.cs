@@ -12,6 +12,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
         public UserDto user { get; set; }
+        public List<UserRoleGridDto> userRoles { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loaded;
         private bool _EditMode;
@@ -23,16 +24,27 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadData();
+            await LoadUserData();
+            await LoadUserRoles();
         }
 
-        private async Task LoadData()
+        private async Task LoadUserData()
         {
             var result = await securityService.UserGetAsync(id);
             if (result != null)
             {
                 user = result.Result;
                 _loaded = true;
+            }
+        }
+
+        private async Task LoadUserRoles()
+        {
+            var result = await securityService.UserRolesGetAsync(id);
+            if (result != null)
+            {
+                userRoles = result.Result;
+                //_loadedRolePermissionData = true;
             }
         }
 
@@ -53,7 +65,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         {
             DisableEditMode();
             Snackbar.Add("Edit canceled", Severity.Warning);
-            await LoadData();
+            await LoadUserData();
         }
 
         private void EnableEditMode()
@@ -66,6 +78,20 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         {
             _EditMode = false;
 
+        }
+
+        private async Task ToggleRoleSwitch(ChangeEventArgs e, int roleId)
+        {
+            //Console.WriteLine($"RoleId : {id}, PermissionId: {permissionId}, Enabled: {e.Value}");
+
+            var result = await securityService.UserRoleChangeAsync(id, roleId, (bool)e.Value);
+            if (result != null)
+            {
+                if (!result.HasError)
+                {
+                    Snackbar.Add("Role Changed", Severity.Warning);
+                }
+            }
         }
     }
 }
