@@ -15,8 +15,6 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             SecurityService = securityService;
         }
 
-  
-
         [HttpGet]
         //[Authorize(Roles = "admin,RolesGet")]
         public async Task<IActionResult> UserPermissionsGet(int userId)
@@ -28,14 +26,12 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             return Ok(result);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> UserPermissionChange(UserPermissionChangeDto model)
         {
             var result = await SecurityService.UserPermissionChange(model);
             return Ok(result);
         }
-
     }
 }
 

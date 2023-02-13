@@ -70,7 +70,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             foreach (var permission in RolePermissionList)
             {
                 var value = permissionGrid.First(x => x.PermissionName == permission);
-                value.Enable = true;
+                value.Allow = true;
             }
 
             result.Result = permissionGrid;

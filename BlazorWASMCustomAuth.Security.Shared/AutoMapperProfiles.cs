@@ -36,7 +36,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<UserPermissionDto, UserPermission>().ReverseMap();
         CreateMap<UserRoleDto, UserRole>().ReverseMap();
         CreateMap<UserRoleGridDto, Role>().ReverseMap();
-        
+        CreateMap<UserPermissionGridDto, Permission>().ReverseMap();
+
         CreateMap<UserTokenDto, UserToken>().ReverseMap();
     }  
 }

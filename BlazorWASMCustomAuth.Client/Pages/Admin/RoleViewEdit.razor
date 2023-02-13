@@ -55,7 +55,7 @@ else
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="PermissionSwitch">                    
-                    <MudSwitch Color="Color.Success" @bind-Checked="@context.Enable" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
+                    <MudSwitch Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
                 </MudTd>
                 <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
                 <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>

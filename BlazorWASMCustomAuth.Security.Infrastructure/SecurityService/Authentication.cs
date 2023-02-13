@@ -136,7 +136,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key ?? ""));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
-            var userPermissions = await GetUserPermissions(user.Id);
+            var userPermissions = await GetUserPermissionsCombined(user.Id);
             var userClaims = new List<Claim>();
             userClaims.Add(new Claim(ClaimTypes.Email, user.Email ?? ""));
             userClaims.Add(new Claim("UserId", user.Id.ToString()));

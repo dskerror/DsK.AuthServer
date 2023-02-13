@@ -3,6 +3,8 @@ using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Data;
+using System.Security;
+using static BlazorWASMCustomAuth.Security.Shared.Constants.Access;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
@@ -59,7 +61,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return result;
         }
 
-        public async Task<List<string>> GetUserPermissions(int userId)
+        public async Task<List<string>> GetUserPermissionsCombined(int userId)
         {
             var permissionAllow = await (from u in db.Users
                                          join up in db.UserPermissions on u.Id equals up.UserId
@@ -67,7 +69,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                                          where u.Id == userId && up.Allow == true
                                          select p.PermissionName).ToListAsync();
 
-
+            
             var permissionDeny = await (from u in db.Users
                                         join up in db.UserPermissions on u.Id equals up.UserId
                                         join p in db.Permissions on up.PermissionId equals p.Id
@@ -90,6 +92,60 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             //return new APIResult(finalList);
             return finalList;
+        }
+
+        public async Task<APIResult<List<UserPermissionGridDto>>> GetUserPermissions(int userId)
+        {
+            APIResult<List<UserPermissionGridDto>> result = new APIResult<List<UserPermissionGridDto>>();
+            var permissionList = await db.Permissions.ToListAsync();
+
+            var permissioinGrid = Mapper.Map<List<Permission>, List<UserPermissionGridDto>>(permissionList);
+
+            var UserPermissions = await (from u in db.Users
+                                         join up in db.UserPermissions on u.Id equals up.UserId
+                                         join p in db.Permissions on up.PermissionId equals p.Id
+                                         where u.Id == userId
+                                         select new UserPermissionGridDto() { 
+                                             Id = p.Id, 
+                                             PermissionName = p.PermissionName,
+                                             PermissionDescription = p.PermissionDescription,
+                                             Allow = up.Allow
+                                         }).ToListAsync();
+
+            foreach (var userPermission in UserPermissions)
+            {
+                var value = permissioinGrid.First(x => x.PermissionName == userPermission.PermissionName);
+                value.Enabled = true;
+                value.Allow = userPermission.Allow;
+            }
+
+
+
+            //Todo : Listar en cada permiso si el permiso ya lo tiene en algun rol
+
+            var RolePermissions = await (from u in db.Users
+                                         join ur in db.UserRoles on u.Id equals ur.UserId
+                                         join r in db.Roles on ur.RoleId equals r.Id
+                                         join rp in db.RolePermissions on r.Id equals rp.RoleId
+                                         join p in db.Permissions on rp.PermissionId equals p.Id
+                                         where u.Id == userId
+                                         select new { p.PermissionName, r.RoleName }).ToListAsync();
+
+            foreach (var rolePermission in RolePermissions)
+            {
+                var value = permissioinGrid.First(x => x.PermissionName == rolePermission.PermissionName);
+                if(string.IsNullOrEmpty(value.Roles))
+                {
+                    value.Roles = rolePermission.RoleName;
+                }
+                else
+                {
+                    value.Roles = string.Join(",", value.Roles, rolePermission.RoleName);
+                }                
+            }
+
+            result.Result = permissioinGrid;
+            return result;
         }
     }
 }
