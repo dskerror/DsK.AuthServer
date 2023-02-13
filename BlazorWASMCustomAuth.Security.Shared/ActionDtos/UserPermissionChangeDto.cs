@@ -9,5 +9,7 @@ public partial class UserPermissionChangeDto
 
     public int PermissionId { get; set; }
 
+    public bool Enabled { get; set; }
+
     public bool Allow { get; set; }    
 }

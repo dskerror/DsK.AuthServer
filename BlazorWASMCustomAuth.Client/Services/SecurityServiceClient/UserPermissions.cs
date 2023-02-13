@@ -36,15 +36,9 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> UserPermissionChangeAsync(int userId, int permissionId, bool permissionEnabled)
+    public async Task<APIResult<string>> UserPermissionChangeAsync(UserPermissionChangeDto model)
     {
         await PrepareBearerToken();
-        var model = new UserPermissionChangeDto()
-        {            
-            UserId = userId,
-            PermissionId= permissionId,
-            Allow= permissionEnabled
-        };
         var response = await _httpClient.PostAsJsonAsync(Routes.UserPermissionEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;

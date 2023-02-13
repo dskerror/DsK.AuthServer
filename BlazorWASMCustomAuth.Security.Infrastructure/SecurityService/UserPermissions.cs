@@ -18,49 +18,53 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var record = new UserPermission();
             Mapper.Map(model, record);
 
-            db.UserPermissions.Add(record);
+            if (model.Enabled)
+            {
+                var recordFind = await db.UserPermissions.Where(x => x.UserId == model.UserId && x.PermissionId == model.PermissionId).FirstOrDefaultAsync();
+                if (recordFind is null)
+                {
+                    db.UserPermissions.Add(record);
+                }
+                else
+                {
+                    recordFind.Allow = model.Allow;
+                }
 
-            //try
-            //{
-            //    recordsCreated = await db.SaveChangesAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    result.HasError = true;
-            //    result.Message = ex.InnerException.Message;
-            //}
+                try
+                {
+                    recordsModifiedCount = await db.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    result.HasError = true;
+                    result.Message = ex.InnerException.Message;
+                }
 
-            //if (recordsCreated == 1)
-            //{
-            //    result.Result = recordsCreated.ToString();
-            //    result.Message = "Record Created";
-            //}
+                if (recordsModifiedCount == 1)
+                {
+                    result.Result = recordsModifiedCount.ToString();
+                    result.Message = "Record Created";
+                }
+            }
+            else
+            {
+                var recordFind = await db.UserPermissions.Where(x => x.UserId == model.UserId && x.PermissionId == model.PermissionId).FirstOrDefaultAsync();
+                var recordToDelete = db.UserPermissions.Attach(recordFind);
+                recordToDelete.State = EntityState.Deleted;
+                try
+                {
+                    recordsModifiedCount = await db.SaveChangesAsync();
+                    result.Result = recordsModifiedCount.ToString();
+                }
+                catch (Exception ex)
+                {
+                    result.HasError = true;
+                    result.Message = ex.Message;
+                }
+            }
 
             return result;
         }
-
-
-
-        public async Task< APIResult<string>> UserPermissionDelete(int id)
-        {
-            APIResult<string> result = new APIResult<string>();
-            int recordsDeleted = 0;
-            var record = db.UserPermissions.Attach(new UserPermission { Id = id });
-            record.State = EntityState.Deleted;
-            try
-            {
-                recordsDeleted = await db.SaveChangesAsync();
-                result.Result = recordsDeleted.ToString();
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.Message;
-            }
-
-            return result;
-        }
-
         public async Task<List<string>> GetUserPermissionsCombined(int userId)
         {
             var permissionAllow = await (from u in db.Users
@@ -69,7 +73,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                                          where u.Id == userId && up.Allow == true
                                          select p.PermissionName).ToListAsync();
 
-            
+
             var permissionDeny = await (from u in db.Users
                                         join up in db.UserPermissions on u.Id equals up.UserId
                                         join p in db.Permissions on up.PermissionId equals p.Id
@@ -93,7 +97,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             //return new APIResult(finalList);
             return finalList;
         }
-
         public async Task<APIResult<List<UserPermissionGridDto>>> GetUserPermissions(int userId)
         {
             APIResult<List<UserPermissionGridDto>> result = new APIResult<List<UserPermissionGridDto>>();
@@ -105,8 +108,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                                          join up in db.UserPermissions on u.Id equals up.UserId
                                          join p in db.Permissions on up.PermissionId equals p.Id
                                          where u.Id == userId
-                                         select new UserPermissionGridDto() { 
-                                             Id = p.Id, 
+                                         select new UserPermissionGridDto()
+                                         {
+                                             Id = p.Id,
                                              PermissionName = p.PermissionName,
                                              PermissionDescription = p.PermissionDescription,
                                              Allow = up.Allow
@@ -119,10 +123,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 value.Allow = userPermission.Allow;
             }
 
-
-
-            //Todo : Listar en cada permiso si el permiso ya lo tiene en algun rol
-
             var RolePermissions = await (from u in db.Users
                                          join ur in db.UserRoles on u.Id equals ur.UserId
                                          join r in db.Roles on ur.RoleId equals r.Id
@@ -134,14 +134,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             foreach (var rolePermission in RolePermissions)
             {
                 var value = permissioinGrid.First(x => x.PermissionName == rolePermission.PermissionName);
-                if(string.IsNullOrEmpty(value.Roles))
+                if (string.IsNullOrEmpty(value.Roles))
                 {
                     value.Roles = rolePermission.RoleName;
                 }
                 else
                 {
                     value.Roles = string.Join(",", value.Roles, rolePermission.RoleName);
-                }                
+                }
             }
 
             result.Result = permissioinGrid;

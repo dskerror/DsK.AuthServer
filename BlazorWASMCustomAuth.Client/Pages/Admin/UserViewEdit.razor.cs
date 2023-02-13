@@ -102,20 +102,46 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                 if (!result.HasError)
                 {
                     Snackbar.Add("Role Changed", Severity.Warning);
+                    await LoadUserPermissions();
                 }
             }
         }
 
-        private async Task TogglePermissionSwitch(ChangeEventArgs e, int roleId)
-        {
-            //Console.WriteLine($"RoleId : {id}, PermissionId: {permissionId}, Enabled: {e.Value}");
-
-            var result = await securityService.UserRoleChangeAsync(id, roleId, (bool)e.Value);
+        private async Task TogglePermissionEnabledSwitch(ChangeEventArgs e, int permissionId, bool allow)
+        {   
+            UserPermissionChangeDto userPermissionChangeDto = new UserPermissionChangeDto()
+            {
+                UserId = id,
+                PermissionId = permissionId,
+                Enabled = (bool)e.Value,
+                Allow = allow
+            };
+            var result = await securityService.UserPermissionChangeAsync(userPermissionChangeDto);
             if (result != null)
             {
                 if (!result.HasError)
                 {
-                    Snackbar.Add("Role Changed", Severity.Warning);
+                    Snackbar.Add("Permissions Changed", Severity.Warning);
+                }
+            }
+        }
+
+        private async Task TogglePermissionAllowSwitch(ChangeEventArgs e, int permissionId)
+        {
+            UserPermissionChangeDto userPermissionChangeDto = new UserPermissionChangeDto()
+            {
+                UserId = id,
+                PermissionId = permissionId,
+                Enabled = true,
+                Allow = (bool)e.Value
+            };
+
+            var result = await securityService.UserPermissionChangeAsync(userPermissionChangeDto);
+            if (result != null)
+            {
+                if (!result.HasError)
+                {
+                    Snackbar.Add("Permissions  Changed", Severity.Warning);
                 }
             }
         }

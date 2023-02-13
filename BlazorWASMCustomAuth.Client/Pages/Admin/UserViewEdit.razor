@@ -87,45 +87,54 @@ else
             <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="EnableEditMode" Class="mb-2">Edit</MudButton>
         </EditForm>
 
+        <MudDivider />
 
-        <MudTable Items="@userRoles" Hover="true">
-            <HeaderContent>
-                <MudTh>On/Off</MudTh>
-                <MudTh>Role Name</MudTh>
-                <MudTh>Role Description</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="RoleSwitch">
-                    <MudSwitch Color="Color.Success" @bind-Checked="@context.Enable" @oninput="(e)=>ToggleRoleSwitch(e,context.Id)" />
-                </MudTd>
-                <MudTd DataLabel="RoleName">@context.RoleName</MudTd>
-                <MudTd DataLabel="RoleDescription">@context.RoleDescription</MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-            </PagerContent>
-        </MudTable>
-
-        <MudTable Items="@userPermissions" Hover="true">
-            <HeaderContent>
-                <MudTh>On/Off</MudTh>
-                <MudTh>Permission Name</MudTh>
-                <MudTh>Permission Description</MudTh>
-                <MudTh>In Roles</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="PermissionSwitch">
-                    <MudSwitch Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>TogglePermissionSwitch(e,context.Id)" />
-                    <MudSlider TickMarks="true" TickMarkLabels="@(new string[] { "Default", "Off", "On" })" Step="3" Value="1" />
-                </MudTd>
-                <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
-                <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>
-                <MudTd DataLabel="Roles">@context.Roles</MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-            </PagerContent>
-        </MudTable>
+        <MudExpansionPanels>
+            <MudExpansionPanel Text="User Roles">
+                <MudTable Items="@userRoles" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Disabled/Enabled</MudTh>
+                        <MudTh>Role Name</MudTh>
+                        <MudTh>Role Description</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="RoleSwitch">
+                            <MudSwitch Color="Color.Success" @bind-Checked="@context.Enable" @oninput="(e)=>ToggleRoleSwitch(e,context.Id)" />
+                        </MudTd>
+                        <MudTd DataLabel="RoleName">@context.RoleName</MudTd>
+                        <MudTd DataLabel="RoleDescription">@context.RoleDescription</MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+                    </PagerContent>
+                </MudTable>
+            </MudExpansionPanel>
+            <MudExpansionPanel Text="User Permissions">
+                <MudTable Items="@userPermissions" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Disabled/Enabled</MudTh>
+                        <MudTh>Deny/Allow</MudTh>
+                        <MudTh>Permission Name</MudTh>
+                        <MudTh>Permission Description</MudTh>
+                        <MudTh>In Roles</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="PermissionSwitchEnabled">
+                            <MudSwitch Color="Color.Success" @bind-Checked="@context.Enabled" @oninput="(e)=>TogglePermissionEnabledSwitch(e,context.Id, context.Allow)" />
+                        </MudTd>
+                        <MudTd DataLabel="PermissionSwitchAllow">
+                            <MudSwitch Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>TogglePermissionAllowSwitch(e,context.Id)" Disabled=@(!context.Enabled) UnCheckedColor="MudBlazor.Color.Error" />
+                        </MudTd>
+                        <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
+                        <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>
+                        <MudTd DataLabel="Roles">@context.Roles</MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+                    </PagerContent>
+                </MudTable>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
     }
 }
 
