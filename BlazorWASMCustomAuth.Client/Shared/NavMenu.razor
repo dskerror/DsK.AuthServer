@@ -1,4 +1,5 @@
-﻿<MudNavMenu>
+﻿@using BlazorWASMCustomAuth.Security.Shared.Constants;
+<MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <AuthorizeView>
         <Authorized>
@@ -14,4 +15,28 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
+    private bool AccessUsersView;
+    private bool AccessRolesView;
+    private bool AccessAuthenticationProviders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await authenticationState;
+        var user = state.User;
+        if (user.HasClaim(x => x.Type == Access.Admin))
+        {
+            AccessUsersView = true;
+            AccessRolesView = true;
+            AccessAuthenticationProviders = true;
+        }
+        if (user.HasClaim(x => x.Type == Access.Users.View))
+            AccessUsersView = true;
+
+        if (user.HasClaim(x => x.Type == Access.Roles.View))
+            AccessRolesView = true;
+
+        if (user.HasClaim(x => x.Type == Access.AuthenticationProvider.View))
+            AccessAuthenticationProviders = true;
+    }
+
 }
