@@ -9,6 +9,8 @@ using System.Text.Json;
 using System.Net.Http.Headers;
 using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Client.Services.Requests;
+using System.Security.Claims;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 
@@ -31,4 +33,12 @@ public partial class SecurityServiceClient
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
     }
 
+    public bool HasPermission(ClaimsPrincipal user, string permission)
+    {
+        if (user.HasClaim(x => x.Type == ClaimTypes.Role && x.Value == permission))
+            return true;
+        else
+            return false;
+
+    }
 }

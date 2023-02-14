@@ -21,6 +21,7 @@ namespace BlazorWASMCustomAuth.Client.Security
                 return anonymous;
             }
             var userClaimPrincipal = new ClaimsPrincipal(new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "Fake Authentication"));
+            
             var loginUser = new AuthenticationState(userClaimPrincipal);            
             return loginUser;
         }

@@ -1,9 +1,6 @@
 ﻿@page "/admin/AuthenticationProviderCreate"
 
-@*<AuthorizeView>
-    <Authorized>*@
 <h3><NavLink href="/admin/AuthenticationProviders">Authentication Providers</NavLink> > Create Authentication Provider</h3>
-
 
 <EditForm Model="model" OnValidSubmit="Create">
     <DataAnnotationsValidator />
@@ -39,9 +36,3 @@
         </div>
     </div>
 </EditForm>
-
-@*    </Authorized>
-    <NotAuthorized>
-        <Login />
-    </NotAuthorized>
-</AuthorizeView>*@

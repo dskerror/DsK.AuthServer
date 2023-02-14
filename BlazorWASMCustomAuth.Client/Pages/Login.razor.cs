@@ -20,6 +20,11 @@ public partial class Login
         if (result)
         {
             _navigationManager.NavigateTo("/");
+            Snackbar.Add("Login Successful", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("Username and/or Password incorrect", Severity.Error);
         }
     }
 

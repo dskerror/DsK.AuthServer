@@ -1,8 +1,5 @@
 ﻿@page "/admin/roleviewedit/{id:int}"
 
-@*<AuthorizeView>
-    <Authorized>*@
-
 <MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
 
 @if (!_loadedPermissionData)
@@ -66,10 +63,3 @@ else
         </MudTable>
     }
 }
-
-
-@*    </Authorized>
-    <NotAuthorized>
-        <Login />
-    </NotAuthorized>
-</AuthorizeView>*@

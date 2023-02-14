@@ -4,9 +4,18 @@
     <AuthorizeView>
         <Authorized>
             <MudListSubheader Class="mt-2 mb-n2">Admin</MudListSubheader>
-            <MudNavLink Href="/admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
-            <MudNavLink Href="/admin/roles" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Roles</MudNavLink>
-            <MudNavLink Href="/admin/authenticationproviders" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Authentication Providers</MudNavLink>
+            @if (_AccessUsersView)
+            {
+                <MudNavLink Href="/admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
+            }
+            @if (_AccessRolesView)
+            {
+                <MudNavLink Href="/admin/roles" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Roles</MudNavLink>
+            }
+            @if (_AccessAuthenticationProviders)
+            {
+                <MudNavLink Href="/admin/authenticationproviders" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Authentication Providers</MudNavLink>
+            }
         </Authorized>
     </AuthorizeView>
 
@@ -15,28 +24,24 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
-    private bool AccessUsersView;
-    private bool AccessRolesView;
-    private bool AccessAuthenticationProviders;
+    private bool _AccessUsersView;
+    private bool _AccessRolesView;
+    private bool _AccessAuthenticationProviders;
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationState;
         var user = state.User;
-        if (user.HasClaim(x => x.Type == Access.Admin))
+
+        _AccessUsersView = securityService.HasPermission(user, Access.Users.View);
+        _AccessRolesView = securityService.HasPermission(user, Access.Roles.View);
+        _AccessAuthenticationProviders = securityService.HasPermission(user, Access.AuthenticationProvider.View);
+
+        if (securityService.HasPermission(user, Access.Admin))
         {
-            AccessUsersView = true;
-            AccessRolesView = true;
-            AccessAuthenticationProviders = true;
+            _AccessUsersView = true;
+            _AccessRolesView = true;
+            _AccessAuthenticationProviders = true;
         }
-        if (user.HasClaim(x => x.Type == Access.Users.View))
-            AccessUsersView = true;
-
-        if (user.HasClaim(x => x.Type == Access.Roles.View))
-            AccessRolesView = true;
-
-        if (user.HasClaim(x => x.Type == Access.AuthenticationProvider.View))
-            AccessAuthenticationProviders = true;
     }
-
 }

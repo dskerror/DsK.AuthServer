@@ -1,9 +1,6 @@
 ﻿@page "/admin/rolecreate"
 
-@*<AuthorizeView>
-    <Authorized>*@
 <h3><NavLink href="/admin/roles">Roles</NavLink> > Create Role</h3>
-
 
 <EditForm Model="model" OnValidSubmit="Create">
     <DataAnnotationsValidator />
@@ -25,9 +22,3 @@
         </div>
     </div>
 </EditForm>
-
-@*    </Authorized>
-    <NotAuthorized>
-        <Login />
-    </NotAuthorized>
-</AuthorizeView>*@

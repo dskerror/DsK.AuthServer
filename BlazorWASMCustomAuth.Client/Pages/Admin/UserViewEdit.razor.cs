@@ -81,7 +81,10 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             var result = await securityService.UserPasswordCreateAsync(userPassword);
 
             if (result != null)
+            {
                 Snackbar.Add("Password Changed", Severity.Success);
+                userPassword.Password = "";
+            }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
         }

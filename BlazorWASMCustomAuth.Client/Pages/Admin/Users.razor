@@ -4,14 +4,6 @@
 
 <h2>Users</h2>
 
-<AuthorizeView>
-    <Authorized>
-    </Authorized>
-    <NotAuthorized>
-        <Login />
-    </NotAuthorized>
-</AuthorizeView>
-
 <MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<UserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
         <div class="justify-center mud-text-align-center">
@@ -26,8 +18,7 @@
         <MudTh><MudTableSortLabel T="UserDto" SortLabel="Email">Email</MudTableSortLabel></MudTh>
         <MudTh>Details</MudTh>
     </HeaderContent>
-    <RowTemplate>
-        @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+    <RowTemplate>        
         <MudTd DataLabel="Username">
             <MudHighlighter Text="@context.Username" HighlightedText="@_searchString" />
         </MudTd>
@@ -49,4 +40,3 @@
         <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
     </PagerContent>
 </MudTable>
-
