@@ -1,5 +1,6 @@
 ﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,8 +18,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpPost]
-        //[Authorize(Roles = "admin,UserCreateLocalPassword")]
-        [Route("CreateLocalPassword")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.UserPasswords.Create}")]        
         public async Task<IActionResult> UserCreateLocalPassword(UserCreateLocalPasswordDto model)
         {
             //TODO : Create another method for user to change their own passwords

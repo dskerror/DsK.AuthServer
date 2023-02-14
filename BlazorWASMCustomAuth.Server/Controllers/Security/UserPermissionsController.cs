@@ -1,6 +1,8 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
@@ -16,7 +18,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpGet]
-        //[Authorize(Roles = "admin,RolesGet")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.UserPermissions.View}")]
         public async Task<IActionResult> UserPermissionsGet(int userId)
         {
             if (userId == 0)
@@ -27,6 +29,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{Access.Admin}, {Access.UserPermissions.Edit}")]
         public async Task<IActionResult> UserPermissionChange(UserPermissionChangeDto model)
         {
             var result = await SecurityService.UserPermissionChange(model);

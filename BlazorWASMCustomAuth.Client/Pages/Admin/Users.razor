@@ -4,6 +4,14 @@
 
 <h2>Users</h2>
 
+<AuthorizeView>
+    <Authorized>
+    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>
+
 <MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<UserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
         <div class="justify-center mud-text-align-center">

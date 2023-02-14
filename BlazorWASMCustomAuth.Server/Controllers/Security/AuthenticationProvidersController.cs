@@ -1,5 +1,7 @@
 ﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
@@ -14,8 +16,8 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             SecurityService = securityService;
         }
 
-        [HttpPost]
-        //[Authorize(Roles = "admin,RoleCreate")]
+        [HttpPost]        
+        [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Create}")]
         public async Task<IActionResult> AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
         {
             var result = await SecurityService.AuthenticationProvidersCreate(model);
@@ -23,7 +25,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpGet]
-        //[Authorize(Roles = "admin,RolesGet")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.View}")]
         public async Task<IActionResult> AuthenticationProvidersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
             var result = await SecurityService.AuthenticationProvidersGet(id, pageNumber, pageSize, searchString, orderBy);
@@ -31,7 +33,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpPut]
-        //[Authorize(Roles = "admin,RoleUpdate")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Edit}")]
         public async Task<IActionResult> AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
         {
             var result = await SecurityService.AuthenticationProvidersUpdate(model);
@@ -39,7 +41,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "admin,RoleDelete")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Delete}")]
         public async Task<IActionResult> AuthenticationProvidersDelete(int id)
         {
             var result = await SecurityService.AuthenticationProvidersDelete(id);

@@ -1,5 +1,7 @@
 ﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
@@ -15,7 +17,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpGet]
-        //[Authorize(Roles = "admin,RolesGet")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.UserRoles.View}")]
         public async Task<IActionResult> UserRolesGet(int userId = 0)
         {
             if (userId == 0)
@@ -26,28 +28,12 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{Access.Admin}, {Access.UserRoles.Edit}")]
         public async Task<IActionResult> UserRoleChange(UserRoleChangeDto model)
         {
             var result = await SecurityService.UserRoleChange(model);
             return Ok(result);
         }
-
-
-        //[HttpDelete]
-        ////[Authorize(Roles = "admin,RoleDelete")]
-        //public async Task<IActionResult> UserRoleDelete(int id)
-        //{
-        //    var result = await SecurityService.UserRoleDelete(id);
-        //    return Ok(result);
-        //}
-
-        //[HttpPost]
-        ////[Authorize(Roles = "admin,RoleCreate")]
-        //public async Task<IActionResult> UserRoleCreate(UserRoleCreateDto model)
-        //{
-        //    var result = await SecurityService.UserRoleCreate(model);
-        //    return Ok(result);
-        //}
     }
 }
 

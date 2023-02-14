@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using BlazorWASMCustomAuth.Client.Services;
 using System.Security.Claims;
 using MudBlazor;
+using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
@@ -12,6 +13,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
         public UserDto user { get; set; }
+        public UserCreateLocalPasswordDto userPassword { get; set; } = new UserCreateLocalPasswordDto();
         public List<UserRoleGridDto> userRoles { get; set; }
         public List<UserPermissionGridDto> userPermissions { get; set; }
         [Parameter] public int id { get; set; }
@@ -73,6 +75,17 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
         }
 
+        private async Task ChangePassword()
+        { 
+            userPassword.UserId = id;
+            var result = await securityService.UserPasswordCreateAsync(userPassword);
+
+            if (result != null)
+                Snackbar.Add("Password Changed", Severity.Success);
+            else
+                Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
+        }
+
         private async Task CancelChanges()
         {
             DisableEditMode();
@@ -108,7 +121,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         }
 
         private async Task TogglePermissionEnabledSwitch(ChangeEventArgs e, int permissionId, bool allow)
-        {   
+        {
             UserPermissionChangeDto userPermissionChangeDto = new UserPermissionChangeDto()
             {
                 UserId = id,

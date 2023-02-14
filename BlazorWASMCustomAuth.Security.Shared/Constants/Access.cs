@@ -37,9 +37,7 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
         public static class RolesPermissions
         {
             public const string View = "RolePermissions.View";
-            public const string Create = "RolePermissions.Create";
             public const string Edit = "RolePermissions.Edit";
-            public const string Delete = "RolePermissions.Delete";
         }
 
         [DisplayName("Roles")]
@@ -55,11 +53,8 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
         [DisplayName("User Passwords")]
         [Description("User Passwords Permissions")]
         public static class UserPasswords
-        {
-            public const string View = "UserPasswords.View";
-            public const string Create = "UserPasswords.Create";
-            public const string Edit = "UserPasswords.Edit";
-            public const string Delete = "UserPasswords.Delete";
+        {            
+            public const string Create = "UserPasswords.Create";           
         }
 
 
@@ -67,10 +62,8 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
         [Description("Users Permissions Permissions")]
         public static class UserPermissions
         {
-            public const string View = "UserPermissions.View";
-            public const string Create = "UserPermissions.Create";
-            public const string Edit = "UserPermissions.Edit";
-            public const string Delete = "UserPermissions.Delete";
+            public const string View = "UserPermissions.View";            
+            public const string Edit = "UserPermissions.Edit";            
         }
 
 
@@ -78,10 +71,8 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
         [Description("Users Roles Permissions")]
         public static class UserRoles
         {
-            public const string View = "UserRoles.View";
-            public const string Create = "UserRoles.Create";
-            public const string Edit = "UserRoles.Edit";
-            public const string Delete = "UserRoles.Delete";
+            public const string View = "UserRoles.View";            
+            public const string Edit = "UserRoles.Edit";            
         }
 
         [DisplayName("Users")]

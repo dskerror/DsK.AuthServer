@@ -17,7 +17,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpPost]
-        //[Authorize(Roles = "admin,UserCreate")]        
+        [Authorize(Roles = $"{Access.Admin}, {Access.Users.Create}")]
         public async Task<IActionResult> UserCreate(UserCreateDto model)
         {
             var result = await SecurityService.UserCreate(model);
@@ -25,7 +25,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpGet]
-        //[Authorize(Roles = $"{Access.Admin}, {Access.Users.View}")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.Users.View}")]
         public async Task<IActionResult> UsersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
             var result = await SecurityService.UsersGet(id, pageNumber, pageSize, searchString, orderBy);
@@ -33,7 +33,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpPut]
-        //[Authorize(Roles = "admin,UserDelete")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.Users.Edit}")]
         public async Task<IActionResult> UserUpdate(UserDto model)
         {
             var result = await SecurityService.UserUpdate(model);
@@ -41,13 +41,12 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "admin,UserDelete")]
+        [Authorize(Roles = $"{Access.Admin}, {Access.Users.Delete}")]
         public async Task<IActionResult> UserDelete(int id)
         {
             var result = await SecurityService.UserDelete(id);
             return Ok(result);
         }
-
     }
 }
 
