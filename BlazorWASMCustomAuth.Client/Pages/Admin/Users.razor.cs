@@ -14,19 +14,35 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
     public partial class Users
     {
+        [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
         private IEnumerable<UserDto> _pagedData;
         private MudTable<UserDto> _table;
         private int _totalItems;
         private int _currentPage;
         private string _searchString = "";
-        
+
+        private bool _AccessUsersView;
+
         protected override async Task OnInitializedAsync()
         {
+            var state = await authenticationState;
+            var user = state.User;
+
+            _AccessUsersView = securityService.HasPermission(user, Access.Users.View);
+            if(securityService.HasPermission(user, Access.Admin))
+            {
+                _AccessUsersView = true;
+            }
+
+            if (!_AccessUsersView)
+            {
+                _navigationManager.NavigateTo("/noaccess");
+            }
         }
 
         private async Task<TableData<UserDto>> ServerReload(TableState state)
         {         
-            await LoadData(state.Page, state.PageSize, state);            
+            await LoadData(state.Page, state.PageSize, state);
             return new TableData<UserDto> { TotalItems = _totalItems, Items = _pagedData };
         }
 

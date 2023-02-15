@@ -14,23 +14,22 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-
         public async Task<APIResult<TokenModel>> UserLogin(UserLoginDto model)
         {
             APIResult<TokenModel> result = new APIResult<TokenModel>();
-            bool IsUserAuthenticated = AuthenticateUser(model);
+            bool IsUserAuthenticated = await AuthenticateUser(model);
 
             if (!IsUserAuthenticated)
                 return null;
 
             var token = await GenerateAuthenticationToken(model.Username);
-            
+
             db.UserTokens.Add(new UserToken()
             {
                 Token = token.Token,
                 RefreshToken = token.RefreshToken,
                 TokenRefreshedDateTime = DateTime.Now,
-                TokenCreatedDateTime= DateTime.Now
+                TokenCreatedDateTime = DateTime.Now
             });
 
             await db.SaveChangesAsync();
@@ -131,8 +130,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             if (username.IsNullOrEmpty())
                 return null;
-            var user = await db.Users.Where(x=>x.Username == username).FirstOrDefaultAsync();
-            
+            var user = await db.Users.Where(x => x.Username == username).FirstOrDefaultAsync();
+
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key ?? ""));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
@@ -169,7 +168,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return Convert.ToBase64String(key);
             }
         }
-        private bool AuthenticateUser(UserLoginDto model)
+        private async Task<bool> AuthenticateUser(UserLoginDto model)
         {
             bool IsUserAuthenticated = false;
             switch (model.AuthenticationProviderName)
@@ -178,19 +177,19 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                     IsUserAuthenticated = AuthenticateUserWithDomain(model.Username, model.Password);
                     break;
                 default: //Local
-                    IsUserAuthenticated = AuthenticateUserWithLocalPassword(model.Username, model.Password);
+                    IsUserAuthenticated = await AuthenticateUserWithLocalPassword(model.Username, model.Password);
                     break;
             }
             return IsUserAuthenticated;
         }
-        private bool AuthenticateUserWithLocalPassword(string username, string password)
+        private async Task<bool> AuthenticateUserWithLocalPassword(string username, string password)
         {
             try
             {
-                var userPassword = db.UserPasswords.Where(x => x.User.Username == username).FirstOrDefault();
+                var userPassword = await db.UserPasswords.Where(x => x.User.Username == username).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
 
                 if (userPassword == null)
-                    return false; 
+                    return false;
 
                 byte[] bytesalt = Convert.FromHexString(userPassword.Salt);
                 const int keySize = 64;
@@ -207,7 +206,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
         private bool AuthenticateUserWithDomain(string username, string password)
         {
-            //TODO: Get AD credentials
 
 #pragma warning disable IDE0063 // Use simple 'using' statement
 #pragma warning disable CA1416 // Validate platform compatibility
@@ -220,6 +218,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 #pragma warning restore CA1416 // Validate platform compatibility
 #pragma warning restore IDE0063 // Use simple 'using' statement
 
-        } 
+        }
     }
 }

@@ -8,7 +8,7 @@ public partial class Login
 {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private UserLoginDto userLoginModel = new UserLoginDto();
-
+    private bool _LoginButtonDisabled;
     protected override async Task OnInitializedAsync()
     {
 
@@ -16,6 +16,7 @@ public partial class Login
 
     private async Task SubmitAsync()
     {
+        _LoginButtonDisabled = true;
         bool result = await securityService.LoginAsync(userLoginModel);
         if (result)
         {
@@ -26,6 +27,7 @@ public partial class Login
         {
             Snackbar.Add("Username and/or Password incorrect", Severity.Error);
         }
+        _LoginButtonDisabled = false;
     }
 
     private bool _passwordVisibility;

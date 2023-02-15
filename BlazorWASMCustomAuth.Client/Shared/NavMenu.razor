@@ -3,7 +3,10 @@
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <AuthorizeView>
         <Authorized>
-            <MudListSubheader Class="mt-2 mb-n2">Admin</MudListSubheader>
+            @if (_AdminMenuHeader)
+            {
+                <MudListSubheader Class="mt-2 mb-n2">Admin</MudListSubheader>
+            }
             @if (_AccessUsersView)
             {
                 <MudNavLink Href="/admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
@@ -18,12 +21,13 @@
             }
         </Authorized>
     </AuthorizeView>
-
 </MudNavMenu>
 
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
+
+    private bool _AdminMenuHeader;
     private bool _AccessUsersView;
     private bool _AccessRolesView;
     private bool _AccessAuthenticationProviders;
@@ -43,5 +47,8 @@
             _AccessRolesView = true;
             _AccessAuthenticationProviders = true;
         }
+
+        if (_AccessUsersView || _AccessRolesView || _AccessAuthenticationProviders)
+            _AdminMenuHeader = true;
     }
 }
