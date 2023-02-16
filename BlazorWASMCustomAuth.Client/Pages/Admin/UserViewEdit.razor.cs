@@ -1,10 +1,7 @@
 ﻿using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
-using BlazorWASMCustomAuth.Client.Services;
-using System.Security.Claims;
 using MudBlazor;
-using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
@@ -18,7 +15,6 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         public List<UserPermissionGridDto> userPermissions { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loaded;
-        private bool _EditMode;
 
         private bool _AccessUsersView;
         private bool _AccessUsersEdit;
@@ -95,7 +91,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private async Task EditUser()
         {
             var result = await securityService.UserEditAsync(user);
-            DisableEditMode();
+           
             if (result != null)
                 if (result.HasError)
                     Snackbar.Add(result.Message, Severity.Error);
@@ -120,22 +116,9 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         }
 
         private async Task CancelChanges()
-        {
-            DisableEditMode();
+        {            
             Snackbar.Add("Edit canceled", Severity.Warning);
             await LoadUserData();
-        }
-
-        private void EnableEditMode()
-        {
-            _EditMode = true;
-            Snackbar.Add("Edit mode enabled", Severity.Warning);
-        }
-
-        private void DisableEditMode()
-        {
-            _EditMode = false;
-
         }
 
         private async Task ToggleRoleSwitch(ChangeEventArgs e, int roleId)
@@ -191,6 +174,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                 }
             }
         }
+
     }
 }
 

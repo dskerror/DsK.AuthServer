@@ -6,13 +6,11 @@ using MudBlazor;
 namespace BlazorWASMCustomAuth.Client.Pages;
 public partial class Login
 {
-    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private UserLoginDto userLoginModel = new UserLoginDto();
     private bool _LoginButtonDisabled;
-    protected override async Task OnInitializedAsync()
-    {
-
-    }
+    private bool _passwordVisibility;
+    private InputType _passwordInput = InputType.Password;
+    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
 
     private async Task SubmitAsync()
     {
@@ -24,16 +22,10 @@ public partial class Login
             Snackbar.Add("Login Successful", Severity.Success);
         }
         else
-        {
             Snackbar.Add("Username and/or Password incorrect", Severity.Error);
-        }
+
         _LoginButtonDisabled = false;
     }
-
-    private bool _passwordVisibility;
-    private InputType _passwordInput = InputType.Password;
-    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
-
     void TogglePasswordVisibility()
     {
         if (_passwordVisibility)
