@@ -22,26 +22,25 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private string _searchString = "";
 
         private bool _AccessUsersView;
+        private bool _AccessUsersCreate;
 
         protected override async Task OnInitializedAsync()
         {
             var state = await authenticationState;
-            var user = state.User;
-
-            _AccessUsersView = securityService.HasPermission(user, Access.Users.View);
-            if(securityService.HasPermission(user, Access.Admin))
-            {
-                _AccessUsersView = true;
-            }
+            SetPermissions(state);
 
             if (!_AccessUsersView)
-            {
                 _navigationManager.NavigateTo("/noaccess");
-            }
+        }
+
+        private void SetPermissions(AuthenticationState state)
+        {
+            _AccessUsersView = securityService.HasPermission(state.User, Access.Users.View);
+            _AccessUsersCreate = securityService.HasPermission(state.User, Access.Users.Create);
         }
 
         private async Task<TableData<UserDto>> ServerReload(TableState state)
-        {         
+        {
             await LoadData(state.Page, state.PageSize, state);
             return new TableData<UserDto> { TotalItems = _totalItems, Items = _pagedData };
         }

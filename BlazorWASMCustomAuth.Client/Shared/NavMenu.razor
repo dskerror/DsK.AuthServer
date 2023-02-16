@@ -34,19 +34,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var state = await authenticationState;
-        var user = state.User;
+        var state = await authenticationState;        
+        SetPermissions(state);
+    }
 
-        _AccessUsersView = securityService.HasPermission(user, Access.Users.View);
-        _AccessRolesView = securityService.HasPermission(user, Access.Roles.View);
-        _AccessAuthenticationProviders = securityService.HasPermission(user, Access.AuthenticationProvider.View);
-
-        if (securityService.HasPermission(user, Access.Admin))
-        {
-            _AccessUsersView = true;
-            _AccessRolesView = true;
-            _AccessAuthenticationProviders = true;
-        }
+    private void SetPermissions(AuthenticationState state)
+    {
+        _AccessUsersView = securityService.HasPermission(state.User, Access.Users.View);
+        _AccessRolesView = securityService.HasPermission(state.User, Access.Roles.View);
+        _AccessAuthenticationProviders = securityService.HasPermission(state.User, Access.AuthenticationProvider.View);
 
         if (_AccessUsersView || _AccessRolesView || _AccessAuthenticationProviders)
             _AdminMenuHeader = true;

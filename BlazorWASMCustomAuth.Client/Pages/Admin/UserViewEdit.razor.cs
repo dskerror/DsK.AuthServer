@@ -5,13 +5,13 @@ using BlazorWASMCustomAuth.Client.Services;
 using System.Security.Claims;
 using MudBlazor;
 using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
     public partial class UserViewEdit
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-
         public UserDto user { get; set; }
         public UserCreateLocalPasswordDto userPassword { get; set; } = new UserCreateLocalPasswordDto();
         public List<UserRoleGridDto> userRoles { get; set; }
@@ -19,6 +19,15 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         [Parameter] public int id { get; set; }
         private bool _loaded;
         private bool _EditMode;
+
+        private bool _AccessUsersView;
+        private bool _AccessUsersEdit;
+        private bool _AccessUserPermissionsView;
+        private bool _AccessUserPermissionsEdit;
+        private bool _AccessUserRolesEdit;
+        private bool _AccessUserRolesView;
+        private bool _AccessUserPasswordsCreate;
+
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("Users", href: "admin/users"),
@@ -27,9 +36,30 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadUserData();
-            await LoadUserRoles();
-            await LoadUserPermissions();
+            var state = await authenticationState;
+            SetPermissions(state);
+
+            if (!_AccessUsersView)
+            {
+                _navigationManager.NavigateTo("/noaccess");
+            }
+            else
+            {
+                await LoadUserData();
+                await LoadUserRoles();
+                await LoadUserPermissions();
+            }
+        }
+
+        private void SetPermissions(AuthenticationState state)
+        {
+            _AccessUsersView = securityService.HasPermission(state.User, Access.Users.View);
+            _AccessUsersEdit = securityService.HasPermission(state.User, Access.Users.Edit);
+            _AccessUserPermissionsView = securityService.HasPermission(state.User, Access.UserPermissions.View);
+            _AccessUserPermissionsEdit = securityService.HasPermission(state.User, Access.UserPermissions.Edit);
+            _AccessUserRolesView = securityService.HasPermission(state.User, Access.UserRoles.View);
+            _AccessUserRolesEdit = securityService.HasPermission(state.User, Access.UserRoles.Edit);
+            _AccessUserPasswordsCreate = securityService.HasPermission(state.User, Access.UserPasswords.Create);
         }
 
         private async Task LoadUserData()
@@ -76,7 +106,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         }
 
         private async Task ChangePassword()
-        { 
+        {
             userPassword.UserId = id;
             var result = await securityService.UserPasswordCreateAsync(userPassword);
 
@@ -163,3 +193,4 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         }
     }
 }
+

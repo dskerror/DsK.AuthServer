@@ -35,10 +35,28 @@ public partial class SecurityServiceClient
 
     public bool HasPermission(ClaimsPrincipal user, string permission)
     {
-        if (user.HasClaim(x => x.Type == ClaimTypes.Role && x.Value == permission))
+        //ClaimsPrincipal newuser = user;
+        // && (x.Value.Contains(permission)|| x.Value.Contains("Admin")
+        var permissions = user.Claims.Where(x => x.Type == ClaimTypes.Role).FirstOrDefault();
+
+        if (UserHasPermission(permissions, permission) || UserHasPermission(permissions, "Admin"))
             return true;
         else
             return false;
+    }
 
+    private bool UserHasPermission(Claim permissions, string permission)
+    {   
+        if (permissions != null)
+        {
+            var schema = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role : ";
+            var parsedPermissions = permissions.Value.ToString().Replace(schema,"").Trim().TrimStart('[').TrimEnd(']').Replace("\"","").Split(',');
+         
+                foreach (var parsedPermission in parsedPermissions)
+                {
+                    if(parsedPermission == permission) return true;
+                }
+        }
+        return false;
     }
 }
