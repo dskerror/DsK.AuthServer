@@ -1,31 +1,27 @@
-﻿
-using Blazored.LocalStorage;
-using BlazorWASMCustomAuth.Client.Security;
-using BlazorWASMCustomAuth.Security.Shared;
+﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Net.Http.Headers;
-using BlazorWASMCustomAuth.Security.Infrastructure;
-using BlazorWASMCustomAuth.Client.Services.Requests;
 using System.Security.Claims;
-using BlazorWASMCustomAuth.Security.Shared.Constants;
+using BlazorWASMCustomAuth.Security.Infrastructure;
+using BlazorWASMCustomAuth.Security.Shared;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Text.Json;
+using System.Net.Http.Json;
+using System.Linq.Dynamic.Core.Tokenizer;
 
 namespace BlazorWASMCustomAuth.Client.Services;
-
 public partial class SecurityServiceClient
 {
-    private readonly AuthenticationStateProvider _customAuthenticationProvider;
     private readonly ILocalStorageService _localStorageService;
     private readonly HttpClient _httpClient;
+    private readonly AuthenticationStateProvider _authenticationStateProvider;
+
     public SecurityServiceClient(ILocalStorageService localStorageService,
-        AuthenticationStateProvider customAuthenticationProvider,
-        HttpClient httpClient)
+        HttpClient httpClient, AuthenticationStateProvider authenticationStateProvider)
     {
         _localStorageService = localStorageService;
-        _customAuthenticationProvider = customAuthenticationProvider;
         _httpClient = httpClient;
+        _authenticationStateProvider = authenticationStateProvider;
     }
     private async Task PrepareBearerToken()
     {
@@ -36,49 +32,28 @@ public partial class SecurityServiceClient
     public async Task<string> GetTokenAsync()
     {
         string token = await _localStorageService.GetItemAsync<string>("token");
-        if (string.IsNullOrEmpty(token))
-        {
+        if (string.IsNullOrEmpty(token))        
             return string.Empty;
-        }
+        
 
-        if (ValidateTokenExpiration(token))
-        {
-            return token;
-        }
+        if (TokenHelpers.IsTokenExpired(token))
+            token = await TryRefreshToken();
+        
+        return token;
+    }
 
+
+    private async Task<string> TryRefreshToken()
+    {
+        string token = await _localStorageService.GetItemAsync<string>("token");
         string refreshToken = await _localStorageService.GetItemAsync<string>("refreshToken");
-        if (string.IsNullOrEmpty(refreshToken))
+        if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(refreshToken))
         {
             return string.Empty;
         }
 
-        TokenModel tokenModel = new TokenModel(token, refreshToken);
-        return await RefreshTokenEndPoint(tokenModel);
-    }
+        TokenModel tokenModel = new TokenModel(token, refreshToken);        
 
-    private bool ValidateTokenExpiration(string token)
-    {
-        List<Claim> claims = JwtParser.ParseClaimsFromJwt(token).ToList();
-        if (claims?.Count == 0)
-        {
-            return false;
-        }
-        string expirationSeconds = claims.Where(_ => _.Type.ToLower() == "exp").Select(_ => _.Value).FirstOrDefault();
-        if (string.IsNullOrEmpty(expirationSeconds))
-        {
-            return false;
-        }
-
-        var expirationDate = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(expirationSeconds));
-        if (expirationDate < DateTime.UtcNow)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    private async Task<string> RefreshTokenEndPoint(TokenModel tokenModel)
-    {
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.RefreshToken, tokenModel);
         if (!response.IsSuccessStatusCode)
         {
@@ -86,18 +61,17 @@ public partial class SecurityServiceClient
         }
 
         var result = await response.Content.ReadFromJsonAsync<APIResult<TokenModel>>();
-        if (result == null)
+        if (result.Result == null || result.HasError == true)
         {
-            return string.Empty; ;
+            await _localStorageService.RemoveItemAsync("token");
+            await _localStorageService.RemoveItemAsync("refreshToken");
+            return string.Empty;
         }
         await _localStorageService.SetItemAsync("token", result.Result.Token);
         await _localStorageService.SetItemAsync("refreshToken", result.Result.RefreshToken);
-        ((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
 
         return result.Result.Token;
     }
-
-
     public bool HasPermission(ClaimsPrincipal user, string permission)
     {
         //ClaimsPrincipal newuser = user;
@@ -109,7 +83,6 @@ public partial class SecurityServiceClient
         else
             return false;
     }
-
     private bool UserHasPermission(Claim permissions, string permission)
     {
         if (permissions != null)

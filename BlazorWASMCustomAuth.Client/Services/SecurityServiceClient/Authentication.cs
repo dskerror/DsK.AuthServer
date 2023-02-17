@@ -1,14 +1,5 @@
-﻿
-using Blazored.LocalStorage;
-using BlazorWASMCustomAuth.Client.Security;
-using BlazorWASMCustomAuth.Security.Shared;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using BlazorWASMCustomAuth.Security.Shared;
 using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Net.Http.Headers;
-using BlazorWASMCustomAuth.Security.Infrastructure;
-using BlazorWASMCustomAuth.Client.Services.Requests;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 
@@ -28,7 +19,7 @@ public partial class SecurityServiceClient
         }
         await _localStorageService.SetItemAsync("token", result.Result.Token);
         await _localStorageService.SetItemAsync("refreshToken", result.Result.RefreshToken);
-        ((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
+        (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
         return true;
     }
 
@@ -36,7 +27,7 @@ public partial class SecurityServiceClient
     {
         await _localStorageService.RemoveItemAsync("token");
         await _localStorageService.RemoveItemAsync("refreshToken");
-        ((CustomAuthenticationProvider)_customAuthenticationProvider).Notify();
+        (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
         return true;
     }
 }

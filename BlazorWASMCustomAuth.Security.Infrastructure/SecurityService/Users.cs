@@ -129,5 +129,10 @@ public partial class SecurityService
 
         return result;
     }
+
+    private async Task<User> GetUserByUsernameAsync(string username)
+    {
+        return await db.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
+    }
 }
 

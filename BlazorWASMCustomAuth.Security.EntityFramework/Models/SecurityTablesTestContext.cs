@@ -121,6 +121,8 @@ public partial class SecurityTablesTestContext : DbContext
         {
             entity.HasIndex(e => new { e.PermissionId, e.UserId }, "IX_UserPermissions").IsUnique();
 
+            entity.HasIndex(e => e.UserId, "IX_UserPermissions_UserId");
+
             entity.HasOne(d => d.Permission).WithMany(p => p.UserPermissions)
                 .HasForeignKey(d => d.PermissionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -135,6 +137,8 @@ public partial class SecurityTablesTestContext : DbContext
         modelBuilder.Entity<UserRole>(entity =>
         {
             entity.HasIndex(e => new { e.UserId, e.RoleId }, "IX_UserRoles").IsUnique();
+
+            entity.HasIndex(e => e.RoleId, "IX_UserRoles_RoleId");
 
             entity.HasOne(d => d.Role).WithMany(p => p.UserRoles)
                 .HasForeignKey(d => d.RoleId)
@@ -153,6 +157,11 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.Property(e => e.TokenCreatedDateTime).HasColumnType("datetime");
             entity.Property(e => e.TokenRefreshedDateTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserTokens)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserTokens_Users");
         });
 
         OnModelCreatingPartial(modelBuilder);

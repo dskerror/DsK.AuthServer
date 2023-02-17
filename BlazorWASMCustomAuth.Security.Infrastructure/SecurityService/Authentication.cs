@@ -17,16 +17,19 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         public async Task<APIResult<TokenModel>> UserLogin(UserLoginDto model)
         {
             APIResult<TokenModel> result = new APIResult<TokenModel>();
-            bool IsUserAuthenticated = await AuthenticateUser(model);
+            var user = await AuthenticateUser(model);
 
-            if (!IsUserAuthenticated)
-                return null;
+            if (user == null)
+            {
+                result.HasError = true;
+                return result;
+            }   
 
-            var token = await GenerateAuthenticationToken(model.Username);
+            var token = await GenerateAuthenticationToken(user);
 
             db.UserTokens.Add(new UserToken()
             {
-                Token = token.Token,
+                UserId = user.Id,
                 RefreshToken = token.RefreshToken,
                 TokenRefreshedDateTime = DateTime.Now,
                 TokenCreatedDateTime = DateTime.Now
@@ -40,7 +43,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         public async Task<APIResult<UserTokenDto>> RefreshToken(TokenModel model)
         {
             APIResult<UserTokenDto> result = new APIResult<UserTokenDto>();
-            
+
             var claimsPrincipal = ValidateToken(model.Token);
             if (claimsPrincipal == null)
             {
@@ -58,11 +61,18 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            //TODO : Remove token from UserToken Table
-            //TODO : Associate user with refreshtoken
+            //TODO : Remove token from UserToken Table            
             //TODO : Create cleanup method that remove refreshtokens older than established date
 
-            var userToken = await db.UserTokens.Where(x => x.RefreshToken == model.RefreshToken).FirstOrDefaultAsync();
+            var user = await GetUserByUsernameAsync(username);
+            if (user == null )
+            {
+                result.HasError = true;
+                result.Message = "Invalid Token";
+                return result;
+            }
+
+            var userToken = await db.UserTokens.Where(x => x.RefreshToken == model.RefreshToken && x.UserId == user.Id).FirstOrDefaultAsync();
 
             if (userToken == null || userToken.RefreshToken != model.RefreshToken)
             {
@@ -71,14 +81,20 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var newtoken = await GenerateAuthenticationToken(username);
+            //TODO : Don't refresh if token is x time.
+
+            var newtoken = await GenerateAuthenticationToken(user);
+            userToken.UserId = user.Id;
             userToken.RefreshToken = newtoken.RefreshToken;
-            userToken.Token = newtoken.Token;
             userToken.TokenRefreshedDateTime = DateTime.Now;
             await db.SaveChangesAsync();
 
-            UserTokenDto userTokenDto = new UserTokenDto();
-            Mapper.Map(userToken, userTokenDto);
+            UserTokenDto userTokenDto = new UserTokenDto()
+            {
+                Token = newtoken.Token,
+                RefreshToken = newtoken.RefreshToken,
+            };
+            
 
             result.Result = userTokenDto;
             result.Message = "Token Refreshed";
@@ -128,12 +144,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return username;
         }
-        private async Task<TokenModel> GenerateAuthenticationToken(string username)
+        private async Task<TokenModel> GenerateAuthenticationToken(User user)
         {
-            if (username.IsNullOrEmpty())
-                return null;
-            var user = await db.Users.Where(x => x.Username == username).FirstOrDefaultAsync();
-
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key ?? ""));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
@@ -151,7 +163,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var newJwtToken = new JwtSecurityToken(
                     issuer: _tokenSettings.Issuer,
                     audience: _tokenSettings.Audience,
-                    expires: DateTime.UtcNow.AddSeconds(10),
+                    expires: DateTime.UtcNow.AddSeconds(30),
                     signingCredentials: credentials,
                     claims: userClaims
             );
@@ -170,8 +182,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return Convert.ToBase64String(key);
             }
         }
-        private async Task<bool> AuthenticateUser(UserLoginDto model)
+        private async Task<User> AuthenticateUser(UserLoginDto model)
         {
+            var user = await GetUserByUsernameAsync(model.Username);            
+
             bool IsUserAuthenticated = false;
             switch (model.AuthenticationProviderName)
             {
@@ -182,7 +196,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                     IsUserAuthenticated = await AuthenticateUserWithLocalPassword(model.Username, model.Password);
                     break;
             }
-            return IsUserAuthenticated;
+            if (IsUserAuthenticated)
+                return user;
+            else
+                return null;
         }
         private async Task<bool> AuthenticateUserWithLocalPassword(string username, string password)
         {
