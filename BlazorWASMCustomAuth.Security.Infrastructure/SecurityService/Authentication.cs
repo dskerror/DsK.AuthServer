@@ -40,8 +40,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         public async Task<APIResult<UserTokenDto>> RefreshToken(TokenModel model)
         {
             APIResult<UserTokenDto> result = new APIResult<UserTokenDto>();
-            //implement method that declines renewal depeding of token age.
-
+            
             var claimsPrincipal = ValidateToken(model.Token);
             if (claimsPrincipal == null)
             {
@@ -59,6 +58,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
+            //TODO : Remove token from UserToken Table
+            //TODO : Associate user with refreshtoken
+            //TODO : Create cleanup method that remove refreshtokens older than established date
 
             var userToken = await db.UserTokens.Where(x => x.RefreshToken == model.RefreshToken).FirstOrDefaultAsync();
 
@@ -149,7 +151,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var newJwtToken = new JwtSecurityToken(
                     issuer: _tokenSettings.Issuer,
                     audience: _tokenSettings.Audience,
-                    expires: DateTime.UtcNow.AddDays(1),
+                    expires: DateTime.UtcNow.AddSeconds(10),
                     signingCredentials: credentials,
                     claims: userClaims
             );

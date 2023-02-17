@@ -17,18 +17,15 @@
         </MudLayout>
     </NotAuthorized>
     <Authorized>
-        <MudLayout>
-            <MudAppBar Elevation="25">
-                <MudText Typo="Typo.h6" Class="ml-4">Custom Auth</MudText>
-                <MudToolBar DisableGutters="true">
-                    <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
-                </MudToolBar>
-                <MudIconButton Icon="@Icons.Material.Outlined.Logout" Color="Color.Inherit" OnClick="Logout" Class="ml-3" />
-
+        <MudLayout>      
+            <MudAppBar Color="Color.Primary" Elevation="1">
+                <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Edge="Edge.Start" />
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Outlined.Logout" Color="Color.Inherit" OnClick="Logout" />
             </MudAppBar>
             <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
                 <MudDrawerHeader>
-                    <MudText Typo="Typo.h6">Blazor Wasm Custom Auth</MudText>
+                    <MudText Typo="Typo.h6">My App</MudText>
                 </MudDrawerHeader>
                 <NavMenu />
             </MudDrawer>
