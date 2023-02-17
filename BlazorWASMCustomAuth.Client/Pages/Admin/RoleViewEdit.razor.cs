@@ -1,34 +1,52 @@
 ﻿using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
-using BlazorWASMCustomAuth.Client.Services;
-using System.Security.Claims;
 using MudBlazor;
-using System.Diagnostics;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
     public partial class RoleViewEdit
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-
         public RoleDto role { get; set; }
         public List<RolePermissionGridDto> rolePermissions { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loadedPermissionData;
         private bool _loadedRolePermissionData;
-        private bool _EditMode;
+        private bool _AccessRolesView;
+        private bool _AccessRolesEdit;
+        private bool _AccessRolesPermissionsView;
+        private bool _AccessRolesPermissionsEdit;
+
 
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("Roles", href: "admin/roles"),
             new BreadcrumbItem("Role View/Edit", href: null, disabled: true)
         };
-
         protected override async Task OnInitializedAsync()
         {
-            await LoadPermissionData();
-            await LoadRolePermissionData();
+            var state = await authenticationState;
+            SetPermissions(state);
+
+            if (!_AccessRolesView)
+            {
+                _navigationManager.NavigateTo("/noaccess");
+            }
+            else
+            {
+                await LoadPermissionData();
+                await LoadRolePermissionData();
+            }
+        }
+
+        private void SetPermissions(AuthenticationState state)
+        {
+            _AccessRolesView = securityService.HasPermission(state.User, Access.Roles.View);
+            _AccessRolesEdit = securityService.HasPermission(state.User, Access.Roles.Edit);
+            _AccessRolesPermissionsView = securityService.HasPermission(state.User, Access.RolesPermissions.View);
+            _AccessRolesPermissionsEdit = securityService.HasPermission(state.User, Access.RolesPermissions.Edit);
         }
 
         private async Task LoadPermissionData()
@@ -54,7 +72,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private async Task EditRole()
         {
             var result = await securityService.RoleEditAsync(role);
-            DisableEditMode();
+            
             if (result != null)
                 if (result.HasError)
                     Snackbar.Add(result.Message, Severity.Error);
@@ -66,21 +84,9 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private async Task CancelChanges()
         {
-            DisableEditMode();
             Snackbar.Add("Edit canceled", Severity.Warning);
             await LoadPermissionData();
             await LoadRolePermissionData();
-        }
-
-        private void EnableEditMode()
-        {
-            _EditMode = true;
-            Snackbar.Add("Edit mode enabled", Severity.Warning);
-        }
-
-        private void DisableEditMode()
-        {
-            _EditMode = false;
         }
 
         private async Task ToggleSwitch(ChangeEventArgs e, int permissionId)

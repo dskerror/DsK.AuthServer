@@ -2,14 +2,29 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
     public partial class UserCreate
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-
         private UserCreateDto model = new UserCreateDto();
+        private bool _AccessUsersCreate;
+
+        protected override async Task OnInitializedAsync()
+        {
+            var state = await authenticationState;
+            SetPermissions(state);
+
+            if (!_AccessUsersCreate)
+                _navigationManager.NavigateTo("/noaccess");
+        }
+
+        private void SetPermissions(AuthenticationState state)
+        {   
+            _AccessUsersCreate = securityService.HasPermission(state.User, Access.Users.Create);
+        }
 
         private async Task Create()
         {

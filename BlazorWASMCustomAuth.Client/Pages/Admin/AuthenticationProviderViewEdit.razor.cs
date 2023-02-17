@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
@@ -11,8 +12,9 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         public AuthenticationProviderDto model { get; set; }
         [Parameter] public int id { get; set; }
-        private bool _loaded;
-        private bool _EditMode;
+        private bool _loaded;        
+        private bool _AccessAuthenticationProviderView;
+        private bool _AccessAuthenticationProviderEdit;
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("AuthenticationProviders", href: "admin/AuthenticationProviders"),
@@ -21,7 +23,19 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadData();
+            var state = await authenticationState;
+            SetPermissions(state);
+
+            if (!_AccessAuthenticationProviderView)            
+                _navigationManager.NavigateTo("/noaccess");            
+            else            
+                await LoadData();
+        }
+
+        private void SetPermissions(AuthenticationState state)
+        {
+            _AccessAuthenticationProviderView = securityService.HasPermission(state.User, Access.AuthenticationProvider.View);
+            _AccessAuthenticationProviderEdit = securityService.HasPermission(state.User, Access.AuthenticationProvider.Edit);
         }
 
         private async Task LoadData()
@@ -37,7 +51,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private async Task Edit()
         {
             var result = await securityService.AuthenticationProviderEditAsync(model);
-            DisableEditMode();
+          
             if (result != null)
                 if (result.HasError)
                     Snackbar.Add(result.Message, Severity.Error);
@@ -49,20 +63,8 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private async Task CancelChanges()
         {
-            DisableEditMode();
             Snackbar.Add("Edit canceled", Severity.Warning);
             await LoadData();
-        }
-
-        private void EnableEditMode()
-        {
-            _EditMode = true;
-            Snackbar.Add("Edit mode enabled", Severity.Warning);
-        }
-
-        private void DisableEditMode()
-        {
-            _EditMode = false;
         }
     }
 }

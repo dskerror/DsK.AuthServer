@@ -4,16 +4,26 @@
 
 <h2>Roles</h2>
 
+@if (!_loaded)
+{
+    <h3>Loading...</h3>
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+}
+
 <MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<RoleDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
-        <div class="justify-center mud-text-align-center">
-            <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateRole())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Role</MudButton>
-        </div>
+
+        @if (_AccessRolesCreate)
+        {
+            <div class="justify-center mud-text-align-center">
+                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateRole())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Role</MudButton>
+            </div>
+        }
         <MudSpacer />
         <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        
+
         <MudTh><MudTableSortLabel T="RoleDto" SortLabel="RoleName">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="RoleDto" SortLabel="RoleDescription">Description</MudTableSortLabel></MudTh>
         <MudTh>Details</MudTh>

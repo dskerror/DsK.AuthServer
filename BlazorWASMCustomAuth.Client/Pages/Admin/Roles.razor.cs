@@ -1,32 +1,44 @@
-﻿using BlazorWASMCustomAuth.Client.Services;
-using BlazorWASMCustomAuth.Client.Services.Requests;
-using BlazorWASMCustomAuth.Security.Infrastructure;
+﻿using BlazorWASMCustomAuth.Client.Services.Requests;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
-using System.Net;
-using System.Security.Claims;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
     public partial class Roles
     {
+        [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
         private IEnumerable<RoleDto> _pagedData;
         private MudTable<RoleDto> _table;
+        private bool _loaded;
         private int _totalItems;
         private int _currentPage;
         private string _searchString = "";
-        
+        private bool _AccessRolesView;
+        private bool _AccessRolesCreate;
+
         protected override async Task OnInitializedAsync()
         {
+            var state = await authenticationState;
+            SetPermissions(state);
+
+            if (!_AccessRolesView)
+                _navigationManager.NavigateTo("/noaccess");
+        }
+
+        private void SetPermissions(AuthenticationState state)
+        {
+            _AccessRolesView = securityService.HasPermission(state.User, Access.Roles.View);
+            _AccessRolesCreate = securityService.HasPermission(state.User, Access.Roles.Create);
         }
 
         private async Task<TableData<RoleDto>> ServerReload(TableState state)
-        {         
-            await LoadData(state.Page, state.PageSize, state);            
+        {
+            await LoadData(state.Page, state.PageSize, state);
+            _loaded = true;
+            base.StateHasChanged();
             return new TableData<RoleDto> { TotalItems = _totalItems, Items = _pagedData };
         }
 

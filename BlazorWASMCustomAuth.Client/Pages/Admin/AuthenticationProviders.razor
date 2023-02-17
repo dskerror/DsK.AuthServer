@@ -4,15 +4,24 @@
 
 <h2>Roles</h2>
 
+@if (!_loaded)
+{
+    <h3>Loading...</h3>
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+}
+
 <MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<AuthenticationProviderDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
-        <div class="justify-center mud-text-align-center">
-            <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateAuthenticationProvider())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Authentication Provider</MudButton>
-        </div>
+        @if (_AccessAuthenticationProviderCreate)
+        {
+            <div class="justify-center mud-text-align-center">
+                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateAuthenticationProvider())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Authentication Provider</MudButton>
+            </div>
+        }
         <MudSpacer />
         <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
-    <HeaderContent>        
+    <HeaderContent>
         <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="AuthenticationProviderName">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="AuthenticationProviderType">Type</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="Domain">Domain</MudTableSortLabel></MudTh>

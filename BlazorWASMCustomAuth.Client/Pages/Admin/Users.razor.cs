@@ -1,14 +1,9 @@
-﻿using BlazorWASMCustomAuth.Client.Services;
-using BlazorWASMCustomAuth.Client.Services.Requests;
-using BlazorWASMCustomAuth.Security.Infrastructure;
+﻿using BlazorWASMCustomAuth.Client.Services.Requests;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
-using System.Net;
-using System.Security.Claims;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
@@ -21,7 +16,6 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private int _totalItems;
         private int _currentPage;
         private string _searchString = "";
-
         private bool _AccessUsersView;
         private bool _AccessUsersCreate;
 
