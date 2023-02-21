@@ -35,6 +35,7 @@ namespace BlazorWASMCustomAuth.Client.Components
             {
                 userPermissions = result.Result;
             }
+            StateHasChanged();
         }
 
         private async Task TogglePermissionEnabledSwitch(ChangeEventArgs e, int permissionId, bool allow)

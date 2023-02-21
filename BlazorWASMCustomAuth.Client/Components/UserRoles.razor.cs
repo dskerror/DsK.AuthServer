@@ -11,8 +11,10 @@ namespace BlazorWASMCustomAuth.Client.Components
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
         public List<UserRoleGridDto> userRoles { get; set; }
         [Parameter] public int UserId { get; set; }
+        [Parameter] public EventCallback UserRoleChanged { get; set; }
         private bool _AccessUserRolesEdit;
         private bool _AccessUserRolesView;
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -33,7 +35,7 @@ namespace BlazorWASMCustomAuth.Client.Components
             var result = await securityService.UserRolesGetAsync(UserId);
             if (result != null)
             {
-                userRoles = result.Result;
+                userRoles = result.Result;                
                 //_loadedRolePermissionData = true;
             }
         }
@@ -46,6 +48,7 @@ namespace BlazorWASMCustomAuth.Client.Components
                 if (!result.HasError)
                 {
                     Snackbar.Add("Role Changed", Severity.Warning);
+                    await UserRoleChanged.InvokeAsync();
                     //await LoadUserPermissions();
                 }
             }

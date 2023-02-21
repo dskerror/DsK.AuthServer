@@ -53,13 +53,13 @@ else
         @if (_AccessUserRolesView)
         {
             <MudExpansionPanel Text="User Roles">
-                <UserRoles UserId="@id"/>
+                <UserRoles UserId="@id" UserRoleChanged="RefreshUserPermissions"/>
             </MudExpansionPanel>
         }
         @if (_AccessUserPermissionsView)
         {
             <MudExpansionPanel Text="User Permissions">
-                <UserPermissions UserId="@id" />
+                <UserPermissions UserId="@id" @ref="userPermissionsComponent" />
             </MudExpansionPanel>
         }
         @if (_AccessUserAuthenticationProvidersView)

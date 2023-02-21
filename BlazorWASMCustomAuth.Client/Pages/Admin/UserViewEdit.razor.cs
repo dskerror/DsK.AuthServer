@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
+using BlazorWASMCustomAuth.Client.Components;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
@@ -18,6 +19,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private bool _AccessUserRolesView;
         private bool _AccessUserPasswordsCreate;
         private bool _AccessUserAuthenticationProvidersView;
+        protected UserPermissions userPermissionsComponent;
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("Users", href: "admin/users"),
@@ -68,6 +70,11 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         {
             Snackbar.Add("Edit canceled", Severity.Warning);
             await LoadUserData();
+        }
+
+        private async Task RefreshUserPermissions()
+        {
+            await userPermissionsComponent.LoadUserPermissions();
         }
     }
 }
