@@ -1,0 +1,21 @@
+﻿<MudTable Items="@userAuthenticationProviders" Hover="true">
+    <HeaderContent>
+        <MudTh>Authentication Provider</MudTh>
+        <MudTh>Authentication Provider Type</MudTh>
+        <MudTh>Username</MudTh>
+        <MudTh>Save</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="AuthenticationProviderName">@context.AuthenticationProviderName</MudTd>
+        <MudTd DataLabel="AuthenticationProviderType">@context.AuthenticationProviderType</MudTd>
+        <MudTd DataLabel="Username">
+            <MudTextField @bind-Value="@context.Username" For="@(()=>@context.Username)">@context.Username</MudTextField>
+        </MudTd>
+        <MudTd DataLabel="Save">
+            <MudButton Color="Color.Primary" OnClick="()=>SaveUserAuthenticatonProvider(context)" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>

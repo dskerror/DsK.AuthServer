@@ -53,96 +53,26 @@ else
         @if (_AccessUserRolesView)
         {
             <MudExpansionPanel Text="User Roles">
-                <MudTable Items="@userRoles" Hover="true">
-                    <HeaderContent>
-                        <MudTh>Disabled/Enabled</MudTh>
-                        <MudTh>Role Name</MudTh>
-                        <MudTh>Role Description</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="RoleSwitch">
-                            <MudSwitch Color="Color.Success" Disabled="!_AccessUserRolesEdit" @bind-Checked="@context.Enable" @oninput="(e)=>ToggleRoleSwitch(e,context.Id)" />
-                        </MudTd>
-                        <MudTd DataLabel="RoleName">@context.RoleName</MudTd>
-                        <MudTd DataLabel="RoleDescription">@context.RoleDescription</MudTd>
-                    </RowTemplate>
-                    <PagerContent>
-                        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-                    </PagerContent>
-                </MudTable>
+                <UserRoles UserId="@id"/>
             </MudExpansionPanel>
         }
         @if (_AccessUserPermissionsView)
         {
             <MudExpansionPanel Text="User Permissions">
-                <MudTable Items="@userPermissions" Hover="true">
-                    <HeaderContent>
-                        <MudTh>Disabled/Enabled</MudTh>
-                        <MudTh>Deny/Allow</MudTh>
-                        <MudTh>Permission Name</MudTh>
-                        <MudTh>Permission Description</MudTh>
-                        <MudTh>In Roles</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="PermissionSwitchEnabled">
-                            <MudSwitch Color="Color.Success" Disabled="!_AccessUserPermissionsEdit" @bind-Checked="@context.Enabled" @oninput="(e)=>TogglePermissionEnabledSwitch(e,context.Id, context.Allow)" />
-                        </MudTd>
-                        <MudTd DataLabel="PermissionSwitchAllow">
-                            <MudSwitch Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>TogglePermissionAllowSwitch(e,context.Id)" Disabled=@(!context.Enabled) UnCheckedColor="MudBlazor.Color.Error" />
-                        </MudTd>
-                        <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
-                        <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>
-                        <MudTd DataLabel="Roles">@context.Roles</MudTd>
-                    </RowTemplate>
-                    <PagerContent>
-                        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-                    </PagerContent>
-                </MudTable>
+                <UserPermissions UserId="@id" />
             </MudExpansionPanel>
         }
         @if (_AccessUserAuthenticationProvidersView)
         {
             <MudExpansionPanel Text="User Authentication Providers">
-                <MudTable Items="@userAuthenticationProviders" Hover="true">
-                    <HeaderContent>
-                        <MudTh>Authentication Provider</MudTh>
-                        <MudTh>Authentication Provider Type</MudTh>
-                        <MudTh>Username</MudTh>
-                        <MudTh>Save</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="AuthenticationProviderName">@context.AuthenticationProviderName</MudTd>
-                        <MudTd DataLabel="AuthenticationProviderType">@context.AuthenticationProviderType</MudTd>
-                        <MudTd DataLabel="Username">
-                            <MudTextField @bind-Value="@context.Username" For="@(()=>@context.Username)">@context.Username</MudTextField>
-                        </MudTd>
-                        <MudTd DataLabel="Save">
-                            <MudButton Color="Color.Primary" OnClick="()=>SaveUserAuthenticatonProvider(context)" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
-                        </MudTd>
-                    </RowTemplate>
-                    <PagerContent>
-                        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-                    </PagerContent>
-                </MudTable>
+                <UserAuthenticationProvider UserId="@id" />
             </MudExpansionPanel>
         }
         @if (_AccessUserPasswordsCreate)
         {
             <MudExpansionPanel Text="User Password">
-                <EditForm Model="userPassword" OnValidSubmit="ChangePassword">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <MudCard Class="mb-2">
-                        <MudCardContent>
-                            <MudTextField Label="Password" @bind-Value="userPassword.Password"
-                                  For="@(()=>userPassword.Password)">
-                            </MudTextField>
-                        </MudCardContent>
-                    </MudCard>
-                    <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Change Password</MudButton>
-                </EditForm>
+                <UserChangePassword UserId="@id" />
             </MudExpansionPanel>
         }
     </MudExpansionPanels>
-
 }

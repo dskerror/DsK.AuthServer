@@ -1,0 +1,23 @@
+﻿<MudTable Items="@userPermissions" Hover="true">
+    <HeaderContent>
+        <MudTh>Disabled/Enabled</MudTh>
+        <MudTh>Deny/Allow</MudTh>
+        <MudTh>Permission Name</MudTh>
+        <MudTh>Permission Description</MudTh>
+        <MudTh>In Roles</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="PermissionSwitchEnabled">
+            <MudSwitch Color="Color.Success" Disabled="!_AccessUserPermissionsEdit" @bind-Checked="@context.Enabled" @oninput="(e)=>TogglePermissionEnabledSwitch(e,context.Id, context.Allow)" />
+        </MudTd>
+        <MudTd DataLabel="PermissionSwitchAllow">
+            <MudSwitch Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>TogglePermissionAllowSwitch(e,context.Id)" Disabled=@(!context.Enabled) UnCheckedColor="MudBlazor.Color.Error" />
+        </MudTd>
+        <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
+        <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>
+        <MudTd DataLabel="Roles">@context.Roles</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>
