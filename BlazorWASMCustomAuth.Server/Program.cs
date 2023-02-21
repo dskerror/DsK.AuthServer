@@ -6,6 +6,7 @@ using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,28 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
+
+//builder.Services.AddHttpLogging(logging =>
+//{
+//    // Customize HTTP logging here.
+//    logging.LoggingFields = HttpLoggingFields.All;
+//    logging.RequestHeaders.Add("sec-ch-ua");
+//    logging.RequestHeaders.Add("Access-Control-Request-Headers");
+//    logging.RequestHeaders.Add("Access-Control-Request-Method");
+//    logging.RequestHeaders.Add("Origin");
+//    logging.RequestHeaders.Add("Referer");
+//    logging.RequestHeaders.Add("sec-fetch-mode");
+//    logging.RequestHeaders.Add("sec-fetch-site");
+//    logging.RequestHeaders.Add("sec-fetch-dest");
+//    logging.RequestHeaders.Add("Authorization");
+//    logging.ResponseHeaders.Add("Access-Control-Allow-Headers");
+//    logging.ResponseHeaders.Add("Access-Control-Allow-Methods");
+//    logging.ResponseHeaders.Add("Access-Control-Allow-Origin");
+//    logging.ResponseHeaders.Add("my-response-header");
+//    logging.MediaTypeOptions.AddText("application/javascript");
+//    logging.RequestBodyLogLimit = 4096;
+//    logging.ResponseBodyLogLimit = 4096;
+//});
 
 
 builder.Services.AddDbContext<SecurityTablesTestContext>(options =>
@@ -70,10 +93,13 @@ if (app.Environment.IsDevelopment())
 }
 
 
+//app.UseHttpLogging();
 
 app.UseHttpsRedirection();
 app.UseCors("myOrigins");
 app.UseAuthorization();
+
+app.UseLoggingMiddleware();
 
 app.MapControllers();
 
