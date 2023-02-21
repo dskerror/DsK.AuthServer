@@ -23,7 +23,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             {
                 result.HasError = true;
                 return result;
-            }   
+            }
 
             var token = await GenerateAuthenticationToken(user);
 
@@ -65,7 +65,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             //TODO : Create cleanup method that remove refreshtokens older than established date
 
             var user = await GetUserByUsernameAsync(username);
-            if (user == null )
+            if (user == null)
             {
                 result.HasError = true;
                 result.Message = "Invalid Token";
@@ -100,7 +100,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 Token = newtoken.Token,
                 RefreshToken = newtoken.RefreshToken,
             };
-            
+
 
             result.Result = userTokenDto;
             result.Message = "Token Refreshed";
@@ -190,15 +190,18 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
         private async Task<User> AuthenticateUser(UserLoginDto model)
         {
-            var user = await GetUserByMappedUsernameAsync(model.Username, model.AuthenticationProviderId);            
+            var user = await GetUserByMappedUsernameAsync(model.Username, model.AuthenticationProviderId);
 
             bool IsUserAuthenticated = false;
 
             var authenticationProvider = await AuthenticationProviderGet(model.AuthenticationProviderId);
+
             switch (authenticationProvider.AuthenticationProviderType)
             {
                 case "Active Directory":
-                    IsUserAuthenticated = AuthenticateUserWithDomain(model.Username, model.Password);
+                    IsUserAuthenticated = AuthenticateUserWithDomain(model.Username, model.Password, authenticationProvider);
+                    if (IsUserAuthenticated)
+                        user = await CreateADUserIfNotExists(model, user, authenticationProvider);
                     break;
                 default: //Local
                     IsUserAuthenticated = await AuthenticateUserWithLocalPassword(model.Username, model.Password);
@@ -209,6 +212,33 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             else
                 return null;
         }
+
+        private async Task<User> CreateADUserIfNotExists(UserLoginDto model, User? user, AuthenticationProvider authenticationProvider)
+        {
+            if (user == null)
+            {
+                UserCreateDto userCreateDto = new UserCreateDto()
+                {
+                    Username = model.Username,
+                    Email = GetADUserEmail(model.Username, authenticationProvider),
+                    Name = GetADUserDisplayName(model.Username, authenticationProvider)
+                };
+
+                var result = await UserCreate(userCreateDto);
+
+                UserAuthenticationProviderCreateDto userAuthenticationProviderCreateDto = new UserAuthenticationProviderCreateDto()
+                {
+                    Username = model.Username,
+                    AuthenticationProviderId = model.AuthenticationProviderId,
+                    UserId = result.Result.Id
+                };
+
+                UserAuthenticationProviderCreate(userAuthenticationProviderCreateDto);
+                user = await GetUserByMappedUsernameAsync(model.Username, model.AuthenticationProviderId);
+            }
+            return user;
+        }
+
         private async Task<bool> AuthenticateUserWithLocalPassword(string username, string password)
         {
             try
@@ -231,20 +261,42 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return false;
             }
         }
-        private bool AuthenticateUserWithDomain(string username, string password)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
+        private bool AuthenticateUserWithDomain(string username, string password, AuthenticationProvider AuthenticationProvider)
         {
-
-#pragma warning disable IDE0063 // Use simple 'using' statement
-#pragma warning disable CA1416 // Validate platform compatibility
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "DOMAIN", "USERNAME", "PASSWORD"))
+            //todo : encrypt Authentication Provider password 
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, AuthenticationProvider.Domain, AuthenticationProvider.Username, AuthenticationProvider.Password))
             {
                 // validate the credentials
                 bool isValid = pc.ValidateCredentials(username, password);
                 return isValid;
             }
-#pragma warning restore CA1416 // Validate platform compatibility
-#pragma warning restore IDE0063 // Use simple 'using' statement
+        }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
+        private string GetADUserEmail(string username, AuthenticationProvider AuthenticationProvider)
+        {   
+            string email = "";
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, AuthenticationProvider.Domain, AuthenticationProvider.Username, AuthenticationProvider.Password))
+            {
+                UserPrincipal user = UserPrincipal.FindByIdentity(pc, username);
+                email = user.EmailAddress;
+            }
+            return email;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
+        public string GetADUserDisplayName(string username, AuthenticationProvider AuthenticationProvider)
+        {   
+            string realname = "";
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, AuthenticationProvider.Domain, AuthenticationProvider.Username, AuthenticationProvider.Password))
+            {
+                UserPrincipal user = UserPrincipal.FindByIdentity(pc, username);
+                if (user != null)
+                    realname = user.DisplayName;
+            }
+            return realname;
         }
     }
 }

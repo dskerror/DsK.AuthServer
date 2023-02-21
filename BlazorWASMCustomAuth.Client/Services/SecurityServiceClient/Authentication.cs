@@ -13,7 +13,7 @@ public partial class SecurityServiceClient
             return false;
         }
         var result = await response.Content.ReadFromJsonAsync<APIResult<TokenModel>>();
-        if (result == null)
+        if (result == null || result.HasError)
         {
             return false;
         }
