@@ -81,7 +81,13 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            //TODO : Don't refresh if token is x time.
+            //Don't refresh if token is x time.
+            if (userToken.TokenRefreshedDateTime < DateTime.Now.AddDays(-1))
+            {
+                result.HasError = true;
+                result.Message = "Expired Refresh Token";
+                return result;
+            }
 
             var newtoken = await GenerateAuthenticationToken(user);
             userToken.UserId = user.Id;
@@ -163,7 +169,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var newJwtToken = new JwtSecurityToken(
                     issuer: _tokenSettings.Issuer,
                     audience: _tokenSettings.Audience,
-                    expires: DateTime.UtcNow.AddSeconds(30),
+                    expires: DateTime.UtcNow.AddDays(1),
                     signingCredentials: credentials,
                     claims: userClaims
             );
@@ -184,10 +190,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
         private async Task<User> AuthenticateUser(UserLoginDto model)
         {
-            var user = await GetUserByUsernameAsync(model.Username);            
+            var user = await GetUserByMappedUsernameAsync(model.Username, model.AuthenticationProviderId);            
 
             bool IsUserAuthenticated = false;
-            switch (model.AuthenticationProviderName)
+
+            var authenticationProvider = await AuthenticationProviderGet(model.AuthenticationProviderId);
+            switch (authenticationProvider.AuthenticationProviderType)
             {
                 case "Active Directory":
                     IsUserAuthenticated = AuthenticateUserWithDomain(model.Username, model.Password);

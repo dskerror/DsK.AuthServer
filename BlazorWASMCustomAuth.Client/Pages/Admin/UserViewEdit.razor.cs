@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
+using BlazorWASMCustomAuth.Security.Infrastructure;
 
 namespace BlazorWASMCustomAuth.Client.Pages.Admin
 {
@@ -13,6 +14,8 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         public UserCreateLocalPasswordDto userPassword { get; set; } = new UserCreateLocalPasswordDto();
         public List<UserRoleGridDto> userRoles { get; set; }
         public List<UserPermissionGridDto> userPermissions { get; set; }
+
+        public List<UserAuthenticationProvidersGridDto> userAuthenticationProviders { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loaded;
 
@@ -23,6 +26,10 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         private bool _AccessUserRolesEdit;
         private bool _AccessUserRolesView;
         private bool _AccessUserPasswordsCreate;
+        private bool _AccessUserAuthenticationProvidersView;
+        private bool _AccessUserAuthenticationProvidersCreate;
+        private bool _AccessUserAuthenticationProvidersEdit;
+        private bool _AccessUserAuthenticationProvidersDelete;
 
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
@@ -42,8 +49,12 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             else
             {
                 await LoadUserData();
-                await LoadUserRoles();
-                await LoadUserPermissions();
+                if (_AccessUserRolesView)
+                    await LoadUserRoles();
+                if (_AccessUserPermissionsView)
+                    await LoadUserPermissions();
+                if (_AccessUserAuthenticationProvidersView)
+                    await LoadUserAuthenticationProviders();
             }
         }
 
@@ -56,6 +67,10 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             _AccessUserRolesView = securityService.HasPermission(state.User, Access.UserRoles.View);
             _AccessUserRolesEdit = securityService.HasPermission(state.User, Access.UserRoles.Edit);
             _AccessUserPasswordsCreate = securityService.HasPermission(state.User, Access.UserPasswords.Create);
+            _AccessUserAuthenticationProvidersView = securityService.HasPermission(state.User, Access.UserAuthenticationProviders.View);
+            _AccessUserAuthenticationProvidersCreate = securityService.HasPermission(state.User, Access.UserAuthenticationProviders.Create);
+            _AccessUserAuthenticationProvidersEdit = securityService.HasPermission(state.User, Access.UserAuthenticationProviders.Edit);
+            _AccessUserAuthenticationProvidersDelete = securityService.HasPermission(state.User, Access.UserAuthenticationProviders.Delete);
         }
 
         private async Task LoadUserData()
@@ -88,10 +103,19 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             }
         }
 
+        private async Task LoadUserAuthenticationProviders()
+        {
+            var result = await securityService.UserAuthenticationProvidersGetAsync(id);
+            if (result != null)
+            {
+                userAuthenticationProviders = result.Result;
+            }
+        }
+
         private async Task EditUser()
         {
             var result = await securityService.UserEditAsync(user);
-           
+
             if (result != null)
                 if (result.HasError)
                     Snackbar.Add(result.Message, Severity.Error);
@@ -116,7 +140,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         }
 
         private async Task CancelChanges()
-        {            
+        {
             Snackbar.Add("Edit canceled", Severity.Warning);
             await LoadUserData();
         }
@@ -174,7 +198,64 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                 }
             }
         }
+        private async Task SaveUserAuthenticatonProvider(UserAuthenticationProvidersGridDto record)
+        {
+            if (_AccessUserAuthenticationProvidersDelete && string.IsNullOrEmpty(record.Username) && record.Id != 0)
+            {
+                var result = await securityService.UserAuthenticationProviderDeleteAsync(record.Id);
+                if (result != null)
+                {
+                    if (!result.HasError)
+                        Snackbar.Add("User Authentication Provider Deleted", Severity.Success);
+                }
+            }
+            else if (!_AccessUserAuthenticationProvidersDelete && string.IsNullOrEmpty(record.Username) && record.Id != 0)
+            {
+                Snackbar.Add("You don't have permission to delete the User Authentication Provider", Severity.Success);
+            }
+            else if (_AccessUserAuthenticationProvidersEdit && !string.IsNullOrEmpty(record.Username) && record.Id != 0)
+            {
+                UserAuthenticationProviderUpdateDto userAuthenticationProviderUpdateDto = new UserAuthenticationProviderUpdateDto()
+                {
+                    Id = record.Id,
+                    Username = record.Username
+                };
+                var result = await securityService.UserAuthenticationProviderEditAsync(userAuthenticationProviderUpdateDto);
+                if (result != null)
+                {
+                    if (!result.HasError)
+                        Snackbar.Add("User Authentication Provider Edited", Severity.Success);
+                    else
+                        Snackbar.Add(result.Message, Severity.Error);
+                }
+            }
+            else if (!_AccessUserAuthenticationProvidersEdit && !string.IsNullOrEmpty(record.Username) && record.Id != 0)
+            {
+                Snackbar.Add("You don't have permission to edit the User Authentication Provider", Severity.Success);
+            }
+            else if (_AccessUserAuthenticationProvidersCreate && !string.IsNullOrEmpty(record.Username) && record.Id == 0)
+            {
+                UserAuthenticationProviderCreateDto userAuthenticationProviderCreateDto = new UserAuthenticationProviderCreateDto()
+                {
+                    AuthenticationProviderId = record.AuthenticationProviderId,
+                    UserId = id,
+                    Username = record.Username
+                };
+                var result = await securityService.UserAuthenticationProviderCreateAsync(userAuthenticationProviderCreateDto);
+                if (result != null)
+                {
+                    if (!result.HasError)
+                        Snackbar.Add("User Authentication Provider Created", Severity.Success);
+                    else
+                        Snackbar.Add(result.Message, Severity.Error);
+                }
+            }
+            else if (!_AccessUserAuthenticationProvidersCreate && !string.IsNullOrEmpty(record.Username) && record.Id == 0)
+            {
+                Snackbar.Add("You don't have permission to create the User Authentication Provider", Severity.Success);
+            }
 
+            await LoadUserAuthenticationProviders();
+        }
     }
 }
-

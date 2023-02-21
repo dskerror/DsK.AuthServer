@@ -50,6 +50,16 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
             public const string Delete = "Roles.Delete";
         }
 
+        [DisplayName("User Authentication Providers")]
+        [Description("User Authentication Providers Permissions")]
+        public static class UserAuthenticationProviders
+        {
+            public const string View = "UserAuthenticationProviders.View";
+            public const string Create = "UserAuthenticationProviders.Create";
+            public const string Edit = "UserAuthenticationProviders.Edit";
+            public const string Delete = "UserAuthenticationProviders.Delete";
+        }
+
         [DisplayName("User Passwords")]
         [Description("User Passwords Permissions")]
         public static class UserPasswords

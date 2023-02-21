@@ -85,6 +85,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure{
             result.Result = Mapper.Map<List<AuthenticationProvider>, List<AuthenticationProviderDto>>(items);
             return result;
         }
+
+        public async Task<AuthenticationProvider> AuthenticationProviderGet(int id)
+        {
+            var authenticationProvider = await db.AuthenticationProviders.Where(u => u.Id == id).FirstOrDefaultAsync();
+            return authenticationProvider;
+        }
         public async Task<APIResult<string>> AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
         {
             APIResult<string> result = new APIResult<string>();

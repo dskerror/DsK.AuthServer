@@ -27,6 +27,25 @@ public partial class SecurityService
             result.Message = ex.InnerException.Message;
         }
 
+        var userAuthenticationProvider = new UserAuthenticationProvider()
+        {
+            AuthenticationProviderId = 1,
+            UserId = record.Id,
+            Username= record.Username,
+        };
+
+        await db.UserAuthenticationProviders.AddAsync(userAuthenticationProvider);
+
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.Message = ex.InnerException.Message;
+        }
+
         if (recordsCreated == 1)
         {
             result.Result = Mapper.Map(record, result.Result);
@@ -133,6 +152,15 @@ public partial class SecurityService
     private async Task<User> GetUserByUsernameAsync(string username)
     {
         return await db.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
+    }
+
+    private async Task<User> GetUserByMappedUsernameAsync(string username, int AuthenticationProviderId)
+    {
+        var user = await (from u in db.Users
+                   join uap in db.UserAuthenticationProviders on u.Id equals uap.UserId
+                   where uap.Username == username && uap.AuthenticationProviderId == AuthenticationProviderId
+                   select u).FirstOrDefaultAsync();
+        return user;
     }
 }
 

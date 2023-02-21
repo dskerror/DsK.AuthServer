@@ -2,7 +2,6 @@
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
@@ -24,8 +23,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             //TODO : Create another method for user to change their own passwords
             var result = await SecurityService.UserCreateLocalPassword(model);
             return Ok(result);
-        }
-     
+        }     
     }
 }
 

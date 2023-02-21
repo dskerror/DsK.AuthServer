@@ -9,9 +9,10 @@
 6. Delete ModelsOld Folder
 7. Delete Migrations Folder
 8. Delete __EFMigrationsHistory table on the database
-9. Comment the OnConfiguring Method on the SecurityTablesTestContext.cs
-10. Build and fix any errors.
-11. Add-Migration Initial-Migration
+9. Build and fix any errors.
+10. Run this command:
+	Add-Migration Initial-Migration
+11. Comment the OnConfiguring Method on the SecurityTablesTestContext.cs
 
 Other:
 Add-Migration: Creates a new migration class as per specified name with the Up() and Down() methods.

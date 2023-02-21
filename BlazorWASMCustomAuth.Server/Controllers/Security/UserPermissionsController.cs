@@ -1,5 +1,4 @@
-﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
-using BlazorWASMCustomAuth.Security.Infrastructure;
+﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;

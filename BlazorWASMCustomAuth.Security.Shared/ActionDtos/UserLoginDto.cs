@@ -9,6 +9,6 @@ namespace BlazorWASMCustomAuth.Security.Shared
         public string? Username { get; set; }
 		[Required]
 		public string? Password { get; set; }
-		public string AuthenticationProviderName { get; set; } = "Local";
+		public int AuthenticationProviderId { get; set; } = 1;
 	}
 }

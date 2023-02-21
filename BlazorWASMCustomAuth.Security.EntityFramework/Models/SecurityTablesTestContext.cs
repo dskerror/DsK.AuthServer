@@ -25,6 +25,8 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserAuthenticationProvider> UserAuthenticationProviders { get; set; }
+
     public virtual DbSet<UserLog> UserLogs { get; set; }
 
     public virtual DbSet<UserPassword> UserPasswords { get; set; }
@@ -91,6 +93,21 @@ public partial class SecurityTablesTestContext : DbContext
             entity.Property(e => e.LockoutEnd).HasColumnType("date");
             entity.Property(e => e.Name).HasMaxLength(256);
             entity.Property(e => e.Username).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<UserAuthenticationProvider>(entity =>
+        {
+            entity.Property(e => e.Username).HasMaxLength(256);
+
+            entity.HasOne(d => d.AuthenticationProvider).WithMany(p => p.UserAuthenticationProviders)
+                .HasForeignKey(d => d.AuthenticationProviderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserAuthenticationProviders_AuthenticationProviders");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserAuthenticationProviders)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserAuthenticationProviders_Users");
         });
 
         modelBuilder.Entity<UserLog>(entity =>

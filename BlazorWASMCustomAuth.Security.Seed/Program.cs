@@ -15,11 +15,12 @@ internal class Program
         db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
 
 
-        CreateLocalAuthProvider(db);
+        AuthenticationProvider localAuthProvider = CreateLocalAuthProvider(db);
         Permission adminPermission = CreateAdminPermission(db);
         Role adminRole = CreateAdminRole(db);
         AddAdminPermissionToAdminRole(db, adminPermission, adminRole);
         User adminUser = CreateAdminUser(db);
+        AddAuthenticationProviderToAdminUser(db, localAuthProvider, adminUser);
         AddAdminRoleToAdminUser(db, adminRole, adminUser);
         
         CreateAdminUserPassword(db, adminUser);
@@ -32,7 +33,6 @@ internal class Program
         db.SaveChanges();
 
     }
-
     private static void CreateAdminUserPassword(SecurityTablesTestContext db, User adminUser)
     {
         var ramdomSalt = SecurityHelpers.RandomizeSalt;
@@ -47,7 +47,6 @@ internal class Program
         db.UserPasswords.Add(userPassword);
         db.SaveChanges();
     }
-
     private static AuthenticationProvider CreateLocalAuthProvider(SecurityTablesTestContext db)
     {
         var authProvider = new AuthenticationProvider()
@@ -62,14 +61,22 @@ internal class Program
         db.SaveChanges();
         return authProvider;
     }
-
     private static void AddAdminRoleToAdminUser(SecurityTablesTestContext db, Role adminRole, User adminUser)
     {
         var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
         db.UserRoles.Add(adminUserRole);
         db.SaveChanges();
+    }    
+    private static void AddAuthenticationProviderToAdminUser(SecurityTablesTestContext db, AuthenticationProvider localAuthProvider, User adminUser)
+    {
+        var adminAuthenticationProvider = new UserAuthenticationProvider() { 
+            AuthenticationProvider = localAuthProvider, 
+            User = adminUser, Username = 
+            adminUser.Username 
+        };
+        db.UserAuthenticationProviders.Add(adminAuthenticationProvider);
+        db.SaveChanges();
     }
-
     private static User CreateAdminUser(SecurityTablesTestContext db)
     {
         var adminUser = new User()
@@ -84,7 +91,6 @@ internal class Program
         db.SaveChanges();
         return adminUser;
     }
-
     private static void AddAdminPermissionToAdminRole(SecurityTablesTestContext db, Permission adminPermission, Role adminRole)
     {
         var adminRolePermission = new RolePermission()
@@ -95,7 +101,6 @@ internal class Program
         db.RolePermissions.Add(adminRolePermission);
         db.SaveChanges();
     }
-
     private static Role CreateAdminRole(SecurityTablesTestContext db)
     {
         var adminRole = new Role()
@@ -107,7 +112,6 @@ internal class Program
         db.SaveChanges();
         return adminRole;
     }
-
     private static Permission CreateAdminPermission(SecurityTablesTestContext db)
     {
         var adminPermission = new Permission()
