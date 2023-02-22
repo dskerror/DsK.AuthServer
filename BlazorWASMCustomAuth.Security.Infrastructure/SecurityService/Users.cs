@@ -27,6 +27,13 @@ public partial class SecurityService
             result.Message = ex.InnerException.Message;
         }
 
+        var userRole = new UserRole()
+        {
+            RoleId = 2,
+            UserId = record.Id
+        };
+        await db.UserRoles.AddAsync(userRole);
+
         var userAuthenticationProvider = new UserAuthenticationProvider()
         {
             AuthenticationProviderId = 1,

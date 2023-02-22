@@ -18,6 +18,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<UserAuthenticationProviderUpdateDto, UserAuthenticationProvider>().ReverseMap();
         CreateMap<UserPermissionChangeDto, UserPermission>().ReverseMap();
         CreateMap<UserCreateDto, User>().ReverseMap();
+        CreateMap<UserCreateDto, UserRegisterDto>().ReverseMap();
         CreateMap<UserRoleChangeDto, UserRole>().ReverseMap();
 
         //.ForMember(dest => dest.ConfirmEmail,

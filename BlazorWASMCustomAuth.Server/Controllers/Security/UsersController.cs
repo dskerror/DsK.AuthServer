@@ -1,4 +1,6 @@
-﻿using BlazorWASMCustomAuth.Security.Infrastructure;
+﻿using AutoMapper;
+using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +13,35 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
     public class UsersController : ControllerBase
     {
         private readonly SecurityService SecurityService;
-        public UsersController(SecurityService securityService)
+        private IMapper Mapper;
+
+        public UsersController(SecurityService securityService, IMapper Mapper)
         {
             SecurityService = securityService;
+            this.Mapper = Mapper;
+        }
+
+        //TODO : ChangePassword
+        //TODO : Forgot Password
+        
+        [HttpPost]
+        [Route("Register")]
+        public async Task<IActionResult> Register(UserRegisterDto model)
+        {
+            var record = new UserCreateDto();
+            Mapper.Map(model, record);
+            var result = await SecurityService.UserCreate(record);
+
+            if (result.Result != null)
+            {
+                var newPassword = new UserCreateLocalPasswordDto()
+                {
+                    Password = model.Password,
+                    UserId = result.Result.Id
+                };
+                await SecurityService.UserCreateLocalPassword(newPassword);
+            }
+            return Ok(result);
         }
 
         [HttpPost]

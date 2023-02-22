@@ -18,6 +18,7 @@ internal class Program
         AuthenticationProvider localAuthProvider = CreateLocalAuthProvider(db);
         Permission adminPermission = CreateAdminPermission(db);
         Role adminRole = CreateAdminRole(db);
+        CreateUserRole(db);
         AddAdminPermissionToAdminRole(db, adminPermission, adminRole);
         User adminUser = CreateAdminUser(db);
         AddAuthenticationProviderToAdminUser(db, localAuthProvider, adminUser);
@@ -111,6 +112,17 @@ internal class Program
         db.Roles.Add(adminRole);
         db.SaveChanges();
         return adminRole;
+    }
+    private static Role CreateUserRole(SecurityTablesTestContext db)
+    {
+        var role = new Role()
+        {
+            RoleName = "User",
+            RoleDescription = "User Role"
+        };
+        db.Roles.Add(role);
+        db.SaveChanges();
+        return role;
     }
     private static Permission CreateAdminPermission(SecurityTablesTestContext db)
     {

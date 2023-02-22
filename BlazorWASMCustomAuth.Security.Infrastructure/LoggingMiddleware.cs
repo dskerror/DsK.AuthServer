@@ -15,7 +15,6 @@ public class LoggingMiddleware
     {
         this.requestProcess = requestProcess;
         _logger = loggerFactory.CreateLogger<LoggingMiddleware>();
-
     }
 
     public async Task Invoke(HttpContext context, SecurityTablesTestContext db)
