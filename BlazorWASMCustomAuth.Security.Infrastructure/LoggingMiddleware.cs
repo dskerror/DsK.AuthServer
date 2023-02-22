@@ -1,13 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 
@@ -21,25 +15,39 @@ public class LoggingMiddleware
     {
         this.requestProcess = requestProcess;
         _logger = loggerFactory.CreateLogger<LoggingMiddleware>();
+
     }
 
-
-    public async Task Invoke(HttpContext context)
+    public async Task Invoke(HttpContext context, SecurityTablesTestContext db)
     {
-        await LogRequest(context);
+        await LogRequest(context, db);
         await requestProcess(context);
     }
-
-
-    private async Task LogRequest(HttpContext context)
+    private async Task LogRequest(HttpContext context, SecurityTablesTestContext db)
     {
+        var userid = context.User.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();
+        int userIdParsed = 0;
+        if (userid != null)
+            userIdParsed = int.Parse(userid);
+        UserLog userLog = new UserLog()
+        {
+            UserId = userIdParsed,
+            Method = context.Request.Method,
+            Ip = context.Connection.RemoteIpAddress.ToString(),
+            Path = context.Request.Path,
+            QueryString = context.Request.QueryString.ToString(),
+            LogDateTime = DateTime.Now
+        };
+
+        db.UserLogs.Add(userLog);
+        db.SaveChanges();
+
         _logger.LogInformation($"Http Request Information:\n" +
-        $"Schema:{context.Request.Scheme}\n " +                               
+        $"Schema:{context.Request.Scheme}\n " +
                                $"Path: {context.Request.Path}\n " +
-                               $"QueryString: {context.Request.QueryString}\n ");        
+                               $"QueryString: {context.Request.QueryString}\n ");
     }
 }
-
 public static class RequestResponseLoggingMiddlewareExtensions
 {
     public static IApplicationBuilder UseLoggingMiddleware(this IApplicationBuilder builder)

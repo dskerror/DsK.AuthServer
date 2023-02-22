@@ -37,14 +37,16 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<UserToken> UserTokens { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AuthenticationProvider>(entity =>
         {
+            entity.HasIndex(e => e.AuthenticationProviderName, "IX_AuthenticationProviders");
+
             entity.Property(e => e.AuthenticationProviderName).HasMaxLength(50);
             entity.Property(e => e.AuthenticationProviderType).HasMaxLength(50);
             entity.Property(e => e.Domain).HasMaxLength(100);
@@ -97,6 +99,10 @@ public partial class SecurityTablesTestContext : DbContext
 
         modelBuilder.Entity<UserAuthenticationProvider>(entity =>
         {
+            entity.HasIndex(e => e.AuthenticationProviderId, "IX_UserAuthenticationProviders_AuthenticationProviderId");
+
+            entity.HasIndex(e => e.UserId, "IX_UserAuthenticationProviders_UserId");
+
             entity.Property(e => e.Username).HasMaxLength(256);
 
             entity.HasOne(d => d.AuthenticationProvider).WithMany(p => p.UserAuthenticationProviders)
@@ -114,12 +120,8 @@ public partial class SecurityTablesTestContext : DbContext
         {
             entity.HasIndex(e => e.UserId, "IX_UserLogs_UserId");
 
-            entity.Property(e => e.EventDateTime).HasColumnType("datetime");
-
-            entity.HasOne(d => d.User).WithMany(p => p.UserLogs)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserLogs_Users");
+            entity.Property(e => e.Ip).HasColumnName("IP");
+            entity.Property(e => e.LogDateTime).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<UserPassword>(entity =>
@@ -171,6 +173,8 @@ public partial class SecurityTablesTestContext : DbContext
         modelBuilder.Entity<UserToken>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_UserAuthenticationProviderTokens");
+
+            entity.HasIndex(e => e.UserId, "IX_UserTokens_UserId");
 
             entity.Property(e => e.TokenCreatedDateTime).HasColumnType("datetime");
             entity.Property(e => e.TokenRefreshedDateTime).HasColumnType("datetime");

@@ -4,7 +4,7 @@ using MudBlazor;
 namespace BlazorWASMCustomAuth.Client.Pages;
 public partial class Login
 {
-    private UserLoginDto userLoginModel = new UserLoginDto() { AuthenticationProviderId = 2};
+    private UserLoginDto userLoginModel = new UserLoginDto() { AuthenticationProviderId = 1};
     private bool _LoginButtonDisabled;
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;

@@ -53,6 +53,8 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex(new[] { "AuthenticationProviderName" }, "IX_AuthenticationProviders");
+
                     b.ToTable("AuthenticationProviders");
                 });
 
@@ -192,9 +194,9 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthenticationProviderId");
+                    b.HasIndex(new[] { "AuthenticationProviderId" }, "IX_UserAuthenticationProviders_AuthenticationProviderId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "UserId" }, "IX_UserAuthenticationProviders_UserId");
 
                     b.ToTable("UserAuthenticationProviders");
                 });
@@ -207,12 +209,25 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Event")
+                    b.Property<string>("Ip")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("IP");
+
+                    b.Property<DateTime>("LogDateTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Method")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EventDateTime")
-                        .HasColumnType("datetime");
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QueryString")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -328,7 +343,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.HasKey("Id")
                         .HasName("PK_UserAuthenticationProviderTokens");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "UserId" }, "IX_UserTokens_UserId");
 
                     b.ToTable("UserTokens");
                 });
@@ -367,17 +382,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasConstraintName("FK_UserAuthenticationProviders_Users");
 
                     b.Navigation("AuthenticationProvider");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.UserLog", b =>
-                {
-                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.User", "User")
-                        .WithMany("UserLogs")
-                        .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("FK_UserLogs_Users");
 
                     b.Navigation("User");
                 });
@@ -464,8 +468,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.User", b =>
                 {
                     b.Navigation("UserAuthenticationProviders");
-
-                    b.Navigation("UserLogs");
 
                     b.Navigation("UserPasswords");
 

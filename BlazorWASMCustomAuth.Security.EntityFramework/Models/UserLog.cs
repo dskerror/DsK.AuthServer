@@ -9,9 +9,13 @@ public partial class UserLog
 
     public int UserId { get; set; }
 
-    public DateTime EventDateTime { get; set; }
+    public string Ip { get; set; } = null!;
 
-    public string Event { get; set; } = null!;
+    public string Method { get; set; } = null!;
 
-    public virtual User User { get; set; } = null!;
+    public string Path { get; set; } = null!;
+
+    public string QueryString { get; set; } = null!;
+
+    public DateTime LogDateTime { get; set; }
 }

@@ -25,8 +25,6 @@ public partial class User
 
     public virtual ICollection<UserAuthenticationProvider> UserAuthenticationProviders { get; } = new List<UserAuthenticationProvider>();
 
-    public virtual ICollection<UserLog> UserLogs { get; } = new List<UserLog>();
-
     public virtual ICollection<UserPassword> UserPasswords { get; } = new List<UserPassword>();
 
     public virtual ICollection<UserPermission> UserPermissions { get; } = new List<UserPermission>();

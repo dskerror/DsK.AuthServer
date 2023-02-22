@@ -57,6 +57,24 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    IP = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Method = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    QueryString = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LogDateTime = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -118,26 +136,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserAuthenticationProviders_Users",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserLogs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    EventDateTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Event = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserLogs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserLogs_Users",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -233,6 +231,11 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthenticationProviders",
+                table: "AuthenticationProviders",
+                column: "AuthenticationProviderName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Permissions",
