@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using BlazorWASMCustomAuth.Client.Services.Requests;
+using Newtonsoft.Json;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 
@@ -39,13 +40,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonSerializer.Deserialize<APIResult<List<UserAuthenticationProvidersGridDto>>>(responseAsString, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                ReferenceHandler = ReferenceHandler.Preserve,
-                IncludeFields = true
-            });
-
+            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserAuthenticationProvidersGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)

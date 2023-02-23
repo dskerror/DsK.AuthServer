@@ -14,7 +14,7 @@ public partial class SecurityService
 
         var record = new User();
         Mapper.Map(model, record);
-
+        record.EmailConfirmed = true;
         await db.Users.AddAsync(record);
 
         try
