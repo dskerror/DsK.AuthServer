@@ -88,15 +88,20 @@ public partial class SecurityService
                 .Take(pageSize)
                 .ToListAsync();
         }
-        else if (id != 0)
+        else if (id > 0)
         {
             count = await db.Users
                 .Where(u => u.Id == id)
                 .CountAsync();
 
             items = await db.Users.OrderBy(ordering)
-                .Where(u => u.Id == id)                
+                .Where(u => u.Id == id)
                 .ToListAsync();
+        }
+        else if (id == -1)
+        {
+            count = await db.Users.CountAsync();
+            items = await db.Users.OrderBy(x => x.Name).ToListAsync();
         }
         else
         {
