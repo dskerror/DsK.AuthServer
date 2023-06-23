@@ -22,6 +22,34 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.Application", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppApiKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ApplicationDesc")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("ApplicationName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Applications");
+                });
+
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.AuthenticationProvider", b =>
                 {
                     b.Property<int>("Id")

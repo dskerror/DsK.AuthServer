@@ -13,6 +13,16 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
     {
         public const string Admin = "Admin";
 
+        [DisplayName("Applications")]
+        [Description("Applications Permissions")]
+        public static class Application
+        {
+            public const string View = "Applications.View";
+            public const string Create = "Applications.Create";
+            public const string Edit = "Applications.Edit";
+            public const string Delete = "Applications.Delete";
+        }
+
         [DisplayName("Authentication Providers")]
         [Description("Authentication Providers Permissions")]
         public static class AuthenticationProvider

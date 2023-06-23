@@ -12,6 +12,21 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Applications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ApplicationDesc = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    AppApiKey = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Applications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AuthenticationProviders",
                 columns: table => new
                 {
@@ -312,6 +327,9 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Applications");
+
             migrationBuilder.DropTable(
                 name: "RolePermissions");
 

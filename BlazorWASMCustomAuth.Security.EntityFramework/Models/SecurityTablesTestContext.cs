@@ -15,6 +15,8 @@ public partial class SecurityTablesTestContext : DbContext
     {
     }
 
+    public virtual DbSet<Application> Applications { get; set; }
+
     public virtual DbSet<AuthenticationProvider> AuthenticationProviders { get; set; }
 
     public virtual DbSet<Permission> Permissions { get; set; }
@@ -37,12 +39,19 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<UserToken> UserTokens { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Application>(entity =>
+        {
+            entity.Property(e => e.AppApiKey).HasMaxLength(50);
+            entity.Property(e => e.ApplicationDesc).HasMaxLength(250);
+            entity.Property(e => e.ApplicationName).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<AuthenticationProvider>(entity =>
         {
             entity.HasIndex(e => e.AuthenticationProviderName, "IX_AuthenticationProviders");

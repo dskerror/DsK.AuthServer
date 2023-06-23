@@ -19,6 +19,10 @@
             {
                 <MudNavLink Href="/admin/authenticationproviders" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Authentication Providers</MudNavLink>
             }
+            @if (_AccessApplications)
+            {
+                <MudNavLink Href="/admin/applications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Applications</MudNavLink>
+            }
         </Authorized>
     </AuthorizeView>
 </MudNavMenu>
@@ -31,6 +35,7 @@
     private bool _AccessUsersView;
     private bool _AccessRolesView;
     private bool _AccessAuthenticationProviders;
+    private bool _AccessApplications;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,8 +48,9 @@
         _AccessUsersView = securityService.HasPermission(state.User, Access.Users.View);
         _AccessRolesView = securityService.HasPermission(state.User, Access.Roles.View);
         _AccessAuthenticationProviders = securityService.HasPermission(state.User, Access.AuthenticationProvider.View);
+        _AccessApplications = securityService.HasPermission(state.User, Access.Application.View);
 
-        if (_AccessUsersView || _AccessRolesView || _AccessAuthenticationProviders)
+        if (_AccessUsersView || _AccessRolesView || _AccessAuthenticationProviders || _AccessApplications)
             _AdminMenuHeader = true;
     }
 }

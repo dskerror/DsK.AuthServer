@@ -28,6 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Pages\Admin\Applications.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="Pages\Admin\UserCreate.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

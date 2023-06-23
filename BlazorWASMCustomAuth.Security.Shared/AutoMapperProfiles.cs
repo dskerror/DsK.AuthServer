@@ -7,6 +7,7 @@ public class AutoMapperProfiles : Profile
     public AutoMapperProfiles()
     {
         //ActionDtos
+        CreateMap<ApplicationCreateDto, Application>().ReverseMap();
         CreateMap<AuthenticationProviderCreateDto, AuthenticationProvider>().ReverseMap();
         CreateMap<AuthenticationProviderUpdateDto, AuthenticationProvider>().ReverseMap();
         CreateMap<PermissionCreateDto, Permission>().ReverseMap();
@@ -28,6 +29,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<User, User>().ReverseMap().ForMember(dest => dest.Username, act => act.Ignore());
 
         //ModelDtos
+        CreateMap<ApplicationDto, Application>().ReverseMap();
         CreateMap<AuthenticationProviderDto, AuthenticationProvider>().ReverseMap();
         CreateMap<PermissionDto, Permission>().ReverseMap();
         CreateMap<RolePermissionGridDto, Permission>().ReverseMap();

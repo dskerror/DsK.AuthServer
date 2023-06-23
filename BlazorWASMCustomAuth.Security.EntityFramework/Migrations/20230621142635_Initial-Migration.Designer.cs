@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 {
     [DbContext(typeof(SecurityTablesTestContext))]
-    [Migration("20230222002532_Initial-Migration")]
+    [Migration("20230621142635_Initial-Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -24,6 +24,34 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.Application", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppApiKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ApplicationDesc")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("ApplicationName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Applications");
+                });
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.AuthenticationProvider", b =>
                 {
