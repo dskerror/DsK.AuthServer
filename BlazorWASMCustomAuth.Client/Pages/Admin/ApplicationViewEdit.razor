@@ -1,0 +1,30 @@
+﻿@page "/admin/ApplicationViewEdit/{id:int}"
+
+<MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
+
+@if (!_loaded)
+{
+    <h3>Loading...</h3>
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="Edit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <MudCard Class="mb-2">
+            <MudCardContent>
+                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="Application Name" @bind-Value="model.ApplicationName"
+                              For="@(()=>model.ApplicationName)">
+                </MudTextField>
+                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="Application Desc" @bind-Value="model.ApplicationDesc"
+                              For="@(()=>model.ApplicationDesc)">
+                </MudTextField>
+            </MudCardContent>
+        </MudCard>
+
+        <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
+
+    </EditForm>
+}

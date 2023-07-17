@@ -1,0 +1,25 @@
+﻿@page "/admin/ApplicationCreate"
+
+<h3><NavLink href="/admin/Applications">Applications</NavLink> > Create Application</h3>
+
+<EditForm Model="model" OnValidSubmit="Create">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <MudCard Class="mb-2">
+        <MudCardContent>
+            <MudTextField Label="Application Name" @bind-Value="model.ApplicationName"
+                          For="@(()=>model.ApplicationName)">
+            </MudTextField>
+            <MudTextField Label="Application Desc" @bind-Value="model.ApplicationDesc"
+                          For="@(()=>model.ApplicationDesc)">
+            </MudTextField>
+
+        </MudCardContent>
+    </MudCard>
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button type="submit" class="btn btn-success">Create</button>
+        </div>
+    </div>
+</EditForm>

@@ -86,7 +86,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             result.Result = Mapper.Map<List<Application>, List<ApplicationDto>>(items);
             return result;
         }
-
         public async Task<Application> ApplicationGet(int id)
         {
             var Application = await db.Applications.Where(u => u.Id == id).FirstOrDefaultAsync();
