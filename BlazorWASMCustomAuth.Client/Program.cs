@@ -13,9 +13,15 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7045/") });
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
 builder.Services.AddScoped<SecurityServiceClient>();
+
+/* ---Authentication--- */
+//Add Authorization Core - To be able to use [CascadingAuthenticationState, AuthorizeRouteView, Authorizing], [AuthorizeView, NotAuthorized, Authorized], @attribute [Authorize]
 builder.Services.AddAuthorizationCore();
+//The CustomAuthenticationStateProvider is to be able to use tokens as the mode of authentication.
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
 builder.Services.AddBlazoredLocalStorage();
 //builder.Services.AddScoped<SecurityServiceClient>();
 builder.Services.AddMudServices(config =>

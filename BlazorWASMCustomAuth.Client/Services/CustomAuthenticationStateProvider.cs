@@ -27,7 +27,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
             var anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity() { }));
             return anonymous;
         }
-        var userClaimPrincipal = new ClaimsPrincipal(new ClaimsIdentity(TokenHelpers.ParseClaimsFromJwt(token), "Fake Authentication"));
+        var userClaimPrincipal = new ClaimsPrincipal(new ClaimsIdentity(TokenHelpers.ParseClaimsFromJwt(token), "jwt"));
 
         var loginUser = new AuthenticationState(userClaimPrincipal);
         return loginUser;
