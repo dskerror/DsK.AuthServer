@@ -13,7 +13,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7045/") });
-
 builder.Services.AddScoped<SecurityServiceClient>();
 
 /* ---Authentication--- */
@@ -22,8 +21,10 @@ builder.Services.AddAuthorizationCore();
 //The CustomAuthenticationStateProvider is to be able to use tokens as the mode of authentication.
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
+/* ---Manages saving to local storage--- */
 builder.Services.AddBlazoredLocalStorage();
-//builder.Services.AddScoped<SecurityServiceClient>();
+
+/* ---Manages MudBlazor config--- */
 builder.Services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
