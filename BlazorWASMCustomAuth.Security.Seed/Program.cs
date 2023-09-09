@@ -16,8 +16,8 @@ internal class Program
 
 
         AuthenticationProvider localAuthProvider = CreateLocalAuthProvider(db);
-        Permission adminPermission = CreateAdminPermission(db);
-        Role adminRole = CreateAdminRole(db);
+        ApplicationPermission adminPermission = CreateAdminPermission(db);
+        ApplicationRole adminRole = CreateAdminRole(db);
         CreateUserRole(db);
         AddAdminPermissionToAdminRole(db, adminPermission, adminRole);
         User adminUser = CreateAdminUser(db);
@@ -29,7 +29,7 @@ internal class Program
         var permissionList = BlazorWASMCustomAuth.Security.Shared.Constants.Access.GetRegisteredPermissions();
         foreach (var permission in permissionList)
         {
-            db.Permissions.Add(new Permission() { PermissionName = permission, PermissionDescription = "" });
+            db.ApplicationPermissions.Add(new ApplicationPermission() { PermissionName = permission, PermissionDescription = "" });
         }
         db.SaveChanges();
 
@@ -62,7 +62,7 @@ internal class Program
         db.SaveChanges();
         return authProvider;
     }
-    private static void AddAdminRoleToAdminUser(SecurityTablesTestContext db, Role adminRole, User adminUser)
+    private static void AddAdminRoleToAdminUser(SecurityTablesTestContext db, ApplicationRole adminRole, User adminUser)
     {
         var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
         db.UserRoles.Add(adminUserRole);
@@ -92,46 +92,46 @@ internal class Program
         db.SaveChanges();
         return adminUser;
     }
-    private static void AddAdminPermissionToAdminRole(SecurityTablesTestContext db, Permission adminPermission, Role adminRole)
+    private static void AddAdminPermissionToAdminRole(SecurityTablesTestContext db, ApplicationPermission adminPermission, ApplicationRole adminRole)
     {
-        var adminRolePermission = new RolePermission()
+        var adminRolePermission = new ApplicationRolePermission()
         {
             RoleId = adminRole.Id,
             PermissionId = adminPermission.Id
         };
-        db.RolePermissions.Add(adminRolePermission);
+        db.ApplicationRolePermissions.Add(adminRolePermission);
         db.SaveChanges();
     }
-    private static Role CreateAdminRole(SecurityTablesTestContext db)
+    private static ApplicationRole CreateAdminRole(SecurityTablesTestContext db)
     {
-        var adminRole = new Role()
+        var adminRole = new ApplicationRole()
         {
             RoleName = "Admin",
             RoleDescription = "Admin Role"
         };
-        db.Roles.Add(adminRole);
+        db.ApplicationRoles.Add(adminRole);
         db.SaveChanges();
         return adminRole;
     }
-    private static Role CreateUserRole(SecurityTablesTestContext db)
+    private static ApplicationRole CreateUserRole(SecurityTablesTestContext db)
     {
-        var role = new Role()
+        var role = new ApplicationRole()
         {
             RoleName = "User",
             RoleDescription = "User Role"
         };
-        db.Roles.Add(role);
+        db.ApplicationRoles.Add(role);
         db.SaveChanges();
         return role;
     }
-    private static Permission CreateAdminPermission(SecurityTablesTestContext db)
+    private static ApplicationPermission CreateAdminPermission(SecurityTablesTestContext db)
     {
-        var adminPermission = new Permission()
+        var adminPermission = new ApplicationPermission()
         {
             PermissionName = "Admin",
             PermissionDescription = "Admin Permission"
         };
-        db.Permissions.Add(adminPermission);
+        db.ApplicationPermissions.Add(adminPermission);
         db.SaveChanges();
         return adminPermission;
     }

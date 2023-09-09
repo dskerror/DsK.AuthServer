@@ -63,16 +63,16 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
 
             APIResult<List<UserRoleGridDto>> result = new APIResult<List<UserRoleGridDto>>();
-            var roleList = await db.Roles.ToListAsync();
+            var roleList = await db.ApplicationRoles.ToListAsync();
 
 
             var userPermissionList = await (from u in db.Users
                                             join ur in db.UserRoles on u.Id equals ur.UserId
-                                            join r in db.Roles on ur.RoleId equals r.Id
+                                            join r in db.ApplicationRoles on ur.RoleId equals r.Id
                                             where u.Id == userId
                                             select r.RoleName).ToListAsync();
 
-            var roleGrid = Mapper.Map<List<Role>, List<UserRoleGridDto>>(roleList);
+            var roleGrid = Mapper.Map<List<ApplicationRole>, List<UserRoleGridDto>>(roleList);
 
             foreach (var role in userPermissionList)
             {

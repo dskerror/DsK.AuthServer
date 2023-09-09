@@ -12,10 +12,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
 
-            var record = new Permission();
+            var record = new ApplicationPermission();
             Mapper.Map(model, record);
 
-            db.Permissions.Add(record);
+            db.ApplicationPermissions.Add(record);
 
             try
             {
@@ -40,13 +40,13 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             APIResult<List<PermissionDto>> result = new APIResult<List<PermissionDto>>();
             if (id == 0)
             {
-                var items = await db.Permissions.ToListAsync();
-                result.Result = Mapper.Map<List<Permission>, List<PermissionDto>>(items);
+                var items = await db.ApplicationPermissions.ToListAsync();
+                result.Result = Mapper.Map<List<ApplicationPermission>, List<PermissionDto>>(items);
             }
             else
             {
-                var items = await db.Permissions.Where(x => x.Id == id).ToListAsync();
-                result.Result = Mapper.Map<List<Permission>, List<PermissionDto>>(items);
+                var items = await db.ApplicationPermissions.Where(x => x.Id == id).ToListAsync();
+                result.Result = Mapper.Map<List<ApplicationPermission>, List<PermissionDto>>(items);
             }
 
             return result;
@@ -55,7 +55,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             APIResult<string> result = new APIResult<string>();
             int recordsUpdated = 0;
-            var record = await db.Permissions.FirstOrDefaultAsync(x => x.Id == model.Id);
+            var record = await db.ApplicationPermissions.FirstOrDefaultAsync(x => x.Id == model.Id);
 
             if (record != null)
             {
@@ -85,7 +85,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
-            var record = db.Permissions.Attach(new Permission { Id = id });
+            var record = db.ApplicationPermissions.Attach(new ApplicationPermission { Id = id });
             record.State = EntityState.Deleted;
             try
             {

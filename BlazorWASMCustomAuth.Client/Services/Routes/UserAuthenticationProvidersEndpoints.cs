@@ -6,15 +6,15 @@ namespace BlazorWASMCustomAuth.Client.Services.Routes
     {
         public static string Get(int userId)
         {
-            var url = $"api/security/UserAuthenticationProviders?UserId={userId}";
+            var url = $"api/UserAuthenticationProviders?UserId={userId}";
             return url;
         }
 
-        public static string Post = "api/security/UserAuthenticationProviders";
-        public static string Put = "api/security/UserAuthenticationProviders";
+        public static string Post = "api/UserAuthenticationProviders";
+        public static string Put = "api/UserAuthenticationProviders";
         public static string Delete(int id)
         {
-            var url = $"api/security/UserAuthenticationProviders?Id={id}";
+            var url = $"api/UserAuthenticationProviders?Id={id}";
             return url;
         }
 

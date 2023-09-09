@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
 
-public partial class Permission
+public partial class ApplicationPermission
 {
     public int Id { get; set; }
 
@@ -11,7 +11,7 @@ public partial class Permission
 
     public string PermissionDescription { get; set; } = null!;
 
-    public virtual ICollection<RolePermission> RolePermissions { get; } = new List<RolePermission>();
+    public virtual ICollection<ApplicationRolePermission> ApplicationRolePermissions { get; } = new List<ApplicationRolePermission>();
 
     public virtual ICollection<UserPermission> UserPermissions { get; } = new List<UserPermission>();
 }

@@ -4,7 +4,7 @@
     {
         public static string Get(int id, int pageNumber, int pageSize, string searchString, string[] orderBy)
         {
-            var url = $"api/security/roles?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy=";
+            var url = $"api/roles?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy=";
             if (orderBy?.Any() == true)
             {
                 foreach (var orderByPart in orderBy)
@@ -16,8 +16,8 @@
             return url;
         }
                 
-        public static string Post = "api/security/roles";
-        public static string Put = "api/security/roles";
-        public static string Delete = "api/security/roles";
+        public static string Post = "api/roles";
+        public static string Put = "api/roles";
+        public static string Delete = "api/roles";
     }
 }

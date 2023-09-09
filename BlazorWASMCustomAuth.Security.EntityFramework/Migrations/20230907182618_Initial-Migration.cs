@@ -12,18 +12,61 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ApplicationPermissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PermissionName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PermissionDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApplicationRoles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    RoleDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Applications",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationGUID = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     ApplicationName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ApplicationDesc = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    AppApiKey = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    AppApiKey = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Applications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApplicationUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,34 +84,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AuthenticationProviders", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Permissions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PermissionName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PermissionDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    RoleDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,7 +125,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RolePermissions",
+                name: "ApplicationRolePermissions",
                 columns: table => new
                 {
                     RoleId = table.Column<int>(type: "int", nullable: false),
@@ -122,12 +137,36 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     table.ForeignKey(
                         name: "FK_RolePermissions_Permissions",
                         column: x => x.RoleId,
-                        principalTable: "Permissions",
+                        principalTable: "ApplicationPermissions",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RolePermissions_Roles",
                         column: x => x.RoleId,
-                        principalTable: "Roles",
+                        principalTable: "ApplicationRoles",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApplicationAuthenticationProviders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationId = table.Column<int>(type: "int", nullable: false),
+                    AuthenticationProviderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationAuthenticationProviders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ApplicationAuthenticationProviders_Applications",
+                        column: x => x.ApplicationId,
+                        principalTable: "Applications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ApplicationAuthenticationProviders_AuthenticationProviders",
+                        column: x => x.AuthenticationProviderId,
+                        principalTable: "AuthenticationProviders",
                         principalColumn: "Id");
                 });
 
@@ -193,7 +232,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     table.ForeignKey(
                         name: "FK_UserPermissions_Permissions",
                         column: x => x.PermissionId,
-                        principalTable: "Permissions",
+                        principalTable: "ApplicationPermissions",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserPermissions_Users",
@@ -217,7 +256,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     table.ForeignKey(
                         name: "FK_UserRoles_Roles",
                         column: x => x.RoleId,
-                        principalTable: "Roles",
+                        principalTable: "ApplicationRoles",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserRoles_Users",
@@ -248,21 +287,31 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuthenticationProviders",
-                table: "AuthenticationProviders",
-                column: "AuthenticationProviderName");
+                name: "IX_ApplicationAuthenticationProviders_ApplicationId",
+                table: "ApplicationAuthenticationProviders",
+                column: "ApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationAuthenticationProviders_AuthenticationProviderId",
+                table: "ApplicationAuthenticationProviders",
+                column: "AuthenticationProviderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Permissions",
-                table: "Permissions",
+                table: "ApplicationPermissions",
                 column: "PermissionName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles",
-                table: "Roles",
+                table: "ApplicationRoles",
                 column: "RoleName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthenticationProviders",
+                table: "AuthenticationProviders",
+                column: "AuthenticationProviderName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserAuthenticationProviders_AuthenticationProviderId",
@@ -328,10 +377,13 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Applications");
+                name: "ApplicationAuthenticationProviders");
 
             migrationBuilder.DropTable(
-                name: "RolePermissions");
+                name: "ApplicationRolePermissions");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationUsers");
 
             migrationBuilder.DropTable(
                 name: "UserAuthenticationProviders");
@@ -352,13 +404,16 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
+                name: "Applications");
+
+            migrationBuilder.DropTable(
                 name: "AuthenticationProviders");
 
             migrationBuilder.DropTable(
-                name: "Permissions");
+                name: "ApplicationPermissions");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "ApplicationRoles");
 
             migrationBuilder.DropTable(
                 name: "Users");

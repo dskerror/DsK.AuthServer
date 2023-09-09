@@ -13,7 +13,7 @@ public partial class UserPermission
 
     public bool Allow { get; set; }
 
-    public virtual Permission Permission { get; set; } = null!;
+    public virtual ApplicationPermission Permission { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

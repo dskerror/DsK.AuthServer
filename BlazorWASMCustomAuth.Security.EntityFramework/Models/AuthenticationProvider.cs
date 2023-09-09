@@ -17,5 +17,7 @@ public partial class AuthenticationProvider
 
     public string? Password { get; set; }
 
+    public virtual ICollection<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; } = new List<ApplicationAuthenticationProvider>();
+
     public virtual ICollection<UserAuthenticationProvider> UserAuthenticationProviders { get; } = new List<UserAuthenticationProvider>();
 }

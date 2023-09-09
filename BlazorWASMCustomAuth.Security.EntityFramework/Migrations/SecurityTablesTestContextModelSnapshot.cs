@@ -30,15 +30,21 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AppApiKey")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<Guid>("AppApiKey")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
                     b.Property<string>("ApplicationDesc")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
+
+                    b.Property<Guid>("ApplicationGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ApplicationGUID")
+                        .HasDefaultValueSql("(newid())");
 
                     b.Property<string>("ApplicationName")
                         .IsRequired()
@@ -48,6 +54,116 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Applications");
+                });
+
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationAuthenticationProvider", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AuthenticationProviderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("AuthenticationProviderId");
+
+                    b.ToTable("ApplicationAuthenticationProviders");
+                });
+
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PermissionDescription")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Permissions");
+
+                    b.HasIndex(new[] { "PermissionName" }, "IX_Permissions")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationPermissions");
+                });
+
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RoleDescription")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Roles");
+
+                    b.HasIndex(new[] { "RoleName" }, "IX_Roles")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationRoles");
+                });
+
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRolePermission", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId")
+                        .HasName("PK_RolePermissions_1");
+
+                    b.ToTable("ApplicationRolePermissions");
+                });
+
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApplicationUsers");
                 });
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.AuthenticationProvider", b =>
@@ -84,72 +200,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.HasIndex(new[] { "AuthenticationProviderName" }, "IX_AuthenticationProviders");
 
                     b.ToTable("AuthenticationProviders");
-                });
-
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.Permission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("PermissionDescription")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("PermissionName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "PermissionName" }, "IX_Permissions")
-                        .IsUnique();
-
-                    b.ToTable("Permissions");
-                });
-
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("RoleDescription")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "RoleName" }, "IX_Roles")
-                        .IsUnique();
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.RolePermission", b =>
-                {
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoleId", "PermissionId")
-                        .HasName("PK_RolePermissions_1");
-
-                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.User", b =>
@@ -376,16 +426,35 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.ToTable("UserTokens");
                 });
 
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.RolePermission", b =>
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationAuthenticationProvider", b =>
                 {
-                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.Permission", "Role")
-                        .WithMany("RolePermissions")
+                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.Application", "Application")
+                        .WithMany("ApplicationAuthenticationProviders")
+                        .HasForeignKey("ApplicationId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ApplicationAuthenticationProviders_Applications");
+
+                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.AuthenticationProvider", "AuthenticationProvider")
+                        .WithMany("ApplicationAuthenticationProviders")
+                        .HasForeignKey("AuthenticationProviderId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ApplicationAuthenticationProviders_AuthenticationProviders");
+
+                    b.Navigation("Application");
+
+                    b.Navigation("AuthenticationProvider");
+                });
+
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRolePermission", b =>
+                {
+                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationPermission", "Role")
+                        .WithMany("ApplicationRolePermissions")
                         .HasForeignKey("RoleId")
                         .IsRequired()
                         .HasConstraintName("FK_RolePermissions_Permissions");
 
-                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.Role", "RoleNavigation")
-                        .WithMany("RolePermissions")
+                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRole", "RoleNavigation")
+                        .WithMany("ApplicationRolePermissions")
                         .HasForeignKey("RoleId")
                         .IsRequired()
                         .HasConstraintName("FK_RolePermissions_Roles");
@@ -427,7 +496,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.UserPermission", b =>
                 {
-                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.Permission", "Permission")
+                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationPermission", "Permission")
                         .WithMany("UserPermissions")
                         .HasForeignKey("PermissionId")
                         .IsRequired()
@@ -446,7 +515,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.UserRole", b =>
                 {
-                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.Role", "Role")
+                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .IsRequired()
@@ -474,23 +543,30 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.AuthenticationProvider", b =>
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.Application", b =>
                 {
-                    b.Navigation("UserAuthenticationProviders");
+                    b.Navigation("ApplicationAuthenticationProviders");
                 });
 
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.Permission", b =>
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationPermission", b =>
                 {
-                    b.Navigation("RolePermissions");
+                    b.Navigation("ApplicationRolePermissions");
 
                     b.Navigation("UserPermissions");
                 });
 
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.Role", b =>
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRole", b =>
                 {
-                    b.Navigation("RolePermissions");
+                    b.Navigation("ApplicationRolePermissions");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.AuthenticationProvider", b =>
+                {
+                    b.Navigation("ApplicationAuthenticationProviders");
+
+                    b.Navigation("UserAuthenticationProviders");
                 });
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.User", b =>

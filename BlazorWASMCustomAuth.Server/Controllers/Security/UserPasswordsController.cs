@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
 {
-    [Route("api/Security/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UserPasswordsController : ControllerBase
     {

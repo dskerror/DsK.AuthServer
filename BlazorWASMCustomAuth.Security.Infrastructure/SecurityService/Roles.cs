@@ -12,10 +12,10 @@ public partial class SecurityService
         APIResult<RoleDto> result = new APIResult<RoleDto>();
         int recordsCreated = 0;
 
-        var record = new Role();
+        var record = new ApplicationRole();
         Mapper.Map(model, record);
 
-        db.Roles.Add(record);
+        db.ApplicationRoles.Add(record);
 
         try
         {
@@ -49,14 +49,14 @@ public partial class SecurityService
         pageNumber = pageNumber == 0 ? 1 : pageNumber;
         pageSize = pageSize == 0 ? 10 : pageSize;
         int count = 0;
-        List<Role> items;
+        List<ApplicationRole> items;
         if (!string.IsNullOrWhiteSpace(searchString))
         {
-            count = await db.Roles
+            count = await db.ApplicationRoles
                 .Where(m => m.RoleName.Contains(searchString) || m.RoleDescription.Contains(searchString))
                 .CountAsync();
 
-            items = await db.Roles.OrderBy(ordering)
+            items = await db.ApplicationRoles.OrderBy(ordering)
                 .Where(m => m.RoleName.Contains(searchString) || m.RoleDescription.Contains(searchString))
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -64,32 +64,32 @@ public partial class SecurityService
         }
         else if (id != 0)
         {
-            count = await db.Roles
+            count = await db.ApplicationRoles
                 .Where(u => u.Id == id)
                 .CountAsync();
 
-            items = await db.Roles.OrderBy(ordering)
+            items = await db.ApplicationRoles.OrderBy(ordering)
                 .Where(u => u.Id == id)
                 .ToListAsync();
         }
         else
         {
-            count = await db.Roles.CountAsync();
+            count = await db.ApplicationRoles.CountAsync();
 
-            items = await db.Roles.OrderBy(ordering)
+            items = await db.ApplicationRoles.OrderBy(ordering)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
         }
         result.Paging.TotalItems = count;
-        result.Result = Mapper.Map<List<Role>, List<RoleDto>>(items);
+        result.Result = Mapper.Map<List<ApplicationRole>, List<RoleDto>>(items);
         return result;
     }
     public async Task<APIResult<string>> RoleUpdate(RoleUpdateDto model)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
-        var record = await db.Roles.FirstOrDefaultAsync(x => x.Id == model.Id);
+        var record = await db.ApplicationRoles.FirstOrDefaultAsync(x => x.Id == model.Id);
 
         if (record != null)
             Mapper.Map(model, record);
@@ -113,7 +113,7 @@ public partial class SecurityService
     {
         APIResult<string> result = new APIResult<string>();
         int recordsDeleted = 0;
-        var record = db.Roles.Attach(new Role { Id = id });
+        var record = db.ApplicationRoles.Attach(new ApplicationRole { Id = id });
         record.State = EntityState.Deleted;
         try
         {

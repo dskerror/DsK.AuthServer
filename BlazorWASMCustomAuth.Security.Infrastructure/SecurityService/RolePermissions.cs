@@ -11,12 +11,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             APIResult<string> result = new APIResult<string>();
             int recordsModifiedCount = 0;
-            var record = new RolePermission();
+            var record = new ApplicationRolePermission();
             Mapper.Map(model, record);
 
             if (model.PermissionEnabled)
             {
-                db.RolePermissions.Add(record);
+                db.ApplicationRolePermissions.Add(record);
                 try
                 {
                     recordsModifiedCount = await db.SaveChangesAsync();
@@ -34,7 +34,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
             else
             {
-                var recordToDelete = db.RolePermissions.Attach(record);
+                var recordToDelete = db.ApplicationRolePermissions.Attach(record);
                 recordToDelete.State = EntityState.Deleted;
 
                 try
@@ -56,16 +56,16 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
 
             APIResult<List<RolePermissionGridDto>> result = new APIResult<List<RolePermissionGridDto>>();
-            var permissionList = await db.Permissions.ToListAsync();
+            var permissionList = await db.ApplicationPermissions.ToListAsync();
 
 
-            var RolePermissionList = await (from r in db.Roles
-                                            join rp in db.RolePermissions on r.Id equals rp.RoleId
-                                            join p in db.Permissions on rp.PermissionId equals p.Id
+            var RolePermissionList = await (from r in db.ApplicationRoles
+                                            join rp in db.ApplicationRolePermissions on r.Id equals rp.RoleId
+                                            join p in db.ApplicationPermissions on rp.PermissionId equals p.Id
                                             where r.Id == roleId
                                             select p.PermissionName).ToListAsync();
 
-            var permissionGrid = Mapper.Map<List<Permission>, List<RolePermissionGridDto>>(permissionList);
+            var permissionGrid = Mapper.Map<List<ApplicationPermission>, List<RolePermissionGridDto>>(permissionList);
 
             foreach (var permission in RolePermissionList)
             {

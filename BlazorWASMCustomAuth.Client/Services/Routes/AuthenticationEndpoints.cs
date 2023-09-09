@@ -2,7 +2,7 @@
 {
     public static class AuthenticationEndpoints
     {
-        public static string Login = "/api/security/Authentication/userlogin";
-        public static string RefreshToken = "/api/security/Authentication/RefreshToken";
+        public static string Login = "/api/Authentication/userlogin";
+        public static string RefreshToken = "/api/Authentication/RefreshToken";
     }
 }

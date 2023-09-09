@@ -69,22 +69,22 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             var permissionAllow = await (from u in db.Users
                                          join up in db.UserPermissions on u.Id equals up.UserId
-                                         join p in db.Permissions on up.PermissionId equals p.Id
+                                         join p in db.ApplicationPermissions on up.PermissionId equals p.Id
                                          where u.Id == userId && up.Allow == true
                                          select p.PermissionName).ToListAsync();
 
 
             var permissionDeny = await (from u in db.Users
                                         join up in db.UserPermissions on u.Id equals up.UserId
-                                        join p in db.Permissions on up.PermissionId equals p.Id
+                                        join p in db.ApplicationPermissions on up.PermissionId equals p.Id
                                         where u.Id == userId && up.Allow == false
                                         select p.PermissionName).ToListAsync();
 
             var RolePermissions = await (from u in db.Users
                                          join ur in db.UserRoles on u.Id equals ur.UserId
-                                         join r in db.Roles on ur.RoleId equals r.Id
-                                         join rp in db.RolePermissions on r.Id equals rp.RoleId
-                                         join p in db.Permissions on rp.PermissionId equals p.Id
+                                         join r in db.ApplicationRoles on ur.RoleId equals r.Id
+                                         join rp in db.ApplicationRolePermissions on r.Id equals rp.RoleId
+                                         join p in db.ApplicationPermissions on rp.PermissionId equals p.Id
                                          where u.Id == userId
                                          select p.PermissionName).ToListAsync();
 
@@ -100,13 +100,13 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         public async Task<APIResult<List<UserPermissionGridDto>>> GetUserPermissions(int userId)
         {
             APIResult<List<UserPermissionGridDto>> result = new APIResult<List<UserPermissionGridDto>>();
-            var permissionList = await db.Permissions.ToListAsync();
+            var permissionList = await db.ApplicationPermissions.ToListAsync();
 
-            var permissioinGrid = Mapper.Map<List<Permission>, List<UserPermissionGridDto>>(permissionList);
+            var permissioinGrid = Mapper.Map<List<ApplicationPermission>, List<UserPermissionGridDto>>(permissionList);
 
             var UserPermissions = await (from u in db.Users
                                          join up in db.UserPermissions on u.Id equals up.UserId
-                                         join p in db.Permissions on up.PermissionId equals p.Id
+                                         join p in db.ApplicationPermissions on up.PermissionId equals p.Id
                                          where u.Id == userId
                                          select new UserPermissionGridDto()
                                          {
@@ -125,9 +125,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             var RolePermissions = await (from u in db.Users
                                          join ur in db.UserRoles on u.Id equals ur.UserId
-                                         join r in db.Roles on ur.RoleId equals r.Id
-                                         join rp in db.RolePermissions on r.Id equals rp.RoleId
-                                         join p in db.Permissions on rp.PermissionId equals p.Id
+                                         join r in db.ApplicationRoles on ur.RoleId equals r.Id
+                                         join rp in db.ApplicationRolePermissions on r.Id equals rp.RoleId
+                                         join p in db.ApplicationPermissions on rp.PermissionId equals p.Id
                                          where u.Id == userId
                                          select new { p.PermissionName, r.RoleName }).ToListAsync();
 

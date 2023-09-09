@@ -2,6 +2,6 @@
 {
     public static class UserPasswordEndpoints
     {
-        public static string Post = "api/security/userpasswords";
+        public static string Post = "api/userpasswords";
     }
 }

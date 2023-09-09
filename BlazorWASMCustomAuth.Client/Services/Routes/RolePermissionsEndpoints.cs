@@ -4,11 +4,11 @@
     {
         public static string Get(int RoleId)
         {
-            var url = $"api/security/rolepermissions?RoleId={RoleId}";            
+            var url = $"api/rolepermissions?RoleId={RoleId}";            
             return url;
         }
 
-        public static string Post = "api/security/rolepermissions";
+        public static string Post = "api/rolepermissions";
         
     }
 }

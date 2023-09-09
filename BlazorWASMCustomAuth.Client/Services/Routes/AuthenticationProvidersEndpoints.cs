@@ -4,7 +4,7 @@
     {
         public static string Get(int id, int pageNumber, int pageSize, string searchString, string[] orderBy)
         {
-            var url = $"api/security/AuthenticationProviders?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy=";            
+            var url = $"api/AuthenticationProviders?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy=";            
             if (orderBy?.Any() == true)
             {
                 foreach (var orderByPart in orderBy)
@@ -16,8 +16,8 @@
             return url;
         }
                 
-        public static string Post = "api/security/AuthenticationProviders";
-        public static string Put = "api/security/AuthenticationProviders";
-        public static string Delete = "api/security/AuthenticationProviders";
+        public static string Post = "api/AuthenticationProviders";
+        public static string Put = "api/AuthenticationProviders";
+        public static string Delete = "api/AuthenticationProviders";
     }
 }
