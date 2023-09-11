@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 
-namespace BlazorWASMCustomAuth.Client.Pages.Admin
+namespace BlazorWASMCustomAuth.Client.Components
 {
-    public partial class Roles
+    public partial class ApplicationRoles
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
         private IEnumerable<RoleDto> _pagedData;
@@ -72,12 +72,12 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private void ViewRole(int id)
         {
-            _navigationManager.NavigateTo($"/admin/roleviewedit/{id}");
+            _navigationManager.NavigateTo($"/roleviewedit/{id}");
         }
 
         private void CreateRole()
         {
-            _navigationManager.NavigateTo("/admin/rolecreate");
+            _navigationManager.NavigateTo("/rolecreate");
         }
     }
 }

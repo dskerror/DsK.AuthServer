@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 
-namespace BlazorWASMCustomAuth.Client.Pages.Admin
+namespace BlazorWASMCustomAuth.Client.Pages
 {
     public partial class RoleViewEdit
     {
@@ -22,7 +22,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Roles", href: "admin/roles"),
+            new BreadcrumbItem("Roles", href: "roles"),
             new BreadcrumbItem("Role View/Edit", href: null, disabled: true)
         };
         protected override async Task OnInitializedAsync()

@@ -14,6 +14,7 @@ public partial class Login
     {
         _LoginButtonDisabled = true;
         bool result = await securityService.LoginAsync(userLoginModel);
+
         if (result)
         {
             _navigationManager.NavigateTo("/");

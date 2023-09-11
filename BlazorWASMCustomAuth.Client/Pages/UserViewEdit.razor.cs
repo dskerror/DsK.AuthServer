@@ -5,7 +5,7 @@ using MudBlazor;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 using BlazorWASMCustomAuth.Client.Components;
 
-namespace BlazorWASMCustomAuth.Client.Pages.Admin
+namespace BlazorWASMCustomAuth.Client.Pages
 {
     public partial class UserViewEdit
     {
@@ -22,7 +22,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
         protected UserPermissions userPermissionsComponent;
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Users", href: "admin/users"),
+            new BreadcrumbItem("Users", href: "users"),
             new BreadcrumbItem("User View/Edit", href: null, disabled: true)
         };
 

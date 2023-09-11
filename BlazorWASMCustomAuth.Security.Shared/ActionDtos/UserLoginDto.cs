@@ -5,8 +5,8 @@ namespace BlazorWASMCustomAuth.Security.Shared
 	public class UserLoginDto
 	{
         [Required]
-        [StringLength(256, MinimumLength = 3)]
-        public string? Username { get; set; }
+        [StringLength(256, MinimumLength = 5)]
+        public string? Email { get; set; }
 		[Required]
 		public string? Password { get; set; }
 		public int AuthenticationProviderId { get; set; } = 1;

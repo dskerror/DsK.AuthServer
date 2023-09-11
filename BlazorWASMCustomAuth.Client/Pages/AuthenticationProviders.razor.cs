@@ -10,40 +10,40 @@ using MudBlazor;
 using System.Net;
 using System.Security.Claims;
 
-namespace BlazorWASMCustomAuth.Client.Pages.Admin
+namespace BlazorWASMCustomAuth.Client.Pages
 {
-    public partial class Applications
+    public partial class AuthenticationProviders
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private IEnumerable<ApplicationDto> _pagedData;
-        private MudTable<ApplicationDto> _table;
+        private IEnumerable<AuthenticationProviderDto> _pagedData;
+        private MudTable<AuthenticationProviderDto> _table;
         private int _totalItems;
         private int _currentPage;
         private string _searchString = "";
         private bool _loaded;
-        private bool _AccessApplicationView;
-        private bool _AccessApplicationCreate;
+        private bool _AccessAuthenticationProviderView;
+        private bool _AccessAuthenticationProviderCreate;
 
         protected override async Task OnInitializedAsync()
         {
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessApplicationView)
+            if (!_AccessAuthenticationProviderView)
                 _navigationManager.NavigateTo("/noaccess");
         }
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessApplicationView = securityService.HasPermission(state.User, Access.Application.View);
-            _AccessApplicationCreate = securityService.HasPermission(state.User, Access.Application.Create);
+            _AccessAuthenticationProviderView = securityService.HasPermission(state.User, Access.AuthenticationProvider.View);
+            _AccessAuthenticationProviderCreate = securityService.HasPermission(state.User, Access.AuthenticationProvider.Create);
         }
-        private async Task<TableData<ApplicationDto>> ServerReload(TableState state)
+        private async Task<TableData<AuthenticationProviderDto>> ServerReload(TableState state)
         {         
             await LoadData(state.Page, state.PageSize, state);
             _loaded = true;
             base.StateHasChanged();
-            return new TableData<ApplicationDto> { TotalItems = _totalItems, Items = _pagedData };
+            return new TableData<AuthenticationProviderDto> { TotalItems = _totalItems, Items = _pagedData };
         }
 
         private async Task LoadData(int pageNumber, int pageSize, TableState state)
@@ -55,7 +55,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             }
 
             var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = orderings };
-            var response = await securityService.ApplicationsGetAsync(request);
+            var response = await securityService.AuthenticationProvidersGetAsync(request);
             if (!response.HasError)
             {
                 _totalItems = response.Paging.TotalItems;
@@ -74,14 +74,14 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             _table.ReloadServerData();
         }
 
-        private void ViewApplication(int id)
+        private void ViewAuthenticationProvider(int id)
         {
-            _navigationManager.NavigateTo($"/admin/applicationViewEdit/{id}");
+            _navigationManager.NavigateTo($"/authenticationProviderViewEdit/{id}");
         }
 
-        private void CreateApplication()
+        private void CreateAuthenticationProvider()
         {
-            _navigationManager.NavigateTo("/admin/applicationCreate");
+            _navigationManager.NavigateTo("/authenticationProviderCreate");
         }
     }
 }

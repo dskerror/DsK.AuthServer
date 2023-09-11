@@ -1,4 +1,4 @@
-﻿@page "/admin/ApplicationViewEdit/{id:int}"
+﻿@page "/ApplicationViewEdit/{id:int}"
 
 <MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
 
@@ -17,9 +17,20 @@ else
                 <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="Application Name" @bind-Value="model.ApplicationName"
                               For="@(()=>model.ApplicationName)">
                 </MudTextField>
-                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="Application Desc" @bind-Value="model.ApplicationDesc"
+                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="false" Label="Description" @bind-Value="model.ApplicationDesc"
                               For="@(()=>model.ApplicationDesc)">
                 </MudTextField>
+
+                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="Application Id" @bind-Value="model.ApplicationGuid"
+                              For="@(()=>model.ApplicationGuid)">
+                </MudTextField>
+
+                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="API Key" @bind-Value="model.AppApiKey"
+                              For="@(()=>model.AppApiKey)">
+                </MudTextField>
+
+                <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => GenerateNewAPIKey(model)" Class="mb-2">Generate New API Key</MudButton>
+
             </MudCardContent>
         </MudCard>
 

@@ -22,6 +22,7 @@ internal class Program
         CreateUserRole(db);
         AddAdminPermissionToAdminRole(db, adminPermission, adminRole);
         User adminUser = CreateAdminUser(db);
+        ApplicationUser adminApplicationUser = CreateAdminApplicationUser(db, adminUser);
         AddAuthenticationProviderMappingToAdminUser(db, applicationAuthenticationProvider, adminUser);
         AddAdminRoleToAdminUser(db, adminRole, adminUser);
 
@@ -30,7 +31,7 @@ internal class Program
         var permissionList = BlazorWASMCustomAuth.Security.Shared.Constants.Access.GetRegisteredPermissions();
         foreach (var permission in permissionList)
         {
-            db.ApplicationPermissions.Add(new ApplicationPermission() { PermissionName = permission, PermissionDescription = "" });
+            db.ApplicationPermissions.Add(new ApplicationPermission() { ApplicationId = 1, PermissionName = permission, PermissionDescription = "" });
         }
         db.SaveChanges();
 
@@ -123,10 +124,25 @@ internal class Program
         db.SaveChanges();
         return adminUser;
     }
+
+    private static ApplicationUser CreateAdminApplicationUser(SecurityTablesTestContext db, User user)
+    {
+        var adminApplicationUser = new ApplicationUser()
+        {
+            UserId = user.Id,
+            ApplicationId = 1,
+            AccessFailedCount = 0,
+            LockoutEnabled = false
+        };
+
+        db.ApplicationUsers.Add(adminApplicationUser);
+        db.SaveChanges();
+        return adminApplicationUser;
+    }
     private static void AddAdminPermissionToAdminRole(SecurityTablesTestContext db, ApplicationPermission adminPermission, ApplicationRole adminRole)
     {
         var adminRolePermission = new ApplicationRolePermission()
-        {
+        {            
             RoleId = adminRole.Id,
             PermissionId = adminPermission.Id
         };
@@ -137,6 +153,7 @@ internal class Program
     {
         var adminRole = new ApplicationRole()
         {
+            ApplicationId = 1,
             RoleName = "Admin",
             RoleDescription = "Admin Role"
         };
@@ -148,6 +165,7 @@ internal class Program
     {
         var role = new ApplicationRole()
         {
+            ApplicationId = 1,
             RoleName = "User",
             RoleDescription = "User Role"
         };
@@ -159,6 +177,7 @@ internal class Program
     {
         var adminPermission = new ApplicationPermission()
         {
+            ApplicationId = 1,
             PermissionName = "Admin",
             PermissionDescription = "Admin Permission"
         };

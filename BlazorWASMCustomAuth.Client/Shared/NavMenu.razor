@@ -3,26 +3,14 @@
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <AuthorizeView>
         <Authorized>
-            @if (_AdminMenuHeader)
+            @if (_AccessApplications)
             {
-                <MudListSubheader Class="mt-2 mb-n2">Admin</MudListSubheader>
+                <MudNavLink Href="/applications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Applications</MudNavLink>
             }
             @if (_AccessUsersView)
             {
-                <MudNavLink Href="/admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
-            }
-            @if (_AccessRolesView)
-            {
-                <MudNavLink Href="/admin/roles" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Roles</MudNavLink>
-            }
-            @if (_AccessAuthenticationProviders)
-            {
-                <MudNavLink Href="/admin/authenticationproviders" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Authentication Providers</MudNavLink>
-            }
-            @if (_AccessApplications)
-            {
-                <MudNavLink Href="/admin/applications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Applications</MudNavLink>
-            }
+                <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
+            }   
         </Authorized>
     </AuthorizeView>
 </MudNavMenu>
@@ -31,10 +19,7 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
 
-    private bool _AdminMenuHeader;
     private bool _AccessUsersView;
-    private bool _AccessRolesView;
-    private bool _AccessAuthenticationProviders;
     private bool _AccessApplications;
 
     protected override async Task OnInitializedAsync()
@@ -46,11 +31,6 @@
     private void SetPermissions(AuthenticationState state)
     {
         _AccessUsersView = securityService.HasPermission(state.User, Access.Users.View);
-        _AccessRolesView = securityService.HasPermission(state.User, Access.Roles.View);
-        _AccessAuthenticationProviders = securityService.HasPermission(state.User, Access.AuthenticationProvider.View);
         _AccessApplications = securityService.HasPermission(state.User, Access.Application.View);
-
-        if (_AccessUsersView || _AccessRolesView || _AccessAuthenticationProviders || _AccessApplications)
-            _AdminMenuHeader = true;
     }
 }

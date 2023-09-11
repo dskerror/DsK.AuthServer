@@ -21,6 +21,7 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
             public const string Create = "Applications.Create";
             public const string Edit = "Applications.Edit";
             public const string Delete = "Applications.Delete";
+            public const string GenerateNewAPIKey = "Applications.GenerateNewAPIKey";
         }
 
         [DisplayName("Authentication Providers")]

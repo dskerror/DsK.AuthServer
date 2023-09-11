@@ -4,31 +4,31 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 
-namespace BlazorWASMCustomAuth.Client.Pages.Admin
+namespace BlazorWASMCustomAuth.Client.Pages
 {
-    public partial class RoleCreate
+    public partial class UserCreate
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private RoleCreateDto model = new RoleCreateDto();
-        private bool _AccessRolesCreate;
+        private UserCreateDto model = new UserCreateDto();
+        private bool _AccessUsersCreate;
 
         protected override async Task OnInitializedAsync()
         {
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessRolesCreate)
+            if (!_AccessUsersCreate)
                 _navigationManager.NavigateTo("/noaccess");
         }
 
         private void SetPermissions(AuthenticationState state)
-        {
-            _AccessRolesCreate = securityService.HasPermission(state.User, Access.Roles.Create);
+        {   
+            _AccessUsersCreate = securityService.HasPermission(state.User, Access.Users.Create);
         }
 
         private async Task Create()
         {
-            var result = await securityService.RoleCreateAsync(model);
+            var result = await securityService.UserCreateAsync(model);
 
             if (result != null)
                 if (result.HasError)
@@ -36,7 +36,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                 else
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    _navigationManager.NavigateTo($"/admin/roleviewedit/{result.Result.Id}");
+                    _navigationManager.NavigateTo($"/userviewedit/{result.Result.Id}");
                 }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

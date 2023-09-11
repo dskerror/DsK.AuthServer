@@ -189,7 +189,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
         private async Task<User> AuthenticateUser(UserLoginDto model)
         {
-            var user = await GetUserByMappedUsernameAsync(model.Username, model.AuthenticationProviderId);
+            var user = await GetUserByMappedUsernameAsync(model.Email, model.AuthenticationProviderId);
 
             bool IsUserAuthenticated = false;
 
@@ -198,12 +198,12 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             switch (applicationAuthenticationProvider.AuthenticationProvider.AuthenticationProviderType)
             {
                 case "Active Directory":
-                    IsUserAuthenticated = AuthenticateUserWithDomain(model.Username, model.Password, applicationAuthenticationProvider);
+                    IsUserAuthenticated = AuthenticateUserWithDomain(model.Email, model.Password, applicationAuthenticationProvider);
                     if (IsUserAuthenticated)
                         user = await CreateADUserIfNotExists(model, user, applicationAuthenticationProvider);
                     break;
                 default: //Local
-                    IsUserAuthenticated = await AuthenticateUserWithLocalPassword(model.Username, model.Password);
+                    IsUserAuthenticated = await AuthenticateUserWithLocalPassword(model.Email, model.Password);
                     break;
             }
             if (IsUserAuthenticated)
@@ -218,22 +218,22 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             {
                 UserCreateDto userCreateDto = new UserCreateDto()
                 {
-                    Username = model.Username,
-                    Email = GetADUserEmail(model.Username, applicationAuthenticationProvider),
-                    Name = GetADUserDisplayName(model.Username, applicationAuthenticationProvider)
+                    Username = model.Email,
+                    Email = GetADUserEmail(model.Email, applicationAuthenticationProvider),
+                    Name = GetADUserDisplayName(model.Email, applicationAuthenticationProvider)
                 };
 
                 var result = await UserCreate(userCreateDto);
 
                 UserAuthenticationProviderCreateDto userAuthenticationProviderCreateDto = new UserAuthenticationProviderCreateDto()
                 {
-                    Username = model.Username,
+                    Username = model.Email,
                     AuthenticationProviderId = model.AuthenticationProviderId,
                     UserId = result.Result.Id
                 };
 
                 UserAuthenticationProviderCreate(userAuthenticationProviderCreateDto);
-                user = await GetUserByMappedUsernameAsync(model.Username, model.AuthenticationProviderId);
+                user = await GetUserByMappedUsernameAsync(model.Email, model.AuthenticationProviderId);
             }
             return user;
         }

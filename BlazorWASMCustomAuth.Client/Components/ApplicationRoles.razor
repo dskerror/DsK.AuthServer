@@ -1,5 +1,4 @@
-﻿@page "/admin/roles"
-@using BlazorWASMCustomAuth.Security.Shared;
+﻿@using BlazorWASMCustomAuth.Security.Shared;
 @using System.Security.Claims;
 
 <h2>Roles</h2>
@@ -47,3 +46,12 @@
         <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
     </PagerContent>
 </MudTable>
+
+<MudExpansionPanels>
+    @if (_AccessApplicationRolesView)
+    {
+        <MudExpansionPanel Text="User Roles">
+            <ApplicationRoles ApplicationId="@id" UserRoleChanged="RefreshUserPermissions" />
+        </MudExpansionPanel>
+    }
+</MudExpansionPanels>

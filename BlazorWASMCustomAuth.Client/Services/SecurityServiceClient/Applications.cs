@@ -19,7 +19,7 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationDto>>();
         return result;
     }
-    public async Task<APIResult<ApplicationDto>> ApplicationEditAsync(ApplicationDto model)
+    public async Task<APIResult<ApplicationDto>> ApplicationEditAsync(ApplicationUpdateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationsEndpoints.Put, model);
@@ -27,6 +27,17 @@ public partial class SecurityServiceClient
             return null;
         
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationDto>>();
+        return result;
+    }
+
+    public async Task<APIResult<string>> ApplicationGenerateNewAPIKeyAsync(ApplicationDto model)
+    {   
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationsEndpoints.GenerateNewAPIKey, model);
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
         return result;
     }
     public async Task<APIResult<List<ApplicationDto>>> ApplicationsGetAsync(PagedRequest request)

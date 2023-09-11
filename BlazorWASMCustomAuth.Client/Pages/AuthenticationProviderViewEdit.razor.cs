@@ -4,21 +4,21 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 
-namespace BlazorWASMCustomAuth.Client.Pages.Admin
+namespace BlazorWASMCustomAuth.Client.Pages
 {
-    public partial class ApplicationViewEdit
+    public partial class AuthenticationProviderViewEdit
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
-        public ApplicationDto model { get; set; }
+        public AuthenticationProviderDto model { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loaded;        
-        private bool _AccessApplicationView;
-        private bool _AccessApplicationEdit;
+        private bool _AccessAuthenticationProviderView;
+        private bool _AccessAuthenticationProviderEdit;
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Applications", href: "admin/Applications"),
-            new BreadcrumbItem("Application View/Edit", href: null, disabled: true)
+            new BreadcrumbItem("AuthenticationProviders", href: "AuthenticationProviders"),
+            new BreadcrumbItem("Authentication Provider View/Edit", href: null, disabled: true)
         };
 
         protected override async Task OnInitializedAsync()
@@ -26,7 +26,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessApplicationView)            
+            if (!_AccessAuthenticationProviderView)            
                 _navigationManager.NavigateTo("/noaccess");            
             else            
                 await LoadData();
@@ -34,13 +34,13 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessApplicationView = securityService.HasPermission(state.User, Access.Application.View);
-            _AccessApplicationEdit = securityService.HasPermission(state.User, Access.Application.Edit);
+            _AccessAuthenticationProviderView = securityService.HasPermission(state.User, Access.AuthenticationProvider.View);
+            _AccessAuthenticationProviderEdit = securityService.HasPermission(state.User, Access.AuthenticationProvider.Edit);
         }
 
         private async Task LoadData()
         {
-            var result = await securityService.ApplicationGetAsync(id);
+            var result = await securityService.AuthenticationProviderGetAsync(id);
             if (result != null)
             {
                 model = result.Result;
@@ -50,7 +50,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private async Task Edit()
         {
-            var result = await securityService.ApplicationEditAsync(model);
+            var result = await securityService.AuthenticationProviderEditAsync(model);
           
             if (result != null)
                 if (result.HasError)

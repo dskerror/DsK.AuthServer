@@ -138,5 +138,28 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
+
+        public async Task<APIResult<string>> ApplicationGenerateNewAPIKey(int id)
+        {
+            APIResult<string> result = new APIResult<string>();
+            int recordsUpdated = 0;
+
+            var record = await db.Applications.FirstOrDefaultAsync(x => x.Id == id);
+
+            try
+            {
+                record.AppApiKey = Guid.NewGuid();
+                recordsUpdated = await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                result.Message = ex.Message;
+            }
+
+            result.Result = recordsUpdated.ToString();
+
+            return result;
+        }
     }
 }

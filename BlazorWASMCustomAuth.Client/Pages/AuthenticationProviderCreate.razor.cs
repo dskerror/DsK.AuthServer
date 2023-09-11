@@ -4,31 +4,31 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 
-namespace BlazorWASMCustomAuth.Client.Pages.Admin
+namespace BlazorWASMCustomAuth.Client.Pages
 {
-    public partial class ApplicationCreate
+    public partial class AuthenticationProviderCreate
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private ApplicationCreateDto model = new ApplicationCreateDto();
-        private bool _AccessApplicationCreate;
+        private AuthenticationProviderMappingCreateDto model = new AuthenticationProviderMappingCreateDto();
+        private bool _AccessAuthenticationProviderCreate;
 
         protected override async Task OnInitializedAsync()
         {
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessApplicationCreate)
+            if (!_AccessAuthenticationProviderCreate)
                 _navigationManager.NavigateTo("/noaccess");
         }
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessApplicationCreate = securityService.HasPermission(state.User, Access.Application.Create);
+            _AccessAuthenticationProviderCreate = securityService.HasPermission(state.User, Access.AuthenticationProvider.Create);
         }
 
         private async Task Create()
         {
-            var result = await securityService.ApplicationCreateAsync(model);
+            var result = await securityService.AuthenticationProviderCreateAsync(model);
 
             if (result != null)
                 if (result.HasError)
@@ -36,7 +36,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
                 else
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    _navigationManager.NavigateTo($"/admin/ApplicationViewEdit/{result.Result.Id}");
+                    _navigationManager.NavigateTo($"/AuthenticationProviderViewEdit/{result.Result.Id}");
                 }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

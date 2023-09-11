@@ -24,6 +24,14 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             return Ok(result);
         }
 
+        [HttpPost("GenerateNewAPIKey")]        
+        [Authorize(Roles = $"{Access.Admin}, {Access.Application.GenerateNewAPIKey}")]
+        public async Task<IActionResult> GenerateNewAPIKey(ApplicationDto model)
+        {
+            var result = await SecurityService.ApplicationGenerateNewAPIKey(model.Id);
+            return Ok(result);
+        }
+
         [HttpGet]
         [Authorize(Roles = $"{Access.Admin}, {Access.Application.View}")]
         public async Task<IActionResult> ApplicationGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)

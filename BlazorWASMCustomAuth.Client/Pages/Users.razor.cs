@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 
-namespace BlazorWASMCustomAuth.Client.Pages.Admin
+namespace BlazorWASMCustomAuth.Client.Pages
 {
     public partial class Users
     {
@@ -72,7 +72,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
 
         private void ViewUser(int id)
         {
-            _navigationManager.NavigateTo($"/admin/userviewedit/{id}");
+            _navigationManager.NavigateTo($"/userviewedit/{id}");
         }
 
         private void CreateUser()
