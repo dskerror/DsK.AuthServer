@@ -7,6 +7,8 @@ public partial class UserLog
 {
     public int Id { get; set; }
 
+    public int ApplicationId { get; set; }
+
     public int UserId { get; set; }
 
     public string Ip { get; set; } = null!;
@@ -18,4 +20,6 @@ public partial class UserLog
     public string QueryString { get; set; } = null!;
 
     public DateTime LogDateTime { get; set; }
+
+    public virtual Application Application { get; set; } = null!;
 }

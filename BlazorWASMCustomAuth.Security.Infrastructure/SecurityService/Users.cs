@@ -36,9 +36,9 @@ public partial class SecurityService
 
         var userAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
         {
-            AuthenticationProviderId = 1,
+            ApplicationAuthenticationProviderId = 1,
             UserId = record.Id,
-            Username= record.Username,
+            Username= record.Email,
         };
 
         await db.UserAuthenticationProviderMappings.AddAsync(userAuthenticationProviderMapping);
@@ -79,11 +79,11 @@ public partial class SecurityService
         if (!string.IsNullOrWhiteSpace(searchString))
         {
             count = await db.Users
-                .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
+                .Where(m => m.Name.Contains(searchString) || m.Email.Contains(searchString))
                 .CountAsync();
 
             items = await db.Users.OrderBy(ordering)
-                .Where(m => m.Username.Contains(searchString) || m.Name.Contains(searchString) || m.Email.Contains(searchString))
+                .Where(m => m.Name.Contains(searchString) || m.Email.Contains(searchString))
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -161,16 +161,16 @@ public partial class SecurityService
         return result;
     }
 
-    private async Task<User> GetUserByUsernameAsync(string username)
+    private async Task<User> GetUserByEmailAsync(string username)
     {
-        return await db.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
+        return await db.Users.Where(u => u.Email == username).FirstOrDefaultAsync();
     }
 
     private async Task<User> GetUserByMappedUsernameAsync(string username, int AuthenticationProviderId)
     {
         var user = await (from u in db.Users
                    join uap in db.UserAuthenticationProviderMappings on u.Id equals uap.UserId
-                   where uap.Username == username && uap.AuthenticationProviderId == AuthenticationProviderId
+                   where uap.Username == username && uap.ApplicationAuthenticationProviderId == AuthenticationProviderId
                    select u).FirstOrDefaultAsync();
         return user;
     }

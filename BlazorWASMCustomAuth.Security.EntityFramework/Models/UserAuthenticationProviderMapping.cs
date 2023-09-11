@@ -9,11 +9,11 @@ public partial class UserAuthenticationProviderMapping
 
     public int UserId { get; set; }
 
-    public int AuthenticationProviderId { get; set; }
+    public int ApplicationAuthenticationProviderId { get; set; }
 
     public string Username { get; set; } = null!;
 
-    public virtual AuthenticationProvider AuthenticationProvider { get; set; } = null!;
+    public virtual ApplicationAuthenticationProvider ApplicationAuthenticationProvider { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

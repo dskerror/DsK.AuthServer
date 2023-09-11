@@ -16,13 +16,13 @@ internal class Program
 
         Application newApplication = CreateApplication(db);
         AuthenticationProvider localAuthProvider = CreateLocalAuthProvider(db);
-        CreateApplicationAuthenticationUserProvider(db, newApplication, localAuthProvider);
+        ApplicationAuthenticationProvider applicationAuthenticationProvider = CreateApplicationAuthenticationUserProvider(db, newApplication, localAuthProvider);
         ApplicationPermission adminPermission = CreateAdminPermission(db);
         ApplicationRole adminRole = CreateAdminRole(db);
         CreateUserRole(db);
         AddAdminPermissionToAdminRole(db, adminPermission, adminRole);
         User adminUser = CreateAdminUser(db);
-        AddAuthenticationProviderMappingToAdminUser(db, localAuthProvider, adminUser);
+        AddAuthenticationProviderMappingToAdminUser(db, applicationAuthenticationProvider, adminUser);
         AddAdminRoleToAdminUser(db, adminRole, adminUser);
 
         CreateAdminUserPassword(db, adminUser);
@@ -36,7 +36,7 @@ internal class Program
 
     }
 
-    private static void CreateApplicationAuthenticationUserProvider(SecurityTablesTestContext db, Application newApplication, AuthenticationProvider localAuthProvider)
+    private static ApplicationAuthenticationProvider CreateApplicationAuthenticationUserProvider(SecurityTablesTestContext db, Application newApplication, AuthenticationProvider localAuthProvider)
     {
         ApplicationAuthenticationProvider applicationAuthenticationProvider =
                 new ApplicationAuthenticationProvider()
@@ -50,6 +50,8 @@ internal class Program
 
         db.ApplicationAuthenticationProviders.Add(applicationAuthenticationProvider);
         db.SaveChanges();
+
+        return applicationAuthenticationProvider;
     }
 
     private static void CreateAdminUserPassword(SecurityTablesTestContext db, User adminUser)
@@ -71,7 +73,7 @@ internal class Program
     {
         Application newApplication = new Application()
         {
-            ApplicationName = "DsK.Scurity",
+            ApplicationName = "DsK.Security",
             ApplicationDesc = "Manages security for other applications"
         };
 
@@ -96,14 +98,14 @@ internal class Program
         db.UserRoles.Add(adminUserRole);
         db.SaveChanges();
     }
-    private static void AddAuthenticationProviderMappingToAdminUser(SecurityTablesTestContext db, AuthenticationProvider localAuthProvider, User adminUser)
+    private static void AddAuthenticationProviderMappingToAdminUser(SecurityTablesTestContext db, ApplicationAuthenticationProvider localAuthProvider, User adminUser)
     {
         var adminAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
         {
-            AuthenticationProvider = localAuthProvider,
+            ApplicationAuthenticationProvider = localAuthProvider,
             User = adminUser,
             Username =
-            adminUser.Username
+            adminUser.Email
         };
         db.UserAuthenticationProviderMappings.Add(adminAuthenticationProviderMapping);
         db.SaveChanges();
@@ -112,7 +114,6 @@ internal class Program
     {
         var adminUser = new User()
         {
-            Username = "admin",
             Name = "admin",
             Email = "admin@admin.com",
             EmailConfirmed = true

@@ -16,7 +16,7 @@ public partial class SecurityService
         var record = new UserAuthenticationProviderMapping();
         Mapper.Map(model, record);
 
-        var checkDuplicateUsername = await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username && x.AuthenticationProviderId == model.AuthenticationProviderId);
+        var checkDuplicateUsername = await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username && x.ApplicationAuthenticationProviderId == model.AuthenticationProviderId);
 
         if (checkDuplicateUsername != null)
         {
@@ -53,7 +53,7 @@ public partial class SecurityService
 
 
         var userAuthenticationProviderList = await (from uap in db.UserAuthenticationProviderMappings
-                                                    join ap in db.AuthenticationProviders on uap.AuthenticationProviderId equals ap.Id
+                                                    join ap in db.ApplicationAuthenticationProviders on uap.ApplicationAuthenticationProviderId equals ap.Id
                                                     where uap.UserId == userId
                                                     select new { uap.Id, uap.Username, AuthenticationProviderId = ap.Id }).ToListAsync();
 
@@ -88,7 +88,7 @@ public partial class SecurityService
         if (record != null)
             Mapper.Map(model, record);
 
-        var checkDuplicateUsername =  await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username && x.AuthenticationProviderId == record.AuthenticationProviderId);
+        var checkDuplicateUsername =  await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username && x.ApplicationAuthenticationProviderId == record.ApplicationAuthenticationProviderId);
 
         if (checkDuplicateUsername != null)
         {

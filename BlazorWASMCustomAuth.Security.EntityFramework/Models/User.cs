@@ -7,11 +7,9 @@ public partial class User
 {
     public int Id { get; set; }
 
-    public string Username { get; set; } = null!;
+    public string Email { get; set; } = null!;
 
     public string Name { get; set; } = null!;
-
-    public string Email { get; set; } = null!;
 
     public bool EmailConfirmed { get; set; }
 
@@ -19,9 +17,7 @@ public partial class User
 
     public bool LockoutEnabled { get; set; }
 
-    public int AccessFailedCount { get; set; }
-
-    public bool TwoFactorEnabled { get; set; }
+    public virtual ICollection<ApplicationUser> ApplicationUsers { get; } = new List<ApplicationUser>();
 
     public virtual ICollection<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; } = new List<UserAuthenticationProviderMapping>();
 

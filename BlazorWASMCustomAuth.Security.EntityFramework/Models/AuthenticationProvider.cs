@@ -12,6 +12,4 @@ public partial class AuthenticationProvider
     public string? AuthenticationProviderType { get; set; }
 
     public virtual ICollection<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; } = new List<ApplicationAuthenticationProvider>();
-
-    public virtual ICollection<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; } = new List<UserAuthenticationProviderMapping>();
 }

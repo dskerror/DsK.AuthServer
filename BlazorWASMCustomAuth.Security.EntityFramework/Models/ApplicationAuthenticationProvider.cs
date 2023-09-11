@@ -20,4 +20,6 @@ public partial class ApplicationAuthenticationProvider
     public virtual Application Application { get; set; } = null!;
 
     public virtual AuthenticationProvider AuthenticationProvider { get; set; } = null!;
+
+    public virtual ICollection<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; } = new List<UserAuthenticationProviderMapping>();
 }

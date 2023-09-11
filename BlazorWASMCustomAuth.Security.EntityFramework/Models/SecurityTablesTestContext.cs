@@ -43,9 +43,9 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<UserToken> UserTokens { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -84,6 +84,8 @@ public partial class SecurityTablesTestContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_Permissions");
 
+            entity.HasIndex(e => e.ApplicationId, "IX_ApplicationPermissions_ApplicationId");
+
             entity.HasIndex(e => e.PermissionName, "IX_Permissions").IsUnique();
 
             entity.Property(e => e.PermissionDescription).HasMaxLength(250);
@@ -98,6 +100,8 @@ public partial class SecurityTablesTestContext : DbContext
         modelBuilder.Entity<ApplicationRole>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_Roles");
+
+            entity.HasIndex(e => e.ApplicationId, "IX_ApplicationRoles_ApplicationId");
 
             entity.HasIndex(e => e.RoleName, "IX_Roles").IsUnique();
 
@@ -125,6 +129,21 @@ public partial class SecurityTablesTestContext : DbContext
                 .HasConstraintName("FK_RolePermissions_Roles");
         });
 
+        modelBuilder.Entity<ApplicationUser>(entity =>
+        {
+            entity.Property(e => e.LockoutEnd).HasColumnType("date");
+
+            entity.HasOne(d => d.Application).WithMany(p => p.ApplicationUsers)
+                .HasForeignKey(d => d.ApplicationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ApplicationUsers_Applications");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ApplicationUsers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ApplicationUsers_Users");
+        });
+
         modelBuilder.Entity<AuthenticationProvider>(entity =>
         {
             entity.HasIndex(e => e.AuthenticationProviderName, "IX_AuthenticationProviders");
@@ -137,28 +156,25 @@ public partial class SecurityTablesTestContext : DbContext
         {
             entity.HasIndex(e => e.Email, "IX_Users_Email").IsUnique();
 
-            entity.HasIndex(e => e.Username, "IX_Users_Username").IsUnique();
-
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.LockoutEnd).HasColumnType("date");
             entity.Property(e => e.Name).HasMaxLength(256);
-            entity.Property(e => e.Username).HasMaxLength(256);
         });
 
         modelBuilder.Entity<UserAuthenticationProviderMapping>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_UserAuthenticationProviders");
 
-            entity.HasIndex(e => e.AuthenticationProviderId, "IX_UserAuthenticationProviders_AuthenticationProviderId");
+            entity.HasIndex(e => e.ApplicationAuthenticationProviderId, "IX_UserAuthenticationProviders_AuthenticationProviderId");
 
             entity.HasIndex(e => e.UserId, "IX_UserAuthenticationProviders_UserId");
 
             entity.Property(e => e.Username).HasMaxLength(256);
 
-            entity.HasOne(d => d.AuthenticationProvider).WithMany(p => p.UserAuthenticationProviderMappings)
-                .HasForeignKey(d => d.AuthenticationProviderId)
+            entity.HasOne(d => d.ApplicationAuthenticationProvider).WithMany(p => p.UserAuthenticationProviderMappings)
+                .HasForeignKey(d => d.ApplicationAuthenticationProviderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserAuthenticationProviders_AuthenticationProviders");
+                .HasConstraintName("FK_UserAuthenticationProviders_ApplicationAuthenticationProviders");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserAuthenticationProviderMappings)
                 .HasForeignKey(d => d.UserId)
@@ -172,6 +188,11 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.Property(e => e.Ip).HasColumnName("IP");
             entity.Property(e => e.LogDateTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Application).WithMany(p => p.UserLogs)
+                .HasForeignKey(d => d.ApplicationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserLogs_Users");
         });
 
         modelBuilder.Entity<UserPassword>(entity =>
@@ -223,6 +244,8 @@ public partial class SecurityTablesTestContext : DbContext
         modelBuilder.Entity<UserToken>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_UserAuthenticationProviderTokens");
+
+            entity.HasIndex(e => e.ApplicationId, "IX_UserTokens_ApplicationId");
 
             entity.HasIndex(e => e.UserId, "IX_UserTokens_UserId");
 

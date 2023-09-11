@@ -21,5 +21,9 @@ public partial class Application
 
     public virtual ICollection<ApplicationRole> ApplicationRoles { get; } = new List<ApplicationRole>();
 
+    public virtual ICollection<ApplicationUser> ApplicationUsers { get; } = new List<ApplicationUser>();
+
+    public virtual ICollection<UserLog> UserLogs { get; } = new List<UserLog>();
+
     public virtual ICollection<UserToken> UserTokens { get; } = new List<UserToken>();
 }

@@ -64,7 +64,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             //TODO : Remove token from UserToken Table            
             //TODO : Create cleanup method that remove refreshtokens older than established date
 
-            var user = await GetUserByUsernameAsync(username);
+            var user = await GetUserByEmailAsync(username);
             if (user == null)
             {
                 result.HasError = true;
@@ -158,8 +158,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var userPermissions = await GetUserPermissionsCombined(user.Id);
             var userClaims = new List<Claim>();
             userClaims.Add(new Claim(ClaimTypes.Email, user.Email ?? ""));
-            userClaims.Add(new Claim("UserId", user.Id.ToString()));
-            userClaims.Add(new Claim("UserName", user.Username ?? ""));
+            userClaims.Add(new Claim("UserId", user.Id.ToString()));            
 
             foreach (var permission in userPermissions)
             {
@@ -243,7 +242,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             try
             {
-                var userPassword = await db.UserPasswords.Where(x => x.User.Username == username).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+                var userPassword = await db.UserPasswords.Where(x => x.User.Email == username).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
 
                 if (userPassword == null)
                     return false;

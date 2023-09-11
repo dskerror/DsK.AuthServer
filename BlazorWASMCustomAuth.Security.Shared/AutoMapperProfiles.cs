@@ -26,7 +26,7 @@ public class AutoMapperProfiles : Profile
         //           opt => opt.MapFrom(src => src.Email));
         //CreateMap<User, UserCreateDto>();
 
-        CreateMap<User, User>().ReverseMap().ForMember(dest => dest.Username, act => act.Ignore());
+        //CreateMap<User, User>().ReverseMap().ForMember(dest => dest.Username, act => act.Ignore());
 
         //ModelDtos
         CreateMap<ApplicationDto, Application>().ReverseMap();
