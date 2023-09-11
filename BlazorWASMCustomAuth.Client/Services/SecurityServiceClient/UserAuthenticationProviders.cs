@@ -9,14 +9,14 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<UserAuthenticationProviderDto>> UserAuthenticationProviderCreateAsync(UserAuthenticationProviderCreateDto model)
+    public async Task<APIResult<UserAuthenticationProviderMappingDto>> UserAuthenticationProviderCreateAsync(UserAuthenticationProviderCreateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.UserAuthenticationProvidersEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<UserAuthenticationProviderDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResult<UserAuthenticationProviderMappingDto>>();
         return result;
     }
     public async Task<APIResult<string>> UserAuthenticationProviderEditAsync(UserAuthenticationProviderUpdateDto model)
@@ -29,7 +29,7 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
         return result;
     }
-    public async Task<APIResult<List<UserAuthenticationProvidersGridDto>>> UserAuthenticationProvidersGetAsync(int UserId)
+    public async Task<APIResult<List<UserAuthenticationProviderMappingsGridDto>>> UserAuthenticationProvidersGetAsync(int UserId)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.UserAuthenticationProvidersEndpoints.Get(UserId));
@@ -40,7 +40,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserAuthenticationProvidersGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserAuthenticationProviderMappingsGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)

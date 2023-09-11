@@ -9,7 +9,7 @@ namespace BlazorWASMCustomAuth.Client.Pages.Admin
     public partial class AuthenticationProviderCreate
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private AuthenticationProviderCreateDto model = new AuthenticationProviderCreateDto();
+        private AuthenticationProviderMappingCreateDto model = new AuthenticationProviderMappingCreateDto();
         private bool _AccessAuthenticationProviderCreate;
 
         protected override async Task OnInitializedAsync()

@@ -194,14 +194,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             bool IsUserAuthenticated = false;
 
-            var authenticationProvider = await AuthenticationProviderGet(model.AuthenticationProviderId);
+            var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.AuthenticationProviderId);
 
-            switch (authenticationProvider.AuthenticationProviderType)
+            switch (applicationAuthenticationProvider.AuthenticationProvider.AuthenticationProviderType)
             {
                 case "Active Directory":
-                    IsUserAuthenticated = AuthenticateUserWithDomain(model.Username, model.Password, authenticationProvider);
+                    IsUserAuthenticated = AuthenticateUserWithDomain(model.Username, model.Password, applicationAuthenticationProvider);
                     if (IsUserAuthenticated)
-                        user = await CreateADUserIfNotExists(model, user, authenticationProvider);
+                        user = await CreateADUserIfNotExists(model, user, applicationAuthenticationProvider);
                     break;
                 default: //Local
                     IsUserAuthenticated = await AuthenticateUserWithLocalPassword(model.Username, model.Password);
@@ -213,15 +213,15 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return null;
         }
 
-        private async Task<User> CreateADUserIfNotExists(UserLoginDto model, User? user, AuthenticationProvider authenticationProvider)
+        private async Task<User> CreateADUserIfNotExists(UserLoginDto model, User? user, ApplicationAuthenticationProvider applicationAuthenticationProvider)
         {
             if (user == null)
             {
                 UserCreateDto userCreateDto = new UserCreateDto()
                 {
                     Username = model.Username,
-                    Email = GetADUserEmail(model.Username, authenticationProvider),
-                    Name = GetADUserDisplayName(model.Username, authenticationProvider)
+                    Email = GetADUserEmail(model.Username, applicationAuthenticationProvider),
+                    Name = GetADUserDisplayName(model.Username, applicationAuthenticationProvider)
                 };
 
                 var result = await UserCreate(userCreateDto);
@@ -263,10 +263,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
-        private bool AuthenticateUserWithDomain(string username, string password, AuthenticationProvider AuthenticationProvider)
+        private bool AuthenticateUserWithDomain(string username, string password, ApplicationAuthenticationProvider ApplicationAuthenticationProvider)
         {
             //todo : encrypt Authentication Provider password 
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, AuthenticationProvider.Domain, AuthenticationProvider.Username, AuthenticationProvider.Password))
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, ApplicationAuthenticationProvider.Domain, ApplicationAuthenticationProvider.Username, ApplicationAuthenticationProvider.Password))
             {
                 // validate the credentials
                 bool isValid = pc.ValidateCredentials(username, password);
@@ -275,10 +275,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
-        private string GetADUserEmail(string username, AuthenticationProvider AuthenticationProvider)
+        private string GetADUserEmail(string username, ApplicationAuthenticationProvider ApplicationAuthenticationProvider)
         {   
             string email = "";
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, AuthenticationProvider.Domain, AuthenticationProvider.Username, AuthenticationProvider.Password))
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, ApplicationAuthenticationProvider.Domain, ApplicationAuthenticationProvider.Username, ApplicationAuthenticationProvider.Password))
             {
                 UserPrincipal user = UserPrincipal.FindByIdentity(pc, username);
                 email = user.EmailAddress;
@@ -287,10 +287,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
-        public string GetADUserDisplayName(string username, AuthenticationProvider AuthenticationProvider)
+        public string GetADUserDisplayName(string username, ApplicationAuthenticationProvider ApplicationAuthenticationProvider)
         {   
             string realname = "";
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, AuthenticationProvider.Domain, AuthenticationProvider.Username, AuthenticationProvider.Password))
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, ApplicationAuthenticationProvider.Domain, ApplicationAuthenticationProvider.Username, ApplicationAuthenticationProvider.Password))
             {
                 UserPrincipal user = UserPrincipal.FindByIdentity(pc, username);
                 if (user != null)

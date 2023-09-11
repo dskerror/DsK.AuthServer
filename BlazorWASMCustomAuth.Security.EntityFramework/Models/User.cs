@@ -23,7 +23,7 @@ public partial class User
 
     public bool TwoFactorEnabled { get; set; }
 
-    public virtual ICollection<UserAuthenticationProvider> UserAuthenticationProviders { get; } = new List<UserAuthenticationProvider>();
+    public virtual ICollection<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; } = new List<UserAuthenticationProviderMapping>();
 
     public virtual ICollection<UserPassword> UserPasswords { get; } = new List<UserPassword>();
 

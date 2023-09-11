@@ -10,7 +10,7 @@ namespace BlazorWASMCustomAuth.Client.Components
     public partial class UserAuthenticationProvider
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        public List<UserAuthenticationProvidersGridDto> userAuthenticationProviders { get; set; }
+        public List<UserAuthenticationProviderMappingsGridDto> userAuthenticationProviders { get; set; }
 
         [Parameter] public int UserId { get; set; }
 
@@ -47,7 +47,7 @@ namespace BlazorWASMCustomAuth.Client.Components
             }
         }
 
-        private async Task SaveUserAuthenticatonProvider(UserAuthenticationProvidersGridDto record)
+        private async Task SaveUserAuthenticatonProvider(UserAuthenticationProviderMappingsGridDto record)
         {
             if (_AccessUserAuthenticationProvidersDelete && string.IsNullOrEmpty(record.Username) && record.Id != 0)
             {

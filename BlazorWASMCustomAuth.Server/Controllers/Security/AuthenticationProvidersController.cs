@@ -18,7 +18,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]        
         [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Create}")]
-        public async Task<IActionResult> AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
+        public async Task<IActionResult> AuthenticationProvidersCreate(AuthenticationProviderMappingCreateDto model)
         {
             var result = await SecurityService.AuthenticationProvidersCreate(model);
             return Ok(result);
@@ -34,7 +34,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPut]
         [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Edit}")]
-        public async Task<IActionResult> AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
+        public async Task<IActionResult> AuthenticationProvidersUpdate(AuthenticationProviderMappingUpdateDto model)
         {
             var result = await SecurityService.AuthenticationProvidersUpdate(model);
             return Ok(result);

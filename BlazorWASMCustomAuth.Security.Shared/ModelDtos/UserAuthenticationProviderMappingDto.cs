@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
-public class UserAuthenticationProviderDto
+public class UserAuthenticationProviderMappingDto
 {
     public int Id { get; set; }
 

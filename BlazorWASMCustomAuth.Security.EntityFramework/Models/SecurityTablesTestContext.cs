@@ -31,7 +31,7 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<UserAuthenticationProvider> UserAuthenticationProviders { get; set; }
+    public virtual DbSet<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; set; }
 
     public virtual DbSet<UserLog> UserLogs { get; set; }
 
@@ -61,6 +61,14 @@ public partial class SecurityTablesTestContext : DbContext
 
         modelBuilder.Entity<ApplicationAuthenticationProvider>(entity =>
         {
+            entity.HasIndex(e => e.ApplicationId, "IX_ApplicationAuthenticationProviders_ApplicationId");
+
+            entity.HasIndex(e => e.AuthenticationProviderId, "IX_ApplicationAuthenticationProviders_AuthenticationProviderId");
+
+            entity.Property(e => e.Domain).HasMaxLength(100);
+            entity.Property(e => e.Password).HasMaxLength(100);
+            entity.Property(e => e.Username).HasMaxLength(100);
+
             entity.HasOne(d => d.Application).WithMany(p => p.ApplicationAuthenticationProviders)
                 .HasForeignKey(d => d.ApplicationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -80,6 +88,11 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.Property(e => e.PermissionDescription).HasMaxLength(250);
             entity.Property(e => e.PermissionName).HasMaxLength(50);
+
+            entity.HasOne(d => d.Application).WithMany(p => p.ApplicationPermissions)
+                .HasForeignKey(d => d.ApplicationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ApplicationPermissions_Applications");
         });
 
         modelBuilder.Entity<ApplicationRole>(entity =>
@@ -90,6 +103,11 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.Property(e => e.RoleDescription).HasMaxLength(250);
             entity.Property(e => e.RoleName).HasMaxLength(50);
+
+            entity.HasOne(d => d.Application).WithMany(p => p.ApplicationRoles)
+                .HasForeignKey(d => d.ApplicationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ApplicationRoles_Applications");
         });
 
         modelBuilder.Entity<ApplicationRolePermission>(entity =>
@@ -113,9 +131,6 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.Property(e => e.AuthenticationProviderName).HasMaxLength(50);
             entity.Property(e => e.AuthenticationProviderType).HasMaxLength(50);
-            entity.Property(e => e.Domain).HasMaxLength(100);
-            entity.Property(e => e.Password).HasMaxLength(100);
-            entity.Property(e => e.Username).HasMaxLength(100);
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -130,20 +145,22 @@ public partial class SecurityTablesTestContext : DbContext
             entity.Property(e => e.Username).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<UserAuthenticationProvider>(entity =>
+        modelBuilder.Entity<UserAuthenticationProviderMapping>(entity =>
         {
+            entity.HasKey(e => e.Id).HasName("PK_UserAuthenticationProviders");
+
             entity.HasIndex(e => e.AuthenticationProviderId, "IX_UserAuthenticationProviders_AuthenticationProviderId");
 
             entity.HasIndex(e => e.UserId, "IX_UserAuthenticationProviders_UserId");
 
             entity.Property(e => e.Username).HasMaxLength(256);
 
-            entity.HasOne(d => d.AuthenticationProvider).WithMany(p => p.UserAuthenticationProviders)
+            entity.HasOne(d => d.AuthenticationProvider).WithMany(p => p.UserAuthenticationProviderMappings)
                 .HasForeignKey(d => d.AuthenticationProviderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserAuthenticationProviders_AuthenticationProviders");
 
-            entity.HasOne(d => d.User).WithMany(p => p.UserAuthenticationProviders)
+            entity.HasOne(d => d.User).WithMany(p => p.UserAuthenticationProviderMappings)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserAuthenticationProviders_Users");
@@ -211,6 +228,10 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.Property(e => e.TokenCreatedDateTime).HasColumnType("datetime");
             entity.Property(e => e.TokenRefreshedDateTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Application).WithMany(p => p.UserTokens)
+                .HasForeignKey(d => d.ApplicationId)
+                .HasConstraintName("FK_UserTokens_Applications");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserTokens)
                 .HasForeignKey(d => d.UserId)

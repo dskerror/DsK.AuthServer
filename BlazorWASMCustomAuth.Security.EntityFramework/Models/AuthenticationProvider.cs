@@ -11,13 +11,7 @@ public partial class AuthenticationProvider
 
     public string? AuthenticationProviderType { get; set; }
 
-    public string? Domain { get; set; }
-
-    public string? Username { get; set; }
-
-    public string? Password { get; set; }
-
     public virtual ICollection<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; } = new List<ApplicationAuthenticationProvider>();
 
-    public virtual ICollection<UserAuthenticationProvider> UserAuthenticationProviders { get; } = new List<UserAuthenticationProvider>();
+    public virtual ICollection<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; } = new List<UserAuthenticationProviderMapping>();
 }

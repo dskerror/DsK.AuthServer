@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
 
-namespace BlazorWASMCustomAuth.Security.Infrastructure{
+namespace BlazorWASMCustomAuth.Security.Infrastructure
+{
     public partial class SecurityService
     {
-        public async Task<APIResult<AuthenticationProviderDto>> AuthenticationProvidersCreate(AuthenticationProviderCreateDto model)
+        public async Task<APIResult<AuthenticationProviderDto>> AuthenticationProvidersCreate(AuthenticationProviderMappingCreateDto model)
         {
             APIResult<AuthenticationProviderDto> result = new APIResult<AuthenticationProviderDto>();
             int recordsCreated = 0;
@@ -26,7 +27,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure{
                 result.HasError = true;
                 result.Message = ex.InnerException.Message;
             }
-            
+
             if (recordsCreated == 1)
             {
                 result.Result = Mapper.Map(record, result.Result);
@@ -86,26 +87,26 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure{
             return result;
         }
 
-        public async Task<AuthenticationProvider> AuthenticationProviderGet(int id)
+        public async Task<ApplicationAuthenticationProvider> ApplicationAuthenticationProviderGet(int id)
         {
-            var authenticationProvider = await db.AuthenticationProviders.Where(u => u.Id == id).FirstOrDefaultAsync();
-            return authenticationProvider;
+            var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == id).Include(x => x.AuthenticationProvider).FirstOrDefaultAsync();
+            return applicationAuthenticationProvider;
         }
-        public async Task<APIResult<string>> AuthenticationProvidersUpdate(AuthenticationProviderUpdateDto model)
+        public async Task<APIResult<string>> AuthenticationProvidersUpdate(AuthenticationProviderMappingUpdateDto model)
         {
             APIResult<string> result = new APIResult<string>();
 
             int recordsUpdated = 0;
             var record = await db.AuthenticationProviders.FirstOrDefaultAsync(x => x.Id == model.Id);
 
-            if(record.AuthenticationProviderName == "Local")
+            if (record.AuthenticationProviderName == "Local")
             {
                 result.HasError = true;
                 result.Message = "Local Authentication Provider can't be updated";
             }
 
-            if (record != null)            
-                Mapper.Map(model, record);            
+            if (record != null)
+                Mapper.Map(model, record);
 
             try
             {
@@ -118,7 +119,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure{
             }
 
             if (recordsUpdated == 1)
-                result.Message = "Record Updated";            
+                result.Message = "Record Updated";
 
             return result;
         }
@@ -135,12 +136,13 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure{
                 {
                     result.HasError = true;
                     result.Message = "Local Authentication Provider can't be deleted";
-                } else
+                }
+                else
                 {
                     db.Remove(record);
                     recordsDeleted = await db.SaveChangesAsync();
                 }
-                
+
             }
             catch (Exception ex)
             {

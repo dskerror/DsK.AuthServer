@@ -9,7 +9,7 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<AuthenticationProviderDto>> AuthenticationProviderCreateAsync(AuthenticationProviderCreateDto model)
+    public async Task<APIResult<AuthenticationProviderDto>> AuthenticationProviderCreateAsync(AuthenticationProviderMappingCreateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationProvidersEndpoints.Post, model);

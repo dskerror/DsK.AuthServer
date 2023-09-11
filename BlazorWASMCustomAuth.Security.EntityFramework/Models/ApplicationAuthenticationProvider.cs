@@ -11,6 +11,12 @@ public partial class ApplicationAuthenticationProvider
 
     public int AuthenticationProviderId { get; set; }
 
+    public string? Domain { get; set; }
+
+    public string? Username { get; set; }
+
+    public string? Password { get; set; }
+
     public virtual Application Application { get; set; } = null!;
 
     public virtual AuthenticationProvider AuthenticationProvider { get; set; } = null!;

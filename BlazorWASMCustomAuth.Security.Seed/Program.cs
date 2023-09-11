@@ -8,22 +8,23 @@ internal class Program
     private static void Main(string[] args)
     {
         var options = new DbContextOptions<SecurityTablesTestContext>();
-        
+
         //var db = new SecurityTablesTestContext(new DbContextOptionsBuilder<SecurityTablesTestContext>().UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true").Options);
         var db = new SecurityTablesTestContext(new DbContextOptionsBuilder<SecurityTablesTestContext>().UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true").Options);
         db.Database.Migrate(); //CREATES DATABASE IF IT DOESNT EXISTS
         db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
 
-
+        Application newApplication = CreateApplication(db);
         AuthenticationProvider localAuthProvider = CreateLocalAuthProvider(db);
+        CreateApplicationAuthenticationUserProvider(db, newApplication, localAuthProvider);
         ApplicationPermission adminPermission = CreateAdminPermission(db);
         ApplicationRole adminRole = CreateAdminRole(db);
         CreateUserRole(db);
         AddAdminPermissionToAdminRole(db, adminPermission, adminRole);
         User adminUser = CreateAdminUser(db);
-        AddAuthenticationProviderToAdminUser(db, localAuthProvider, adminUser);
+        AddAuthenticationProviderMappingToAdminUser(db, localAuthProvider, adminUser);
         AddAdminRoleToAdminUser(db, adminRole, adminUser);
-        
+
         CreateAdminUserPassword(db, adminUser);
 
         var permissionList = BlazorWASMCustomAuth.Security.Shared.Constants.Access.GetRegisteredPermissions();
@@ -34,6 +35,23 @@ internal class Program
         db.SaveChanges();
 
     }
+
+    private static void CreateApplicationAuthenticationUserProvider(SecurityTablesTestContext db, Application newApplication, AuthenticationProvider localAuthProvider)
+    {
+        ApplicationAuthenticationProvider applicationAuthenticationProvider =
+                new ApplicationAuthenticationProvider()
+                {
+                    ApplicationId = newApplication.Id,
+                    AuthenticationProviderId = localAuthProvider.Id,
+                    Domain = "",
+                    Username = "",
+                    Password = ""
+                };
+
+        db.ApplicationAuthenticationProviders.Add(applicationAuthenticationProvider);
+        db.SaveChanges();
+    }
+
     private static void CreateAdminUserPassword(SecurityTablesTestContext db, User adminUser)
     {
         var ramdomSalt = SecurityHelpers.RandomizeSalt;
@@ -48,15 +66,25 @@ internal class Program
         db.UserPasswords.Add(userPassword);
         db.SaveChanges();
     }
+
+    private static Application CreateApplication(SecurityTablesTestContext db)
+    {
+        Application newApplication = new Application()
+        {
+            ApplicationName = "DsK.Scurity",
+            ApplicationDesc = "Manages security for other applications"
+        };
+
+        db.Applications.Add(newApplication);
+        db.SaveChanges();
+        return newApplication;
+    }
     private static AuthenticationProvider CreateLocalAuthProvider(SecurityTablesTestContext db)
     {
         var authProvider = new AuthenticationProvider()
         {
             AuthenticationProviderName = "Local",
-            AuthenticationProviderType= "Local",
-            Domain="",
-            Username="",
-            Password=""
+            AuthenticationProviderType = "Local"
         };
         db.AuthenticationProviders.Add(authProvider);
         db.SaveChanges();
@@ -67,15 +95,17 @@ internal class Program
         var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
         db.UserRoles.Add(adminUserRole);
         db.SaveChanges();
-    }    
-    private static void AddAuthenticationProviderToAdminUser(SecurityTablesTestContext db, AuthenticationProvider localAuthProvider, User adminUser)
+    }
+    private static void AddAuthenticationProviderMappingToAdminUser(SecurityTablesTestContext db, AuthenticationProvider localAuthProvider, User adminUser)
     {
-        var adminAuthenticationProvider = new UserAuthenticationProvider() { 
-            AuthenticationProvider = localAuthProvider, 
-            User = adminUser, Username = 
-            adminUser.Username 
+        var adminAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
+        {
+            AuthenticationProvider = localAuthProvider,
+            User = adminUser,
+            Username =
+            adminUser.Username
         };
-        db.UserAuthenticationProviders.Add(adminAuthenticationProvider);
+        db.UserAuthenticationProviderMappings.Add(adminAuthenticationProviderMapping);
         db.SaveChanges();
     }
     private static User CreateAdminUser(SecurityTablesTestContext db)

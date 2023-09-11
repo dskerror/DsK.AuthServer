@@ -7,16 +7,16 @@ using System.Data;
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<UserAuthenticationProviderDto>> UserAuthenticationProviderCreate(UserAuthenticationProviderCreateDto model)
+    public async Task<APIResult<UserAuthenticationProviderMappingDto>> UserAuthenticationProviderCreate(UserAuthenticationProviderCreateDto model)
     {
-        APIResult<UserAuthenticationProviderDto> result = new APIResult<UserAuthenticationProviderDto>();
+        APIResult<UserAuthenticationProviderMappingDto> result = new APIResult<UserAuthenticationProviderMappingDto>();
 
         int recordsCreated = 0;
 
-        var record = new UserAuthenticationProvider();
+        var record = new UserAuthenticationProviderMapping();
         Mapper.Map(model, record);
 
-        var checkDuplicateUsername = await db.UserAuthenticationProviders.FirstOrDefaultAsync(x => x.Username == model.Username && x.AuthenticationProviderId == model.AuthenticationProviderId);
+        var checkDuplicateUsername = await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username && x.AuthenticationProviderId == model.AuthenticationProviderId);
 
         if (checkDuplicateUsername != null)
         {
@@ -25,7 +25,7 @@ public partial class SecurityService
             return result;
         }
 
-        db.UserAuthenticationProviders.Add(record);
+        db.UserAuthenticationProviderMappings.Add(record);
 
         try
         {
@@ -45,23 +45,23 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<UserAuthenticationProvidersGridDto>>> UserAuthenticationProvidersGet(int userId)
+    public async Task<APIResult<List<UserAuthenticationProviderMappingsGridDto>>> UserAuthenticationProvidersGet(int userId)
     {
 
-        var result = new APIResult<List<UserAuthenticationProvidersGridDto>>();
+        var result = new APIResult<List<UserAuthenticationProviderMappingsGridDto>>();
         var authenticationProviderList = await db.AuthenticationProviders.ToListAsync();
 
 
-        var userAuthenticationProviderList = await (from uap in db.UserAuthenticationProviders
+        var userAuthenticationProviderList = await (from uap in db.UserAuthenticationProviderMappings
                                                     join ap in db.AuthenticationProviders on uap.AuthenticationProviderId equals ap.Id
                                                     where uap.UserId == userId
                                                     select new { uap.Id, uap.Username, AuthenticationProviderId = ap.Id }).ToListAsync();
 
-        List<UserAuthenticationProvidersGridDto> userAuthenticationProvidersGridDtoList = new List<UserAuthenticationProvidersGridDto>();
+        List<UserAuthenticationProviderMappingsGridDto> userAuthenticationProvidersGridDtoList = new List<UserAuthenticationProviderMappingsGridDto>();
 
         foreach (var item in authenticationProviderList)
         {
-            userAuthenticationProvidersGridDtoList.Add(new UserAuthenticationProvidersGridDto
+            userAuthenticationProvidersGridDtoList.Add(new UserAuthenticationProviderMappingsGridDto
             {
                 AuthenticationProviderId = item.Id,
                 AuthenticationProviderName = item.AuthenticationProviderName,
@@ -83,12 +83,12 @@ public partial class SecurityService
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
-        var record = await db.UserAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == model.Id);
+        var record = await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Id == model.Id);
 
         if (record != null)
             Mapper.Map(model, record);
 
-        var checkDuplicateUsername =  await db.UserAuthenticationProviders.FirstOrDefaultAsync(x => x.Username == model.Username && x.AuthenticationProviderId == record.AuthenticationProviderId);
+        var checkDuplicateUsername =  await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username && x.AuthenticationProviderId == record.AuthenticationProviderId);
 
         if (checkDuplicateUsername != null)
         {
@@ -116,7 +116,7 @@ public partial class SecurityService
     {
         APIResult<string> result = new APIResult<string>();
         int recordsDeleted = 0;
-        var record = db.UserAuthenticationProviders.Attach(new UserAuthenticationProvider { Id = id });
+        var record = db.UserAuthenticationProviderMappings.Attach(new UserAuthenticationProviderMapping { Id = id });
         record.State = EntityState.Deleted;
         try
         {

@@ -8,15 +8,15 @@ public class AutoMapperProfiles : Profile
     {
         //ActionDtos
         CreateMap<ApplicationCreateDto, Application>().ReverseMap();
-        CreateMap<AuthenticationProviderCreateDto, AuthenticationProvider>().ReverseMap();
-        CreateMap<AuthenticationProviderUpdateDto, AuthenticationProvider>().ReverseMap();
+        CreateMap<AuthenticationProviderMappingCreateDto, AuthenticationProvider>().ReverseMap();
+        CreateMap<AuthenticationProviderMappingUpdateDto, AuthenticationProvider>().ReverseMap();
         CreateMap<PermissionCreateDto, ApplicationPermission>().ReverseMap();
         CreateMap<PermissionUpdateDto, ApplicationPermission>().ReverseMap();
         CreateMap<RolePermissionChangeDto, ApplicationRolePermission>().ReverseMap();        
         CreateMap<RoleCreateDto, ApplicationRole>().ReverseMap();
         CreateMap<RoleUpdateDto, ApplicationRole>().ReverseMap();
-        CreateMap<UserAuthenticationProviderCreateDto, UserAuthenticationProvider>().ReverseMap();
-        CreateMap<UserAuthenticationProviderUpdateDto, UserAuthenticationProvider>().ReverseMap();
+        CreateMap<UserAuthenticationProviderCreateDto, UserAuthenticationProviderMapping>().ReverseMap();
+        CreateMap<UserAuthenticationProviderUpdateDto, UserAuthenticationProviderMapping>().ReverseMap();
         CreateMap<UserPermissionChangeDto, UserPermission>().ReverseMap();
         CreateMap<UserCreateDto, User>().ReverseMap();
         CreateMap<UserCreateDto, UserRegisterDto>().ReverseMap();
@@ -35,7 +35,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<RolePermissionGridDto, ApplicationPermission>().ReverseMap();
         CreateMap<RoleDto, ApplicationRole>().ReverseMap();
         CreateMap<RolePermissionDto, ApplicationRolePermission>().ReverseMap();
-        CreateMap<UserAuthenticationProviderDto, UserAuthenticationProvider>().ReverseMap();
+        CreateMap<UserAuthenticationProviderMappingDto, UserAuthenticationProviderMapping>().ReverseMap();
         CreateMap<UserDto, User>().ReverseMap();        
         CreateMap<UserLogDto, UserLog>().ReverseMap();
         CreateMap<UserPasswordDto, UserPassword>().ReverseMap();

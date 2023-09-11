@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
 
-public partial class UserAuthenticationProvidersGridDto
+public partial class UserAuthenticationProviderMappingsGridDto
 {
     public int Id { get; set; }
 
