@@ -29,6 +29,7 @@ else
                               For="@(()=>model.AppApiKey)">
                 </MudTextField>
 
+                <br />
                 <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => GenerateNewAPIKey(model)" Class="mb-2">Generate New API Key</MudButton>
 
             </MudCardContent>
@@ -39,10 +40,12 @@ else
 
     </EditForm>
 
+    <br />
+
     <MudExpansionPanels>
 
-        <MudExpansionPanel Text="User Roles">
-            <ApplicationRoles ApplicationId="model.Id" UserRoleChanged="RefreshUserPermissions" />
+        <MudExpansionPanel Text="Application Roles">
+            <ApplicationRoles ApplicationId="model.Id" />
         </MudExpansionPanel>
 
     </MudExpansionPanels>

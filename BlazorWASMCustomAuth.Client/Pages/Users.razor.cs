@@ -1,6 +1,7 @@
-﻿using BlazorWASMCustomAuth.Client.Services.Requests;
+﻿using BlazorWASMCustomAuth.Client.Services;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
+using BlazorWASMCustomAuth.Security.Shared.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
@@ -44,13 +45,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private async Task LoadData(int pageNumber, int pageSize, TableState state)
         {
-            string[] orderings = null;
-            if (!string.IsNullOrEmpty(state.SortLabel))
-            {
-                orderings = state.SortDirection != SortDirection.None ? new[] { $"{state.SortLabel} {state.SortDirection}" } : new[] { $"{state.SortLabel}" };
-            }
-
-            var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = orderings };
+            var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString() };
             var response = await securityService.UsersGetAsync(request);
             if (!response.HasError)
             {

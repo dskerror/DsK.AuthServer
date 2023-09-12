@@ -3,13 +3,15 @@ using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
+using Azure.Core;
+using BlazorWASMCustomAuth.Security.Shared.Requests;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<RoleDto>> RoleCreate(RoleCreateDto model)
+    public async Task<APIResult<ApplicationRoleDto>> RoleCreate(RoleCreateDto model)
     {
-        APIResult<RoleDto> result = new APIResult<RoleDto>();
+        APIResult<ApplicationRoleDto> result = new APIResult<ApplicationRoleDto>();
         int recordsCreated = 0;
 
         var record = new ApplicationRole();
@@ -35,54 +37,54 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<RoleDto>>> RolesGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
+    public async Task<APIResult<List<ApplicationRoleDto>>> ApplicationRolesGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
     {
-        var result = new APIResult<List<RoleDto>>();
+        var result = new APIResult<List<ApplicationRoleDto>>();
 
         string ordering = "Id";
-        if (!string.IsNullOrWhiteSpace(orderBy))
+        if (!string.IsNullOrWhiteSpace(Orderby))
         {
-            string[] OrderBy = orderBy.Split(',');
+            string[] OrderBy = Orderby.Split(',');
             ordering = string.Join(",", OrderBy);
         }
-        result.Paging.CurrentPage = pageNumber;
-        pageNumber = pageNumber == 0 ? 1 : pageNumber;
-        pageSize = pageSize == 0 ? 10 : pageSize;
+        result.Paging.CurrentPage = PageNumber;
+        PageNumber = PageNumber == 0 ? 1 : PageNumber;
+        PageSize = PageSize == 0 ? 10 : PageSize;
         int count = 0;
         List<ApplicationRole> items;
-        if (!string.IsNullOrWhiteSpace(searchString))
+        if (!string.IsNullOrWhiteSpace(SearchString))
         {
             count = await db.ApplicationRoles
-                .Where(m => m.RoleName.Contains(searchString) || m.RoleDescription.Contains(searchString))
+                .Where(m => m.RoleName.Contains(SearchString) || m.RoleDescription.Contains(SearchString))
                 .CountAsync();
 
             items = await db.ApplicationRoles.OrderBy(ordering)
-                .Where(m => m.RoleName.Contains(searchString) || m.RoleDescription.Contains(searchString))
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Where(m => m.RoleName.Contains(SearchString) || m.RoleDescription.Contains(SearchString))
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
                 .ToListAsync();
         }
-        else if (id != 0)
+        else if (Id != 0)
         {
             count = await db.ApplicationRoles
-                .Where(u => u.Id == id)
+                .Where(u => u.Id == Id)
                 .CountAsync();
 
             items = await db.ApplicationRoles.OrderBy(ordering)
-                .Where(u => u.Id == id)
+                .Where(u => u.Id == Id)
                 .ToListAsync();
         }
         else
         {
-            count = await db.ApplicationRoles.CountAsync();
+            count = await db.ApplicationRoles.Where(u => u.ApplicationId == ApplicationId).CountAsync();
 
-            items = await db.ApplicationRoles.OrderBy(ordering)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+            items = await db.ApplicationRoles.Where(u => u.ApplicationId == ApplicationId).OrderBy(ordering)
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
                 .ToListAsync();
         }
         result.Paging.TotalItems = count;
-        result.Result = Mapper.Map<List<ApplicationRole>, List<RoleDto>>(items);
+        result.Result = Mapper.Map<List<ApplicationRole>, List<ApplicationRoleDto>>(items);
         return result;
     }
     public async Task<APIResult<string>> RoleUpdate(RoleUpdateDto model)

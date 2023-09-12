@@ -1,17 +1,19 @@
 ﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
+using BlazorWASMCustomAuth.Security.Shared.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class ApplicationRolesController : ControllerBase
     {
         private readonly SecurityService SecurityService;
-        public RolesController(SecurityService securityService)
+        public ApplicationRolesController(SecurityService securityService)
         {
             SecurityService = securityService;
         }
@@ -26,9 +28,9 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpGet]
         [Authorize(Roles = $"{Access.Admin}, {Access.Roles.View}")]
-        public async Task<IActionResult> RolesGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
-        {
-            var result = await SecurityService.RolesGet(id, pageNumber, pageSize, searchString, orderBy);
+        public async Task<IActionResult> RolesGet(int ApplicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        {            
+            var result = await SecurityService.ApplicationRolesGet(ApplicationId, id, pageNumber, pageSize, searchString, orderBy);
             return Ok(result);
         }
 

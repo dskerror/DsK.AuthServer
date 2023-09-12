@@ -11,7 +11,7 @@ public partial class UserRoleDto
 
     public int RoleId { get; set; }
 
-    public virtual RoleDto Role { get; set; } = null!;
+    public virtual ApplicationRoleDto Role { get; set; } = null!;
 
     public virtual UserDto User { get; set; } = null!;
 }

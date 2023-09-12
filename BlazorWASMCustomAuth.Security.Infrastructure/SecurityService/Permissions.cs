@@ -35,18 +35,18 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public async Task<APIResult<List<PermissionDto>>> PermissionsGet (int id = 0)
+        public async Task<APIResult<List<ApplicationPermissionDto>>> PermissionsGet (int id = 0)
         {
-            APIResult<List<PermissionDto>> result = new APIResult<List<PermissionDto>>();
+            APIResult<List<ApplicationPermissionDto>> result = new APIResult<List<ApplicationPermissionDto>>();
             if (id == 0)
             {
                 var items = await db.ApplicationPermissions.ToListAsync();
-                result.Result = Mapper.Map<List<ApplicationPermission>, List<PermissionDto>>(items);
+                result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
             }
             else
             {
                 var items = await db.ApplicationPermissions.Where(x => x.Id == id).ToListAsync();
-                result.Result = Mapper.Map<List<ApplicationPermission>, List<PermissionDto>>(items);
+                result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
             }
 
             return result;

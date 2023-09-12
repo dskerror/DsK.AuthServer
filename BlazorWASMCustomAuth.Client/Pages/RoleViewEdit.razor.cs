@@ -9,7 +9,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
     public partial class RoleViewEdit
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        public RoleDto role { get; set; }
+        public ApplicationRoleDto role { get; set; }
         public List<RolePermissionGridDto> rolePermissions { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loadedPermissionData;

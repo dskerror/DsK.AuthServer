@@ -2,8 +2,8 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using BlazorWASMCustomAuth.Client.Services.Requests;
 using Newtonsoft.Json;
+using BlazorWASMCustomAuth.Security.Shared.Requests;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 
@@ -33,7 +33,7 @@ public partial class SecurityServiceClient
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.UserEndpoints.Get(request.Id, request.PageNumber, request.PageSize, request.SearchString, request.Orderby));
-        
+
         if (!response.IsSuccessStatusCode)        
             return null;
 

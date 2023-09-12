@@ -1,15 +1,13 @@
 ﻿@using BlazorWASMCustomAuth.Security.Shared;
 @using System.Security.Claims;
 
-<h2>Roles</h2>
-
 @if (!_loaded)
 {
     <h3>Loading...</h3>
     <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
 }
 
-<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<RoleDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationRoleDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
 
         @if (_AccessRolesCreate)
@@ -23,8 +21,8 @@
     </ToolBarContent>
     <HeaderContent>
 
-        <MudTh><MudTableSortLabel T="RoleDto" SortLabel="RoleName">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="RoleDto" SortLabel="RoleDescription">Description</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationRoleDto" SortLabel="RoleName">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationRoleDto" SortLabel="RoleDescription">Description</MudTableSortLabel></MudTh>
         <MudTh>Details</MudTh>
     </HeaderContent>
     <RowTemplate>

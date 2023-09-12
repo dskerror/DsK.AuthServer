@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
 
-public partial class RoleDto
+public partial class ApplicationRoleDto
 {
     public int Id { get; set; }
 
@@ -11,7 +11,7 @@ public partial class RoleDto
 
     public string RoleDescription { get; set; } = null!;
 
-    public virtual ICollection<RolePermissionDto> RolePermissions { get; } = new List<RolePermissionDto>();
+    public virtual ICollection<ApplicationRolePermissionDto> RolePermissions { get; } = new List<ApplicationRolePermissionDto>();
 
     public virtual ICollection<UserRoleDto> UserRoles { get; } = new List<UserRoleDto>();
 }

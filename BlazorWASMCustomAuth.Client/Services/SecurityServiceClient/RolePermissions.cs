@@ -2,15 +2,12 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using BlazorWASMCustomAuth.Client.Services.Requests;
 using Newtonsoft.Json;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-
-
     public async Task<APIResult<List<RolePermissionGridDto>>> RolePermissionsGetAsync(int RoleId)
     {
         await PrepareBearerToken();

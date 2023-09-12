@@ -1,9 +1,11 @@
-﻿using BlazorWASMCustomAuth.Client.Services.Requests;
+﻿using BlazorWASMCustomAuth.Client.Services;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
+using BlazorWASMCustomAuth.Security.Shared.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
+using System.Security.Policy;
 
 namespace BlazorWASMCustomAuth.Client.Components
 {
@@ -11,8 +13,8 @@ namespace BlazorWASMCustomAuth.Client.Components
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
         [Parameter] public int ApplicationId { get; set; }
-        private IEnumerable<RoleDto> _pagedData;
-        private MudTable<RoleDto> _table;
+        private IEnumerable<ApplicationRoleDto> _pagedData;
+        private MudTable<ApplicationRoleDto> _table;
         private bool _loaded;
         private int _totalItems;
         private int _currentPage;
@@ -36,24 +38,18 @@ namespace BlazorWASMCustomAuth.Client.Components
             _AccessRolesCreate = securityService.HasPermission(state.User, Access.Roles.Create);
         }
 
-        private async Task<TableData<RoleDto>> ServerReload(TableState state)
+        private async Task<TableData<ApplicationRoleDto>> ServerReload(TableState state)
         {
             await LoadData(state.Page, state.PageSize, state);
             _loaded = true;
             base.StateHasChanged();
-            return new TableData<RoleDto> { TotalItems = _totalItems, Items = _pagedData };
+            return new TableData<ApplicationRoleDto> { TotalItems = _totalItems, Items = _pagedData };
         }
 
         private async Task LoadData(int pageNumber, int pageSize, TableState state)
         {
-            string[] orderings = null;
-            if (!string.IsNullOrEmpty(state.SortLabel))
-            {
-                orderings = state.SortDirection != SortDirection.None ? new[] { $"{state.SortLabel} {state.SortDirection}" } : new[] { $"{state.SortLabel}" };
-            }
-
-            var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = orderings };
-            var response = await securityService.RolesGetAsync(request);
+            var request = new ApplicationRolePagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString(), ApplicationId = ApplicationId };
+            var response = await securityService.ApplicationRolesGetAsync(request);
             if (!response.HasError)
             {
                 _totalItems = response.Paging.TotalItems;

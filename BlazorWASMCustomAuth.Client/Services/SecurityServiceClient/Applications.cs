@@ -2,8 +2,8 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using BlazorWASMCustomAuth.Client.Services.Requests;
 using Newtonsoft.Json;
+using BlazorWASMCustomAuth.Security.Shared.Requests;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 

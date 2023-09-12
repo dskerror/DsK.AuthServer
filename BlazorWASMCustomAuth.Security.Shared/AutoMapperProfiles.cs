@@ -32,10 +32,10 @@ public class AutoMapperProfiles : Profile
         //ModelDtos
         CreateMap<ApplicationDto, Application>().ReverseMap();
         CreateMap<AuthenticationProviderDto, AuthenticationProvider>().ReverseMap();
-        CreateMap<PermissionDto, ApplicationPermission>().ReverseMap();
+        CreateMap<ApplicationPermissionDto, ApplicationPermission>().ReverseMap();
         CreateMap<RolePermissionGridDto, ApplicationPermission>().ReverseMap();
-        CreateMap<RoleDto, ApplicationRole>().ReverseMap();
-        CreateMap<RolePermissionDto, ApplicationRolePermission>().ReverseMap();
+        CreateMap<ApplicationRoleDto, ApplicationRole>().ReverseMap();
+        CreateMap<ApplicationRolePermissionDto, ApplicationRolePermission>().ReverseMap();
         CreateMap<UserAuthenticationProviderMappingDto, UserAuthenticationProviderMapping>().ReverseMap();
         CreateMap<UserDto, User>().ReverseMap();        
         CreateMap<UserLogDto, UserLog>().ReverseMap();
