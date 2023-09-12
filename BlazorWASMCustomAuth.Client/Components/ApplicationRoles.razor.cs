@@ -10,27 +10,29 @@ namespace BlazorWASMCustomAuth.Client.Components
     public partial class ApplicationRoles
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
+        [Parameter] public int ApplicationId { get; set; }
         private IEnumerable<RoleDto> _pagedData;
         private MudTable<RoleDto> _table;
         private bool _loaded;
         private int _totalItems;
         private int _currentPage;
-        private string _searchString = "";
-        private bool _AccessRolesView;
+        private string _searchString = "";        
         private bool _AccessRolesCreate;
+        private bool _AccessApplicationRolesView;
+        
 
         protected override async Task OnInitializedAsync()
         {
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessRolesView)
+            if (!_AccessApplicationRolesView)
                 _navigationManager.NavigateTo("/noaccess");
         }
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessRolesView = securityService.HasPermission(state.User, Access.Roles.View);
+            _AccessApplicationRolesView = securityService.HasPermission(state.User, Access.Roles.View);
             _AccessRolesCreate = securityService.HasPermission(state.User, Access.Roles.Create);
         }
 

@@ -38,4 +38,12 @@ else
         <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
 
     </EditForm>
+
+    <MudExpansionPanels>
+
+        <MudExpansionPanel Text="User Roles">
+            <ApplicationRoles ApplicationId="model.Id" UserRoleChanged="RefreshUserPermissions" />
+        </MudExpansionPanel>
+
+    </MudExpansionPanels>
 }
