@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace BlazorWASMCustomAuth.Security.Shared
-{
-    public class RoleCreateDto
+{ 
+    public class ApplicationRoleUpdateDto
     {
+        public int Id { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 3)]
         public string? RoleName { get; set; }

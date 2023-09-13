@@ -51,7 +51,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private async Task LoadPermissionData()
         {
-            var result = await securityService.RoleGetAsync(id);
+            var result = await securityService.ApplicationRoleGetAsync(id);
             if (result != null)
             {
                 role = result.Result;
@@ -71,7 +71,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private async Task EditRole()
         {
-            var result = await securityService.RoleEditAsync(role);
+            var result = await securityService.ApplicationRoleEditAsync(role);
             
             if (result != null)
                 if (result.HasError)

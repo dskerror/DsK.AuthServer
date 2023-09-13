@@ -9,7 +9,7 @@ using BlazorWASMCustomAuth.Security.Shared.Requests;
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<ApplicationRoleDto>> RoleCreate(RoleCreateDto model)
+    public async Task<APIResult<ApplicationRoleDto>> RoleCreate(ApplicationRoleCreateDto model)
     {
         APIResult<ApplicationRoleDto> result = new APIResult<ApplicationRoleDto>();
         int recordsCreated = 0;
@@ -87,7 +87,7 @@ public partial class SecurityService
         result.Result = Mapper.Map<List<ApplicationRole>, List<ApplicationRoleDto>>(items);
         return result;
     }
-    public async Task<APIResult<string>> RoleUpdate(RoleUpdateDto model)
+    public async Task<APIResult<string>> RoleUpdate(ApplicationRoleUpdateDto model)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;

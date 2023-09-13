@@ -9,7 +9,7 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<ApplicationRoleDto>> RoleCreateAsync(RoleCreateDto model)
+    public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleCreateAsync(ApplicationRoleCreateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationRoleEndpoints.Post, model);
@@ -19,7 +19,7 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationRoleDto>>();
         return result;
     }
-    public async Task<APIResult<ApplicationRoleDto>> RoleEditAsync(ApplicationRoleDto model)
+    public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleEditAsync(ApplicationRoleDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationRoleEndpoints.Put, model);
@@ -50,7 +50,7 @@ public partial class SecurityServiceClient
             return null;
         }
     }
-    public async Task<APIResult<ApplicationRoleDto>> RoleGetAsync(int id)
+    public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleGetAsync(int id)
     {
         var result = await ApplicationRolesGetAsync(new ApplicationRolePagedRequest() { Id = id });
         var newResult = new APIResult<ApplicationRoleDto>

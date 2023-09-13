@@ -9,7 +9,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
     public partial class RoleCreate
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private RoleCreateDto model = new RoleCreateDto();
+        private ApplicationRoleCreateDto model = new ApplicationRoleCreateDto();
         private bool _AccessRolesCreate;
 
         protected override async Task OnInitializedAsync()
@@ -28,7 +28,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private async Task Create()
         {
-            var result = await securityService.RoleCreateAsync(model);
+            var result = await securityService.ApplicationRoleCreateAsync(model);
 
             if (result != null)
                 if (result.HasError)

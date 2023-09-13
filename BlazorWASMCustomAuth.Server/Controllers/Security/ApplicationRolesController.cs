@@ -20,7 +20,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPost]
         [Authorize(Roles = $"{Access.Admin}, {Access.Roles.Create}")]
-        public async Task<IActionResult> RoleCreate(RoleCreateDto model)
+        public async Task<IActionResult> RoleCreate(ApplicationRoleCreateDto model)
         {
             var result = await SecurityService.RoleCreate(model);
             return Ok(result);
@@ -36,7 +36,7 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpPut]
         [Authorize(Roles = $"{Access.Admin}, {Access.Roles.Edit}")]
-        public async Task<IActionResult> RoleUpdate(RoleUpdateDto model)
+        public async Task<IActionResult> RoleUpdate(ApplicationRoleUpdateDto model)
         {
             var result = await SecurityService.RoleUpdate(model);
             return Ok(result);

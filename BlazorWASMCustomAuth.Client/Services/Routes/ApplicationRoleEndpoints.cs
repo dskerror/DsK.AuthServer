@@ -12,8 +12,8 @@ namespace BlazorWASMCustomAuth.Client.Services.Routes
             return url;
         }
 
-        public static string Post = "api/roles";
-        public static string Put = "api/roles";
-        public static string Delete = "api/roles";
+        public static string Post = "api/ApplicationRoles";
+        public static string Put = "api/ApplicationRoles";
+        public static string Delete = "api/ApplicationRoles";
     }
 }
