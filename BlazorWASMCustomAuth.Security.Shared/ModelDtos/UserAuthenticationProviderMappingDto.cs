@@ -16,7 +16,7 @@ public class UserAuthenticationProviderMappingDto
 
     public string Username { get; set; } = null!;
 
-    public virtual AuthenticationProviderDto AuthenticationProvider { get; set; } = null!;
+    public virtual ApplicationAuthenticationProviderDto AuthenticationProvider { get; set; } = null!;
 
     public virtual UserDto User { get; set; } = null!;
 }

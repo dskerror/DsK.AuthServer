@@ -5,11 +5,11 @@
         <Authorized>
             @if (_AccessApplications)
             {
-                <MudNavLink Href="/applications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Applications</MudNavLink>
+                <MudNavLink Href="/Applications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Applications</MudNavLink>
             }
             @if (_AccessUsersView)
             {
-                <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
+                <MudNavLink Href="/Users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
             }   
         </Authorized>
     </AuthorizeView>

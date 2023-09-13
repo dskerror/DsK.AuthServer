@@ -11,6 +11,12 @@ namespace BlazorWASMCustomAuth.Client.Pages
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
         private ApplicationCreateDto model = new ApplicationCreateDto();
         private bool _AccessApplicationCreate;
+        private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem("Applications", href: "Applications"),
+            new BreadcrumbItem("Application Create", href: null, disabled: true)
+        };
+
 
         protected override async Task OnInitializedAsync()
         {

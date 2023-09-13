@@ -75,7 +75,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private void CreateApplication()
         {
-            _navigationManager.NavigateTo("/applicationCreate");
+            _navigationManager.NavigateTo("/ApplicationCreate");
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@inject IJSRuntime JSRuntime
+@inherits LayoutComponentBase
+@using BlazorWASMCustomAuth.Client.ExceptionHandling
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -17,7 +19,7 @@
         </MudLayout>
     </NotAuthorized>
     <Authorized>
-        <MudLayout>      
+        <MudLayout>
             <MudAppBar Color="Color.Primary" Elevation="1">
                 <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Edge="Edge.Start" />
                 <MudSpacer />
@@ -31,7 +33,18 @@
             </MudDrawer>
             <MudMainContent>
                 <MudContainer MaxWidth="MaxWidth.Large" Class="my-8 pt-8">
-                    @Body
+                    <CustomErrorBoundary @ref="errorBoundary">
+                        <ChildContent>
+                            @Body
+                        </ChildContent>
+                        <ErrorContent Context="Excepcion">
+                            <div class="alert">
+                                <h3>@Excepcion.GetType()</h3>
+                                <h3>@Excepcion.Message</h3>
+                                <button class="btn btn-info" @onclick="() => GoBack()">Go back to previous page</button>
+                            </div>
+                        </ErrorContent>
+                    </CustomErrorBoundary>
                 </MudContainer>
             </MudMainContent>
         </MudLayout>
@@ -41,11 +54,35 @@
 @code {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     bool _drawerOpen = true;
+    private CustomErrorBoundary errorBoundary;
 
+    protected override void OnInitialized()
+    {
+        errorBoundary = new CustomErrorBoundary();
+    }
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
+
+    protected override void OnParametersSet()
+    {
+        errorBoundary?.Recover();
+    }
+
+    private void ErrorRecover()
+    {
+        _navigationManager.NavigateTo("/applications");
+    }
+
+    
+
+    // Go back in browser using Javascript on a Razor Page
+    private async Task GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+
     async Task Logout()
     {
         await securityService.LogoutAsync();

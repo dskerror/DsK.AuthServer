@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
 
-public partial class RolePermissionGridDto
+public partial class ApplicationRolePermissionGridDto
 {   
     public int Id { get; set; }
     public string PermissionName { get; set; }

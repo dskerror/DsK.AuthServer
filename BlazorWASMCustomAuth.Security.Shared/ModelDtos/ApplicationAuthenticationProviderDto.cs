@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
 
-public partial class AuthenticationProviderDto
+public partial class ApplicationAuthenticationProviderDto
 {
     public int Id { get; set; }
+
+    public int ApplicationId { get; set; }
 
     public string AuthenticationProviderName { get; set; } = null!;
 

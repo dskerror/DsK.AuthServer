@@ -8,7 +8,7 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<RolePermissionGridDto>>> RolePermissionsGetAsync(int RoleId)
+    public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGetAsync(int RoleId)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.RolePermissionsEndpoints.Get(RoleId));
@@ -19,7 +19,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<RolePermissionGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationRolePermissionGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -30,7 +30,7 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> RolePermissionChangeAsync(int roleId, int permissionId, bool permissionEnabled)
+    public async Task<APIResult<string>> ApplicationRolePermissionChangeAsync(int roleId, int permissionId, bool permissionEnabled)
     {
         await PrepareBearerToken();
         var model = new RolePermissionChangeDto()

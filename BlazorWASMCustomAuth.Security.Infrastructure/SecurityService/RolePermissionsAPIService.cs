@@ -52,10 +52,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
 
 
-        public async Task<APIResult<List<RolePermissionGridDto>>> RolePermissionsGet(int roleId)
+        public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> RolePermissionsGet(int roleId)
         {
 
-            APIResult<List<RolePermissionGridDto>> result = new APIResult<List<RolePermissionGridDto>>();
+            APIResult<List<ApplicationRolePermissionGridDto>> result = new APIResult<List<ApplicationRolePermissionGridDto>>();
             var permissionList = await db.ApplicationPermissions.ToListAsync();
 
 
@@ -65,7 +65,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                                             where r.Id == roleId
                                             select p.PermissionName).ToListAsync();
 
-            var permissionGrid = Mapper.Map<List<ApplicationPermission>, List<RolePermissionGridDto>>(permissionList);
+            var permissionGrid = Mapper.Map<List<ApplicationPermission>, List<ApplicationRolePermissionGridDto>>(permissionList);
 
             foreach (var permission in RolePermissionList)
             {

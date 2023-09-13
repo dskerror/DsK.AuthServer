@@ -62,7 +62,7 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
         }
 
         [DisplayName("User Authentication Providers")]
-        [Description("User Authentication Providers Permissions")]
+        [Description("AppliUsercation Authentication Providers Permissions")]
         public static class UserAuthenticationProviders
         {
             public const string View = "UserAuthenticationProviders.View";

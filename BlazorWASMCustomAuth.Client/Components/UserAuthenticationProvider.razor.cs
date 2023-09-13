@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
-using static BlazorWASMCustomAuth.Security.Shared.Constants.Access;
 using BlazorWASMCustomAuth.Security.Shared;
 using MudBlazor;
+using BlazorWASMCustomAuth.Security.Shared.Requests;
+using System.Drawing.Printing;
 
 namespace BlazorWASMCustomAuth.Client.Components
 {
@@ -39,7 +40,7 @@ namespace BlazorWASMCustomAuth.Client.Components
         }
 
         private async Task LoadUserAuthenticationProviders()
-        {
+        {   
             var result = await securityService.UserAuthenticationProvidersGetAsync(UserId);
             if (result != null)
             {

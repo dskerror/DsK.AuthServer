@@ -29,7 +29,7 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationRoleDto>>();
         return result;
     }
-    public async Task<APIResult<List<ApplicationRoleDto>>> ApplicationRolesGetAsync(ApplicationRolePagedRequest request)
+    public async Task<APIResult<List<ApplicationRoleDto>>> ApplicationRolesGetAsync(ApplicationPagedRequest request)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.ApplicationRoleEndpoints.Get(request));
@@ -52,7 +52,7 @@ public partial class SecurityServiceClient
     }
     public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleGetAsync(int id)
     {
-        var result = await ApplicationRolesGetAsync(new ApplicationRolePagedRequest() { Id = id });
+        var result = await ApplicationRolesGetAsync(new ApplicationPagedRequest() { Id = id });
         var newResult = new APIResult<ApplicationRoleDto>
         {
             Exception = result.Exception,

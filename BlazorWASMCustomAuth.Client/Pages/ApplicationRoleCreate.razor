@@ -1,6 +1,6 @@
-﻿@page "/rolecreate"
+﻿@page "/applicationrolecreate/{ApplicationId:int}"
 
-<h3><NavLink href="/roles">Roles</NavLink> > Create Role</h3>
+<MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
 
 <EditForm Model="model" OnValidSubmit="Create">
     <DataAnnotationsValidator />

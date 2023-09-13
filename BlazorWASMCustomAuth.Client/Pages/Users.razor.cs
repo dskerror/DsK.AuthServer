@@ -72,7 +72,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private void CreateUser()
         {
-            _navigationManager.NavigateTo("/admin/usercreate");
+            _navigationManager.NavigateTo("/usercreate");
         }
     }
 }

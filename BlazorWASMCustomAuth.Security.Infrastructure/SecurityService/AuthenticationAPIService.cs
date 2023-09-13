@@ -193,7 +193,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             bool IsUserAuthenticated = false;
 
-            var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.AuthenticationProviderId);
+            var applicationAuthenticationProvider = await ApplicationApplicationAuthenticationProviderGet(model.AuthenticationProviderId);
 
             switch (applicationAuthenticationProvider.AuthenticationProvider.AuthenticationProviderType)
             {

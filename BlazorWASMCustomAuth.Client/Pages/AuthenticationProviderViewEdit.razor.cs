@@ -10,7 +10,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
-        public AuthenticationProviderDto model { get; set; }
+        public ApplicationAuthenticationProviderDto model { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loaded;        
         private bool _AccessAuthenticationProviderView;
@@ -40,7 +40,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private async Task LoadData()
         {
-            var result = await securityService.AuthenticationProviderGetAsync(id);
+            var result = await securityService.ApplicationAuthenticationProviderGetAsync(id);
             if (result != null)
             {
                 model = result.Result;
@@ -50,7 +50,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private async Task Edit()
         {
-            var result = await securityService.AuthenticationProviderEditAsync(model);
+            var result = await securityService.ApplicationAuthenticationProviderEditAsync(model);
           
             if (result != null)
                 if (result.HasError)

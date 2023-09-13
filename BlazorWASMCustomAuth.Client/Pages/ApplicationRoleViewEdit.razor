@@ -1,0 +1,51 @@
+﻿@page "/applicationroleviewedit/{id:int}"
+
+<MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
+
+@if (!_loadedPermissionData)
+{
+    <h3>Loading...</h3>
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+}
+else
+{
+    <EditForm Model="applicationRole" OnValidSubmit="EditApplicationRole">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <MudCard Class="mb-2">
+            <MudCardContent>
+                <MudTextField Disabled="!_AccessApplicationRolesEdit" ReadOnly="true" Label="RoleName" @bind-Value="applicationRole.RoleName"
+                          For="@(()=>applicationRole.RoleName)">
+                </MudTextField>
+                <MudTextField Disabled="!_AccessApplicationRolesEdit" Label="RoleDescription" @bind-Value="applicationRole.RoleDescription"
+                          For="@(()=>applicationRole.RoleDescription)">
+                </MudTextField>
+            </MudCardContent>
+        </MudCard>
+
+        <MudButton Disabled="!_AccessApplicationRolesEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        <MudButton Disabled="!_AccessApplicationRolesEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
+
+    </EditForm>
+
+    @if (_AccessApplicationRolesPermissionsView)
+    {
+        <MudTable Items="@applicationRolePermissions" Hover="true">
+            <HeaderContent>
+                <MudTh>On/Off</MudTh>
+                <MudTh>Permission Name</MudTh>
+                <MudTh>Permission Description</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="PermissionSwitch">
+                    <MudSwitch Disabled="!_AccessApplicationRolesPermissionsEdit" Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
+                </MudTd>
+                <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
+                <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+            </PagerContent>
+        </MudTable>
+    }
+}

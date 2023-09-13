@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using BlazorWASMCustomAuth.Security.Shared.Requests;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BlazorWASMCustomAuth.Client.Services.Routes
 {
@@ -6,7 +7,7 @@ namespace BlazorWASMCustomAuth.Client.Services.Routes
     {
         public static string Get(int userId)
         {
-            var url = $"api/UserAuthenticationProviders?UserId={userId}";
+            var url = ""//$"api/UserAuthenticationProviders?ApplicationId={request.ApplicationId}?Id={request.Id}&pageNumber={request.PageNumber}&pageSize={request.PageSize}&searchString={request.SearchString}&orderBy={request.Orderby}";
             return url;
         }
 
@@ -17,6 +18,5 @@ namespace BlazorWASMCustomAuth.Client.Services.Routes
             var url = $"api/UserAuthenticationProviders?Id={id}";
             return url;
         }
-
     }
 }

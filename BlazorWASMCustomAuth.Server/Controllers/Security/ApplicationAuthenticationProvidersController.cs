@@ -8,33 +8,33 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationProvidersController : ControllerBase
+    public class ApplicationAuthenticationProvidersController : ControllerBase
     {
         private readonly SecurityService SecurityService;
-        public AuthenticationProvidersController(SecurityService securityService)
+        public ApplicationAuthenticationProvidersController(SecurityService securityService)
         {
             SecurityService = securityService;
         }
 
         [HttpPost]        
         [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Create}")]
-        public async Task<IActionResult> AuthenticationProvidersCreate(AuthenticationProviderMappingCreateDto model)
+        public async Task<IActionResult> ApplicationAuthenticationProvidersCreate(AuthenticationProviderMappingCreateDto model)
         {
-            var result = await SecurityService.AuthenticationProvidersCreate(model);
+            var result = await SecurityService.ApplicationAuthenticationProvidersCreate(model);
             return Ok(result);
         }
 
         [HttpGet]
         [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.View}")]
-        public async Task<IActionResult> AuthenticationProvidersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+        public async Task<IActionResult> ApplicationAuthenticationProvidersGet(int applicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
         {
-            var result = await SecurityService.AuthenticationProvidersGet(id, pageNumber, pageSize, searchString, orderBy);
+            var result = await SecurityService.ApplicationAuthenticationProvidersGet(applicationId, id, pageNumber, pageSize, searchString, orderBy);
             return Ok(result);
         }
 
         [HttpPut]
         [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Edit}")]
-        public async Task<IActionResult> AuthenticationProvidersUpdate(AuthenticationProviderMappingUpdateDto model)
+        public async Task<IActionResult> ApplicationAuthenticationProvidersUpdate(AuthenticationProviderMappingUpdateDto model)
         {
             var result = await SecurityService.AuthenticationProvidersUpdate(model);
             return Ok(result);
@@ -42,9 +42,9 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
 
         [HttpDelete]
         [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Delete}")]
-        public async Task<IActionResult> AuthenticationProvidersDelete(int id)
+        public async Task<IActionResult> ApplicationAuthenticationProvidersDelete(int id)
         {
-            var result = await SecurityService.AuthenticationProvidersDelete(id);
+            var result = await SecurityService.ApplicationAuthenticationProvidersDelete(id);
             return Ok(result);
         }
     }

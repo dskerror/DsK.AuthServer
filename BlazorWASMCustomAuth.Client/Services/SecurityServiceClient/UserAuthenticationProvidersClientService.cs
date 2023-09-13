@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Newtonsoft.Json;
+using BlazorWASMCustomAuth.Security.Shared.Requests;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 
@@ -28,18 +29,20 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
         return result;
     }
-    public async Task<APIResult<List<UserAuthenticationProviderMappingsGridDto>>> UserAuthenticationProvidersGetAsync(int UserId)
+
+    public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> UserAuthenticationProvidersGetAsync(int userId)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.GetAsync(Routes.UserAuthenticationProvidersEndpoints.Get(UserId));
+        var url = Routes.UserAuthenticationProvidersEndpoints.Get(userId);
+        var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
-            return null;        
+            return null;
 
         var responseAsString = await response.Content.ReadAsStringAsync();
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserAuthenticationProviderMappingsGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationAuthenticationProviderDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -49,6 +52,27 @@ public partial class SecurityServiceClient
             return null;
         }
     }
+    //public async Task<APIResult<List<ApplicationUserAuthenticationProviderMappingsGridDto>>> ApplicationAuthenticationProvidersGetAsync(int UserId)
+    //{
+    //    await PrepareBearerToken();
+    //    var response = await _httpClient.GetAsync(Routes.ApplicationAuthenticationProvidersEndpoints.Get(UserId));
+    //    if (!response.IsSuccessStatusCode)
+    //        return null;        
+
+    //    var responseAsString = await response.Content.ReadAsStringAsync();
+
+    //    try
+    //    {
+    //        var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationUserAuthenticationProviderMappingsGridDto>>>(responseAsString);
+    //        return responseObject;
+    //    }
+    //    catch (Exception ex)
+    //    {
+
+    //        Console.Write(ex.Message);
+    //        return null;
+    //    }
+    //}
 
     public async Task<APIResult<string>> UserAuthenticationProviderDeleteAsync(int id)
     {

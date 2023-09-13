@@ -6,47 +6,47 @@ using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 namespace BlazorWASMCustomAuth.Client.Pages
 {
-    public partial class RoleViewEdit
+    public partial class ApplicationRoleViewEdit
     {
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        public ApplicationRoleDto role { get; set; }
-        public List<RolePermissionGridDto> rolePermissions { get; set; }
+        public ApplicationRoleDto applicationRole { get; set; }
+        public List<ApplicationRolePermissionGridDto> applicationRolePermissions { get; set; }
         [Parameter] public int id { get; set; }
         private bool _loadedPermissionData;
-        private bool _loadedRolePermissionData;
-        private bool _AccessRolesView;
-        private bool _AccessRolesEdit;
-        private bool _AccessRolesPermissionsView;
-        private bool _AccessRolesPermissionsEdit;
+        private bool _loadedApplicationRolePermissionData;
+        private bool _AccessApplicationRolesView;
+        private bool _AccessApplicationRolesEdit;
+        private bool _AccessApplicationRolesPermissionsView;
+        private bool _AccessApplicationRolesPermissionsEdit;
 
 
         private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Roles", href: "roles"),
-            new BreadcrumbItem("Role View/Edit", href: null, disabled: true)
+            new BreadcrumbItem("Application Roles", href: "applicationroles"),
+            new BreadcrumbItem("Application Role View/Edit", href: null, disabled: true)
         };
         protected override async Task OnInitializedAsync()
         {
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessRolesView)
+            if (!_AccessApplicationRolesView)
             {
                 _navigationManager.NavigateTo("/noaccess");
             }
             else
             {
                 await LoadPermissionData();
-                await LoadRolePermissionData();
+                await LoadApplicationRolePermissionData();
             }
         }
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessRolesView = securityService.HasPermission(state.User, Access.Roles.View);
-            _AccessRolesEdit = securityService.HasPermission(state.User, Access.Roles.Edit);
-            _AccessRolesPermissionsView = securityService.HasPermission(state.User, Access.RolesPermissions.View);
-            _AccessRolesPermissionsEdit = securityService.HasPermission(state.User, Access.RolesPermissions.Edit);
+            _AccessApplicationRolesView = securityService.HasPermission(state.User, Access.Roles.View);
+            _AccessApplicationRolesEdit = securityService.HasPermission(state.User, Access.Roles.Edit);
+            _AccessApplicationRolesPermissionsView = securityService.HasPermission(state.User, Access.RolesPermissions.View);
+            _AccessApplicationRolesPermissionsEdit = securityService.HasPermission(state.User, Access.RolesPermissions.Edit);
         }
 
         private async Task LoadPermissionData()
@@ -54,24 +54,24 @@ namespace BlazorWASMCustomAuth.Client.Pages
             var result = await securityService.ApplicationRoleGetAsync(id);
             if (result != null)
             {
-                role = result.Result;
+                applicationRole = result.Result;
                 _loadedPermissionData = true;
             }
         }
 
-        private async Task LoadRolePermissionData()
+        private async Task LoadApplicationRolePermissionData()
         {
-            var result = await securityService.RolePermissionsGetAsync(id);
+            var result = await securityService.ApplicationRolePermissionsGetAsync(id);
             if (result != null)
             {
-                rolePermissions = result.Result;
-                _loadedRolePermissionData = true;
+                applicationRolePermissions = result.Result;
+                _loadedApplicationRolePermissionData = true;
             }
         }
 
-        private async Task EditRole()
+        private async Task EditApplicationRole()
         {
-            var result = await securityService.ApplicationRoleEditAsync(role);
+            var result = await securityService.ApplicationRoleEditAsync(applicationRole);
             
             if (result != null)
                 if (result.HasError)
@@ -86,14 +86,14 @@ namespace BlazorWASMCustomAuth.Client.Pages
         {
             Snackbar.Add("Edit canceled", Severity.Warning);
             await LoadPermissionData();
-            await LoadRolePermissionData();
+            await LoadApplicationRolePermissionData();
         }
 
         private async Task ToggleSwitch(ChangeEventArgs e, int permissionId)
         {
             //Console.WriteLine($"RoleId : {id}, PermissionId: {permissionId}, Enabled: {e.Value}");
 
-            var result = await securityService.RolePermissionChangeAsync(id, permissionId, (bool)e.Value);
+            var result = await securityService.ApplicationRolePermissionChangeAsync(id, permissionId, (bool)e.Value);
             if (result != null)
             {
                 if (!result.HasError)

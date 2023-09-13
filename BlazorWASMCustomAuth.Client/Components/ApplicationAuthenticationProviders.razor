@@ -1,8 +1,5 @@
-﻿@page "/AuthenticationProviders"
-@using BlazorWASMCustomAuth.Security.Shared;
+﻿@using BlazorWASMCustomAuth.Security.Shared;
 @using System.Security.Claims;
-
-<h2>Authentication Providers</h2>
 
 @if (!_loaded)
 {
@@ -10,9 +7,9 @@
     <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
 }
 
-<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<AuthenticationProviderDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationAuthenticationProviderDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
-        @if (_AccessAuthenticationProviderCreate)
+        @if (_AccessApplicationAuthenticationProviderCreate)
         {
             <div class="justify-center mud-text-align-center">
                 <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateAuthenticationProvider())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Authentication Provider</MudButton>
@@ -22,10 +19,10 @@
         <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="AuthenticationProviderName">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="AuthenticationProviderType">Type</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="Domain">Domain</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="AuthenticationProviderDto" SortLabel="Username">Username</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="AuthenticationProviderName">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="AuthenticationProviderType">Type</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Domain">Domain</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Username">Username</MudTableSortLabel></MudTh>
         <MudTh>Details</MudTh>
     </HeaderContent>
     <RowTemplate>

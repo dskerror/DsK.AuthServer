@@ -18,10 +18,10 @@ namespace BlazorWASMCustomAuth.Client.Components
         private bool _loaded;
         private int _totalItems;
         private int _currentPage;
-        private string _searchString = "";        
+        private string _searchString = "";
         private bool _AccessRolesCreate;
         private bool _AccessApplicationRolesView;
-        
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -48,7 +48,7 @@ namespace BlazorWASMCustomAuth.Client.Components
 
         private async Task LoadData(int pageNumber, int pageSize, TableState state)
         {
-            var request = new ApplicationRolePagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString(), ApplicationId = ApplicationId };
+            var request = new ApplicationPagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString(), ApplicationId = ApplicationId };
             var response = await securityService.ApplicationRolesGetAsync(request);
             if (!response.HasError)
             {
@@ -70,12 +70,12 @@ namespace BlazorWASMCustomAuth.Client.Components
 
         private void ViewRole(int id)
         {
-            _navigationManager.NavigateTo($"/roleviewedit/{id}");
+            _navigationManager.NavigateTo($"/applicationroleviewedit/{id}");
         }
 
         private void CreateRole()
         {
-            _navigationManager.NavigateTo("/rolecreate");
+            _navigationManager.NavigateTo($"/applicationrolecreate/{ApplicationId}");
         }
     }
 }

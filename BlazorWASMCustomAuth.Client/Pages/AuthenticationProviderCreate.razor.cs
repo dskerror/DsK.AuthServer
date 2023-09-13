@@ -28,7 +28,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private async Task Create()
         {
-            var result = await securityService.AuthenticationProviderCreateAsync(model);
+            var result = await securityService.ApplicationAuthenticationProviderCreateAsync(model);
 
             if (result != null)
                 if (result.HasError)
