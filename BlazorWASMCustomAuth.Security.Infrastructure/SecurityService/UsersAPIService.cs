@@ -36,7 +36,7 @@ public partial class SecurityService
 
         var userAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
         {
-            ApplicationAuthenticationProviderId = 1,
+            
             UserId = record.Id,
             Username= record.Email,
         };
@@ -170,7 +170,7 @@ public partial class SecurityService
     {
         var user = await (from u in db.Users
                    join uap in db.UserAuthenticationProviderMappings on u.Id equals uap.UserId
-                   where uap.Username == username && uap.ApplicationAuthenticationProviderId == AuthenticationProviderId
+                   where uap.Username == username 
                    select u).FirstOrDefaultAsync();
         return user;
     }

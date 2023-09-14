@@ -14,9 +14,8 @@ internal class Program
         db.Database.Migrate(); //CREATES DATABASE IF IT DOESNT EXISTS
         db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
 
-        Application newApplication = CreateApplication(db);
-        AuthenticationProvider localAuthProvider = CreateLocalAuthProvider(db);
-        ApplicationAuthenticationProvider applicationAuthenticationProvider = CreateApplicationAuthenticationUserProvider(db, newApplication, localAuthProvider);
+        Application newApplication = CreateApplication(db);        
+        ApplicationAuthenticationProvider applicationAuthenticationProvider = CreateApplicationAuthenticationUserProvider(db, newApplication);
         ApplicationPermission adminPermission = CreateAdminPermission(db);
         ApplicationRole adminRole = CreateAdminRole(db);
         CreateUserRole(db);
@@ -37,13 +36,14 @@ internal class Program
 
     }
 
-    private static ApplicationAuthenticationProvider CreateApplicationAuthenticationUserProvider(SecurityTablesTestContext db, Application newApplication, AuthenticationProvider localAuthProvider)
+    private static ApplicationAuthenticationProvider CreateApplicationAuthenticationUserProvider(SecurityTablesTestContext db, Application newApplication)
     {
         ApplicationAuthenticationProvider applicationAuthenticationProvider =
                 new ApplicationAuthenticationProvider()
                 {
                     ApplicationId = newApplication.Id,
-                    AuthenticationProviderId = localAuthProvider.Id,
+                    Name="Local",
+                    AuthenticationProviderType = "Local",
                     Domain = "",
                     Username = "",
                     Password = ""
@@ -82,17 +82,7 @@ internal class Program
         db.SaveChanges();
         return newApplication;
     }
-    private static AuthenticationProvider CreateLocalAuthProvider(SecurityTablesTestContext db)
-    {
-        var authProvider = new AuthenticationProvider()
-        {
-            AuthenticationProviderName = "Local",
-            AuthenticationProviderType = "Local"
-        };
-        db.AuthenticationProviders.Add(authProvider);
-        db.SaveChanges();
-        return authProvider;
-    }
+
     private static void AddAdminRoleToAdminUser(SecurityTablesTestContext db, ApplicationRole adminRole, User adminUser)
     {
         var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
@@ -102,8 +92,7 @@ internal class Program
     private static void AddAuthenticationProviderMappingToAdminUser(SecurityTablesTestContext db, ApplicationAuthenticationProvider localAuthProvider, User adminUser)
     {
         var adminAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
-        {
-            ApplicationAuthenticationProvider = localAuthProvider,
+        {   
             User = adminUser,
             Username =
             adminUser.Email

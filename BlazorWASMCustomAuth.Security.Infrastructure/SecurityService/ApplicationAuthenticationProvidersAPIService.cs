@@ -8,15 +8,15 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProvidersCreate(AuthenticationProviderMappingCreateDto model)
+        public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProvidersCreate(ApplicationAuthenticationProviderCreateDto model)
         {
             APIResult<ApplicationAuthenticationProviderDto> result = new APIResult<ApplicationAuthenticationProviderDto>();
             int recordsCreated = 0;
 
-            var record = new AuthenticationProvider();
+            var record = new ApplicationAuthenticationProvider();
             Mapper.Map(model, record);
 
-            db.AuthenticationProviders.Add(record);
+            db.ApplicationAuthenticationProviders.Add(record);
 
             try
             {
@@ -36,7 +36,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
+        public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGet(int applicationid, int id, int pageNumber, int pageSize, string searchString, string orderBy)
         {
             var result = new APIResult<List<ApplicationAuthenticationProviderDto>>();
 
@@ -50,56 +50,63 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             pageNumber = pageNumber == 0 ? 1 : pageNumber;
             pageSize = pageSize == 0 ? 10 : pageSize;
             int count = 0;
-            List<AuthenticationProvider> items;
+            List<ApplicationAuthenticationProvider> items;
+            count = await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationid).CountAsync();
+
+            items = await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationid).OrderBy(ordering)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
             if (!string.IsNullOrWhiteSpace(searchString))
             {
-                count = await db.AuthenticationProviders
-                    .Where(m => m.AuthenticationProviderName.Contains(searchString) || m.AuthenticationProviderType.Contains(searchString))
-                    .CountAsync();
+                //count = await db.AuthenticationProviders
+                //    .Where(m => m.AuthenticationProviderName.Contains(searchString) || m.AuthenticationProviderType.Contains(searchString))
+                //    .CountAsync();
 
-                items = await db.AuthenticationProviders.OrderBy(ordering)
-                    .Where(m => m.AuthenticationProviderName.Contains(searchString) || m.AuthenticationProviderType.Contains(searchString))
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                //items = await db.AuthenticationProviders.OrderBy(ordering)
+                //    .Where(m => m.AuthenticationProviderName.Contains(searchString) || m.AuthenticationProviderType.Contains(searchString))
+                //    .Skip((pageNumber - 1) * pageSize)
+                //    .Take(pageSize)
+                //    .ToListAsync();
             }
             else if (id != 0)
             {
-                count = await db.AuthenticationProviders
-                    .Where(u => u.Id == id)
-                    .CountAsync();
+                //count = await db.AuthenticationProviders
+                //    .Where(u => u.Id == id)
+                //    .CountAsync();
 
-                items = await db.AuthenticationProviders.OrderBy(ordering)
-                    .Where(u => u.Id == id)
-                    .ToListAsync();
+                //items = await db.AuthenticationProviders.OrderBy(ordering)
+                //    .Where(u => u.Id == id)
+                //    .ToListAsync();
             }
             else
             {
-                count = await db.AuthenticationProviders.CountAsync();
+                //count = await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationid).CountAsync();
 
-                items = await db.AuthenticationProviders.OrderBy(ordering)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                //items = await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationid).OrderBy(ordering)
+                //    .Skip((pageNumber - 1) * pageSize)
+                //    .Take(pageSize)
+                //    .ToListAsync();
             }
             result.Paging.TotalItems = count;
-            result.Result = Mapper.Map<List<AuthenticationProvider>, List<ApplicationAuthenticationProviderDto>>(items);
+            result.Result = Mapper.Map<List<ApplicationAuthenticationProvider>, List<ApplicationAuthenticationProviderDto>>(items);
             return result;
         }
 
         public async Task<ApplicationAuthenticationProvider> ApplicationApplicationAuthenticationProviderGet(int id)
         {
-            var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == id).Include(x => x.AuthenticationProvider).FirstOrDefaultAsync();
+            var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == id).FirstOrDefaultAsync();
             return applicationAuthenticationProvider;
         }
-        public async Task<APIResult<string>> AuthenticationProvidersUpdate(AuthenticationProviderMappingUpdateDto model)
+        public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderUpdateDto model)
         {
             APIResult<string> result = new APIResult<string>();
 
             int recordsUpdated = 0;
-            var record = await db.AuthenticationProviders.FirstOrDefaultAsync(x => x.Id == model.Id);
+            var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == model.Id);
 
-            if (record.AuthenticationProviderName == "Local")
+            if (record.AuthenticationProviderType == "Local")
             {
                 result.HasError = true;
                 result.Message = "Local Authentication Provider can't be updated";
@@ -128,11 +135,11 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
 
-            var record = await db.AuthenticationProviders.FirstOrDefaultAsync(x => x.Id == id);
+            var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == id);
 
             try
             {
-                if (record.AuthenticationProviderName == "Local")
+                if (record.AuthenticationProviderType == "Local")
                 {
                     result.HasError = true;
                     result.Message = "Local Authentication Provider can't be deleted";

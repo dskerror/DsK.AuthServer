@@ -9,7 +9,7 @@ public partial class ApplicationAuthenticationProviderDto
 
     public int ApplicationId { get; set; }
 
-    public string AuthenticationProviderName { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
     public string? AuthenticationProviderType { get; set; }
 

@@ -7,7 +7,7 @@ namespace BlazorWASMCustomAuth.Client.Services.Routes
     {
         public static string Get(int userId)
         {
-            var url = ""//$"api/UserAuthenticationProviders?ApplicationId={request.ApplicationId}?Id={request.Id}&pageNumber={request.PageNumber}&pageSize={request.PageSize}&searchString={request.SearchString}&orderBy={request.Orderby}";
+            var url = "";//$"api/UserAuthenticationProviders?ApplicationId={request.ApplicationId}?Id={request.Id}&pageNumber={request.PageNumber}&pageSize={request.PageSize}&searchString={request.SearchString}&orderBy={request.Orderby}";
             return url;
         }
 

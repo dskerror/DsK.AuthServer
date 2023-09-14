@@ -24,6 +24,7 @@ public class LoggingMiddleware
     }
     private async Task LogRequest(HttpContext context, SecurityTablesTestContext db)
     {
+        //todo : implement applicationid in log
         var userid = context.User.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();
         int userIdParsed = 0;
         if (userid != null)
@@ -31,6 +32,7 @@ public class LoggingMiddleware
         UserLog userLog = new UserLog()
         {
             UserId = userIdParsed,
+            ApplicationId = 1,
             Method = context.Request.Method,
             Ip = context.Connection.RemoteIpAddress.ToString(),
             Path = context.Request.Path,

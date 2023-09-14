@@ -195,7 +195,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             var applicationAuthenticationProvider = await ApplicationApplicationAuthenticationProviderGet(model.AuthenticationProviderId);
 
-            switch (applicationAuthenticationProvider.AuthenticationProvider.AuthenticationProviderType)
+            switch (applicationAuthenticationProvider.AuthenticationProviderType)
             {
                 case "Active Directory":
                     IsUserAuthenticated = AuthenticateUserWithDomain(model.Email, model.Password, applicationAuthenticationProvider);

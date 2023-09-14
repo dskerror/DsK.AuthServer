@@ -16,7 +16,7 @@ public partial class SecurityService
         var record = new UserAuthenticationProviderMapping();
         Mapper.Map(model, record);
 
-        var checkDuplicateUsername = await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username && x.ApplicationAuthenticationProviderId == model.AuthenticationProviderId);
+        var checkDuplicateUsername = await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username);
 
         if (checkDuplicateUsername != null)
         {
@@ -49,29 +49,28 @@ public partial class SecurityService
     {
 
         var result = new APIResult<List<UserAuthenticationProviderMappingsGridDto>>();
-        var authenticationProviderList = await db.AuthenticationProviders.ToListAsync();
+        var authenticationProviderList = await db.ApplicationAuthenticationProviders.ToListAsync();
 
 
         var userAuthenticationProviderList = await (from uap in db.UserAuthenticationProviderMappings
-                                                    join ap in db.ApplicationAuthenticationProviders on uap.ApplicationAuthenticationProviderId equals ap.Id
+                                                    //join ap in db.ApplicationAuthenticationProviders on uap.ApplicationAuthenticationProviderId equals ap.Id
                                                     where uap.UserId == userId
-                                                    select new { uap.Id, uap.Username, AuthenticationProviderId = ap.Id }).ToListAsync();
+                                                    select new { uap.Id, uap.Username }).ToListAsync();
 
         List<UserAuthenticationProviderMappingsGridDto> userAuthenticationProvidersGridDtoList = new List<UserAuthenticationProviderMappingsGridDto>();
 
         foreach (var item in authenticationProviderList)
         {
             userAuthenticationProvidersGridDtoList.Add(new UserAuthenticationProviderMappingsGridDto
-            {
-                AuthenticationProviderId = item.Id,
-                AuthenticationProviderName = item.AuthenticationProviderName,
+            {   
+                AuthenticationProviderName = item.Name,
                 AuthenticationProviderType = item.AuthenticationProviderType
             });
         }
 
         foreach (var item in userAuthenticationProviderList)
         {
-            var value = userAuthenticationProvidersGridDtoList.First(x => x.AuthenticationProviderId == item.AuthenticationProviderId);
+            var value = userAuthenticationProvidersGridDtoList.First();
             value.Username = item.Username;
             value.Id = item.Id;
         }
@@ -88,7 +87,7 @@ public partial class SecurityService
         if (record != null)
             Mapper.Map(model, record);
 
-        var checkDuplicateUsername =  await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username && x.ApplicationAuthenticationProviderId == record.ApplicationAuthenticationProviderId);
+        var checkDuplicateUsername =  await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username);
 
         if (checkDuplicateUsername != null)
         {

@@ -19,7 +19,7 @@
         <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="AuthenticationProviderName">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Name">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="AuthenticationProviderType">Type</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Domain">Domain</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Username">Username</MudTableSortLabel></MudTh>
@@ -27,7 +27,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="AuthenticationProviderName">
-            <MudHighlighter Text="@context.AuthenticationProviderName" HighlightedText="@_searchString" />
+            <MudHighlighter Text="@context.Name" HighlightedText="@_searchString" />
         </MudTd>
         <MudTd DataLabel="AuthenticationProviderType">
             <MudHighlighter Text="@context.AuthenticationProviderType" HighlightedText="@_searchString" />

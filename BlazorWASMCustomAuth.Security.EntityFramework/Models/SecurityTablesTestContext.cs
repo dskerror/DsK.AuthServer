@@ -27,8 +27,6 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
-    public virtual DbSet<AuthenticationProvider> AuthenticationProviders { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; set; }
@@ -63,9 +61,11 @@ public partial class SecurityTablesTestContext : DbContext
         {
             entity.HasIndex(e => e.ApplicationId, "IX_ApplicationAuthenticationProviders_ApplicationId");
 
-            entity.HasIndex(e => e.AuthenticationProviderId, "IX_ApplicationAuthenticationProviders_AuthenticationProviderId");
+            entity.HasIndex(e => e.AuthenticationProviderType, "IX_ApplicationAuthenticationProviders_AuthenticationProviderId");
 
+            entity.Property(e => e.AuthenticationProviderType).HasMaxLength(50);
             entity.Property(e => e.Domain).HasMaxLength(100);
+            entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.Password).HasMaxLength(100);
             entity.Property(e => e.Username).HasMaxLength(100);
 
@@ -73,11 +73,6 @@ public partial class SecurityTablesTestContext : DbContext
                 .HasForeignKey(d => d.ApplicationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ApplicationAuthenticationProviders_Applications");
-
-            entity.HasOne(d => d.AuthenticationProvider).WithMany(p => p.ApplicationAuthenticationProviders)
-                .HasForeignKey(d => d.AuthenticationProviderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ApplicationAuthenticationProviders_AuthenticationProviders");
         });
 
         modelBuilder.Entity<ApplicationPermission>(entity =>
@@ -131,6 +126,10 @@ public partial class SecurityTablesTestContext : DbContext
 
         modelBuilder.Entity<ApplicationUser>(entity =>
         {
+            entity.HasIndex(e => e.ApplicationId, "IX_ApplicationUsers_ApplicationId");
+
+            entity.HasIndex(e => e.UserId, "IX_ApplicationUsers_UserId");
+
             entity.Property(e => e.LockoutEnd).HasColumnType("date");
 
             entity.HasOne(d => d.Application).WithMany(p => p.ApplicationUsers)
@@ -142,14 +141,6 @@ public partial class SecurityTablesTestContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ApplicationUsers_Users");
-        });
-
-        modelBuilder.Entity<AuthenticationProvider>(entity =>
-        {
-            entity.HasIndex(e => e.AuthenticationProviderName, "IX_AuthenticationProviders");
-
-            entity.Property(e => e.AuthenticationProviderName).HasMaxLength(50);
-            entity.Property(e => e.AuthenticationProviderType).HasMaxLength(50);
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -165,16 +156,9 @@ public partial class SecurityTablesTestContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_UserAuthenticationProviders");
 
-            entity.HasIndex(e => e.ApplicationAuthenticationProviderId, "IX_UserAuthenticationProviders_AuthenticationProviderId");
-
             entity.HasIndex(e => e.UserId, "IX_UserAuthenticationProviders_UserId");
 
             entity.Property(e => e.Username).HasMaxLength(256);
-
-            entity.HasOne(d => d.ApplicationAuthenticationProvider).WithMany(p => p.UserAuthenticationProviderMappings)
-                .HasForeignKey(d => d.ApplicationAuthenticationProviderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserAuthenticationProviders_ApplicationAuthenticationProviders");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserAuthenticationProviderMappings)
                 .HasForeignKey(d => d.UserId)
@@ -184,6 +168,8 @@ public partial class SecurityTablesTestContext : DbContext
 
         modelBuilder.Entity<UserLog>(entity =>
         {
+            entity.HasIndex(e => e.ApplicationId, "IX_UserLogs_ApplicationId");
+
             entity.HasIndex(e => e.UserId, "IX_UserLogs_UserId");
 
             entity.Property(e => e.Ip).HasColumnName("IP");

@@ -44,7 +44,7 @@ namespace BlazorWASMCustomAuth.Client.Components
             var result = await securityService.UserAuthenticationProvidersGetAsync(UserId);
             if (result != null)
             {
-                userAuthenticationProviders = result.Result;
+                //userAuthenticationProviders = result.Result;
             }
         }
 

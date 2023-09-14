@@ -1,4 +1,4 @@
-﻿@page "/AuthenticationProviderViewEdit/{id:int}"
+﻿@* @page "/AuthenticationProviderViewEdit/{id:int}"
 
 <MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
 
@@ -15,7 +15,7 @@ else
         <MudCard Class="mb-2">
             <MudCardContent>
                 <MudTextField Disabled="!_AccessAuthenticationProviderEdit" ReadOnly="true" Label="Authentication Provider Name" @bind-Value="model.AuthenticationProviderName"
-                          For="@(()=>model.AuthenticationProviderName)">
+                          For="@(()=>model.Name)">
                 </MudTextField>
                 <MudTextField Disabled="!_AccessAuthenticationProviderEdit" ReadOnly="true" Label="Authentication Provider Type" @bind-Value="model.AuthenticationProviderType"
                           For="@(()=>model.AuthenticationProviderType)">
@@ -39,4 +39,4 @@ else
         }
 
     </EditForm>
-}
+} *@

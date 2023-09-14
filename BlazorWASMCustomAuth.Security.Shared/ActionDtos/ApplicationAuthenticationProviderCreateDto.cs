@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
 
-public partial class AuthenticationProviderMappingCreateDto
+public partial class ApplicationAuthenticationProviderCreateDto
 {
 
     [Required]
