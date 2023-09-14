@@ -10,10 +10,10 @@
 <MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationRoleDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
 
-        @if (_AccessRolesCreate)
+        @if (_AccessApplicationRolesCreate)
         {
             <div class="justify-center mud-text-align-center">
-                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateRole())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Role</MudButton>
+                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateApplicationRole())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Role</MudButton>
             </div>
         }
         <MudSpacer />
@@ -33,7 +33,7 @@
             <MudHighlighter Text="@context.RoleDescription" HighlightedText="@_searchString" />
         </MudTd>
         <MudTd DataLabel="Details">
-            <MudIconButton OnClick="() => ViewRole(context.Id)"
+            <MudIconButton OnClick="() => ViewApplicationRole(context.Id)"
                            Icon="@Icons.Material.Filled.Edit"
                            Color="Color.Primary"
                            Variant="Variant.Filled">

@@ -1,0 +1,24 @@
+﻿<MudTable Items="@applicationPermissions" Hover="true">
+    <ToolBarContent>
+
+        @if (_AccessApplicationPermissionsCreate)
+        {
+            <div class="justify-center mud-text-align-center">
+                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateApplicationPermissions())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Role</MudButton>
+             </div>
+        }
+        <MudSpacer />
+        
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Permission Name</MudTh>
+        <MudTh>Permission Description</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
+        <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>        
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>

@@ -29,7 +29,6 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationDto>>();
         return result;
     }
-
     public async Task<APIResult<string>> ApplicationGenerateNewAPIKeyAsync(ApplicationDto model)
     {   
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationsEndpoints.GenerateNewAPIKey, model);
@@ -74,5 +73,16 @@ public partial class SecurityServiceClient
         };
 
         return newResult;
+    }
+
+    public async Task<APIResult<string>> ApplicationDeleteAsync(int id)
+    {
+        await PrepareBearerToken();
+        var response = await _httpClient.DeleteAsync(Routes.ApplicationsEndpoints.Delete(id));
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
     }
 }

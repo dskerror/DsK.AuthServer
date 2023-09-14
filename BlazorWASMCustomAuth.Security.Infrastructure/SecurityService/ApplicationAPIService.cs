@@ -25,8 +25,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             catch (Exception ex)
             {
                 result.HasError = true;
-                if(ex.InnerException.Message != null)
-                result.Message = ex.InnerException.Message;
+                if (ex.InnerException.Message != null)
+                    result.Message = ex.InnerException.Message;
             }
 
             if (recordsCreated == 1)
@@ -120,10 +120,17 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         public async Task<APIResult<string>> ApplicationDelete(int id)
         {
             APIResult<string> result = new APIResult<string>();
+
             int recordsDeleted = 0;
 
-            var record = await db.Applications.FirstOrDefaultAsync(x => x.Id == id);
+            if (id == 1)
+            {
+                result.HasError = true;
+                result.Message = "Error: Can't delete this application";
+                return result;
+            }
 
+            var record = await db.Applications.FirstOrDefaultAsync(x => x.Id == id);
             try
             {
                 db.Remove(record);

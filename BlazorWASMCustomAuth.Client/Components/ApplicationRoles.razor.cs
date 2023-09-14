@@ -19,7 +19,7 @@ namespace BlazorWASMCustomAuth.Client.Components
         private int _totalItems;
         private int _currentPage;
         private string _searchString = "";
-        private bool _AccessRolesCreate;
+        private bool _AccessApplicationRolesCreate;
         private bool _AccessApplicationRolesView;
 
 
@@ -34,8 +34,8 @@ namespace BlazorWASMCustomAuth.Client.Components
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessApplicationRolesView = securityService.HasPermission(state.User, Access.Roles.View);
-            _AccessRolesCreate = securityService.HasPermission(state.User, Access.Roles.Create);
+            _AccessApplicationRolesView = securityService.HasPermission(state.User, Access.ApplicationRoles.View);
+            _AccessApplicationRolesCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
         }
 
         private async Task<TableData<ApplicationRoleDto>> ServerReload(TableState state)
@@ -68,14 +68,14 @@ namespace BlazorWASMCustomAuth.Client.Components
             _table.ReloadServerData();
         }
 
-        private void ViewRole(int id)
+        private void ViewApplicationRole(int id)
         {
-            _navigationManager.NavigateTo($"/applicationroleviewedit/{id}");
+            _navigationManager.NavigateTo($"/ApplicationRoleViewEdit/{ApplicationId}/{id}");
         }
 
-        private void CreateRole()
+        private void CreateApplicationRole()
         {
-            _navigationManager.NavigateTo($"/applicationrolecreate/{ApplicationId}");
+            _navigationManager.NavigateTo($"/ApplicationRoleCreate/{ApplicationId}");
         }
     }
 }

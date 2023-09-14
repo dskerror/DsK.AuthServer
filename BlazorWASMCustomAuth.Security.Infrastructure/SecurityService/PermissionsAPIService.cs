@@ -7,7 +7,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public async Task<APIResult<string>> PermissionCreate(PermissionCreateDto model)
+        public async Task<APIResult<string>> ApplicationPermissionCreate(ApplicationPermissionCreateDto model)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsCreated = 0;
@@ -35,23 +35,14 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public async Task<APIResult<List<ApplicationPermissionDto>>> PermissionsGet (int id = 0)
+        public async Task<APIResult<List<ApplicationPermissionDto>>> ApplicationPermissionsGet(int applicationId)
         {
             APIResult<List<ApplicationPermissionDto>> result = new APIResult<List<ApplicationPermissionDto>>();
-            if (id == 0)
-            {
-                var items = await db.ApplicationPermissions.ToListAsync();
-                result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
-            }
-            else
-            {
-                var items = await db.ApplicationPermissions.Where(x => x.Id == id).ToListAsync();
-                result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
-            }
-
+            var items = await db.ApplicationPermissions.Where(x => x.ApplicationId == applicationId).ToListAsync();
+            result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
             return result;
         }
-        public async Task<APIResult<string>> PermissionUpdate(PermissionUpdateDto model)
+        public async Task<APIResult<string>> ApplicationPermissionUpdate(ApplicationPermissionUpdateDto model)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsUpdated = 0;
@@ -59,7 +50,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             if (record != null)
             {
-                Mapper.Map(model, record);                
+                Mapper.Map(model, record);
             }
 
             try
@@ -72,7 +63,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 result.Message = ex.InnerException.Message;
             }
 
-            
+
             if (recordsUpdated == 1)
             {
                 result.Result = recordsUpdated.ToString();
@@ -81,7 +72,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public async Task<APIResult<string>> PermissionDelete(int id)
+        public async Task<APIResult<string>> ApplicationPermissionDelete(int id)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsDeleted = 0;
@@ -96,8 +87,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             {
                 result.HasError = true;
                 result.Message = ex.Message;
-            }            
-            
+            }
+
             return result;
         }
     }

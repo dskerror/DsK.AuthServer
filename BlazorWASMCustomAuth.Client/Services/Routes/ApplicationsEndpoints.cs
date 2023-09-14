@@ -10,7 +10,12 @@
 
         public static string Post = "api/Application";
         public static string Put = "api/Application";
-        public static string Delete = "api/Application";
+        public static string Delete(int id)
+        {
+            var url = $"api/Application?Id={id}";
+            return url;
+        }
+
         public static string GenerateNewAPIKey = "api/Application/GenerateNewAPIKey";
     }
 }

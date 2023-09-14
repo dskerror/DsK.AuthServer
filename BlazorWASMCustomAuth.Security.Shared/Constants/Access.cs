@@ -34,31 +34,31 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
             public const string Delete = "AuthenticationProviders.Delete";
         }
 
-        [DisplayName("Permissions")]
-        [Description("Permissions Permissions")]
-        public static class Permissions
+        [DisplayName("Application Permissions")]
+        [Description("Application Permissions Permissions")]
+        public static class ApplicationPermissions
         {
-            public const string View = "Permissions.View";
-            public const string Create = "Permissions.Create";
-            public const string Edit = "Permissions.Edit";
-            public const string Delete = "Permissions.Delete";
+            public const string View = "ApplicationPermissions.View";
+            public const string Create = "ApplicationPermissions.Create";
+            public const string Edit = "ApplicationPermissions.Edit";
+            public const string Delete = "ApplicationPermissions.Delete";
         }
-        [DisplayName("Role Permissions")]
-        [Description("Role Permissions Permissions")]
-        public static class RolesPermissions
+        [DisplayName("Application Role Permissions")]
+        [Description("Application Role Permissions Permissions")]
+        public static class ApplicationRolesPermissions
         {
-            public const string View = "RolePermissions.View";
-            public const string Edit = "RolePermissions.Edit";
+            public const string View = "ApplicationRolePermissions.View";
+            public const string Edit = "ApplicationRolePermissions.Edit";
         }
 
-        [DisplayName("Roles")]
-        [Description("Roles Permissions")]
-        public static class Roles
+        [DisplayName("Application Roles")]
+        [Description("Application Roles Permissions")]
+        public static class ApplicationRoles
         {
-            public const string View = "Roles.View";
-            public const string Create = "Roles.Create";
-            public const string Edit = "Roles.Edit";
-            public const string Delete = "Roles.Delete";
+            public const string View = "ApplicationRoles.View";
+            public const string Create = "ApplicationRoles.Create";
+            public const string Edit = "ApplicationRoles.Edit";
+            public const string Delete = "ApplicationRoles.Delete";
         }
 
         [DisplayName("User Authentication Providers")]

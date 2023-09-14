@@ -7,7 +7,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public async Task<APIResult<string>> RolePermissionChange(RolePermissionChangeDto model)
+        public async Task<APIResult<string>> ApplicationRolePermissionChange(ApplicationRolePermissionChangeDto model)
         {
             APIResult<string> result = new APIResult<string>();
             int recordsModifiedCount = 0;
@@ -52,17 +52,17 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         }
 
 
-        public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> RolePermissionsGet(int roleId)
+        public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGet(int applicationId, int applicationRoleId)
         {
 
             APIResult<List<ApplicationRolePermissionGridDto>> result = new APIResult<List<ApplicationRolePermissionGridDto>>();
-            var permissionList = await db.ApplicationPermissions.ToListAsync();
+            var permissionList = await db.ApplicationPermissions.Where(x => x.ApplicationId == applicationId).ToListAsync();
 
 
             var RolePermissionList = await (from r in db.ApplicationRoles
                                             join rp in db.ApplicationRolePermissions on r.Id equals rp.RoleId
                                             join p in db.ApplicationPermissions on rp.PermissionId equals p.Id
-                                            where r.Id == roleId
+                                            where r.Id == applicationRoleId
                                             select p.PermissionName).ToListAsync();
 
             var permissionGrid = Mapper.Map<List<ApplicationPermission>, List<ApplicationRolePermissionGridDto>>(permissionList);

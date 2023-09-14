@@ -12,11 +12,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
         private ApplicationRoleCreateDto model = new ApplicationRoleCreateDto();
         private bool _AccessApplicaitonRolesCreate;
-        private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
-        {
-            new BreadcrumbItem("Applications", href: "Applications"),            
-            new BreadcrumbItem("Application Role Create", href: null, disabled: true)
-        };
+        private List<BreadcrumbItem> _breadcrumbs;
 
         protected override async Task OnInitializedAsync()
         {
@@ -25,11 +21,18 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
             if (!_AccessApplicaitonRolesCreate)
                 _navigationManager.NavigateTo("/noaccess");
+
+            _breadcrumbs = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem("Applications", href: "Applications"),
+                new BreadcrumbItem("Applications View/Edit", href: $"ApplicationViewEdit/{ ApplicationId }"),
+                new BreadcrumbItem("Application Role Create", href: null, disabled: true)
+            };
         }
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessApplicaitonRolesCreate = securityService.HasPermission(state.User, Access.Roles.Create);
+            _AccessApplicaitonRolesCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
         }
 
         private async Task Create()
@@ -43,7 +46,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
                 else
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    _navigationManager.NavigateTo($"/applicationroleviewedit/{result.Result.Id}");
+                    _navigationManager.NavigateTo($"/ApplicationRoleViewEdit/{result.Result.Id}");
                 }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

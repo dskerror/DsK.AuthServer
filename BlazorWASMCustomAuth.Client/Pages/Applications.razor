@@ -2,8 +2,6 @@
 @using BlazorWASMCustomAuth.Security.Shared;
 @using System.Security.Claims;
 
-<h3>Applications</h3>
-
 @if (!_loaded)
 {
     <h3>Loading...</h3>
@@ -16,7 +14,7 @@
         {
             <div class="justify-center mud-text-align-center">
                 <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateApplication())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Application</MudButton>
-            </div>
+             </div>
         }
         <MudSpacer />
         <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -24,7 +22,7 @@
     <HeaderContent>
         <MudTh><MudTableSortLabel T="ApplicationDto" SortLabel="ApplicationName">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="ApplicationDto" SortLabel="ApplicationDesc">Description</MudTableSortLabel></MudTh>
-        <MudTh>Details</MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="ApplicationName">
@@ -33,13 +31,25 @@
         <MudTd DataLabel="ApplicationDesc">
             <MudHighlighter Text="@context.ApplicationDesc" HighlightedText="@_searchString" />
         </MudTd>
-        
-        <MudTd DataLabel="Details">
-            <MudIconButton OnClick="() => ViewApplication(context.Id)"
-                           Icon="@Icons.Material.Filled.Edit"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled">
-            </MudIconButton>
+
+        <MudTd DataLabel="">
+            <MudTooltip Text="View/Edit Application">
+                <MudIconButton OnClick="() => ViewApplication(context.Id)"
+                               Icon="@Icons.Material.Filled.Edit"
+                               Color="Color.Primary"
+                               Variant="Variant.Filled">
+                </MudIconButton>
+            </MudTooltip>
+            @if (context.Id != 1)
+            {
+                <MudTooltip Text="Delete Application">
+                    <MudIconButton OnClick="@( async() => await DeleteApplication(context))"
+                                   Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Primary"
+                                   Variant="Variant.Filled">
+                    </MudIconButton>
+                </MudTooltip>
+            }
         </MudTd>
     </RowTemplate>
     <PagerContent>
