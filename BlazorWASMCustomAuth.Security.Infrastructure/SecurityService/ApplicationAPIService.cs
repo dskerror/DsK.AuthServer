@@ -25,6 +25,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             catch (Exception ex)
             {
                 result.HasError = true;
+                if(ex.InnerException.Message != null)
                 result.Message = ex.InnerException.Message;
             }
 

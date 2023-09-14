@@ -106,6 +106,16 @@ namespace BlazorWASMCustomAuth.Security.Shared.Constants
             public const string Delete = "Users.Delete";
         }
 
+        [DisplayName("Application Users")]
+        [Description("Application Users Permissions")]
+        public static class ApplicationUsers
+        {
+            public const string View = "ApplicationUsers.View";
+            public const string Create = "ApplicationUsers.Create";
+            public const string Edit = "ApplicationUsers.Edit";
+            public const string Delete = "ApplicationUsers.Delete";
+        }
+
 
         /// <summary>
         /// Returns a list of Permissions.

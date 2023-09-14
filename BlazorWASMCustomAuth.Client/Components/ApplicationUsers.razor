@@ -1,8 +1,5 @@
-﻿@page "/users"
-@using BlazorWASMCustomAuth.Security.Shared;
+﻿@using BlazorWASMCustomAuth.Security.Shared;
 @using System.Security.Claims;
-
-<h2>Users</h2>
 
 @if (!_loaded)
 {
@@ -10,9 +7,9 @@
     <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
 }
 
-<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<UserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationUserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
-        @if (_AccessUsersCreate)
+        @if (_AccessApplicationUsersCreate)
         {
             <div class="justify-center mud-text-align-center">
                 <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateUser())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create User</MudButton>
@@ -26,12 +23,12 @@
         <MudTh><MudTableSortLabel T="UserDto" SortLabel="Email">Email</MudTableSortLabel></MudTh>
         <MudTh>Details</MudTh>
     </HeaderContent>
-    <RowTemplate>
+    <RowTemplate>        
         <MudTd DataLabel="Name">
-            <MudHighlighter Text="@context.Name" HighlightedText="@_searchString" />
+            <MudHighlighter Text="@context.User.Name" HighlightedText="@_searchString" />
         </MudTd>
         <MudTd DataLabel="Email">
-            <MudHighlighter Text="@context.Email" HighlightedText="@_searchString" />
+            <MudHighlighter Text="@context.User.Email" HighlightedText="@_searchString" />
         </MudTd>
         <MudTd DataLabel="Details">
             <MudIconButton OnClick="() => ViewUser(context.Id)"

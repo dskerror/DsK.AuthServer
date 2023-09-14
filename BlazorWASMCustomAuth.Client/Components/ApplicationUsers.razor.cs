@@ -1,55 +1,53 @@
 ﻿using BlazorWASMCustomAuth.Client.Services;
-using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.Constants;
 using BlazorWASMCustomAuth.Security.Shared.Requests;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
-using System.Net;
-using System.Security.Claims;
 
-namespace BlazorWASMCustomAuth.Client.Pages
+namespace BlazorWASMCustomAuth.Client.Components
 {
-    public partial class Applications
+    public partial class ApplicationUsers
     {
+        [Parameter] public int ApplicationId { get; set; }
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private IEnumerable<ApplicationDto> _pagedData;
-        private MudTable<ApplicationDto> _table;
+        private IEnumerable<ApplicationUserDto> _pagedData;
+        private MudTable<ApplicationUserDto> _table;
+        private bool _loaded;
         private int _totalItems;
         private int _currentPage;
         private string _searchString = "";
-        private bool _loaded;
-        private bool _AccessApplicationView;
-        private bool _AccessApplicationCreate;
+        private bool _AccessApplicationUsersView;
+        private bool _AccessApplicationUsersCreate;
 
         protected override async Task OnInitializedAsync()
         {
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessApplicationView)
+            if (!_AccessApplicationUsersView)
                 _navigationManager.NavigateTo("/noaccess");
         }
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessApplicationView = securityService.HasPermission(state.User, Access.Application.View);
-            _AccessApplicationCreate = securityService.HasPermission(state.User, Access.Application.Create);
+            _AccessApplicationUsersView = securityService.HasPermission(state.User, Access.ApplicationUsers.View);
+            _AccessApplicationUsersCreate = securityService.HasPermission(state.User, Access.ApplicationUsers.Create);
         }
-        private async Task<TableData<ApplicationDto>> ServerReload(TableState state)
-        {         
+
+        private async Task<TableData<ApplicationUserDto>> ServerReload(TableState state)
+        {
             await LoadData(state.Page, state.PageSize, state);
             _loaded = true;
             base.StateHasChanged();
-            return new TableData<ApplicationDto> { TotalItems = _totalItems, Items = _pagedData };
+            return new TableData<ApplicationUserDto> { TotalItems = _totalItems, Items = _pagedData };
         }
 
         private async Task LoadData(int pageNumber, int pageSize, TableState state)
         {
-            var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString() };
-            var response = await securityService.ApplicationsGetAsync(request);
+            var request = new ApplicationPagedRequest { ApplicationId = ApplicationId, PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString() };
+            var response = await securityService.ApplicationUsersGetAsync(request);
             if (!response.HasError)
             {
                 _totalItems = response.Paging.TotalItems;
@@ -68,14 +66,14 @@ namespace BlazorWASMCustomAuth.Client.Pages
             _table.ReloadServerData();
         }
 
-        private void ViewApplication(int id)
+        private void ViewUser(int id)
         {
-            _navigationManager.NavigateTo($"/ApplicationViewEdit/{id}");
+            //_navigationManager.NavigateTo($"/userviewedit/{id}");
         }
 
-        private void CreateApplication()
+        private void CreateUser()
         {
-            _navigationManager.NavigateTo("/ApplicationCreate");
+            //_navigationManager.NavigateTo("/usercreate");
         }
     }
 }

@@ -15,10 +15,6 @@ else
         <MudCard Class="mb-2">
             <MudCardContent>
 
-                <MudTextField Disabled="true" Label="Username" @bind-Value="user.Username"
-                          For="@(()=>user.Username)">
-                </MudTextField>
-
                 <MudTextField Disabled="!_AccessUsersEdit" Label="Email" @bind-Value="user.Email"
                           For="@(()=>user.Email)">
                 </MudTextField>

@@ -1,14 +1,21 @@
-﻿namespace BlazorWASMCustomAuth.Client.Services.Routes
+﻿using BlazorWASMCustomAuth.Security.Shared.Requests;
+
+namespace BlazorWASMCustomAuth.Client.Services.Routes
 {
-    public static class UserEndpoints
+    public static class ApplicationUserEndpoints
     {
-        public static string Get(int id, int pageNumber, int pageSize, string searchString, string orderBy)
+        public static string Get(ApplicationPagedRequest request)
         {
-            var url = $"api/users?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy={orderBy}";
+            var url = $"api/ApplicationUsers?applicationId={request.ApplicationId}&" +
+                $"Id={request.Id}&" +
+                $"pageNumber={request.PageNumber}&" + 
+                $"pageSize={request.PageSize}&" +
+                $"searchString={request.SearchString}&" +
+                $"orderBy={request.Orderby}";
             return url;
         }
 
-        public static string Post = "api/users";
-        public static string Put = "api/users";
+        public static string Post = "api/ApplicationUsers";
+        public static string Put = "api/ApplicationUsers";
     }
 }

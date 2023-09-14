@@ -5,9 +5,6 @@ public partial class UserDto
 {
     public int Id { get; set; }
 
-   
-    public string Username { get; set; } = null!;
-
     [Required]
     [StringLength(256, MinimumLength = 3)]
     public string Name { get; set; } = null!;
