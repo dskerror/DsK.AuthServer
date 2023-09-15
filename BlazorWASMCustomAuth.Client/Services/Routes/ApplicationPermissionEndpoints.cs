@@ -7,5 +7,7 @@
             var url = $"api/ApplicationPermissions?ApplicationId={applicationId}";            
             return url;
         }
+
+        public static string Post = "api/ApplicationPermissions";
     }
 }

@@ -8,6 +8,17 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
+    public async Task<APIResult<ApplicationPermissionDto>> ApplicationPermissionCreateAsync(ApplicationPermissionCreateDto model)
+    {
+        await PrepareBearerToken();
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationPermissionEndpoints.Post, model);
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationPermissionDto>>();
+        return result;
+    }
+
     public async Task<APIResult<List<ApplicationPermissionGridDto>>> ApplicationPermissionsGetAsync(int applicationId)
     {
         await PrepareBearerToken();

@@ -6,12 +6,12 @@ using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 namespace BlazorWASMCustomAuth.Client.Pages
 {
-    public partial class ApplicationRoleCreate
+    public partial class ApplicationPermissionCreate
     {
         [Parameter] public int ApplicationId { get; set; }
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private ApplicationRoleCreateDto model = new ApplicationRoleCreateDto();
-        private bool _AccessApplicationRolesCreate;
+        private ApplicationPermissionCreateDto model = new ApplicationPermissionCreateDto();
+        private bool _AccessApplicationPermissionsCreate;
         private List<BreadcrumbItem> _breadcrumbs;
 
         protected override async Task OnInitializedAsync()
@@ -19,26 +19,26 @@ namespace BlazorWASMCustomAuth.Client.Pages
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessApplicationRolesCreate)
+            if (!_AccessApplicationPermissionsCreate)
                 _navigationManager.NavigateTo("/noaccess");
 
             _breadcrumbs = new List<BreadcrumbItem>
             {
                 new BreadcrumbItem("Applications", href: "Applications"),
                 new BreadcrumbItem("Applications View/Edit", href: $"ApplicationViewEdit/{ ApplicationId }"),
-                new BreadcrumbItem("Application Role Create", href: null, disabled: true)
+                new BreadcrumbItem("Application Permission Create", href: null, disabled: true)
             };
         }
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessApplicationRolesCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
+            _AccessApplicationPermissionsCreate = securityService.HasPermission(state.User, Access.ApplicationPermissions.Create);
         }
 
         private async Task Create()
         {
             model.ApplicationId = ApplicationId;
-            var result = await securityService.ApplicationRoleCreateAsync(model);
+            var result = await securityService.ApplicationPermissionCreateAsync(model);
 
             if (result != null)
                 if (result.HasError)
@@ -46,7 +46,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
                 else
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    _navigationManager.NavigateTo($"/ApplicationRoleViewEdit/{ApplicationId}/{result.Result.Id}");
+                    _navigationManager.NavigateTo($"/ApplicationPermissionViewEdit/{ApplicationId}/{result.Result.Id}");
                 }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

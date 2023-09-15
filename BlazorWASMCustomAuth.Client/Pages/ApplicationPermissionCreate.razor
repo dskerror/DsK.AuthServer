@@ -1,0 +1,24 @@
+﻿@page "/ApplicationPermissionCreate/{ApplicationId:int}"
+
+<MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
+
+<EditForm Model="model" OnValidSubmit="Create">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <MudCard Class="mb-2">
+        <MudCardContent>            
+            <MudTextField Label="Permission Name" @bind-Value="model.PermissionName"
+                          For="@(()=>model.PermissionName)">
+            </MudTextField>
+            <MudTextField Label="Permission Description" @bind-Value="model.PermissionDescription"
+                          For="@(()=>model.PermissionDescription)">
+            </MudTextField>
+        </MudCardContent>
+    </MudCard>
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button type="submit" class="btn btn-success">Create</button>
+        </div>
+    </div>
+</EditForm>
