@@ -14,4 +14,6 @@ public partial class ApplicationDto
     public string ApplicationDesc { get; set; } = null!;
 
     public string AppApiKey { get; set; } = null!;
+
+    public bool ApplicationDisabled { get; set; }
 }

@@ -50,7 +50,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private async Task Edit()
         {
-            ApplicationUpdateDto applicationUpdateDto = new ApplicationUpdateDto() { Id = model.Id, ApplicationDesc = model.ApplicationDesc };
+            ApplicationUpdateDto applicationUpdateDto = new ApplicationUpdateDto() { Id = model.Id, ApplicationDesc = model.ApplicationDesc, ApplicationDisabled = model.ApplicationDisabled };
             var result = await securityService.ApplicationEditAsync(applicationUpdateDto);
 
             if (result != null)

@@ -1,5 +1,4 @@
-Rename project to DsK.Security
-Disable Application
+DONE Disable Application
 add callback address to application
 change password page
 forgot password page
@@ -15,3 +14,4 @@ user profile (my profile)
 log page
 remove user authentication providers from user page
 implement two factor
+Rename project to DsK.Security

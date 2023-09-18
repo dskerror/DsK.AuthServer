@@ -13,6 +13,8 @@ public partial class ApplicationPermission
 
     public string PermissionDescription { get; set; } = null!;
 
+    public bool PermissionDisabled { get; set; }
+
     public virtual Application Application { get; set; } = null!;
 
     public virtual ICollection<ApplicationRolePermission> ApplicationRolePermissions { get; } = new List<ApplicationRolePermission>();

@@ -19,6 +19,8 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; set; }
 
+    public virtual DbSet<ApplicationAuthenticationProviderLogin> ApplicationAuthenticationProviderLogins { get; set; }
+
     public virtual DbSet<ApplicationPermission> ApplicationPermissions { get; set; }
 
     public virtual DbSet<ApplicationRole> ApplicationRoles { get; set; }
@@ -73,6 +75,16 @@ public partial class SecurityTablesTestContext : DbContext
                 .HasForeignKey(d => d.ApplicationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ApplicationAuthenticationProviders_Applications");
+        });
+
+        modelBuilder.Entity<ApplicationAuthenticationProviderLogin>(entity =>
+        {
+            entity.Property(e => e.DateTimeGenerated).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ApplicationAuthenticationProvider).WithMany(p => p.ApplicationAuthenticationProviderLogins)
+                .HasForeignKey(d => d.ApplicationAuthenticationProviderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ApplicationAuthenticationProviderLogins_ApplicationAuthenticationProviders");
         });
 
         modelBuilder.Entity<ApplicationPermission>(entity =>

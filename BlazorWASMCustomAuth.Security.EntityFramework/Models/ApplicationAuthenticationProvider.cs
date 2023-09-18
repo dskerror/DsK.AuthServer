@@ -19,5 +19,9 @@ public partial class ApplicationAuthenticationProvider
 
     public string? Password { get; set; }
 
+    public bool ApplicationAuthenticationProviderDisabled { get; set; }
+
     public virtual Application Application { get; set; } = null!;
+
+    public virtual ICollection<ApplicationAuthenticationProviderLogin> ApplicationAuthenticationProviderLogins { get; } = new List<ApplicationAuthenticationProviderLogin>();
 }

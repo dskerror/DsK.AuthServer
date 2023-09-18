@@ -10,6 +10,7 @@ public partial class ApplicationUpdateDto
     public int Id { get; set; }
 
     [Required]
-
     public string ApplicationDesc { get; set; } = null!;
+    public bool ApplicationDisabled { get; set; }
+
 }

@@ -14,22 +14,27 @@ else
         <ValidationSummary />
         <MudCard Class="mb-2">
             <MudCardContent>
-                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="Application Name" @bind-Value="model.ApplicationName"
+
+                <MudSwitch Color="Color.Error" Disabled="!_AccessApplicationEdit" Label="Application Disabled" LabelPosition="LabelPosition.Start" @bind-Checked="model.ApplicationDisabled" />
+
+                <MudTextField Disabled="true" ReadOnly="true" Label="Application Name" @bind-Value="model.ApplicationName"
                               For="@(()=>model.ApplicationName)">
                 </MudTextField>
+
                 <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="false" Label="Description" @bind-Value="model.ApplicationDesc"
                               For="@(()=>model.ApplicationDesc)">
                 </MudTextField>
 
-                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="Application Id" @bind-Value="model.ApplicationGuid"
+                <MudTextField Disabled="true" ReadOnly="true" Label="Application Id" @bind-Value="model.ApplicationGuid"
                               For="@(()=>model.ApplicationGuid)">
                 </MudTextField>
 
-                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="true" Label="API Key" @bind-Value="model.AppApiKey"
+                <MudTextField Disabled="true" ReadOnly="true" Label="API Key" @bind-Value="model.AppApiKey"
                               For="@(()=>model.AppApiKey)">
                 </MudTextField>
 
                 <br />
+
                 <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => GenerateNewAPIKey(model)" Class="mb-2">Generate New API Key</MudButton>
 
             </MudCardContent>
