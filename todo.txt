@@ -1,0 +1,17 @@
+Rename project to DsK.Security
+Disable Application
+add callback address to application
+change password page
+forgot password page
+sso login
+disable role
+delete role
+disable permission
+delete permission
+disable authentication provider
+delete authentication provider
+disable user in app
+user profile (my profile)
+log page
+remove user authentication providers from user page
+implement two factor
