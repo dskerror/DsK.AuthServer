@@ -1,0 +1,18 @@
+﻿@page "/login"
+
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+
+<button @onclick="LoginLogic">Click here to login</button>
+
+@code {
+
+    public async Task LoginLogic()
+    {
+        //hacer request del GUID para login
+        string url = "https://localhost:7190/requestlogintoken?ApplicationId=asd";
+        
+
+    }
+}

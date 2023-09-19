@@ -1,0 +1,60 @@
+Install Nuget Blazor.LocalStorage to save the token
+Install Nuget Microsoft.AspNetCore.Components.Authorization
+Create Services Folder
+Copy the folliwing files from the Security Client to the TestApp.Client (fix namespace)
+	CustomAuthenticationStateProvider.cs
+	TokenHelper.cs
+
+Copy App.razor to TestApp (fix namespace)
+
+Modify Program.cs and add the following
+
+	using Blazored.LocalStorage;
+	using Microsoft.AspNetCore.Components.Authorization;
+
+	//Add Authorization Core - To be able to use [CascadingAuthenticationState, AuthorizeRouteView, Authorizing], [AuthorizeView, NotAuthorized, Authorized], @attribute [Authorize]
+	builder.Services.AddAuthorizationCore();
+	//The CustomAuthenticationStateProvider is to be able to use tokens as the mode of authentication.
+	builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
+	/* ---Manages saving to local storage--- */
+	builder.Services.AddBlazoredLocalStorage();
+
+Copy the following to _Imports.razor
+	@using Blazored.LocalStorage;
+	@using Microsoft.AspNetCore.Components.Authorization;
+	@inject NavigationManager _navigationManager
+
+In NavMenu.razor replace the Counter and Fetch Data menu options for
+        <AuthorizeView>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="login">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Login
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="counter">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Counter
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="fetchdata">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="logout">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Logout
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
+
+create login page
+create logout page
+
+secure api
