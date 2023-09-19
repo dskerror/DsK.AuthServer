@@ -1,4 +1,5 @@
 DONE Disable Application
+DONE remove user authentication providers from user page
 add callback address to application
 change password page
 forgot password page
@@ -12,6 +13,6 @@ delete authentication provider
 disable user in app
 user profile (my profile)
 log page
-remove user authentication providers from user page
+create new application to test this application
 implement two factor
-Rename project to DsK.Security
+Rename project to DsK.AuthorizarionServer
