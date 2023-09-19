@@ -58,12 +58,6 @@ else
                 <UserPermissions UserId="@id" @ref="userPermissionsComponent" />
             </MudExpansionPanel>
         }
-        @if (_AccessUserAuthenticationProvidersView)
-        {
-            <MudExpansionPanel Text="User Authentication Providers">
-                <UserAuthenticationProvider UserId="@id" />
-            </MudExpansionPanel>
-        }
         @if (_AccessUserPasswordsCreate)
         {
             <MudExpansionPanel Text="User Password">
