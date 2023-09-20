@@ -1,7 +1,7 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using BlazorWASMCustomAuth.Security.Shared.Constants;
 
 internal class Program
 {
@@ -15,7 +15,7 @@ internal class Program
         db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
 
         Application newApplication = CreateApplication(db);        
-        ApplicationAuthenticationProvider applicationAuthenticationProvider = CreateApplicationAuthenticationUserProvider(db, newApplication);
+        ApplicationAuthenticationProvider applicationAuthenticationProvider = CreateApplicationLocalAuthenticationProvider(db, newApplication);
         ApplicationPermission adminPermission = CreateAdminPermission(db);
         ApplicationRole adminRole = CreateAdminRole(db);
         CreateUserRole(db);
@@ -24,10 +24,8 @@ internal class Program
         ApplicationUser adminApplicationUser = CreateAdminApplicationUser(db, adminUser);
         AddAuthenticationProviderMappingToAdminUser(db, applicationAuthenticationProvider, adminUser);
         AddAdminRoleToAdminUser(db, adminRole, adminUser);
-
         CreateAdminUserPassword(db, adminUser);
-
-        var permissionList = BlazorWASMCustomAuth.Security.Shared.Constants.Access.GetRegisteredPermissions();
+        var permissionList = Access.GetRegisteredPermissions();
         foreach (var permission in permissionList)
         {
             db.ApplicationPermissions.Add(new ApplicationPermission() { ApplicationId = 1, PermissionName = permission, PermissionDescription = "" });
@@ -36,7 +34,7 @@ internal class Program
 
     }
 
-    private static ApplicationAuthenticationProvider CreateApplicationAuthenticationUserProvider(SecurityTablesTestContext db, Application newApplication)
+    private static ApplicationAuthenticationProvider CreateApplicationLocalAuthenticationProvider(SecurityTablesTestContext db, Application newApplication)
     {
         ApplicationAuthenticationProvider applicationAuthenticationProvider =
                 new ApplicationAuthenticationProvider()
@@ -54,7 +52,6 @@ internal class Program
 
         return applicationAuthenticationProvider;
     }
-
     private static void CreateAdminUserPassword(SecurityTablesTestContext db, User adminUser)
     {
         var ramdomSalt = SecurityHelpers.RandomizeSalt;
@@ -69,20 +66,18 @@ internal class Program
         db.UserPasswords.Add(userPassword);
         db.SaveChanges();
     }
-
     private static Application CreateApplication(SecurityTablesTestContext db)
     {
         Application newApplication = new Application()
         {
-            ApplicationName = "DsK.Security",
-            ApplicationDesc = "Manages security for other applications"
+            ApplicationName = "DsK.AuthorizarionServer",
+            ApplicationDesc = "Manages authentication and authorization for other applications"
         };
 
         db.Applications.Add(newApplication);
         db.SaveChanges();
         return newApplication;
     }
-
     private static void AddAdminRoleToAdminUser(SecurityTablesTestContext db, ApplicationRole adminRole, User adminUser)
     {
         var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
@@ -113,7 +108,6 @@ internal class Program
         db.SaveChanges();
         return adminUser;
     }
-
     private static ApplicationUser CreateAdminApplicationUser(SecurityTablesTestContext db, User user)
     {
         var adminApplicationUser = new ApplicationUser()
@@ -121,6 +115,7 @@ internal class Program
             UserId = user.Id,
             ApplicationId = 1,
             AccessFailedCount = 0,
+            TwoFactorEnabled = false,
             LockoutEnabled = false
         };
 

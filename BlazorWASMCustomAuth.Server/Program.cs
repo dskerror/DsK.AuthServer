@@ -40,7 +40,6 @@ builder.Services.AddEndpointsApiExplorer();
 //    logging.ResponseBodyLogLimit = 4096;
 //});
 
-
 builder.Services.AddDbContext<SecurityTablesTestContext>(options =>
 {
 	options.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");

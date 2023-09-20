@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using TestApp.Server.HttpClients;
 
 namespace TestApp
 {
@@ -9,6 +10,13 @@ namespace TestApp
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddScoped<AuthorizarionServerAPIHttpClient>();
+            builder.Services.AddHttpClient<AuthorizarionServerAPIHttpClient>("AuthorizarionServerAPI", c =>
+            {
+                c.BaseAddress = new System.Uri("https://localhost:7045");
+            });
+            
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();

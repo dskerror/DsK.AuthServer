@@ -53,5 +53,6 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             return Ok(resultTokenModel);
         }
     }
+
 }
 

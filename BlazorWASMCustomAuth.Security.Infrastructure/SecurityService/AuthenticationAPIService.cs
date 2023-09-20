@@ -15,23 +15,20 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
     public partial class SecurityService
     {
 
-        public async Task<APIResult<string>> ApplicationLoginRequest(ApplicationLoginRequestDto model)
+        public async Task<string> ApplicationLoginRequest(ApplicationLoginRequestDto model)
         {
-            APIResult<string> result = new APIResult<string>();
-            
+            //db.UserTokens.Add(new UserToken()
+            //{
+            //    UserId = user.Id,
+            //    RefreshToken = token.RefreshToken,
+            //    TokenRefreshedDateTime = DateTime.Now,
+            //    TokenCreatedDateTime = DateTime.Now
+            //});
 
-            db.UserTokens.Add(new UserToken()
-            {
-                UserId = user.Id,
-                RefreshToken = token.RefreshToken,
-                TokenRefreshedDateTime = DateTime.Now,
-                TokenCreatedDateTime = DateTime.Now
-            });
+            //await db.SaveChangesAsync();
 
-            await db.SaveChangesAsync();
-
-            result.Result = token;
-            return result;
+            //result.Result = token;
+            return "ThisIsTheLoginToken";
         }
 
         public async Task<APIResult<TokenModel>> UserLogin(UserLoginDto model)
