@@ -21,7 +21,7 @@ public partial class LoginExternal
 
         if (result)
         {
-            //callback
+            //todo:     callback
             _navigationManager.NavigateTo("https://localhost:7298");            
         }
         else
