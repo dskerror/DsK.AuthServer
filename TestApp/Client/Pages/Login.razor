@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@inject HttpClient _httpClient;
 
 <PageTitle>Login</PageTitle>
 
@@ -10,9 +11,20 @@
 
     public async Task LoginLogic()
     {
-        //hacer request del GUID para login
-        string url = "https://localhost:7190/requestlogintoken?ApplicationId=asd";
+        string model = "AppId, AuthProviderId and SecreteKey";
+        string requestologintokenurl = "https://localhost:7190/requestlogintoken";
+        string loginurl = "https://localhost:7190/login?token=";
+
+        //envio el request para login
+        var response = await _httpClient.PostAsJsonAsync(requestologintokenurl, model);
+        //if (!response.IsSuccessStatusCode)
+            
+        //recibo el guid para login
+        //var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
         
+
+        //redirect lo login
+        //_navigationManager.NavigateTo("/noaccess");
 
     }
 }
