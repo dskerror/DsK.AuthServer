@@ -2,45 +2,42 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using BlazorWASMCustomAuth.Security.Shared.Constants;
 
-namespace BlazorWASMCustomAuth.Client.Pages
+namespace BlazorWASMCustomAuth.Client.Pages;
+public partial class AuthenticationProviderCreate
 {
-    public partial class AuthenticationProviderCreate
+    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
+    private ApplicationAuthenticationProviderCreateDto model = new ApplicationAuthenticationProviderCreateDto();
+    private bool _AccessAuthenticationProviderCreate;
+
+    protected override async Task OnInitializedAsync()
     {
-        [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private ApplicationAuthenticationProviderCreateDto model = new ApplicationAuthenticationProviderCreateDto();
-        private bool _AccessAuthenticationProviderCreate;
+        var state = await authenticationState;
+        SetPermissions(state);
 
-        protected override async Task OnInitializedAsync()
-        {
-            var state = await authenticationState;
-            SetPermissions(state);
+        if (!_AccessAuthenticationProviderCreate)
+            _navigationManager.NavigateTo("/noaccess");
+    }
 
-            if (!_AccessAuthenticationProviderCreate)
-                _navigationManager.NavigateTo("/noaccess");
-        }
+    private void SetPermissions(AuthenticationState state)
+    {
+        _AccessAuthenticationProviderCreate = securityService.HasPermission(state.User, Access.AuthenticationProvider.Create);
+    }
 
-        private void SetPermissions(AuthenticationState state)
-        {
-            _AccessAuthenticationProviderCreate = securityService.HasPermission(state.User, Access.AuthenticationProvider.Create);
-        }
+    private async Task Create()
+    {
+        var result = await securityService.ApplicationAuthenticationProviderCreateAsync(model);
 
-        private async Task Create()
-        {
-            var result = await securityService.ApplicationAuthenticationProviderCreateAsync(model);
-
-            if (result != null)
-                if (result.HasError)
-                    Snackbar.Add(result.Message, Severity.Error);
-                else
-                {
-                    Snackbar.Add(result.Message, Severity.Success);
-                    _navigationManager.NavigateTo($"/AuthenticationProviderViewEdit/{result.Result.Id}");
-                }
+        if (result != null)
+            if (result.HasError)
+                Snackbar.Add(result.Message, Severity.Error);
             else
-                Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+                _navigationManager.NavigateTo($"/AuthenticationProviderViewEdit/{result.Result.Id}");
+            }
+        else
+            Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
 
-        }
     }
 }

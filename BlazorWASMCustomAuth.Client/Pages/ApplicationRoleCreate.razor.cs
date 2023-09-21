@@ -1,56 +1,53 @@
-﻿using BlazorWASMCustomAuth.Security.Shared;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using BlazorWASMCustomAuth.Security.Shared.Constants;
+using BlazorWASMCustomAuth.Security.Shared;
 
-namespace BlazorWASMCustomAuth.Client.Pages
+namespace BlazorWASMCustomAuth.Client.Pages;
+public partial class ApplicationRoleCreate
 {
-    public partial class ApplicationRoleCreate
+    [Parameter] public int ApplicationId { get; set; }
+    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
+    private ApplicationRoleCreateDto model = new ApplicationRoleCreateDto();
+    private bool _AccessApplicationRolesCreate;
+    private List<BreadcrumbItem> _breadcrumbs;
+
+    protected override async Task OnInitializedAsync()
     {
-        [Parameter] public int ApplicationId { get; set; }
-        [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-        private ApplicationRoleCreateDto model = new ApplicationRoleCreateDto();
-        private bool _AccessApplicationRolesCreate;
-        private List<BreadcrumbItem> _breadcrumbs;
+        var state = await authenticationState;
+        SetPermissions(state);
 
-        protected override async Task OnInitializedAsync()
+        if (!_AccessApplicationRolesCreate)
+            _navigationManager.NavigateTo("/noaccess");
+
+        _breadcrumbs = new List<BreadcrumbItem>
         {
-            var state = await authenticationState;
-            SetPermissions(state);
+            new BreadcrumbItem("Applications", href: "Applications"),
+            new BreadcrumbItem("Applications View/Edit", href: $"ApplicationViewEdit/{ ApplicationId }"),
+            new BreadcrumbItem("Application Role Create", href: null, disabled: true)
+        };
+    }
 
-            if (!_AccessApplicationRolesCreate)
-                _navigationManager.NavigateTo("/noaccess");
+    private void SetPermissions(AuthenticationState state)
+    {
+        _AccessApplicationRolesCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
+    }
 
-            _breadcrumbs = new List<BreadcrumbItem>
-            {
-                new BreadcrumbItem("Applications", href: "Applications"),
-                new BreadcrumbItem("Applications View/Edit", href: $"ApplicationViewEdit/{ ApplicationId }"),
-                new BreadcrumbItem("Application Role Create", href: null, disabled: true)
-            };
-        }
+    private async Task Create()
+    {
+        model.ApplicationId = ApplicationId;
+        var result = await securityService.ApplicationRoleCreateAsync(model);
 
-        private void SetPermissions(AuthenticationState state)
-        {
-            _AccessApplicationRolesCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
-        }
-
-        private async Task Create()
-        {
-            model.ApplicationId = ApplicationId;
-            var result = await securityService.ApplicationRoleCreateAsync(model);
-
-            if (result != null)
-                if (result.HasError)
-                    Snackbar.Add(result.Message, Severity.Error);
-                else
-                {
-                    Snackbar.Add(result.Message, Severity.Success);
-                    _navigationManager.NavigateTo($"/ApplicationRoleViewEdit/{ApplicationId}/{result.Result.Id}");
-                }
+        if (result != null)
+            if (result.HasError)
+                Snackbar.Add(result.Message, Severity.Error);
             else
-                Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+                _navigationManager.NavigateTo($"/ApplicationRoleViewEdit/{ApplicationId}/{result.Result.Id}");
+            }
+        else
+            Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
 
-        }
     }
 }

@@ -1,12 +1,8 @@
 ﻿using BlazorWASMCustomAuth.Security.Shared;
 using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 using Newtonsoft.Json;
-using BlazorWASMCustomAuth.Security.Shared.Requests;
 
 namespace BlazorWASMCustomAuth.Client.Services;
-
 public partial class SecurityServiceClient
 {
     public async Task<APIResult<ApplicationDto>> ApplicationCreateAsync(ApplicationCreateDto model)

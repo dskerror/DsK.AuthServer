@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BlazorWASMCustomAuth.Security.Shared;
-
+﻿namespace BlazorWASMCustomAuth.Security.Shared;
 public partial class ApplicationRolePermissionDto
 {
     public int RoleId { get; set; }

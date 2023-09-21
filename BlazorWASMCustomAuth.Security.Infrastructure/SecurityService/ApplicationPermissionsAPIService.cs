@@ -1,22 +1,21 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
 using System.Data;
-
+using System.Linq.Dynamic.Core;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<ApplicationRoleDto>> RoleCreate(ApplicationRoleCreateDto model)
+    public async Task<APIResult<ApplicationPermissionDto>> ApplicationPermissionCreate(ApplicationPermissionCreateDto model)
     {
-        APIResult<ApplicationRoleDto> result = new APIResult<ApplicationRoleDto>();
+        APIResult<ApplicationPermissionDto> result = new APIResult<ApplicationPermissionDto>();
         int recordsCreated = 0;
 
-        var record = new ApplicationRole();
+        var record = new ApplicationPermission();
         Mapper.Map(model, record);
 
-        db.ApplicationRoles.Add(record);
+        db.ApplicationPermissions.Add(record);
 
         try
         {
@@ -36,9 +35,17 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<ApplicationRoleDto>>> ApplicationRolesGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
+    //public async Task<APIResult<List<ApplicationPermissionDto>>> ApplicationPermissionsGet(int applicationId)
+    //{
+    //    APIResult<List<ApplicationPermissionDto>> result = new APIResult<List<ApplicationPermissionDto>>();
+    //    var items = await db.ApplicationPermissions.Where(x => x.ApplicationId == applicationId).ToListAsync();
+    //    result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
+    //    return result;
+    //}
+
+    public async Task<APIResult<List<ApplicationPermissionDto>>> ApplicationPermissionsGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
     {
-        var result = new APIResult<List<ApplicationRoleDto>>();
+        var result = new APIResult<List<ApplicationPermissionDto>>();
 
         string ordering = "Id";
         if (!string.IsNullOrWhiteSpace(Orderby))
@@ -50,50 +57,52 @@ public partial class SecurityService
         PageNumber = PageNumber == 0 ? 1 : PageNumber;
         PageSize = PageSize == 0 ? 10 : PageSize;
         int count = 0;
-        List<ApplicationRole> items;
+        List<ApplicationPermission> items;
         if (!string.IsNullOrWhiteSpace(SearchString))
         {
-            count = await db.ApplicationRoles
-                .Where(m => m.RoleName.Contains(SearchString) || m.RoleDescription.Contains(SearchString))
+            count = await db.ApplicationPermissions
+                .Where(m => m.PermissionName.Contains(SearchString) || m.PermissionDescription.Contains(SearchString))
                 .CountAsync();
 
-            items = await db.ApplicationRoles.OrderBy(ordering)
-                .Where(m => m.RoleName.Contains(SearchString) || m.RoleDescription.Contains(SearchString))
+            items = await db.ApplicationPermissions.OrderBy(ordering)
+                .Where(m => m.PermissionName.Contains(SearchString) || m.PermissionDescription.Contains(SearchString))
                 .Skip((PageNumber - 1) * PageSize)
                 .Take(PageSize)
                 .ToListAsync();
         }
         else if (Id != 0)
         {
-            count = await db.ApplicationRoles
+            count = await db.ApplicationPermissions
                 .Where(u => u.Id == Id)
                 .CountAsync();
 
-            items = await db.ApplicationRoles.OrderBy(ordering)
+            items = await db.ApplicationPermissions.OrderBy(ordering)
                 .Where(u => u.Id == Id)
                 .ToListAsync();
         }
         else
         {
-            count = await db.ApplicationRoles.Where(u => u.ApplicationId == ApplicationId).CountAsync();
+            count = await db.ApplicationPermissions.Where(u => u.ApplicationId == ApplicationId).CountAsync();
 
-            items = await db.ApplicationRoles.Where(u => u.ApplicationId == ApplicationId).OrderBy(ordering)
+            items = await db.ApplicationPermissions.Where(u => u.ApplicationId == ApplicationId).OrderBy(ordering)
                 .Skip((PageNumber - 1) * PageSize)
                 .Take(PageSize)
                 .ToListAsync();
         }
         result.Paging.TotalItems = count;
-        result.Result = Mapper.Map<List<ApplicationRole>, List<ApplicationRoleDto>>(items);
+        result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
         return result;
     }
-    public async Task<APIResult<string>> RoleUpdate(ApplicationRoleUpdateDto model)
+    public async Task<APIResult<string>> ApplicationPermissionUpdate(ApplicationPermissionUpdateDto model)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
-        var record = await db.ApplicationRoles.FirstOrDefaultAsync(x => x.Id == model.Id);
+        var record = await db.ApplicationPermissions.FirstOrDefaultAsync(x => x.Id == model.Id);
 
         if (record != null)
+        {
             Mapper.Map(model, record);
+        }
 
         try
         {
@@ -105,28 +114,31 @@ public partial class SecurityService
             result.Message = ex.InnerException.Message;
         }
 
+
         if (recordsUpdated == 1)
+        {
+            result.Result = recordsUpdated.ToString();
             result.Message = "Record Updated";
+        }
 
         return result;
     }
-    public async Task<APIResult<string>> RoleDelete(int id)
+    public async Task<APIResult<string>> ApplicationPermissionDelete(int id)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsDeleted = 0;
-        var record = db.ApplicationRoles.Attach(new ApplicationRole { Id = id });
+        var record = db.ApplicationPermissions.Attach(new ApplicationPermission { Id = id });
         record.State = EntityState.Deleted;
         try
         {
-            recordsDeleted = await db.SaveChangesAsync();            
+            recordsDeleted = await db.SaveChangesAsync();
+            result.Result = recordsDeleted.ToString();
         }
         catch (Exception ex)
         {
             result.HasError = true;
             result.Message = ex.Message;
         }
-        
-        result.Result = recordsDeleted.ToString();
 
         return result;
     }

@@ -1,0 +1,30 @@
+﻿@page "/ApplicationPermissionViewEdit/{ApplicationId:int}/{ApplicationPermissionsId:int}"
+
+<MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
+
+@if (!_loadedPermissionData)
+{
+    <h3>Loading...</h3>
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+}
+else
+{
+    <EditForm Model="applicationPermission" OnValidSubmit="EditApplicationPermission">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <MudCard Class="mb-2">
+            <MudCardContent>
+                <MudTextField Disabled="!_AccessApplicationPermissionEdit" ReadOnly="true" Label="RoleName" @bind-Value="applicationPermission.PermissionName"
+                              For="@(()=>applicationPermission.PermissionName)">
+                </MudTextField>
+                <MudTextField Disabled="!_AccessApplicationPermissionEdit" Label="RoleDescription" @bind-Value="applicationPermission.PermissionDescription"
+                              For="@(()=>applicationPermission.PermissionDescription)">
+                </MudTextField>
+            </MudCardContent>
+        </MudCard>
+
+        <MudButton Disabled="!_AccessApplicationPermissionEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        <MudButton Disabled="!_AccessApplicationPermissionEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
+
+    </EditForm>
+}

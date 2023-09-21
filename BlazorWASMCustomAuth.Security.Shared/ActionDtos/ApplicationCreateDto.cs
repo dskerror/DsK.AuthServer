@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
-
 public partial class ApplicationCreateDto
 {
     [Required]

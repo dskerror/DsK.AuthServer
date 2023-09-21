@@ -1,9 +1,6 @@
 ﻿using BlazorWASMCustomAuth.Security.Shared;
 using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 using Newtonsoft.Json;
-using BlazorWASMCustomAuth.Security.Shared.Requests;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 
@@ -19,7 +16,7 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationRoleDto>>();
         return result;
     }
-    public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleEditAsync(ApplicationRoleDto model)
+    public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleEditAsync(ApplicationRoleUpdateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationRoleEndpoints.Put, model);
@@ -52,6 +49,7 @@ public partial class SecurityServiceClient
     }
     public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleGetAsync(int id)
     {
+        await PrepareBearerToken();
         var result = await ApplicationRolesGetAsync(new ApplicationPagedRequest() { Id = id });
         var newResult = new APIResult<ApplicationRoleDto>
         {

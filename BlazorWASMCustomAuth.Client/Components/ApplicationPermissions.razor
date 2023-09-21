@@ -1,4 +1,4 @@
-﻿<MudTable Items="@applicationPermissions" Hover="true">
+﻿@* <MudTable Items="@applicationPermissions" Hover="true">
     <ToolBarContent>
 
         @if (_AccessApplicationPermissionsCreate)
@@ -8,7 +8,7 @@
              </div>
         }
         <MudSpacer />
-        
+
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Permission Name</MudTh>
@@ -16,9 +16,54 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
-        <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>        
+        <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable> *@
+
+
+@if (!_loaded)
+{
+    <h3>Loading...</h3>
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+}
+
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationPermissionDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
+    <ToolBarContent>
+
+        @if (_AccessApplicationPermissionsCreate)
+        {
+            <div class="justify-center mud-text-align-center">
+                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateApplicationPermission())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Permission</MudButton>
+             </div>
+        }
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+
+        <MudTh><MudTableSortLabel T="ApplicationPermissionDto" SortLabel="PermissionName">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationPermissionDto" SortLabel="PermissionDescription">Description</MudTableSortLabel></MudTh>
+        <MudTh>Details</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="PermissionName">
+            <MudHighlighter Text="@context.PermissionName" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="PermissionDescription">
+            <MudHighlighter Text="@context.PermissionDescription" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="Details">
+            <MudIconButton OnClick="() => ViewApplicationPermission(context.Id)"
+                           Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled">
+            </MudIconButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
     </PagerContent>
 </MudTable>

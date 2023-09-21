@@ -1,8 +1,7 @@
-﻿using BlazorWASMCustomAuth.Security.Shared;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using BlazorWASMCustomAuth.Security.Shared.Constants;
+using BlazorWASMCustomAuth.Security.Shared;
 
 namespace BlazorWASMCustomAuth.Client.Pages
 {

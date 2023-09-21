@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
-
 public partial class ApplicationUpdateDto
 {
     [Key]
@@ -12,5 +9,4 @@ public partial class ApplicationUpdateDto
     [Required]
     public string ApplicationDesc { get; set; } = null!;
     public bool ApplicationDisabled { get; set; }
-
 }

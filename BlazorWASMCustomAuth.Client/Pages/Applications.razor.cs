@@ -1,14 +1,11 @@
 ﻿using BlazorWASMCustomAuth.Client.Components;
 using BlazorWASMCustomAuth.Client.Services;
 using BlazorWASMCustomAuth.Security.Shared;
-using BlazorWASMCustomAuth.Security.Shared.Constants;
-using BlazorWASMCustomAuth.Security.Shared.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 
 namespace BlazorWASMCustomAuth.Client.Pages;
-
 public partial class Applications
 {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }

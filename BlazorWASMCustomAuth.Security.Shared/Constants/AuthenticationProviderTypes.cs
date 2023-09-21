@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlazorWASMCustomAuth.Security.Shared.Constants
+namespace BlazorWASMCustomAuth.Security.Shared
 {
     public static class AuthenticationProviderTypes
     {
