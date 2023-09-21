@@ -14,10 +14,10 @@ else
         <ValidationSummary />
         <MudCard Class="mb-2">
             <MudCardContent>
-                <MudTextField Disabled="!_AccessApplicationRolesEdit" ReadOnly="true" Label="RoleName" @bind-Value="applicationRole.RoleName"
+                <MudTextField Disabled="true" ReadOnly="true" Label="Role Name" @bind-Value="applicationRole.RoleName"
                           For="@(()=>applicationRole.RoleName)">
                 </MudTextField>
-                <MudTextField Disabled="!_AccessApplicationRolesEdit" Label="RoleDescription" @bind-Value="applicationRole.RoleDescription"
+                <MudTextField Disabled="!_AccessApplicationRolesEdit" Label="Role Description" @bind-Value="applicationRole.RoleDescription"
                           For="@(()=>applicationRole.RoleDescription)">
                 </MudTextField>
             </MudCardContent>

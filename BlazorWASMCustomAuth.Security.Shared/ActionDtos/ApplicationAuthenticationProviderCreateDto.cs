@@ -3,6 +3,7 @@
 namespace BlazorWASMCustomAuth.Security.Shared;
 public partial class ApplicationAuthenticationProviderCreateDto
 {
+    public int ApplicationId { get; set; }
 
     [Required]
     public string AuthenticationProviderName { get; set; } = null!;

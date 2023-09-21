@@ -12,7 +12,7 @@
         @if (_AccessApplicationAuthenticationProviderCreate)
         {
             <div class="justify-center mud-text-align-center">
-                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateAuthenticationProvider())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Authentication Provider</MudButton>
+                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateApplicationAuthenticationProvider())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Authentication Provider</MudButton>
             </div>
         }
         <MudSpacer />
@@ -39,7 +39,7 @@
             <MudHighlighter Text="@context.Username" HighlightedText="@_searchString" />
         </MudTd>
         <MudTd DataLabel="Details">
-            <MudIconButton OnClick="() => ViewAuthenticationProvider(context.Id)"
+            <MudIconButton OnClick="() => ViewApplicationAuthenticationProvider(context.Id)"
                            Icon="@Icons.Material.Filled.Edit"
                            Color="Color.Primary"
                            Variant="Variant.Filled">

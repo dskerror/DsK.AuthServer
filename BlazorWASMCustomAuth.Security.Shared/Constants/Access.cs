@@ -26,12 +26,12 @@ namespace BlazorWASMCustomAuth.Security.Shared
 
         [DisplayName("Authentication Providers")]
         [Description("Authentication Providers Permissions")]
-        public static class AuthenticationProvider
+        public static class ApplicationAuthenticationProvider
         {
-            public const string View = "AuthenticationProviders.View";
-            public const string Create = "AuthenticationProviders.Create";
-            public const string Edit = "AuthenticationProviders.Edit";
-            public const string Delete = "AuthenticationProviders.Delete";
+            public const string View = "ApplicationAuthenticationProviders.View";
+            public const string Create = "ApplicationAuthenticationProviders.Create";
+            public const string Edit = "ApplicationAuthenticationProviders.Edit";
+            public const string Delete = "ApplicationAuthenticationProviders.Delete";
         }
 
         [DisplayName("Application Permissions")]

@@ -1,6 +1,6 @@
-﻿@page "/AuthenticationProviderCreate"
+﻿@page "/ApplicationAuthenticationProviderCreate/{ApplicationId:int}"
 
-<h3><NavLink href="/AuthenticationProviders">Authentication Providers</NavLink> > Create Authentication Provider</h3>
+<MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
 
 <EditForm Model="model" OnValidSubmit="Create">
     <DataAnnotationsValidator />
@@ -10,13 +10,8 @@
             <MudTextField Label="Authentication Provider Name" @bind-Value="model.AuthenticationProviderName"
                           For="@(()=>model.AuthenticationProviderName)">
             </MudTextField>
-            @*<MudTextField Label="Authentication Provider Type" @bind-Value="model.AuthenticationProviderType"
-                          For="@(()=>model.AuthenticationProviderType)">
-            </MudTextField>*@
-            <MudSelect T="string" Label="AuthenticationProviderType" 
-                AnchorOrigin="Origin.BottomCenter" 
-                @bind-Value="model.AuthenticationProviderType">
-                <MudSelectItem Value="@("Active Directory")" />                
+            <MudSelect T="string" Label="AuthenticationProviderType" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.AuthenticationProviderType">
+                <MudSelectItem Value="@("Active Directory")" />
             </MudSelect>
             <MudTextField Label="Domain" @bind-Value="model.Domain"
                           For="@(()=>model.Domain)">

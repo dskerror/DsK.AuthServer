@@ -29,8 +29,8 @@ public partial class ApplicationAuthenticationProviders
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationAuthenticationProviderView = securityService.HasPermission(state.User, Access.AuthenticationProvider.View);
-        _AccessApplicationAuthenticationProviderCreate = securityService.HasPermission(state.User, Access.AuthenticationProvider.Create);
+        _AccessApplicationAuthenticationProviderView = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.View);
+        _AccessApplicationAuthenticationProviderCreate = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.Create);
     }
     private async Task<TableData<ApplicationAuthenticationProviderDto>> ServerReload(TableState state)
     {
@@ -62,13 +62,13 @@ public partial class ApplicationAuthenticationProviders
         _table.ReloadServerData();
     }
 
-    private void ViewAuthenticationProvider(int id)
+    private void ViewApplicationAuthenticationProvider(int id)
     {
-        _navigationManager.NavigateTo($"/authenticationProviderViewEdit/{id}");
+        _navigationManager.NavigateTo($"/ApplicationAuthenticationProviderViewEdit/{id}");
     }
 
-    private void CreateAuthenticationProvider()
+    private void CreateApplicationAuthenticationProvider()
     {
-        _navigationManager.NavigateTo("/authenticationProviderCreate");
+        _navigationManager.NavigateTo($"/ApplicationAuthenticationProviderCreate/{ApplicationId}");
     }
 }

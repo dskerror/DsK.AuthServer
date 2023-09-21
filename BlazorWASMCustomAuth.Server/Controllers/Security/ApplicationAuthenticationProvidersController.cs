@@ -16,7 +16,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
     }
 
     [HttpPost]        
-    [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Create}")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.Create}")]
     public async Task<IActionResult> ApplicationAuthenticationProvidersCreate(ApplicationAuthenticationProviderCreateDto model)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersCreate(model);
@@ -24,7 +24,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.View}")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.View}")]
     public async Task<IActionResult> ApplicationAuthenticationProvidersGet(int applicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersGet(applicationId, id, pageNumber, pageSize, searchString, orderBy);
@@ -32,7 +32,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Edit}")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.Edit}")]
     public async Task<IActionResult> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderUpdateDto model)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersUpdate(model);
@@ -40,7 +40,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
     }
 
     [HttpDelete]
-    [Authorize(Roles = $"{Access.Admin}, {Access.AuthenticationProvider.Delete}")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.Delete}")]
     public async Task<IActionResult> ApplicationAuthenticationProvidersDelete(int id)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersDelete(id);
