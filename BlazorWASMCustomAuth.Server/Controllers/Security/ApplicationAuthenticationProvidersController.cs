@@ -46,5 +46,13 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
         var result = await SecurityService.ApplicationAuthenticationProvidersDelete(id);
         return Ok(result);
     }
+
+    [HttpPost("DisableEnable")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.DisableEnable}")]
+    public async Task<IActionResult> DisableEnable([FromBody] int id)
+    {
+        var result = await SecurityService.ApplicationAuthenticationProviderDisableEnabled(id);
+        return Ok(result);
+    }
 }
 

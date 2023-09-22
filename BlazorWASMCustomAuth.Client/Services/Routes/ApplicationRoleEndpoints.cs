@@ -11,5 +11,11 @@ public static class ApplicationRoleEndpoints
 
     public static string Post = "api/ApplicationRoles";
     public static string Put = "api/ApplicationRoles";
-    public static string Delete = "api/ApplicationRoles";
+    public static string DisableEnable = "api/ApplicationRoles/DisableEnable";
+
+    public static string Delete(int id)
+    {
+        var url = $"api/ApplicationRoles?Id={id}";
+        return url;
+    }
 }

@@ -53,5 +53,13 @@ public class ApplicationPermissionsController : ControllerBase
         var result = await SecurityService.ApplicationPermissionDelete(id);
         return Ok(result);
     }
+
+    [HttpPost("DisableEnable")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationPermissions.DisableEnable}")]
+    public async Task<IActionResult> DisableEnable([FromBody] int id)
+    {
+        var result = await SecurityService.ApplicationPermissionDisableEnabled(id);
+        return Ok(result);
+    }
 }
 

@@ -4,162 +4,186 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
 
-namespace BlazorWASMCustomAuth.Security.Infrastructure
+namespace BlazorWASMCustomAuth.Security.Infrastructure;
+public partial class SecurityService
 {
-    public partial class SecurityService
+    public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProvidersCreate(ApplicationAuthenticationProviderCreateDto model)
     {
-        public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProvidersCreate(ApplicationAuthenticationProviderCreateDto model)
-        {
-            APIResult<ApplicationAuthenticationProviderDto> result = new APIResult<ApplicationAuthenticationProviderDto>();
-            int recordsCreated = 0;
+        APIResult<ApplicationAuthenticationProviderDto> result = new APIResult<ApplicationAuthenticationProviderDto>();
+        int recordsCreated = 0;
 
-            var record = new ApplicationAuthenticationProvider();
+        var record = new ApplicationAuthenticationProvider();
+        Mapper.Map(model, record);
+
+        db.ApplicationAuthenticationProviders.Add(record);
+
+        try
+        {
+            recordsCreated = await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.Message = ex.InnerException.Message;
+        }
+
+        if (recordsCreated == 1)
+        {
+            result.Result = Mapper.Map(record, result.Result);
+            result.Message = "Record Created";
+        }
+
+        return result;
+    }
+    public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
+    {
+        var result = new APIResult<List<ApplicationAuthenticationProviderDto>>();
+
+        string ordering = "Id";
+        if (!string.IsNullOrWhiteSpace(Orderby))
+        {
+            string[] OrderBy = Orderby.Split(',');
+            ordering = string.Join(",", OrderBy);
+        }
+        result.Paging.CurrentPage = PageNumber;
+        PageNumber = PageNumber == 0 ? 1 : PageNumber;
+        PageSize = PageSize == 0 ? 10 : PageSize;
+        int count = 0;
+        List<ApplicationAuthenticationProvider> items;
+        if (!string.IsNullOrWhiteSpace(SearchString))
+        {
+            count = await db.ApplicationAuthenticationProviders
+                .Where(m => m.Name.Contains(SearchString))
+                .CountAsync();
+
+            items = await db.ApplicationAuthenticationProviders.OrderBy(ordering)
+                .Where(m => m.Name.Contains(SearchString))
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
+        }
+        else if (Id != 0)
+        {
+            count = await db.ApplicationAuthenticationProviders
+                .Where(u => u.Id == Id)
+                .CountAsync();
+
+            items = await db.ApplicationAuthenticationProviders.OrderBy(ordering)
+                .Where(u => u.Id == Id)
+                .ToListAsync();
+        }
+        else
+        {
+            count = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationId == ApplicationId).CountAsync();
+
+            items = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationId == ApplicationId).OrderBy(ordering)
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
+        }
+        result.Paging.TotalItems = count;
+        result.Result = Mapper.Map<List<ApplicationAuthenticationProvider>, List<ApplicationAuthenticationProviderDto>>(items);
+        return result;
+    }
+    public async Task<ApplicationAuthenticationProvider> ApplicationApplicationAuthenticationProviderGet(int id)
+    {
+        var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == id).FirstOrDefaultAsync();
+        return applicationAuthenticationProvider;
+    }
+    public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderUpdateDto model)
+    {
+        APIResult<string> result = new APIResult<string>();
+
+        int recordsUpdated = 0;
+        var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == model.Id);
+
+        if (record.AuthenticationProviderType == "Local")
+        {
+            result.HasError = true;
+            result.Message = "Local Authentication Provider can't be updated";
+        }
+
+        if (record != null)
             Mapper.Map(model, record);
 
-            db.ApplicationAuthenticationProviders.Add(record);
-
-            try
-            {
-                recordsCreated = await db.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.InnerException.Message;
-            }
-
-            if (recordsCreated == 1)
-            {
-                result.Result = Mapper.Map(record, result.Result);
-                result.Message = "Record Created";
-            }
-
-            return result;
-        }
-        public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGet(int applicationid, int id, int pageNumber, int pageSize, string searchString, string orderBy)
+        try
         {
-            var result = new APIResult<List<ApplicationAuthenticationProviderDto>>();
-
-            string ordering = "Id";
-            if (!string.IsNullOrWhiteSpace(orderBy))
-            {
-                string[] OrderBy = orderBy.Split(',');
-                ordering = string.Join(",", OrderBy);
-            }
-            result.Paging.CurrentPage = pageNumber;
-            pageNumber = pageNumber == 0 ? 1 : pageNumber;
-            pageSize = pageSize == 0 ? 10 : pageSize;
-            int count = 0;
-            List<ApplicationAuthenticationProvider> items;
-            count = await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationid).CountAsync();
-
-            items = await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationid).OrderBy(ordering)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            if (!string.IsNullOrWhiteSpace(searchString))
-            {
-                //count = await db.AuthenticationProviders
-                //    .Where(m => m.AuthenticationProviderName.Contains(searchString) || m.AuthenticationProviderType.Contains(searchString))
-                //    .CountAsync();
-
-                //items = await db.AuthenticationProviders.OrderBy(ordering)
-                //    .Where(m => m.AuthenticationProviderName.Contains(searchString) || m.AuthenticationProviderType.Contains(searchString))
-                //    .Skip((pageNumber - 1) * pageSize)
-                //    .Take(pageSize)
-                //    .ToListAsync();
-            }
-            else if (id != 0)
-            {
-                //count = await db.AuthenticationProviders
-                //    .Where(u => u.Id == id)
-                //    .CountAsync();
-
-                //items = await db.AuthenticationProviders.OrderBy(ordering)
-                //    .Where(u => u.Id == id)
-                //    .ToListAsync();
-            }
-            else
-            {
-                //count = await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationid).CountAsync();
-
-                //items = await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationid).OrderBy(ordering)
-                //    .Skip((pageNumber - 1) * pageSize)
-                //    .Take(pageSize)
-                //    .ToListAsync();
-            }
-            result.Paging.TotalItems = count;
-            result.Result = Mapper.Map<List<ApplicationAuthenticationProvider>, List<ApplicationAuthenticationProviderDto>>(items);
-            return result;
+            recordsUpdated = await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.Message = ex.InnerException.Message;
         }
 
-        public async Task<ApplicationAuthenticationProvider> ApplicationApplicationAuthenticationProviderGet(int id)
-        {
-            var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == id).FirstOrDefaultAsync();
-            return applicationAuthenticationProvider;
-        }
-        public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderUpdateDto model)
-        {
-            APIResult<string> result = new APIResult<string>();
+        if (recordsUpdated == 1)
+            result.Message = "Record Updated";
 
-            int recordsUpdated = 0;
-            var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == model.Id);
+        return result;
+    }
+    public async Task<APIResult<string>> ApplicationAuthenticationProvidersDelete(int id)
+    {
+        APIResult<string> result = new APIResult<string>();
+        int recordsDeleted = 0;
 
+        var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == id);
+
+        try
+        {
             if (record.AuthenticationProviderType == "Local")
             {
                 result.HasError = true;
-                result.Message = "Local Authentication Provider can't be updated";
+                result.Message = "Local Authentication Provider can't be deleted";
+            }
+            else
+            {
+                db.Remove(record);
+                recordsDeleted = await db.SaveChangesAsync();
             }
 
-            if (record != null)
-                Mapper.Map(model, record);
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.Message = ex.Message;
+        }
 
-            try
+        result.Result = recordsDeleted.ToString();
+
+        return result;
+    }
+
+    public async Task<APIResult<string>> ApplicationAuthenticationProviderDisableEnabled(int id)
+    {
+        APIResult<string> result = new APIResult<string>();
+        int recordsUpdated = 0;
+
+        var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == id);
+
+        try
+        {
+            if (record.AuthenticationProviderType == "Local")
             {
+                result.HasError = true;
+                result.Message = "Local Authentication Provider can't be disabled";
+            }
+            else
+            {
+                if (record.ApplicationAuthenticationProviderDisabled == true)
+                    record.ApplicationAuthenticationProviderDisabled = false;
+                else
+                    record.ApplicationAuthenticationProviderDisabled = true;
                 recordsUpdated = await db.SaveChangesAsync();
             }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.InnerException.Message;
-            }
-
-            if (recordsUpdated == 1)
-                result.Message = "Record Updated";
-
-            return result;
         }
-        public async Task<APIResult<string>> ApplicationAuthenticationProvidersDelete(int id)
+        catch (Exception ex)
         {
-            APIResult<string> result = new APIResult<string>();
-            int recordsDeleted = 0;
-
-            var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == id);
-
-            try
-            {
-                if (record.AuthenticationProviderType == "Local")
-                {
-                    result.HasError = true;
-                    result.Message = "Local Authentication Provider can't be deleted";
-                }
-                else
-                {
-                    db.Remove(record);
-                    recordsDeleted = await db.SaveChangesAsync();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.Message;
-            }
-
-            result.Result = recordsDeleted.ToString();
-
-            return result;
+            result.HasError = true;
+            result.Message = ex.Message;
         }
+
+        result.Result = recordsUpdated.ToString();
+
+        return result;
     }
 }

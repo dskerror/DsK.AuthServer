@@ -70,6 +70,12 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Property<bool>("ApplicationAuthenticationProviderDisabled")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("ApplicationAuthenticationProviderGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ApplicationAuthenticationProviderGUID")
+                        .HasDefaultValueSql("(newid())");
+
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
@@ -121,7 +127,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationAuthenticationProviderId");
+                    b.HasIndex(new[] { "ApplicationAuthenticationProviderId" }, "IX_ApplicationAuthenticationProviderLogins_ApplicationAuthenticationProviderId");
 
                     b.ToTable("ApplicationAuthenticationProviderLogins");
                 });

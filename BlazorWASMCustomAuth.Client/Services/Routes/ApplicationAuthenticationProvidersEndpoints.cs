@@ -12,5 +12,11 @@ public static class ApplicationAuthenticationProvidersEndpoints
             
     public static string Post = "api/ApplicationAuthenticationProviders";
     public static string Put = "api/ApplicationAuthenticationProviders";
-    public static string Delete = "api/ApplicationAuthenticationProviders";
+    public static string DisableEnable = "api/ApplicationAuthenticationProviders/DisableEnable";
+
+    public static string Delete(int id)
+    {
+        var url = $"api/ApplicationAuthenticationProviders?Id={id}";
+        return url;
+    }
 }

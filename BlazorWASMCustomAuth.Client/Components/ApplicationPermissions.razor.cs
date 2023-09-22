@@ -76,4 +76,75 @@ public partial class ApplicationPermissions
         _searchString = text;
         _table.ReloadServerData();
     }
+
+    private async Task DeleteApplicationPermission(ApplicationPermissionDto context)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Are you sure you want to delete this permission?");
+        parameters.Add("ButtonText", "Yes");
+        var dialogresult = DialogService.Show<GenericDialog>("Delete Permission", parameters);
+        var dialogResult = await dialogresult.Result;
+        if (!dialogResult.Canceled && bool.TryParse(dialogResult.Data.ToString(), out bool resultbool))
+        {
+            var result = await securityService.ApplicationPermissionDeleteAsync(context.Id);
+
+            if (result != null)
+                if (result.HasError)
+                    Snackbar.Add(result.Message, Severity.Error);
+                else
+                {
+                    Snackbar.Add(result.Message, Severity.Success);
+                    await _table.ReloadServerData();
+                }
+
+            else
+                Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
+        }
+        else
+        {
+            Snackbar.Add("Operation Canceled", Severity.Warning);
+        }
+    }
+    private async Task DisableEnableApplicationPermission(ApplicationPermissionDto context)
+    {
+        string DisableEnabledHeader = "";
+        string DisableEnabledMessage = "";
+
+        if (context.PermissionDisabled == false)
+        {
+            DisableEnabledHeader = "Disable";
+            DisableEnabledMessage = "disable";
+        }
+        else
+        {
+            DisableEnabledHeader = "Enable";
+            DisableEnabledMessage = "enable";
+        }
+
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", $"Are you sure you want to {DisableEnabledMessage} this permission?");
+        parameters.Add("ButtonText", "Yes");
+        var dialogresult = DialogService.Show<GenericDialog>($"{DisableEnabledHeader} Permission", parameters);
+        var dialogResult = await dialogresult.Result;
+        if (!dialogResult.Canceled && bool.TryParse(dialogResult.Data.ToString(), out bool resultbool))
+        {
+            var result = await securityService.ApplicationPermissionDisableEnableAsync(context.Id);
+
+            if (result != null)
+                if (result.HasError)
+                    Snackbar.Add(result.Message, Severity.Error);
+                else
+                {
+                    Snackbar.Add(result.Message, Severity.Success);
+                    await _table.ReloadServerData();
+                }
+
+            else
+                Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
+        }
+        else
+        {
+            Snackbar.Add("Operation Canceled", Severity.Warning);
+        }
+    }
 }

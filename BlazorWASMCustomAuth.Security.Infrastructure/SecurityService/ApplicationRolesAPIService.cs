@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
 
-
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<ApplicationRoleDto>> RoleCreate(ApplicationRoleCreateDto model)
+    public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleCreate(ApplicationRoleCreateDto model)
     {
         APIResult<ApplicationRoleDto> result = new APIResult<ApplicationRoleDto>();
         int recordsCreated = 0;
@@ -86,7 +85,7 @@ public partial class SecurityService
         result.Result = Mapper.Map<List<ApplicationRole>, List<ApplicationRoleDto>>(items);
         return result;
     }
-    public async Task<APIResult<string>> RoleUpdate(ApplicationRoleUpdateDto model)
+    public async Task<APIResult<string>> ApplicationRoleUpdate(ApplicationRoleUpdateDto model)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
@@ -110,7 +109,7 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> RoleDelete(int id)
+    public async Task<APIResult<string>> ApplicationRoleDelete(int id)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsDeleted = 0;
@@ -127,6 +126,31 @@ public partial class SecurityService
         }
         
         result.Result = recordsDeleted.ToString();
+
+        return result;
+    }
+    public async Task<APIResult<string>> ApplicationRoleDisableEnabled(int id)
+    {
+        APIResult<string> result = new APIResult<string>();
+        int recordsUpdated = 0;
+
+        var record = await db.ApplicationRoles.FirstOrDefaultAsync(x => x.Id == id);
+
+        try
+        {
+            if (record.RoleDisabled == true)
+                record.RoleDisabled = false;
+            else
+                record.RoleDisabled = true;
+            recordsUpdated = await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.Message = ex.Message;
+        }
+
+        result.Result = recordsUpdated.ToString();
 
         return result;
     }

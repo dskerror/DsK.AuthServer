@@ -65,6 +65,9 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.HasIndex(e => e.AuthenticationProviderType, "IX_ApplicationAuthenticationProviders_AuthenticationProviderId");
 
+            entity.Property(e => e.ApplicationAuthenticationProviderGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ApplicationAuthenticationProviderGUID");
             entity.Property(e => e.AuthenticationProviderType).HasMaxLength(50);
             entity.Property(e => e.Domain).HasMaxLength(100);
             entity.Property(e => e.Name).HasMaxLength(50);
@@ -79,6 +82,8 @@ public partial class SecurityTablesTestContext : DbContext
 
         modelBuilder.Entity<ApplicationAuthenticationProviderLogin>(entity =>
         {
+            entity.HasIndex(e => e.ApplicationAuthenticationProviderId, "IX_ApplicationAuthenticationProviderLogins_ApplicationAuthenticationProviderId");
+
             entity.Property(e => e.DateTimeGenerated).HasColumnType("datetime");
 
             entity.HasOne(d => d.ApplicationAuthenticationProvider).WithMany(p => p.ApplicationAuthenticationProviderLogins)

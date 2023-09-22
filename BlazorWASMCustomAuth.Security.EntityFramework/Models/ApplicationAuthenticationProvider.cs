@@ -7,6 +7,8 @@ public partial class ApplicationAuthenticationProvider
 {
     public int Id { get; set; }
 
+    public Guid ApplicationAuthenticationProviderGuid { get; set; }
+
     public int ApplicationId { get; set; }
 
     public string? AuthenticationProviderType { get; set; }

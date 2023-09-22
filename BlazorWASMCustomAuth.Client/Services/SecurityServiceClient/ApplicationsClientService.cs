@@ -70,11 +70,20 @@ public partial class SecurityServiceClient
 
         return newResult;
     }
-
     public async Task<APIResult<string>> ApplicationDeleteAsync(int id)
     {
         await PrepareBearerToken();
         var response = await _httpClient.DeleteAsync(Routes.ApplicationsEndpoints.Delete(id));
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
+    }
+    public async Task<APIResult<string>> ApplicationDisableEnableAsync(int id)
+    {        
+        await PrepareBearerToken();
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationsEndpoints.DisableEnable, id);
         if (!response.IsSuccessStatusCode)
             return null;
 

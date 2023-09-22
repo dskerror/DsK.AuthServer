@@ -11,6 +11,12 @@ namespace BlazorWASMCustomAuth.Client.Services.Routes
 
         public static string Post = "api/ApplicationPermissions";
         public static string Put = "api/ApplicationPermissions";
-        public static string Delete = "api/ApplicationPermissions";
+        public static string DisableEnable = "api/ApplicationPermissions/DisableEnable";
+
+        public static string Delete(int id)
+        {
+            var url = $"api/ApplicationPermissions?Id={id}";
+            return url;
+        }
     }
 }

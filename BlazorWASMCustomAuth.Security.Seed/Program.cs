@@ -15,7 +15,7 @@ internal class Program
         db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
 
         Application newApplication = CreateApplication(db);        
-        ApplicationAuthenticationProvider applicationAuthenticationProvider = CreateApplicationLocalAuthenticationProvider(db, newApplication);
+        ApplicationAuthenticationProvider applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newApplication);
         ApplicationPermission adminPermission = CreateAdminPermission(db);
         ApplicationRole adminRole = CreateAdminRole(db);
         CreateUserRole(db);
@@ -39,10 +39,11 @@ internal class Program
         CreateTestAppPermissions(db);
         AddAdminPermissionToAdminRole(db, TestAppUserRole);
         AddAdminUserToTestApp(db, adminUser);
+        ApplicationAuthenticationProvider testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp);        
 
     }
 
-    private static ApplicationAuthenticationProvider CreateApplicationLocalAuthenticationProvider(SecurityTablesTestContext db, Application newApplication)
+    private static ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(SecurityTablesTestContext db, Application newApplication)
     {
         ApplicationAuthenticationProvider applicationAuthenticationProvider =
                 new ApplicationAuthenticationProvider()

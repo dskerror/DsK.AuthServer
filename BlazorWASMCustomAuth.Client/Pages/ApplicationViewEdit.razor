@@ -15,8 +15,6 @@ else
         <MudCard Class="mb-2">
             <MudCardContent>
 
-                <MudSwitch Color="Color.Error" Disabled="!_AccessApplicationEdit" Label="Application Disabled" LabelPosition="LabelPosition.Start" @bind-Checked="model.ApplicationDisabled" />
-
                 <MudTextField Disabled="true" ReadOnly="true" Label="Application Name" @bind-Value="model.ApplicationName"
                               For="@(()=>model.ApplicationName)">
                 </MudTextField>

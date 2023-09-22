@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using Newtonsoft.Json;
 
 namespace BlazorWASMCustomAuth.Client.Services;
-
 public partial class SecurityServiceClient
 {
     public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleCreateAsync(ApplicationRoleCreateDto model)
@@ -60,5 +59,26 @@ public partial class SecurityServiceClient
         };
 
         return newResult;
+    }
+
+    public async Task<APIResult<string>> ApplicationRoleDeleteAsync(int id)
+    {
+        await PrepareBearerToken();
+        var response = await _httpClient.DeleteAsync(Routes.ApplicationRoleEndpoints.Delete(id));
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
+    }
+    public async Task<APIResult<string>> ApplicationRoleDisableEnableAsync(int id)
+    {        
+        await PrepareBearerToken();
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationRoleEndpoints.DisableEnable, id);
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
     }
 }

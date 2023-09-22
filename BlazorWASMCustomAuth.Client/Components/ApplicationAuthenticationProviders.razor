@@ -23,10 +23,10 @@
         <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="AuthenticationProviderType">Type</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Domain">Domain</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Username">Username</MudTableSortLabel></MudTh>
-        <MudTh>Details</MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="AuthenticationProviderName">
+        <MudTd DataLabel="Name">
             <MudHighlighter Text="@context.Name" HighlightedText="@_searchString" />
         </MudTd>
         <MudTd DataLabel="AuthenticationProviderType">
@@ -38,12 +38,50 @@
         <MudTd DataLabel="Username">
             <MudHighlighter Text="@context.Username" HighlightedText="@_searchString" />
         </MudTd>
-        <MudTd DataLabel="Details">
+        <MudTd DataLabel="">
+
             <MudIconButton OnClick="() => ViewApplicationAuthenticationProvider(context.Id)"
                            Icon="@Icons.Material.Filled.Edit"
                            Color="Color.Primary"
                            Variant="Variant.Filled">
             </MudIconButton>
+
+            &nbsp;
+
+            @if (context.Name != "Local")
+            {
+                if (context.ApplicationAuthenticationProviderDisabled == false)
+                {
+                    <MudTooltip Text="Disable Authentication Provider">
+                        <MudIconButton OnClick="@( async() => await DisableEnableApplicationAuthenticationProvider(context))"
+                                       Icon="@Icons.Material.Filled.WorkOff"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Filled">
+                        </MudIconButton>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudTooltip Text="Enable Authentication Provider">
+                        <MudIconButton OnClick="@( async() => await DisableEnableApplicationAuthenticationProvider(context))"
+                                       Icon="@Icons.Material.Filled.Work"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Filled">
+                        </MudIconButton>
+                    </MudTooltip>
+                }
+
+                @:&nbsp;
+
+                <MudTooltip Text="Delete Authentication Provider">
+                    <MudIconButton OnClick="@( async() => await DeleteApplicationAuthenticationProvider(context))"
+                                   Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Primary"
+                                   Variant="Variant.Filled">
+                    </MudIconButton>
+                </MudTooltip>
+
+            }
         </MudTd>
     </RowTemplate>
     <PagerContent>

@@ -82,8 +82,7 @@ public partial class UserAuthenticationProvider
         else if (_AccessUserAuthenticationProvidersCreate && !string.IsNullOrEmpty(record.Username) && record.Id == 0)
         {
             UserAuthenticationProviderCreateDto userAuthenticationProviderCreateDto = new UserAuthenticationProviderCreateDto()
-            {
-                AuthenticationProviderId = record.AuthenticationProviderId,
+            {                
                 UserId = UserId,
                 Username = record.Username
             };

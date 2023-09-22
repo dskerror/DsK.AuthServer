@@ -40,8 +40,34 @@
                                Variant="Variant.Filled">
                 </MudIconButton>
             </MudTooltip>
+
+            &nbsp;
+            
             @if (context.Id != 1)
             {
+                if (context.ApplicationDisabled == false)
+                {
+                    <MudTooltip Text="Disable Application">
+                        <MudIconButton OnClick="@( async() => await DisableEnableApplication(context))"
+                                       Icon="@Icons.Material.Filled.WorkOff"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Filled">
+                        </MudIconButton>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudTooltip Text="Enable Application">
+                        <MudIconButton OnClick="@( async() => await DisableEnableApplication(context))"
+                                       Icon="@Icons.Material.Filled.Work"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Filled">
+                        </MudIconButton>
+                    </MudTooltip>
+                }
+
+                @:&nbsp;
+
                 <MudTooltip Text="Delete Application">
                     <MudIconButton OnClick="@( async() => await DeleteApplication(context))"
                                    Icon="@Icons.Material.Filled.Delete"

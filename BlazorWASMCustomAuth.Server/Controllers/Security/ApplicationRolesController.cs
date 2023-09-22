@@ -17,15 +17,15 @@ public class ApplicationRolesController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationRoles.Create}")]
-    public async Task<IActionResult> RoleCreate(ApplicationRoleCreateDto model)
+    public async Task<IActionResult> Create(ApplicationRoleCreateDto model)
     {
-        var result = await SecurityService.RoleCreate(model);
+        var result = await SecurityService.ApplicationRoleCreate(model);
         return Ok(result);
     }
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationRoles.View}")]
-    public async Task<IActionResult> RolesGet(int ApplicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+    public async Task<IActionResult> Get(int ApplicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
     {
         var result = await SecurityService.ApplicationRolesGet(ApplicationId, id, pageNumber, pageSize, searchString, orderBy);
         return Ok(result);
@@ -33,17 +33,25 @@ public class ApplicationRolesController : ControllerBase
 
     [HttpPut]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationRoles.Edit}")]
-    public async Task<IActionResult> RoleUpdate(ApplicationRoleUpdateDto model)
+    public async Task<IActionResult> Update(ApplicationRoleUpdateDto model)
     {
-        var result = await SecurityService.RoleUpdate(model);
+        var result = await SecurityService.ApplicationRoleUpdate(model);
         return Ok(result);
     }
 
     [HttpDelete]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationRoles.Delete}")]
-    public async Task<IActionResult> RoleDelete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var result = await SecurityService.RoleDelete(id);
+        var result = await SecurityService.ApplicationRoleDelete(id);
+        return Ok(result);
+    }
+
+    [HttpPost("DisableEnable")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationRoles.DisableEnable}")]
+    public async Task<IActionResult> DisableEnable([FromBody] int id)
+    {
+        var result = await SecurityService.ApplicationRoleDisableEnabled(id);
         return Ok(result);
     }
 }

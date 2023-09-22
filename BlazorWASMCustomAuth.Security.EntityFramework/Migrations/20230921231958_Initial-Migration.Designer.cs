@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 {
     [DbContext(typeof(SecurityTablesTestContext))]
-    [Migration("20230918131742_Initial-Migration")]
+    [Migration("20230921231958_Initial-Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -73,6 +73,12 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Property<bool>("ApplicationAuthenticationProviderDisabled")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("ApplicationAuthenticationProviderGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ApplicationAuthenticationProviderGUID")
+                        .HasDefaultValueSql("(newid())");
+
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
@@ -124,7 +130,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationAuthenticationProviderId");
+                    b.HasIndex(new[] { "ApplicationAuthenticationProviderId" }, "IX_ApplicationAuthenticationProviderLogins_ApplicationAuthenticationProviderId");
 
                     b.ToTable("ApplicationAuthenticationProviderLogins");
                 });

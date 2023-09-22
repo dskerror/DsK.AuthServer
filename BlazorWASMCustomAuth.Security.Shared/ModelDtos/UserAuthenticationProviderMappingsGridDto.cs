@@ -7,9 +7,7 @@ public partial class UserAuthenticationProviderMappingsGridDto
 
     public int UserId { get; set; }
 
-    public int AuthenticationProviderId { get; set; }
-
-    public string AuthenticationProviderName { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
     public string AuthenticationProviderType { get; set; } = null!;
 

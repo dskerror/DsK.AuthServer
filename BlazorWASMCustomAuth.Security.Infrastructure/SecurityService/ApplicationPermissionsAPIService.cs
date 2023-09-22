@@ -142,4 +142,30 @@ public partial class SecurityService
 
         return result;
     }
+
+    public async Task<APIResult<string>> ApplicationPermissionDisableEnabled(int id)
+    {
+        APIResult<string> result = new APIResult<string>();
+        int recordsUpdated = 0;
+
+        var record = await db.ApplicationPermissions.FirstOrDefaultAsync(x => x.Id == id);
+
+        try
+        {
+            if (record.PermissionDisabled == true)
+                record.PermissionDisabled = false;
+            else
+                record.PermissionDisabled = true;
+            recordsUpdated = await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.Message = ex.Message;
+        }
+
+        result.Result = recordsUpdated.ToString();
+
+        return result;
+    }
 }

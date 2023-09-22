@@ -63,7 +63,7 @@ public partial class SecurityService
         {
             userAuthenticationProvidersGridDtoList.Add(new UserAuthenticationProviderMappingsGridDto
             {   
-                AuthenticationProviderName = item.Name,
+                Name = item.Name,
                 AuthenticationProviderType = item.AuthenticationProviderType
             });
         }

@@ -2,9 +2,10 @@
 
 namespace BlazorWASMCustomAuth.Security.Shared;
 public partial class ApplicationAuthenticationProviderUpdateDto
-{
+{    
     [Key]
     public int Id { get; set; }
+    public Guid ApplicationAuthenticationProviderGUID { get; set; }
 
     [Required]
     public string? Domain { get; set; }

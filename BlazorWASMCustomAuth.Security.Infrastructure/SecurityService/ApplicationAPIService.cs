@@ -169,5 +169,31 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
+
+        public async Task<APIResult<string>> ApplicationDisableEnabled(int id)
+        {
+            APIResult<string> result = new APIResult<string>();
+            int recordsUpdated = 0;
+
+            var record = await db.Applications.FirstOrDefaultAsync(x => x.Id == id);
+
+            try
+            {
+                if(record.ApplicationDisabled == true) 
+                    record.ApplicationDisabled = false;
+                else
+                    record.ApplicationDisabled = true;
+                recordsUpdated = await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                result.Message = ex.Message;
+            }
+
+            result.Result = recordsUpdated.ToString();
+
+            return result;
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace BlazorWASMCustomAuth.Security.Shared
             public const string Edit = "Applications.Edit";
             public const string Delete = "Applications.Delete";
             public const string GenerateNewAPIKey = "Applications.GenerateNewAPIKey";
+            public const string DisableEnable = "Applications.DisableEnable";
         }
 
         [DisplayName("Authentication Providers")]
@@ -32,6 +33,7 @@ namespace BlazorWASMCustomAuth.Security.Shared
             public const string Create = "ApplicationAuthenticationProviders.Create";
             public const string Edit = "ApplicationAuthenticationProviders.Edit";
             public const string Delete = "ApplicationAuthenticationProviders.Delete";
+            public const string DisableEnable = "ApplicationAuthenticationProviders.DisableEnable";
         }
 
         [DisplayName("Application Permissions")]
@@ -42,6 +44,7 @@ namespace BlazorWASMCustomAuth.Security.Shared
             public const string Create = "ApplicationPermissions.Create";
             public const string Edit = "ApplicationPermissions.Edit";
             public const string Delete = "ApplicationPermissions.Delete";
+            public const string DisableEnable = "ApplicationPermissions.DisableEnable";            
         }
         [DisplayName("Application Role Permissions")]
         [Description("Application Role Permissions Permissions")]
@@ -59,6 +62,7 @@ namespace BlazorWASMCustomAuth.Security.Shared
             public const string Create = "ApplicationRoles.Create";
             public const string Edit = "ApplicationRoles.Edit";
             public const string Delete = "ApplicationRoles.Delete";
+            public const string DisableEnable = "ApplicationRoles.DisableEnable";
         }
 
         [DisplayName("User Authentication Providers")]

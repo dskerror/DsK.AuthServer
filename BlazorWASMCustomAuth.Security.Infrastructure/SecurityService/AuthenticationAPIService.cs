@@ -243,8 +243,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
                 UserAuthenticationProviderCreateDto userAuthenticationProviderCreateDto = new UserAuthenticationProviderCreateDto()
                 {
-                    Username = model.Email,
-                    AuthenticationProviderId = model.AuthenticationProviderId,
+                    Username = model.Email,                    
                     UserId = result.Result.Id
                 };
 

@@ -31,6 +31,14 @@ public class ApplicationController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("DisableEnable")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.Application.DisableEnable}")]
+    public async Task<IActionResult> DisableEnable([FromBody] int id)
+    {
+        var result = await SecurityService.ApplicationDisableEnabled(id);
+        return Ok(result);
+    }
+
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.Application.View}")]
     public async Task<IActionResult> ApplicationGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)

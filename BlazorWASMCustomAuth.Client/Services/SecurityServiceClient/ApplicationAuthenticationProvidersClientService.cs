@@ -60,4 +60,25 @@ public partial class SecurityServiceClient
 
         return newResult;
     }
+
+    public async Task<APIResult<string>> ApplicationAuthenticationProviderDeleteAsync(int id)
+    {
+        await PrepareBearerToken();
+        var response = await _httpClient.DeleteAsync(Routes.ApplicationAuthenticationProvidersEndpoints.Delete(id));
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
+    }
+    public async Task<APIResult<string>> ApplicationAuthenticationProviderDisableEnableAsync(int id)
+    {
+        await PrepareBearerToken();
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationAuthenticationProvidersEndpoints.DisableEnable, id);
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
+    }
 }

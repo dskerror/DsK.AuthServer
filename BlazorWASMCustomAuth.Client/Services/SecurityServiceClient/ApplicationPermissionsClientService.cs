@@ -15,28 +15,6 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationPermissionDto>>();
         return result;
     }
-    //public async Task<APIResult<List<ApplicationPermissionGridDto>>> ApplicationPermissionsGetAsync(int applicationId)
-    //{
-    //    await PrepareBearerToken();
-    //    var response = await _httpClient.GetAsync(Routes.ApplicationPermissionEndpoints.Get(applicationId));
-    //    if (!response.IsSuccessStatusCode)
-    //        return null;
-
-    //    var responseAsString = await response.Content.ReadAsStringAsync();
-
-    //    try
-    //    {
-    //        var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationPermissionGridDto>>>(responseAsString);
-    //        return responseObject;
-    //    }
-    //    catch (Exception ex)
-    //    {
-
-    //        Console.Write(ex.Message);
-    //        return null;
-    //    }
-    //}
-
     public async Task<APIResult<List<ApplicationPermissionDto>>> ApplicationPermissionsGetAsync(ApplicationPagedRequest request)
     {
         await PrepareBearerToken();
@@ -80,6 +58,27 @@ public partial class SecurityServiceClient
             return null;
 
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationPermissionDto>>();
+        return result;
+    }
+
+    public async Task<APIResult<string>> ApplicationPermissionDeleteAsync(int id)
+    {
+        await PrepareBearerToken();
+        var response = await _httpClient.DeleteAsync(Routes.ApplicationPermissionEndpoints.Delete(id));
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
+    }
+    public async Task<APIResult<string>> ApplicationPermissionDisableEnableAsync(int id)
+    {
+        await PrepareBearerToken();
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationPermissionEndpoints.DisableEnable, id);
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
         return result;
     }
 }

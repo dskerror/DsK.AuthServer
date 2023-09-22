@@ -7,8 +7,8 @@
     <ValidationSummary />
     <MudCard Class="mb-2">
         <MudCardContent>
-            <MudTextField Label="Authentication Provider Name" @bind-Value="model.AuthenticationProviderName"
-                          For="@(()=>model.AuthenticationProviderName)">
+            <MudTextField Label="Authentication Provider Name" @bind-Value="model.Name"
+                          For="@(()=>model.Name)">
             </MudTextField>
             <MudSelect T="string" Label="AuthenticationProviderType" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.AuthenticationProviderType">
                 <MudSelectItem Value="@("Active Directory")" />
