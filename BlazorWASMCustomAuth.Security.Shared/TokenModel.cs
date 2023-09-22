@@ -3,6 +3,7 @@
 	public class TokenModel
 	{
         public string CallbackURL { get; set; }
+        public string LoginToken { get; set; }
         public string Token { get; set; }
 		public string RefreshToken { get; set; }
 

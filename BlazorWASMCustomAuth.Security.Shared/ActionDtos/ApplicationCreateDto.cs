@@ -9,5 +9,5 @@ public partial class ApplicationCreateDto
     public string ApplicationDesc { get; set; } = null!;
 
     [Required]
-    public string CallbackURL { get; set; } = null
+    public string CallbackURL { get; set; } = null!;
 }

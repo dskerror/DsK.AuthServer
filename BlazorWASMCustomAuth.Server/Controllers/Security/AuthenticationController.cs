@@ -27,6 +27,18 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         //    return Ok(result);
         //}
 
+        [HttpGet]
+        [Route("ValidateLoginToken")]
+        public async Task<IActionResult> ValidateLoginToken(string token)
+        {   
+            var tokenModel = await SecurityService.ValidateLoginToken(token);
+
+            if (tokenModel == null)
+                return NotFound();
+
+            return Ok(tokenModel);
+        }
+
 
         [HttpPost]
         [Route("UserLogin")]

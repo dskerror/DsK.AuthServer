@@ -11,20 +11,26 @@
     public async Task LoginLogic()
     {
 
-        if (Token == "BB54D562-58A7-4267-8F9A-0B1A60A12C02")
-        {
-            _navigationManager.NavigateTo("/");
-        }
+        // if (Token == "BB54D562-58A7-4267-8F9A-0B1A60A12C02")
+        // {
+        //     _navigationManager.NavigateTo("/");
+        // }
 
-        // string result = "";
-        // try
-        // {
-        //     result = await Http.GetStringAsync("Security/ValidateToken?applicationAuthenticationProviderGUID=BB54D562-58A7-4267-8F9A-0B1A60A12C02");
-        // }
-        // catch (Exception ex)
-        // {
-        //     Console.WriteLine(ex.Message);
-        // }
+        
+        try
+        {
+            var response = await Http.GetAsync($"Security/ValidateToken?applicationAuthenticationProviderGUID={Token}");
+            var result = await response.Content.ReadFromJsonAsync<bool>();
+            if (result == null || result == false)
+            {
+                //error
+            }
+            //create local token
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
 
         // string loginurl = "https://localhost:7190/login/BB54D562-58A7-4267-8F9A-0B1A60A12C02";
 

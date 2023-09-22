@@ -6,22 +6,24 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {   
-    public async Task<bool> LoginAsync(UserLoginDto model)
+    public async Task<TokenModel> LoginAsync(UserLoginDto model)
     {
+        TokenModel tokenModel = new TokenModel("","");
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Login, model);
         if (!response.IsSuccessStatusCode)
         {
-            return false;
+            return tokenModel;
         }
         var result = await response.Content.ReadFromJsonAsync<APIResult<TokenModel>>();
         if (result == null || result.HasError)
         {
-            return false;
+            return tokenModel;
         }
+        tokenModel = result.Result;
         await _localStorageService.SetItemAsync("token", result.Result.Token);
         await _localStorageService.SetItemAsync("refreshToken", result.Result.RefreshToken);
         (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
-        return true;
+        return tokenModel;
     }
 
     public async Task<bool> LogoutAsync()

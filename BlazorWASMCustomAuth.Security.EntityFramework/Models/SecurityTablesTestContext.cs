@@ -180,6 +180,11 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.Property(e => e.Username).HasMaxLength(256);
 
+            entity.HasOne(d => d.ApplicationAuthenticationProvider).WithMany(p => p.UserAuthenticationProviderMappings)
+                .HasForeignKey(d => d.ApplicationAuthenticationProviderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserAuthenticationProviderMappings_ApplicationAuthenticationProviders");
+
             entity.HasOne(d => d.User).WithMany(p => p.UserAuthenticationProviderMappings)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

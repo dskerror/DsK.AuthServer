@@ -2,6 +2,7 @@
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using static BlazorWASMCustomAuth.Security.Shared.Access;
 
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
@@ -36,9 +37,9 @@ public partial class SecurityService
 
         var userAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
         {
-            
+
             UserId = record.Id,
-            Username= record.Email,
+            Username = record.Email,
         };
 
         await db.UserAuthenticationProviderMappings.AddAsync(userAuthenticationProviderMapping);
@@ -135,8 +136,8 @@ public partial class SecurityService
             result.Message = ex.InnerException.Message;
         }
 
-        if (recordsUpdated == 1)        
-            result.Message = "Record Updated";        
+        if (recordsUpdated == 1)
+            result.Message = "Record Updated";
 
         return result;
     }
@@ -166,12 +167,12 @@ public partial class SecurityService
         return await db.Users.Where(u => u.Email == username).FirstOrDefaultAsync();
     }
 
-    private async Task<User> GetUserByMappedUsernameAsync(string username, int AuthenticationProviderId)
+    private async Task<User> GetUserByMappedUsernameAsync(string username, int applicationAuthenticationProviderId)
     {
         var user = await (from u in db.Users
-                   join uap in db.UserAuthenticationProviderMappings on u.Id equals uap.UserId
-                   where uap.Username == username 
-                   select u).FirstOrDefaultAsync();
+                          join uap in db.UserAuthenticationProviderMappings on u.Id equals uap.UserId                          
+                          where uap.Username == username && uap.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId
+                          select u).FirstOrDefaultAsync();
         return user;
     }
 }

@@ -85,9 +85,9 @@ public partial class SecurityService
         result.Result = Mapper.Map<List<ApplicationAuthenticationProvider>, List<ApplicationAuthenticationProviderDto>>(items);
         return result;
     }
-    public async Task<ApplicationAuthenticationProvider> ApplicationApplicationAuthenticationProviderGet(int id)
+    public async Task<ApplicationAuthenticationProvider> ApplicationApplicationAuthenticationProviderGet(Guid ApplicationAuthenticationProviderGUID)
     {
-        var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == id).FirstOrDefaultAsync();
+        var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).FirstOrDefaultAsync();
         return applicationAuthenticationProvider;
     }
     public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderUpdateDto model)

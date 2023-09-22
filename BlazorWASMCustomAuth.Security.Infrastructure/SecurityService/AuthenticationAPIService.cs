@@ -32,31 +32,53 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         //    return "ThisIsTheLoginToken";
         //}
 
+
+        public async Task<bool> ValidateLoginToken(string token)
+        {
+            //var token = db.ApplicationAuthenticationProviderLogins.Where(x => x.LoginKey == Guid.Parse(token));
+            bool result = false;
+            
+            return result;
+        }
+
+
         public async Task<APIResult<TokenModel>> UserLogin(UserLoginDto model)
         {
-            APIResult<TokenModel> result = new APIResult<TokenModel>();
-            var user = await AuthenticateUser(model);
 
+            APIResult<TokenModel> result = new APIResult<TokenModel>();
+
+            var applicationAuthenticationProvider = await ApplicationApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
+
+            var user = await AuthenticateUser(model, applicationAuthenticationProvider);
             if (user == null)
             {
                 result.HasError = true;
                 return result;
             }
 
-            var token = await GenerateAuthenticationToken(user);
+            var token = await GenerateAuthenticationToken(user, _tokenSettings.Key);
             token.CallbackURL = await GetCallbackURL(model.ApplicationAuthenticationProviderGUID);
 
             db.UserTokens.Add(new UserToken()
             {
+                ApplicationId = applicationAuthenticationProvider.Id,
                 UserId = user.Id,
                 RefreshToken = token.RefreshToken,
                 TokenRefreshedDateTime = DateTime.Now,
                 TokenCreatedDateTime = DateTime.Now
             });
 
+            var newguid = Guid.NewGuid();
+            db.ApplicationAuthenticationProviderLogins.Add(new ApplicationAuthenticationProviderLogin()
+            {
+                ApplicationAuthenticationProviderId = applicationAuthenticationProvider.Id,
+                LoginKey = newguid,
+                DateTimeGenerated = DateTime.Now
+            });
+
+            token.CallbackURL += newguid;
+
             await db.SaveChangesAsync();
-
-
 
             result.Result = token;
             return result;
@@ -110,7 +132,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return result;
             }
 
-            var newtoken = await GenerateAuthenticationToken(user);
+            var newtoken = await GenerateAuthenticationToken(user, _tokenSettings.Key);
             userToken.UserId = user.Id;
             userToken.RefreshToken = newtoken.RefreshToken;
             userToken.TokenRefreshedDateTime = DateTime.Now;
@@ -171,9 +193,9 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return username;
         }
-        private async Task<TokenModel> GenerateAuthenticationToken(User user)
+        private async Task<TokenModel> GenerateAuthenticationToken(User user, string key)
         {
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Key ?? ""));
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
             var userPermissions = await GetUserPermissionsCombined(user.Id);
@@ -215,13 +237,11 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return Convert.ToBase64String(key);
             }
         }
-        private async Task<User> AuthenticateUser(UserLoginDto model)
+        private async Task<User> AuthenticateUser(UserLoginDto model, ApplicationAuthenticationProvider applicationAuthenticationProvider)
         {
-            var user = await GetUserByMappedUsernameAsync(model.Email, model.AuthenticationProviderId);
+            var user = await GetUserByMappedUsernameAsync(model.Email, applicationAuthenticationProvider.Id);
 
             bool IsUserAuthenticated = false;
-
-            var applicationAuthenticationProvider = await ApplicationApplicationAuthenticationProviderGet(model.AuthenticationProviderId);
 
             switch (applicationAuthenticationProvider.AuthenticationProviderType)
             {
@@ -259,7 +279,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 };
 
                 UserAuthenticationProviderCreate(userAuthenticationProviderCreateDto);
-                user = await GetUserByMappedUsernameAsync(model.Email, model.AuthenticationProviderId);
+                user = await GetUserByMappedUsernameAsync(model.Email, applicationAuthenticationProvider.Id);
             }
             return user;
         }
