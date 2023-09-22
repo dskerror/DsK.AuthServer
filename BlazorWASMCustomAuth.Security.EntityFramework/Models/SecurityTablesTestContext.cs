@@ -57,6 +57,9 @@ public partial class SecurityTablesTestContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ApplicationGUID");
             entity.Property(e => e.ApplicationName).HasMaxLength(50);
+            entity.Property(e => e.CallbackUrl)
+                .HasMaxLength(500)
+                .HasColumnName("CallbackURL");
         });
 
         modelBuilder.Entity<ApplicationAuthenticationProvider>(entity =>
@@ -98,7 +101,7 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.HasIndex(e => e.ApplicationId, "IX_ApplicationPermissions_ApplicationId");
 
-            entity.HasIndex(e => e.PermissionName, "IX_Permissions").IsUnique();
+            entity.HasIndex(e => new { e.PermissionName, e.ApplicationId }, "IX_Permissions").IsUnique();
 
             entity.Property(e => e.PermissionDescription).HasMaxLength(250);
             entity.Property(e => e.PermissionName).HasMaxLength(50);
@@ -115,7 +118,7 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.HasIndex(e => e.ApplicationId, "IX_ApplicationRoles_ApplicationId");
 
-            entity.HasIndex(e => e.RoleName, "IX_Roles").IsUnique();
+            entity.HasIndex(e => new { e.RoleName, e.ApplicationId }, "IX_Roles").IsUnique();
 
             entity.Property(e => e.RoleDescription).HasMaxLength(250);
             entity.Property(e => e.RoleName).HasMaxLength(50);

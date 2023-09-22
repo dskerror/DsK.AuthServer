@@ -10,4 +10,6 @@ public class UserLoginDto
     [Required]
     public string? Password { get; set; }
     public int AuthenticationProviderId { get; set; } = 1;
+
+    public Guid ApplicationAuthenticationProviderGUID  { get; set; }
 }

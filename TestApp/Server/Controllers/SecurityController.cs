@@ -16,35 +16,35 @@ namespace TestApp.Server.Controllers
             _Http = authorizarionServerAPIHttpClient.Client;
         }
 
-        [HttpGet]
-        [Route("ApplicationLoginRequest")]
-        public async Task<string> ApplicationLoginRequest()
-        {
-            string result = "";
+        //[HttpGet]
+        //[Route("ApplicationLoginRequest")]
+        //public async Task<string> ApplicationLoginRequest()
+        //{
+        //    string result = "";
 
-            ApplicationLoginRequestDto model = new ApplicationLoginRequestDto()
-            {
-                ApplicationAuthenticationProviderGuid = "xxx",
-                AppApiKey = "123"
-            };
-            try
-            {
-                var response = await _Http.PostAsJsonAsync("api/Authentication/ApplicationLoginRequest", model);
+        //    ApplicationLoginRequestDto model = new ApplicationLoginRequestDto()
+        //    {
+        //        ApplicationAuthenticationProviderGuid = "xxx",
+        //        AppApiKey = "123"
+        //    };
+        //    try
+        //    {
+        //        var response = await _Http.PostAsJsonAsync("api/Authentication/ApplicationLoginRequest", model);
                 
-                if (!response.IsSuccessStatusCode)
-                    return null;
+        //        if (!response.IsSuccessStatusCode)
+        //            return null;
 
-                result = await response.Content.ReadAsStringAsync();                
+        //        result = await response.Content.ReadAsStringAsync();                
 
-            }
-            catch (Exception ex)
-            {
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                Console.WriteLine(ex);
-            }
+        //        Console.WriteLine(ex);
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         [HttpGet]
         [Route("ApplicationLoginApproved")]

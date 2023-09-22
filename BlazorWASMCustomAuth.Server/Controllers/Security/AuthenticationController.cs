@@ -14,18 +14,18 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             SecurityService = securityService;
         }
 
-        [HttpPost]
-        [Route("ApplicationLoginRequest")]
-        public async Task<IActionResult> ApplicationLoginRequest(ApplicationLoginRequestDto model)
-        {
-            //todo : implement captcha
-            var result = await SecurityService.ApplicationLoginRequest(model);
+        //[HttpPost]
+        //[Route("ApplicationLoginRequest")]
+        //public async Task<IActionResult> ApplicationLoginRequest(ApplicationLoginRequestDto model)
+        //{
+        //    //todo : implement captcha
+        //    var result = await SecurityService.ApplicationLoginRequest(model);
 
-            if (result == null)
-                return NotFound();
+        //    if (result == null)
+        //        return NotFound();
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
 
         [HttpPost]

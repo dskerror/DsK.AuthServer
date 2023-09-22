@@ -15,6 +15,8 @@ public partial class Application
 
     public Guid AppApiKey { get; set; }
 
+    public string? CallbackUrl { get; set; }
+
     public bool ApplicationDisabled { get; set; }
 
     public virtual ICollection<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; } = new List<ApplicationAuthenticationProvider>();

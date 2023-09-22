@@ -1,6 +1,7 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
@@ -15,21 +16,21 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
     public partial class SecurityService
     {
 
-        public async Task<string> ApplicationLoginRequest(ApplicationLoginRequestDto model)
-        {
-            //db.UserTokens.Add(new UserToken()
-            //{
-            //    UserId = user.Id,
-            //    RefreshToken = token.RefreshToken,
-            //    TokenRefreshedDateTime = DateTime.Now,
-            //    TokenCreatedDateTime = DateTime.Now
-            //});
+        //public async Task<string> ApplicationLoginRequest(ApplicationLoginRequestDto model)
+        //{
+        //    //db.UserTokens.Add(new UserToken()
+        //    //{
+        //    //    UserId = user.Id,
+        //    //    RefreshToken = token.RefreshToken,
+        //    //    TokenRefreshedDateTime = DateTime.Now,
+        //    //    TokenCreatedDateTime = DateTime.Now
+        //    //});
 
-            //await db.SaveChangesAsync();
+        //    //await db.SaveChangesAsync();
 
-            //result.Result = token;
-            return "ThisIsTheLoginToken";
-        }
+        //    //result.Result = token;
+        //    return "ThisIsTheLoginToken";
+        //}
 
         public async Task<APIResult<TokenModel>> UserLogin(UserLoginDto model)
         {
@@ -43,6 +44,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
 
             var token = await GenerateAuthenticationToken(user);
+            token.CallbackURL = await GetCallbackURL(model.ApplicationAuthenticationProviderGUID);
 
             db.UserTokens.Add(new UserToken()
             {
@@ -53,6 +55,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             });
 
             await db.SaveChangesAsync();
+
+
 
             result.Result = token;
             return result;
@@ -194,6 +198,13 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             string refreshToken = GenerateRefreshToken();
 
             return new TokenModel(token, refreshToken);
+        }
+
+        private async Task<string> GetCallbackURL(Guid ApplicationAuthenticationProviderGUID)
+        {
+            var provider = db.ApplicationAuthenticationProviders.Where(x=>x.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).FirstOrDefault();
+            var CallbackURL = "/"; //provider.CallbackURL;
+            return CallbackURL;
         }
         private string GenerateRefreshToken()
         {

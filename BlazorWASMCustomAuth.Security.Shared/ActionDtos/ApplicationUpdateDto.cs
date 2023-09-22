@@ -8,5 +8,8 @@ public partial class ApplicationUpdateDto
 
     [Required]
     public string ApplicationDesc { get; set; } = null!;
+
+    [Required]
+    public string CallbackURL { get; set; }
     public bool ApplicationDisabled { get; set; }
 }

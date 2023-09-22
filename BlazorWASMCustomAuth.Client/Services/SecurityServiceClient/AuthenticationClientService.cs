@@ -8,7 +8,7 @@ public partial class SecurityServiceClient
 {   
     public async Task<bool> LoginAsync(UserLoginDto model)
     {
-        var response = await _httpClient.PostAsJsonAsync<UserLoginDto>(Routes.AuthenticationEndpoints.Login, model);
+        var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Login, model);
         if (!response.IsSuccessStatusCode)
         {
             return false;
