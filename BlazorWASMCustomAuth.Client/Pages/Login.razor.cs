@@ -7,7 +7,7 @@ namespace BlazorWASMCustomAuth.Client.Pages;
 public partial class Login
 {
     [Parameter] public string ApplicationAuthenticationProviderGUID { get; set; }
-    private UserLoginDto userLoginModel = new UserLoginDto() { ApplicationAuthenticationProviderGUID = Guid.Parse("C2EDCF8B-9E25-4C1F-A9CB-8E5F56E9F5B3") };
+    private LoginRequestDto userLoginModel = new LoginRequestDto();
     private bool _LoginButtonDisabled;
     private bool _passwordVisibility;
     private InputType _passwordInput = InputType.Password;
@@ -22,10 +22,10 @@ public partial class Login
 
         var result = await securityService.LoginAsync(userLoginModel);
 
-        if (!result.CallbackURL.IsNullOrEmpty())
+        if (!result.IsNullOrEmpty())
         {
-            _navigationManager.NavigateTo(result.CallbackURL);
-            Snackbar.Add("Login Successful", Severity.Success);
+            _navigationManager.NavigateTo(result);
+            Snackbar.Add("Authenticating...", Severity.Success);
         }
         else
             Snackbar.Add("Username and/or Password incorrect", Severity.Error);

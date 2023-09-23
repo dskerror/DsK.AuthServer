@@ -194,6 +194,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false),
+                    LoginToken = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TokenCreatedDateTime = table.Column<DateTime>(type: "datetime", nullable: false),
                     TokenRefreshedDateTime = table.Column<DateTime>(type: "datetime", nullable: false)
@@ -210,26 +211,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         name: "FK_UserTokens_Users",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ApplicationAuthenticationProviderLogins",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ApplicationAuthenticationProviderId = table.Column<int>(type: "int", nullable: false),
-                    LoginKey = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DateTimeGenerated = table.Column<DateTime>(type: "datetime", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApplicationAuthenticationProviderLogins", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ApplicationAuthenticationProviderLogins_ApplicationAuthenticationProviders",
-                        column: x => x.ApplicationAuthenticationProviderId,
-                        principalTable: "ApplicationAuthenticationProviders",
                         principalColumn: "Id");
                 });
 
@@ -328,11 +309,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ApplicationAuthenticationProviderLogins_ApplicationAuthenticationProviderId",
-                table: "ApplicationAuthenticationProviderLogins",
-                column: "ApplicationAuthenticationProviderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationAuthenticationProviders_ApplicationId",
@@ -443,9 +419,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ApplicationAuthenticationProviderLogins");
-
             migrationBuilder.DropTable(
                 name: "ApplicationRolePermissions");
 

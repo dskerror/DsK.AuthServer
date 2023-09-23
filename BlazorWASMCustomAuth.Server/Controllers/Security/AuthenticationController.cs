@@ -1,5 +1,6 @@
 ﻿using BlazorWASMCustomAuth.Security.Infrastructure;
 using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Security.Shared.ActionDtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorWASMCustomAuth.Server.Controllers.Security
@@ -14,38 +15,24 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
             SecurityService = securityService;
         }
 
-        //[HttpPost]
-        //[Route("ApplicationLoginRequest")]
-        //public async Task<IActionResult> ApplicationLoginRequest(ApplicationLoginRequestDto model)
-        //{
-        //    //todo : implement captcha
-        //    var result = await SecurityService.ApplicationLoginRequest(model);
-
-        //    if (result == null)
-        //        return NotFound();
-
-        //    return Ok(result);
-        //}
-
-        [HttpGet]
-        [Route("ValidateLoginToken")]
-        public async Task<IActionResult> ValidateLoginToken(string token)
-        {   
-            var tokenModel = await SecurityService.ValidateLoginToken(token);
-
-            if (tokenModel == null)
-                return NotFound();
-
-            return Ok(tokenModel);
-        }
-
-
         [HttpPost]
-        [Route("UserLogin")]
-        public async Task<IActionResult> UserLogin(UserLoginDto model)
+        [Route("Login")]
+        public async Task<IActionResult> Login(LoginRequestDto model)
         {
             //todo : implement captcha
-            var tokenModel = await SecurityService.UserLogin(model);
+            var callbackUrl = await SecurityService.Login(model);
+
+            if (callbackUrl == null)
+                return NotFound();
+
+            return Ok(callbackUrl);
+        }
+
+        [HttpPost]
+        [Route("ValidateLoginToken")]
+        public async Task<IActionResult> ValidateLoginToken(ValidateLoginTokenDto model)
+        {   
+            var tokenModel = await SecurityService.ValidateLoginToken(model);
 
             if (tokenModel == null)
                 return NotFound();

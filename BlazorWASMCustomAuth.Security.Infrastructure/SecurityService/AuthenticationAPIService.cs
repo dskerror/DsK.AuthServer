@@ -1,5 +1,6 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Security.Shared.ActionDtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
@@ -15,73 +16,57 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 {
     public partial class SecurityService
     {
-
-        //public async Task<string> ApplicationLoginRequest(ApplicationLoginRequestDto model)
-        //{
-        //    //db.UserTokens.Add(new UserToken()
-        //    //{
-        //    //    UserId = user.Id,
-        //    //    RefreshToken = token.RefreshToken,
-        //    //    TokenRefreshedDateTime = DateTime.Now,
-        //    //    TokenCreatedDateTime = DateTime.Now
-        //    //});
-
-        //    //await db.SaveChangesAsync();
-
-        //    //result.Result = token;
-        //    return "ThisIsTheLoginToken";
-        //}
-
-
-        public async Task<bool> ValidateLoginToken(string token)
+        public async Task<TokenModel> ValidateLoginToken(ValidateLoginTokenDto model)
         {
-            //var token = db.ApplicationAuthenticationProviderLogins.Where(x => x.LoginKey == Guid.Parse(token));
-            bool result = false;
-            
-            return result;
+            var userToken = db.UserTokens.Where(x => x.LoginToken == Guid.Parse(model.LoginToken)).Include(x => x.User).FirstOrDefault();
+
+            if (model.TokenKey == "") 
+                model.TokenKey = _tokenSettings.Key;
+
+            var token = await GenerateAuthenticationToken(userToken.User, model.TokenKey);
+
+            userToken.RefreshToken = token.RefreshToken;
+            await db.SaveChangesAsync();
+
+            return token;
         }
 
-
-        public async Task<APIResult<TokenModel>> UserLogin(UserLoginDto model)
+        public async Task<LoginResponseDto> Login(LoginRequestDto model)
         {
-
-            APIResult<TokenModel> result = new APIResult<TokenModel>();
-
-            var applicationAuthenticationProvider = await ApplicationApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
+            var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
             var user = await AuthenticateUser(model, applicationAuthenticationProvider);
             if (user == null)
-            {
-                result.HasError = true;
-                return result;
-            }
+                return null;
 
-            var token = await GenerateAuthenticationToken(user, _tokenSettings.Key);
-            token.CallbackURL = await GetCallbackURL(model.ApplicationAuthenticationProviderGUID);
+            string CallbackURL = applicationAuthenticationProvider.Application.CallbackUrl;
+
+            var newguid = Guid.NewGuid();
 
             db.UserTokens.Add(new UserToken()
             {
-                ApplicationId = applicationAuthenticationProvider.Id,
+                ApplicationId = applicationAuthenticationProvider.Application.Id,
                 UserId = user.Id,
-                RefreshToken = token.RefreshToken,
+                LoginToken = newguid,
+                TokenCreatedDateTime = DateTime.Now,
                 TokenRefreshedDateTime = DateTime.Now,
-                TokenCreatedDateTime = DateTime.Now
+                RefreshToken = ""
             });
 
-            var newguid = Guid.NewGuid();
-            db.ApplicationAuthenticationProviderLogins.Add(new ApplicationAuthenticationProviderLogin()
+            CallbackURL += newguid;
+
+            try
             {
-                ApplicationAuthenticationProviderId = applicationAuthenticationProvider.Id,
-                LoginKey = newguid,
-                DateTimeGenerated = DateTime.Now
-            });
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }            
 
-            token.CallbackURL += newguid;
-
-            await db.SaveChangesAsync();
-
-            result.Result = token;
-            return result;
+            var loginResponseDto = new LoginResponseDto();
+            loginResponseDto.CallbackURL = CallbackURL;
+            return loginResponseDto;
         }
         public async Task<APIResult<UserTokenDto>> RefreshToken(TokenModel model)
         {
@@ -149,7 +134,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             result.Message = "Token Refreshed";
             return result;
         }
-
         private ClaimsPrincipal ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -201,7 +185,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var userPermissions = await GetUserPermissionsCombined(user.Id);
             var userClaims = new List<Claim>();
             userClaims.Add(new Claim(ClaimTypes.Email, user.Email ?? ""));
-            userClaims.Add(new Claim("UserId", user.Id.ToString()));            
+            userClaims.Add(new Claim("UserId", user.Id.ToString()));
 
             foreach (var permission in userPermissions)
             {
@@ -221,13 +205,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return new TokenModel(token, refreshToken);
         }
-
-        private async Task<string> GetCallbackURL(Guid ApplicationAuthenticationProviderGUID)
-        {
-            var provider = db.ApplicationAuthenticationProviders.Where(x=>x.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).FirstOrDefault();
-            var CallbackURL = "/"; //provider.CallbackURL;
-            return CallbackURL;
-        }
         private string GenerateRefreshToken()
         {
             var key = new Byte[32];
@@ -237,7 +214,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return Convert.ToBase64String(key);
             }
         }
-        private async Task<User> AuthenticateUser(UserLoginDto model, ApplicationAuthenticationProvider applicationAuthenticationProvider)
+        private async Task<User> AuthenticateUser(LoginRequestDto model, ApplicationAuthenticationProvider applicationAuthenticationProvider)
         {
             var user = await GetUserByMappedUsernameAsync(model.Email, applicationAuthenticationProvider.Id);
 
@@ -260,7 +237,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                 return null;
         }
 
-        private async Task<User> CreateADUserIfNotExists(UserLoginDto model, User? user, ApplicationAuthenticationProvider applicationAuthenticationProvider)
+        private async Task<User> CreateADUserIfNotExists(LoginRequestDto model, User? user, ApplicationAuthenticationProvider applicationAuthenticationProvider)
         {
             if (user == null)
             {
@@ -274,7 +251,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
                 UserAuthenticationProviderCreateDto userAuthenticationProviderCreateDto = new UserAuthenticationProviderCreateDto()
                 {
-                    Username = model.Email,                    
+                    Username = model.Email,
                     UserId = result.Result.Id
                 };
 
@@ -321,7 +298,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         private string GetADUserEmail(string username, ApplicationAuthenticationProvider ApplicationAuthenticationProvider)
-        {   
+        {
             string email = "";
             using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, ApplicationAuthenticationProvider.Domain, ApplicationAuthenticationProvider.Username, ApplicationAuthenticationProvider.Password))
             {
@@ -333,7 +310,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         public string GetADUserDisplayName(string username, ApplicationAuthenticationProvider ApplicationAuthenticationProvider)
-        {   
+        {
             string realname = "";
             using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, ApplicationAuthenticationProvider.Domain, ApplicationAuthenticationProvider.Username, ApplicationAuthenticationProvider.Password))
             {

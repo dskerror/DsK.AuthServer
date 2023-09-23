@@ -19,8 +19,6 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; set; }
 
-    public virtual DbSet<ApplicationAuthenticationProviderLogin> ApplicationAuthenticationProviderLogins { get; set; }
-
     public virtual DbSet<ApplicationPermission> ApplicationPermissions { get; set; }
 
     public virtual DbSet<ApplicationRole> ApplicationRoles { get; set; }
@@ -81,18 +79,6 @@ public partial class SecurityTablesTestContext : DbContext
                 .HasForeignKey(d => d.ApplicationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ApplicationAuthenticationProviders_Applications");
-        });
-
-        modelBuilder.Entity<ApplicationAuthenticationProviderLogin>(entity =>
-        {
-            entity.HasIndex(e => e.ApplicationAuthenticationProviderId, "IX_ApplicationAuthenticationProviderLogins_ApplicationAuthenticationProviderId");
-
-            entity.Property(e => e.DateTimeGenerated).HasColumnType("datetime");
-
-            entity.HasOne(d => d.ApplicationAuthenticationProvider).WithMany(p => p.ApplicationAuthenticationProviderLogins)
-                .HasForeignKey(d => d.ApplicationAuthenticationProviderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ApplicationAuthenticationProviderLogins_ApplicationAuthenticationProviders");
         });
 
         modelBuilder.Entity<ApplicationPermission>(entity =>
@@ -175,6 +161,8 @@ public partial class SecurityTablesTestContext : DbContext
         modelBuilder.Entity<UserAuthenticationProviderMapping>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_UserAuthenticationProviders");
+
+            entity.HasIndex(e => e.ApplicationAuthenticationProviderId, "IX_UserAuthenticationProviderMappings_ApplicationAuthenticationProviderId");
 
             entity.HasIndex(e => e.UserId, "IX_UserAuthenticationProviders_UserId");
 
@@ -260,6 +248,7 @@ public partial class SecurityTablesTestContext : DbContext
 
             entity.HasIndex(e => e.UserId, "IX_UserTokens_UserId");
 
+            entity.Property(e => e.LoginToken).HasDefaultValueSql("(newid())");
             entity.Property(e => e.TokenCreatedDateTime).HasColumnType("datetime");
             entity.Property(e => e.TokenRefreshedDateTime).HasColumnType("datetime");
 

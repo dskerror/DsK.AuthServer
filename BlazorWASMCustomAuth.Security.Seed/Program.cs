@@ -83,7 +83,7 @@ internal class Program
             ApplicationDesc = "Manages authentication and authorization for other applications",
             ApplicationGuid = Guid.Parse("D9847B27-B28A-4223-B7F7-ACD0C365331C"),
             AppApiKey = Guid.Parse("CAB41EEC-6002-4738-BE23-128B0A7276C1"),
-            CallbackUrl = "/"
+            CallbackUrl = "/Callback/"
         };
 
         db.Applications.Add(newApplication);
@@ -101,8 +101,8 @@ internal class Program
         var adminAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
         {   
             User = adminUser,
-            Username =
-            adminUser.Email
+            Username = adminUser.Email,
+            ApplicationAuthenticationProvider = localAuthProvider
         };
         db.UserAuthenticationProviderMappings.Add(adminAuthenticationProviderMapping);
         db.SaveChanges();
@@ -191,7 +191,7 @@ internal class Program
             ApplicationDesc = "Application to test DsK.AuthorizationServer",
             ApplicationGuid = Guid.Parse("004998CC-6A12-46AD-A7D3-D032B4194358"),
             AppApiKey = Guid.Parse("B4F1712E-25E9-4E35-A54A-68A8BA6CEB2C"),
-            CallbackUrl = "https://localhost:7298/Callback"
+            CallbackUrl = "https://localhost:7298/Callback/"
         };
 
         db.Applications.Add(newApplication);

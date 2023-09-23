@@ -2,7 +2,7 @@
 
 namespace BlazorWASMCustomAuth.Security.Shared;
 
-public class UserLoginDto
+public class LoginRequestDto
 {
     [Required]
     [StringLength(256, MinimumLength = 5)]

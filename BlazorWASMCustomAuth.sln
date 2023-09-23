@@ -29,11 +29,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApp", "TestApp", "{D262
 		Notes.txt = Notes.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.Server", "TestApp\Server\TestApp.Server.csproj", "{EDFD0CC1-C132-4710-A5D8-AF667C864A0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp.Server", "TestApp\Server\TestApp.Server.csproj", "{EDFD0CC1-C132-4710-A5D8-AF667C864A0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.Client", "TestApp\Client\TestApp.Client.csproj", "{5F5A80D8-9AB1-43F5-854F-3D4CADD2470E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp.Client", "TestApp\Client\TestApp.Client.csproj", "{5F5A80D8-9AB1-43F5-854F-3D4CADD2470E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.Shared", "TestApp\Shared\TestApp.Shared.csproj", "{CC2B39FE-5E78-4A25-841E-249072261BA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp.Shared", "TestApp\Shared\TestApp.Shared.csproj", "{CC2B39FE-5E78-4A25-841E-249072261BA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

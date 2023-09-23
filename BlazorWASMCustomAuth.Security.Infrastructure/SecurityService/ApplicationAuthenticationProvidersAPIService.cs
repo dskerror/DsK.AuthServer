@@ -3,6 +3,7 @@ using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
@@ -85,10 +86,18 @@ public partial class SecurityService
         result.Result = Mapper.Map<List<ApplicationAuthenticationProvider>, List<ApplicationAuthenticationProviderDto>>(items);
         return result;
     }
-    public async Task<ApplicationAuthenticationProvider> ApplicationApplicationAuthenticationProviderGet(Guid ApplicationAuthenticationProviderGUID)
+    public async Task<ApplicationAuthenticationProvider> ApplicationAuthenticationProviderGet(Guid ApplicationAuthenticationProviderGUID)
     {
-        var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).FirstOrDefaultAsync();
-        return applicationAuthenticationProvider;
+        if (ApplicationAuthenticationProviderGUID == Guid.Empty)
+        {
+            var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == 1).Include(x => x.Application).FirstOrDefaultAsync();
+            return applicationAuthenticationProvider;
+        }
+        else
+        {
+            var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).Include(x => x.Application).FirstOrDefaultAsync();
+            return applicationAuthenticationProvider;
+        }
     }
     public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderUpdateDto model)
     {

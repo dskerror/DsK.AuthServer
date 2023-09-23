@@ -11,6 +11,8 @@ public partial class UserToken
 
     public int UserId { get; set; }
 
+    public Guid LoginToken { get; set; }
+
     public string RefreshToken { get; set; } = null!;
 
     public DateTime TokenCreatedDateTime { get; set; }

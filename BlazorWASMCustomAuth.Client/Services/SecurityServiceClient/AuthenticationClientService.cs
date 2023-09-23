@@ -1,4 +1,5 @@
 ﻿using BlazorWASMCustomAuth.Security.Shared;
+using BlazorWASMCustomAuth.Security.Shared.ActionDtos;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 
@@ -6,24 +7,39 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {   
-    public async Task<TokenModel> LoginAsync(UserLoginDto model)
-    {
-        TokenModel tokenModel = new TokenModel("","");
+    public async Task<string> LoginAsync(LoginRequestDto model)
+    {   
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Login, model);
         if (!response.IsSuccessStatusCode)
         {
-            return tokenModel;
+            return null;
         }
-        var result = await response.Content.ReadFromJsonAsync<APIResult<TokenModel>>();
-        if (result == null || result.HasError)
+        var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
+        if (result == null)
         {
-            return tokenModel;
+            return null;
         }
-        tokenModel = result.Result;
-        await _localStorageService.SetItemAsync("token", result.Result.Token);
-        await _localStorageService.SetItemAsync("refreshToken", result.Result.RefreshToken);
+        
+        return result.CallbackURL;
+    }
+
+    public async Task<bool> ValidateLoginTokenAsync(string loginToken)
+    {
+        var model = new ValidateLoginTokenDto() { LoginToken = loginToken };
+        var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.ValidateLoginToken, model);
+        if (!response.IsSuccessStatusCode)
+        {
+            return false;
+        }
+        var result = await response.Content.ReadFromJsonAsync<TokenModel>();
+        if (result == null)
+        {
+            return false;
+        }        
+        await _localStorageService.SetItemAsync("token", result.Token);
+        await _localStorageService.SetItemAsync("refreshToken", result.RefreshToken);
         (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
-        return tokenModel;
+        return true;
     }
 
     public async Task<bool> LogoutAsync()
