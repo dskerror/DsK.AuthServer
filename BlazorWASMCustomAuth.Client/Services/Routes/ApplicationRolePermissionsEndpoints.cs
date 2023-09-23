@@ -1,9 +1,11 @@
-﻿namespace BlazorWASMCustomAuth.Client.Services.Routes;
+﻿using BlazorWASMCustomAuth.Security.Shared;
+
+namespace BlazorWASMCustomAuth.Client.Services.Routes;
 public static class ApplicationRolePermissionsEndpoints
 {
-    public static string Get(int applicationId, int applicationRoleId)
+    public static string Get(ApplicationRolePermissionsGetDto model)
     {
-        var url = $"api/ApplicationRolePermissions?ApplicationId={applicationId}&RoleId={applicationRoleId}";
+        var url = $"api/ApplicationRolePermissions?ApplicationId={model.ApplicationId}&RoleId={model.ApplicationRoleId}";
         return url;
     }
 

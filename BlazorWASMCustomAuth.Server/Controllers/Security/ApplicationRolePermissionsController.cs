@@ -16,12 +16,12 @@ public class ApplicationRolePermissionsController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationRolesPermissions.View}")]
-    public async Task<IActionResult> ApplicationRolePermissionsGet(int applicationId, int applicationRoleId)
+    public async Task<IActionResult> ApplicationRolePermissionsGet(ApplicationRolePermissionsGetDto model)
     {
-        if(applicationRoleId == 0)            
+        if(model.ApplicationRoleId == 0)            
             return BadRequest();
 
-        var result = await SecurityService.ApplicationRolePermissionsGet(applicationId, applicationRoleId);
+        var result = await SecurityService.ApplicationRolePermissionsGet(model);
         return Ok(result);
     }
 

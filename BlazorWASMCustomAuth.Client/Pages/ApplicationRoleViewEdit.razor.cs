@@ -13,10 +13,11 @@ public partial class ApplicationRoleViewEdit
     [Parameter] public int ApplicationId { get; set; }
     [Parameter] public int ApplicationRoleId { get; set; }
     private bool _loadedRoleData;
-    private bool _AccessApplicationRolesView;
-    private bool _AccessApplicationRolesEdit;
-    private bool _AccessApplicationRolesPermissionsView;
-    private bool _AccessApplicationRolesPermissionsEdit;
+    private Dictionary<string, bool> Permissions = new Dictionary<string, bool>();
+    //private bool _AccessApplicationRolesView;
+    //private bool _AccessApplicationRolesEdit;
+    //private bool _AccessApplicationRolesPermissionsView;
+    //private bool _AccessApplicationRolesPermissionsEdit;
     private bool _loadedApplicationRolePermissionData;
     private List<BreadcrumbItem> _breadcrumbs;
 
@@ -25,7 +26,7 @@ public partial class ApplicationRoleViewEdit
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationRolesView)
+        if (!Permissions[Access.ApplicationRoles.View])  //!_AccessApplicationRolesView
         {
             _navigationManager.NavigateTo("/noaccess");
         }
@@ -45,10 +46,15 @@ public partial class ApplicationRoleViewEdit
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationRolesView = securityService.HasPermission(state.User, Access.ApplicationRoles.View);
-        _AccessApplicationRolesEdit = securityService.HasPermission(state.User, Access.ApplicationRoles.Edit);
-        _AccessApplicationRolesPermissionsView = securityService.HasPermission(state.User, Access.ApplicationRolesPermissions.View);
-        _AccessApplicationRolesPermissionsEdit = securityService.HasPermission(state.User, Access.ApplicationRolesPermissions.Edit);
+        //_AccessApplicationRolesView = securityService.HasPermission(state.User, Access.ApplicationRoles.View);        
+        //_AccessApplicationRolesEdit = securityService.HasPermission(state.User, Access.ApplicationRoles.Edit);
+        //_AccessApplicationRolesPermissionsView = securityService.HasPermission(state.User, Access.ApplicationRolesPermissions.View);
+        //_AccessApplicationRolesPermissionsEdit = securityService.HasPermission(state.User, Access.ApplicationRolesPermissions.Edit);
+
+        Permissions.Add(Access.ApplicationRoles.View, securityService.HasPermission(state.User, Access.ApplicationRoles.View));
+        Permissions.Add(Access.ApplicationRoles.Edit, securityService.HasPermission(state.User, Access.ApplicationRoles.Edit));
+        Permissions.Add(Access.ApplicationRolesPermissions.View, securityService.HasPermission(state.User, Access.ApplicationRolesPermissions.View));
+        Permissions.Add(Access.ApplicationRolesPermissions.Edit, securityService.HasPermission(state.User, Access.ApplicationRolesPermissions.Edit));
     }
 
     private async Task LoadRoleData()
@@ -67,7 +73,8 @@ public partial class ApplicationRoleViewEdit
 
     private async Task LoadApplicationRolePermissionData()
     {
-        var result = await securityService.ApplicationRolePermissionsGetAsync(ApplicationId, ApplicationRoleId);
+        ApplicationRolePermissionsGetDto model = new ApplicationRolePermissionsGetDto() { ApplicationId = ApplicationId, ApplicationRoleId = ApplicationRoleId };
+        var result = await securityService.ApplicationRolePermissionsGetAsync(model);
         if (result != null)
         {
             applicationRolePermissions = result.Result;
@@ -109,3 +116,4 @@ public partial class ApplicationRoleViewEdit
         }
     }
 }
+

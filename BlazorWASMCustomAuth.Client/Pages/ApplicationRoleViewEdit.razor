@@ -17,18 +17,18 @@ else
                 <MudTextField Disabled="true" ReadOnly="true" Label="Role Name" @bind-Value="applicationRole.RoleName"
                           For="@(()=>applicationRole.RoleName)">
                 </MudTextField>
-                <MudTextField Disabled="!_AccessApplicationRolesEdit" Label="Role Description" @bind-Value="applicationRole.RoleDescription"
+                <MudTextField Disabled="!Permissions[Access.ApplicationRoles.Edit]" Label="Role Description" @bind-Value="applicationRole.RoleDescription"
                           For="@(()=>applicationRole.RoleDescription)">
                 </MudTextField>
             </MudCardContent>
         </MudCard>
 
-        <MudButton Disabled="!_AccessApplicationRolesEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
-        <MudButton Disabled="!_AccessApplicationRolesEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
+        <MudButton Disabled="!Permissions[Access.ApplicationRoles.Edit]" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        <MudButton Disabled="!Permissions[Access.ApplicationRoles.Edit]" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
 
     </EditForm>
 
-    @if (_AccessApplicationRolesPermissionsView)
+    @if (Permissions[Access.ApplicationRolesPermissions.View])
     {
         <MudTable Items="@applicationRolePermissions" Hover="true">
             <HeaderContent>
@@ -38,7 +38,7 @@ else
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="PermissionSwitch">
-                    <MudSwitch Disabled="!_AccessApplicationRolesPermissionsEdit" Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
+                    <MudSwitch Disabled="!Permissions[Access.ApplicationRolesPermissions.Edit]" Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
                 </MudTd>
                 <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
                 <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>

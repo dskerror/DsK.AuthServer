@@ -19,18 +19,15 @@
         {
 
             var model = new ValidateLoginTokenDto() { LoginToken = LoginToken };
-            var response = await Http.PostAsJsonAsync("https://localhost:7298/ValidateLoginToken", model);
+            var response = await Http.PostAsJsonAsync("https://localhost:7298/Security/ValidateLoginToken", model);
             if (!response.IsSuccessStatusCode)
-            {
                 _navigationManager.NavigateTo("/noaccess");
-            }
-
+            
             var result = await response.Content.ReadFromJsonAsync<TokenModel>();
             
-            if (result == null)
-            {
+            if (result == null)            
                 _navigationManager.NavigateTo("/noaccess");
-            }
+            
             await _localStorageService.SetItemAsync("token", result.Token);
             await _localStorageService.SetItemAsync("refreshToken", result.RefreshToken);
             (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();

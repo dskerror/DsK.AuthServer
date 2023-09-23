@@ -23,7 +23,7 @@ internal class Program
         User adminUser = CreateAdminUser(db);
         ApplicationUser adminApplicationUser = AddAdminUserToApplicationUser(db, adminUser);
         AddAuthenticationProviderMappingToAdminUser(db, applicationAuthenticationProvider, adminUser);
-        AddAdminRoleToAdminUser(db, adminRole, adminUser);
+        AddRoleToUser(db, adminRole, adminUser);
         CreateAdminUserPassword(db, adminUser);
         var permissionList = Access.GetRegisteredPermissions();
         foreach (var permission in permissionList)
@@ -41,6 +41,7 @@ internal class Program
         AddAdminUserToTestApp(db, adminUser);        
         ApplicationAuthenticationProvider testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp);
         AddAuthenticationProviderMappingToAdminUser(db, testAppAuthenticationProvider, adminUser);
+        AddRoleToUser(db, TestAppUserRole, adminUser);
 
     }
 
@@ -91,7 +92,7 @@ internal class Program
         db.SaveChanges();
         return newApplication;
     }
-    private static void AddAdminRoleToAdminUser(SecurityTablesTestContext db, ApplicationRole adminRole, User adminUser)
+    private static void AddRoleToUser(SecurityTablesTestContext db, ApplicationRole adminRole, User adminUser)
     {
         var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
         db.UserRoles.Add(adminUserRole);

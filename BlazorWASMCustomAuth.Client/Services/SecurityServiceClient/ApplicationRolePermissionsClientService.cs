@@ -1,17 +1,15 @@
 ﻿using BlazorWASMCustomAuth.Security.Shared;
 using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 using Newtonsoft.Json;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGetAsync(int applicationId, int applicationRoleId)
+    public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGetAsync(ApplicationRolePermissionsGetDto model)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.GetAsync(Routes.ApplicationRolePermissionsEndpoints.Get(applicationId, applicationRoleId));
+        var response = await _httpClient.GetAsync(Routes.ApplicationRolePermissionsEndpoints.Get(model));
         if (!response.IsSuccessStatusCode)
             return null;
 
@@ -29,7 +27,6 @@ public partial class SecurityServiceClient
             return null;
         }
     }
-
     public async Task<APIResult<string>> ApplicationRolePermissionChangeAsync(int roleId, int permissionId, bool permissionEnabled)
     {
         await PrepareBearerToken();

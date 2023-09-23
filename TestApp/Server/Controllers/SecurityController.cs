@@ -14,12 +14,12 @@ namespace TestApp.Server.Controllers
             _Http = authorizarionServerAPIHttpClient.Client;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("ValidateLoginToken")]
         public async Task<IActionResult> ValidateLoginToken(ValidateLoginTokenDto model)
         {
             model.TokenKey = "ThisIsTheTestAppKey";
-            var response = await _Http.PostAsJsonAsync($"https://localhost:7190/ValidateLoginToken", model);
+            var response = await _Http.PostAsJsonAsync($"https://localhost:7045/api/authentication/ValidateLoginToken", model);
 
             if (!response.IsSuccessStatusCode) return NotFound();
 
