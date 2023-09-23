@@ -2,34 +2,32 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
-namespace TestApp.Client.Services
+namespace TestApp.Client.Services;
+public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
-    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
+    private readonly ILocalStorageService _localStorageService;
+
+    public CustomAuthenticationStateProvider(ILocalStorageService localStorageService,
+        HttpClient httpClient)
     {
-        private readonly ILocalStorageService _localStorageService;
-
-        public CustomAuthenticationStateProvider(ILocalStorageService localStorageService,
-            HttpClient httpClient)
+        _localStorageService = localStorageService;
+    }
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
+        string token = await _localStorageService.GetItemAsync<string>("token");
+        if (string.IsNullOrEmpty(token) || TokenHelpers.IsTokenExpired(token))
         {
-            _localStorageService = localStorageService;
+            var anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity() { }));
+            return anonymous;
         }
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-        {
-            string token = await _localStorageService.GetItemAsync<string>("token");
-            if (string.IsNullOrEmpty(token) || TokenHelpers.IsTokenExpired(token))
-            {
-                var anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity() { }));
-                return anonymous;
-            }
-            var userClaimPrincipal = new ClaimsPrincipal(new ClaimsIdentity(TokenHelpers.ParseClaimsFromJwt(token), "jwt"));
+        var userClaimPrincipal = new ClaimsPrincipal(new ClaimsIdentity(TokenHelpers.ParseClaimsFromJwt(token), "jwt"));
 
-            var loginUser = new AuthenticationState(userClaimPrincipal);
-            return loginUser;
-        }
+        var loginUser = new AuthenticationState(userClaimPrincipal);
+        return loginUser;
+    }
 
-        public void Notify()
-        {
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        }
+    public void Notify()
+    {
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 }

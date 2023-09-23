@@ -1,5 +1,9 @@
 ﻿@page "/callback/{LoginToken}"
+@using TestApp.Client.Services;
+@using TestApp.Shared;
 @inject HttpClient Http;
+@inject ILocalStorageService _localStorageService;
+@inject AuthenticationStateProvider _authenticationStateProvider;
 
 <PageTitle>Validating Login</PageTitle>
 
@@ -7,35 +11,32 @@
 
 @code {
 
-    [Parameter] public string Token { get; set; }
-    public async Task LoginLogic()
+    [Parameter] public string LoginToken { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-
-        // if (Token == "BB54D562-58A7-4267-8F9A-0B1A60A12C02")
-        // {
-        //     _navigationManager.NavigateTo("/");
-        // }
-
-        
-        try
+        if (LoginToken != null)
         {
-            var response = await Http.GetAsync($"Security/ValidateToken?applicationAuthenticationProviderGUID={Token}");
-            var result = await response.Content.ReadFromJsonAsync<bool>();
-            if (result == null || result == false)
+
+            var model = new ValidateLoginTokenDto() { LoginToken = LoginToken };
+            var response = await Http.PostAsJsonAsync("https://localhost:7298/ValidateLoginToken", model);
+            if (!response.IsSuccessStatusCode)
             {
-                //error
+                _navigationManager.NavigateTo("/noaccess");
             }
-            //create local token
+
+            var result = await response.Content.ReadFromJsonAsync<TokenModel>();
+            
+            if (result == null)
+            {
+                _navigationManager.NavigateTo("/noaccess");
+            }
+            await _localStorageService.SetItemAsync("token", result.Token);
+            await _localStorageService.SetItemAsync("refreshToken", result.RefreshToken);
+            (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
+            
+                _navigationManager.NavigateTo("/");
+            
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-
-        // string loginurl = "https://localhost:7190/login/BB54D562-58A7-4267-8F9A-0B1A60A12C02";
-
-        // //redirect lo login
-        // _navigationManager.NavigateTo(loginurl);
-
     }
 }

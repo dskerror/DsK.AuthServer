@@ -38,8 +38,9 @@ internal class Program
         ApplicationRole TestAppUserRole = CreateTestAppUserRole(db);
         CreateTestAppPermissions(db);
         AddAdminPermissionToAdminRole(db, TestAppUserRole);
-        AddAdminUserToTestApp(db, adminUser);
-        ApplicationAuthenticationProvider testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp);        
+        AddAdminUserToTestApp(db, adminUser);        
+        ApplicationAuthenticationProvider testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp);
+        AddAuthenticationProviderMappingToAdminUser(db, testAppAuthenticationProvider, adminUser);
 
     }
 
@@ -96,13 +97,13 @@ internal class Program
         db.UserRoles.Add(adminUserRole);
         db.SaveChanges();
     }
-    private static void AddAuthenticationProviderMappingToAdminUser(SecurityTablesTestContext db, ApplicationAuthenticationProvider localAuthProvider, User adminUser)
+    private static void AddAuthenticationProviderMappingToAdminUser(SecurityTablesTestContext db, ApplicationAuthenticationProvider authProvider, User adminUser)
     {
         var adminAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
         {   
             User = adminUser,
             Username = adminUser.Email,
-            ApplicationAuthenticationProvider = localAuthProvider
+            ApplicationAuthenticationProvider = authProvider
         };
         db.UserAuthenticationProviderMappings.Add(adminAuthenticationProviderMapping);
         db.SaveChanges();
