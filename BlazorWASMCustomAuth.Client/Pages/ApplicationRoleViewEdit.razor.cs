@@ -13,12 +13,14 @@ public partial class ApplicationRoleViewEdit
     [Parameter] public int ApplicationId { get; set; }
     [Parameter] public int ApplicationRoleId { get; set; }
     private bool _loadedRoleData;
+    private bool _loadedApplicationRolePermissionData;
+
     private Dictionary<string, bool> Permissions = new Dictionary<string, bool>();
     //private bool _AccessApplicationRolesView;
     //private bool _AccessApplicationRolesEdit;
     //private bool _AccessApplicationRolesPermissionsView;
     //private bool _AccessApplicationRolesPermissionsEdit;
-    private bool _loadedApplicationRolePermissionData;
+    
     private List<BreadcrumbItem> _breadcrumbs;
 
     protected override async Task OnInitializedAsync()
@@ -72,9 +74,8 @@ public partial class ApplicationRoleViewEdit
     }
 
     private async Task LoadApplicationRolePermissionData()
-    {
-        ApplicationRolePermissionsGetDto model = new ApplicationRolePermissionsGetDto() { ApplicationId = ApplicationId, ApplicationRoleId = ApplicationRoleId };
-        var result = await securityService.ApplicationRolePermissionsGetAsync(model);
+    {        
+        var result = await securityService.ApplicationRolePermissionsGetAsync(ApplicationId, ApplicationRoleId);
         if (result != null)
         {
             applicationRolePermissions = result.Result;

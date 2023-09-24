@@ -28,7 +28,11 @@ else
 
     </EditForm>
 
-    @if (Permissions[Access.ApplicationRolesPermissions.View])
+    @if (Permissions[Access.ApplicationRolesPermissions.View] && !_loadedApplicationRolePermissionData)
+    {
+        <h3>Loading permission data...</h3>
+    }
+    else if (Permissions[Access.ApplicationRolesPermissions.View] && _loadedApplicationRolePermissionData)
     {
         <MudTable Items="@applicationRolePermissions" Hover="true">
             <HeaderContent>

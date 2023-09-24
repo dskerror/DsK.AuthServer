@@ -3,9 +3,9 @@
 namespace BlazorWASMCustomAuth.Client.Services.Routes;
 public static class ApplicationRolePermissionsEndpoints
 {
-    public static string Get(ApplicationRolePermissionsGetDto model)
+    public static string Get(int ApplicationId, int ApplicationRoleId)
     {
-        var url = $"api/ApplicationRolePermissions?ApplicationId={model.ApplicationId}&RoleId={model.ApplicationRoleId}";
+        var url = $"api/ApplicationRolePermissions?ApplicationId={ApplicationId}&ApplicationRoleId={ApplicationRoleId}";
         return url;
     }
 

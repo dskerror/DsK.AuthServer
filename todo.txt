@@ -1,11 +1,10 @@
-add callback address to application
 change password page
 forgot password page
-sso login
 disable user in app
 user profile (my profile)
 log page
-create new application to test this application
 implement two factor
 Rename project to DsK.AuthorizarionServer
 test active directory before adding
+test whole application
+document testapp

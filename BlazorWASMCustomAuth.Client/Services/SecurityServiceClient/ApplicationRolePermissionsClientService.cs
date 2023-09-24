@@ -6,10 +6,10 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGetAsync(ApplicationRolePermissionsGetDto model)
+    public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGetAsync(int ApplicationId, int ApplicationRoleId)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.GetAsync(Routes.ApplicationRolePermissionsEndpoints.Get(model));
+        var response = await _httpClient.GetAsync(Routes.ApplicationRolePermissionsEndpoints.Get(ApplicationId, ApplicationRoleId));
         if (!response.IsSuccessStatusCode)
             return null;
 
