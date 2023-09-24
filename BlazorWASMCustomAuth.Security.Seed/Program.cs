@@ -24,7 +24,6 @@ internal class Program
         ApplicationUser adminApplicationUser = AddAdminUserToApplicationUser(db, adminUser);
         AddAuthenticationProviderMappingToAdminUser(db, applicationAuthenticationProvider, adminUser);
         AddRoleToUser(db, adminRole, adminUser);
-        CreateAdminUserPassword(db, adminUser);
         var permissionList = Access.GetRegisteredPermissions();
         foreach (var permission in permissionList)
         {
@@ -51,31 +50,19 @@ internal class Program
                 new ApplicationAuthenticationProvider()
                 {
                     ApplicationId = newApplication.Id,
-                    Name="Local",
+                    Name = "Local",
                     AuthenticationProviderType = "Local",
                     Domain = "",
                     Username = "",
-                    Password = ""
+                    Password = "",
+                    ApplicationAuthenticationProviderDisabled = false,
+                    RegistrationEnabled = true,
                 };
 
         db.ApplicationAuthenticationProviders.Add(applicationAuthenticationProvider);
         db.SaveChanges();
 
         return applicationAuthenticationProvider;
-    }
-    private static void CreateAdminUserPassword(SecurityTablesTestContext db, User adminUser)
-    {
-        var ramdomSalt = SecurityHelpers.RandomizeSalt;
-
-        var userPassword = new UserPassword()
-        {
-            UserId = adminUser.Id,
-            HashedPassword = SecurityHelpers.HashPasword("admin123", ramdomSalt),
-            Salt = Convert.ToHexString(ramdomSalt),
-            DateCreated = DateTime.Now
-        };
-        db.UserPasswords.Add(userPassword);
-        db.SaveChanges();
     }
     private static Application CreateApplication(SecurityTablesTestContext db)
     {
@@ -111,11 +98,20 @@ internal class Program
     }
     private static User CreateAdminUser(SecurityTablesTestContext db)
     {
+        var ramdomSalt = SecurityHelpers.RandomizeSalt;
+
         var adminUser = new User()
         {
-            Name = "admin",
             Email = "admin@admin.com",
-            EmailConfirmed = true
+            Name = "admin",            
+            EmailConfirmed = true,
+            AccessFailedCount = 0,            
+            LockoutEnabled = false,
+            HashedPassword = SecurityHelpers.HashPasword("admin123", ramdomSalt),
+            Salt = Convert.ToHexString(ramdomSalt),
+            AccountCreatedDateTime = DateTime.Now,
+            LastPasswordChangeDateTime = DateTime.Now
+            
         };
 
         db.Users.Add(adminUser);

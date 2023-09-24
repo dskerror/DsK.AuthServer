@@ -21,11 +21,15 @@ public partial class UserDto
 
     public int AccessFailedCount { get; set; }
 
-    public bool TwoFactorEnabled { get; set; }
+    public string HashedPassword { get; set; } = null!;
 
-    public virtual ICollection<UserLogDto> UserLogs { get; } = new List<UserLogDto>();
+    public string Salt { get; set; } = null!;
 
-    public virtual ICollection<UserPasswordDto> UserPasswords { get; } = new List<UserPasswordDto>();
+    public DateTime AccountCreatedDateTime { get; set; }
+
+    public DateTime LastPasswordChangeDateTime { get; set; }
+
+    public virtual ICollection<UserLogDto> UserLogs { get; } = new List<UserLogDto>();    
 
     public virtual ICollection<UserPermissionDto> UserPermissions { get; } = new List<UserPermissionDto>();
 

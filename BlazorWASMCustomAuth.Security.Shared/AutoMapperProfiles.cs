@@ -40,7 +40,6 @@ public class AutoMapperProfiles : Profile
         CreateMap<UserAuthenticationProviderMappingDto, UserAuthenticationProviderMapping>().ReverseMap();
         CreateMap<UserDto, User>().ReverseMap();
         CreateMap<UserLogDto, UserLog>().ReverseMap();
-        CreateMap<UserPasswordDto, UserPassword>().ReverseMap();
         CreateMap<UserPermissionDto, UserPermission>().ReverseMap();
         CreateMap<UserRoleDto, UserRole>().ReverseMap();
         CreateMap<UserRoleGridDto, ApplicationRole>().ReverseMap();

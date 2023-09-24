@@ -36,8 +36,8 @@
             <MudTooltip Text="View/Edit Application">
                 <MudIconButton OnClick="() => ViewApplication(context.Id)"
                                Icon="@Icons.Material.Filled.Edit"
-                               Color="Color.Primary"
-                               Variant="Variant.Filled">
+                               Color="Color.Info"
+                               Variant="Variant.Outlined">
                 </MudIconButton>
             </MudTooltip>
 
@@ -49,9 +49,9 @@
                 {
                     <MudTooltip Text="Disable Application">
                         <MudIconButton OnClick="@( async() => await DisableEnableApplication(context))"
-                                       Icon="@Icons.Material.Filled.WorkOff"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
+                                       Icon="@Icons.Material.Filled.Work"
+                                       Color="Color.Success"
+                                       Variant="Variant.Outlined">
                         </MudIconButton>
                     </MudTooltip>
                 }
@@ -59,9 +59,9 @@
                 {
                     <MudTooltip Text="Enable Application">
                         <MudIconButton OnClick="@( async() => await DisableEnableApplication(context))"
-                                       Icon="@Icons.Material.Filled.Work"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
+                                       Icon="@Icons.Material.Filled.WorkOff"
+                                       Color="Color.Error"
+                                       Variant="Variant.Outlined">
                         </MudIconButton>
                     </MudTooltip>
                 }
@@ -71,8 +71,8 @@
                 <MudTooltip Text="Delete Application">
                     <MudIconButton OnClick="@( async() => await DeleteApplication(context))"
                                    Icon="@Icons.Material.Filled.Delete"
-                                   Color="Color.Primary"
-                                   Variant="Variant.Filled">
+                                   Color="Color.Error"
+                                   Variant="Variant.Outlined">
                     </MudIconButton>
                 </MudTooltip>
             }

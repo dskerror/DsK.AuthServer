@@ -20,7 +20,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             var userToken = db.UserTokens.Where(x => x.LoginToken == Guid.Parse(model.LoginToken)).Include(x => x.User).FirstOrDefault();
 
-            if (model.TokenKey == "") 
+            if (model.TokenKey == "")
                 model.TokenKey = _tokenSettings.Key;
 
             var token = await GenerateAuthenticationToken(userToken.User, model.TokenKey);
@@ -62,12 +62,63 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-            }            
+            }
 
             var loginResponseDto = new LoginResponseDto();
             loginResponseDto.CallbackURL = CallbackURL;
             return loginResponseDto;
         }
+
+        //public async Task<LoginResponseDto> Register(RegisterRequestDto model)
+        //{
+            //var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
+
+            //if ((bool)applicationAuthenticationProvider.RegistrationEnabled)
+            //{
+            //    var newUser = new User()
+            //    {
+            //        Email = model.Email,
+                    
+            //    };
+
+            //    db.Users.Add(newUser);
+            //    await db.SaveChangesAsync();
+            //}
+
+            //var user = await AuthenticateUser(model, applicationAuthenticationProvider);
+            //if (user == null)
+            //    return null;
+
+            //string CallbackURL = applicationAuthenticationProvider.Application.CallbackUrl;
+
+            //var newguid = Guid.NewGuid();
+
+            //db.UserTokens.Add(new UserToken()
+            //{
+            //    ApplicationId = applicationAuthenticationProvider.Application.Id,
+            //    UserId = user.Id,
+            //    LoginToken = newguid,
+            //    TokenCreatedDateTime = DateTime.Now,
+            //    TokenRefreshedDateTime = DateTime.Now,
+            //    RefreshToken = ""
+            //});
+
+            //CallbackURL += newguid;
+
+            //try
+            //{
+            //    await db.SaveChangesAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.ToString());
+            //}
+
+            //var loginResponseDto = new LoginResponseDto();
+            //loginResponseDto.CallbackURL = CallbackURL;
+            //return loginResponseDto;
+        //}
+
         public async Task<APIResult<UserTokenDto>> RefreshToken(TokenModel model)
         {
             APIResult<UserTokenDto> result = new APIResult<UserTokenDto>();
@@ -218,7 +269,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
         {
             var user = await GetUserByMappedUsernameAsync(model.Email, applicationAuthenticationProvider.Id);
 
-            bool IsUserAuthenticated = false;
+            bool IsUserAuthenticated;
 
             switch (applicationAuthenticationProvider.AuthenticationProviderType)
             {
@@ -228,7 +279,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
                         user = await CreateADUserIfNotExists(model, user, applicationAuthenticationProvider);
                     break;
                 default: //Local
-                    IsUserAuthenticated = await AuthenticateUserWithLocalPassword(model.Email, model.Password);
+                    IsUserAuthenticated = await AuthenticateUserWithLocalPassword(user, model.Password);
                     break;
             }
             if (IsUserAuthenticated)
@@ -261,21 +312,16 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return user;
         }
 
-        private async Task<bool> AuthenticateUserWithLocalPassword(string username, string password)
+        private async Task<bool> AuthenticateUserWithLocalPassword(User user, string password)
         {
             try
-            {
-                var userPassword = await db.UserPasswords.Where(x => x.User.Email == username).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
-
-                if (userPassword == null)
-                    return false;
-
-                byte[] bytesalt = Convert.FromHexString(userPassword.Salt);
+            {   
+                byte[] bytesalt = Convert.FromHexString(user.Salt);
                 const int keySize = 64;
                 const int iterations = 350000;
                 HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
                 var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, bytesalt, iterations, hashAlgorithm, keySize);
-                return hashToCompare.SequenceEqual(Convert.FromHexString(userPassword.HashedPassword));
+                return hashToCompare.SequenceEqual(Convert.FromHexString(user.HashedPassword));
 
             }
             catch (Exception)

@@ -33,8 +33,6 @@ else
                           For="@(()=>user.AccessFailedCount)">
                 </MudTextField>
 
-                <MudSwitch Disabled="!_AccessUsersEdit" @bind-Checked="@user.TwoFactorEnabled" Label="Two Factor" Color="Color.Success" />
-
             </MudCardContent>
         </MudCard>
 
@@ -56,12 +54,6 @@ else
         {
             <MudExpansionPanel Text="User Permissions">
                 <UserPermissions UserId="@id" @ref="userPermissionsComponent" />
-            </MudExpansionPanel>
-        }
-        @if (_AccessUserPasswordsCreate)
-        {
-            <MudExpansionPanel Text="User Password">
-                <UserChangePassword UserId="@id" />
             </MudExpansionPanel>
         }
     </MudExpansionPanels>

@@ -1,3 +1,6 @@
+register endpoint
+register page
+validate registration
 change password page
 forgot password page
 disable user in app

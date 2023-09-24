@@ -13,15 +13,23 @@ public partial class User
 
     public bool EmailConfirmed { get; set; }
 
+    public int AccessFailedCount { get; set; }
+
     public DateTime? LockoutEnd { get; set; }
 
     public bool LockoutEnabled { get; set; }
 
+    public string HashedPassword { get; set; } = null!;
+
+    public string Salt { get; set; } = null!;
+
+    public DateTime AccountCreatedDateTime { get; set; }
+
+    public DateTime LastPasswordChangeDateTime { get; set; }
+
     public virtual ICollection<ApplicationUser> ApplicationUsers { get; } = new List<ApplicationUser>();
 
     public virtual ICollection<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; } = new List<UserAuthenticationProviderMapping>();
-
-    public virtual ICollection<UserPassword> UserPasswords { get; } = new List<UserPassword>();
 
     public virtual ICollection<UserPermission> UserPermissions { get; } = new List<UserPermission>();
 

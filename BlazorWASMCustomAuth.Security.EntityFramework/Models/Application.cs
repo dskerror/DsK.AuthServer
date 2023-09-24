@@ -15,7 +15,7 @@ public partial class Application
 
     public Guid AppApiKey { get; set; }
 
-    public string? CallbackUrl { get; set; }
+    public string CallbackUrl { get; set; } = null!;
 
     public bool ApplicationDisabled { get; set; }
 

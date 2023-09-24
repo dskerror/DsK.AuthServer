@@ -33,8 +33,6 @@ public partial class SecurityTablesTestContext : DbContext
 
     public virtual DbSet<UserLog> UserLogs { get; set; }
 
-    public virtual DbSet<UserPassword> UserPasswords { get; set; }
-
     public virtual DbSet<UserPermission> UserPermissions { get; set; }
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
@@ -153,7 +151,9 @@ public partial class SecurityTablesTestContext : DbContext
         {
             entity.HasIndex(e => e.Email, "IX_Users_Email").IsUnique();
 
+            entity.Property(e => e.AccountCreatedDateTime).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.LastPasswordChangeDateTime).HasColumnType("datetime");
             entity.Property(e => e.LockoutEnd).HasColumnType("date");
             entity.Property(e => e.Name).HasMaxLength(256);
         });
@@ -192,18 +192,6 @@ public partial class SecurityTablesTestContext : DbContext
                 .HasForeignKey(d => d.ApplicationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserLogs_Users");
-        });
-
-        modelBuilder.Entity<UserPassword>(entity =>
-        {
-            entity.HasIndex(e => e.UserId, "IX_UserPasswords_UserId");
-
-            entity.Property(e => e.DateCreated).HasColumnType("datetime");
-
-            entity.HasOne(d => d.User).WithMany(p => p.UserPasswords)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserPasswords_Users");
         });
 
         modelBuilder.Entity<UserPermission>(entity =>

@@ -23,6 +23,8 @@ public partial class ApplicationAuthenticationProvider
 
     public bool ApplicationAuthenticationProviderDisabled { get; set; }
 
+    public bool? RegistrationEnabled { get; set; }
+
     public virtual Application Application { get; set; } = null!;
 
     public virtual ICollection<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; } = new List<UserAuthenticationProviderMapping>();

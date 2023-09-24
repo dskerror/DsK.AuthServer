@@ -29,6 +29,19 @@ namespace BlazorWASMCustomAuth.Server.Controllers.Security
         }
 
         [HttpPost]
+        [Route("Register")]
+        public async Task<IActionResult> Register(LoginRequestDto model)
+        {
+            //todo : implement captcha
+            var callbackUrl = await SecurityService.Login(model);
+
+            if (callbackUrl == null)
+                return NotFound();
+
+            return Ok(callbackUrl);
+        }
+
+        [HttpPost]
         [Route("ValidateLoginToken")]
         public async Task<IActionResult> ValidateLoginToken(ValidateLoginTokenDto model)
         {   

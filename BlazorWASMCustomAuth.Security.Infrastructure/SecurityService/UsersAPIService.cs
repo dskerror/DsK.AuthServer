@@ -15,6 +15,12 @@ public partial class SecurityService
 
         var record = new User();
         Mapper.Map(model, record);
+
+        //Password
+        var ramdomSalt = SecurityHelpers.RandomizeSalt;
+        record.HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt);
+        record.Salt = Convert.ToHexString(ramdomSalt);
+
         record.EmailConfirmed = true;
         await db.Users.AddAsync(record);
 
@@ -161,12 +167,10 @@ public partial class SecurityService
 
         return result;
     }
-
     private async Task<User> GetUserByEmailAsync(string username)
     {
         return await db.Users.Where(u => u.Email == username).FirstOrDefaultAsync();
     }
-
     private async Task<User> GetUserByMappedUsernameAsync(string username, int applicationAuthenticationProviderId)
     {
         var user = await (from u in db.Users

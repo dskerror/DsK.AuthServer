@@ -75,14 +75,6 @@ namespace BlazorWASMCustomAuth.Security.Shared
             public const string Delete = "UserAuthenticationProviders.Delete";
         }
 
-        [DisplayName("User Passwords")]
-        [Description("User Passwords Permissions")]
-        public static class UserPasswords
-        {            
-            public const string Create = "UserPasswords.Create";           
-        }
-
-
         [DisplayName("Users Permissions")]
         [Description("Users Permissions Permissions")]
         public static class UserPermissions

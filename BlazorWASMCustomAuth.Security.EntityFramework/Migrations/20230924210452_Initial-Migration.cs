@@ -21,7 +21,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     ApplicationName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ApplicationDesc = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     AppApiKey = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    CallbackURL = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CallbackURL = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     ApplicationDisabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -38,8 +38,13 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false),
                     LockoutEnd = table.Column<DateTime>(type: "date", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false)
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AccountCreatedDateTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    LastPasswordChangeDateTime = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,7 +64,8 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    ApplicationAuthenticationProviderDisabled = table.Column<bool>(type: "bit", nullable: false)
+                    ApplicationAuthenticationProviderDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    RegistrationEnabled = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -160,27 +166,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ApplicationUsers_Users",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserPasswords",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserPasswords", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserPasswords_Users",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -373,11 +358,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPasswords_UserId",
-                table: "UserPasswords",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserPermissions",
                 table: "UserPermissions",
                 columns: new[] { "PermissionId", "UserId" },
@@ -430,9 +410,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserLogs");
-
-            migrationBuilder.DropTable(
-                name: "UserPasswords");
 
             migrationBuilder.DropTable(
                 name: "UserPermissions");

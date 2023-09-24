@@ -27,17 +27,7 @@ public class UsersController : ControllerBase
     {
         var record = new UserCreateDto();
         Mapper.Map(model, record);
-        var result = await SecurityService.UserCreate(record);
-
-        if (result.Result != null)
-        {
-            var newPassword = new UserCreateLocalPasswordDto()
-            {
-                Password = model.Password,
-                UserId = result.Result.Id
-            };
-            await SecurityService.UserCreateLocalPassword(newPassword);
-        }
+        var result = await SecurityService.UserCreate(record);        
         return Ok(result);
     }
 

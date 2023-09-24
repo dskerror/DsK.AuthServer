@@ -38,10 +38,9 @@ public partial class UserViewEdit
     {
         _AccessUsersView = securityService.HasPermission(state.User, Access.Users.View);
         _AccessUsersEdit = securityService.HasPermission(state.User, Access.Users.Edit);
-        _AccessUserPermissionsView = securityService.HasPermission(state.User, Access.UserPermissions.View);            
-        _AccessUserRolesView = securityService.HasPermission(state.User, Access.UserRoles.View);            
-        _AccessUserPasswordsCreate = securityService.HasPermission(state.User, Access.UserPasswords.Create);
-        _AccessUserAuthenticationProvidersView = securityService.HasPermission(state.User, Access.UserAuthenticationProviders.View);            
+        _AccessUserPermissionsView = securityService.HasPermission(state.User, Access.UserPermissions.View);
+        _AccessUserRolesView = securityService.HasPermission(state.User, Access.UserRoles.View);
+        _AccessUserAuthenticationProvidersView = securityService.HasPermission(state.User, Access.UserAuthenticationProviders.View);
     }
     private async Task LoadUserData()
     {

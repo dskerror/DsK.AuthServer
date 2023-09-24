@@ -14,4 +14,9 @@ public class UserCreateDto
     [EmailAddress]
     [DefaultValue("jsmith@gmail.com")]
     public string? Email { get; set; }
+
+    [Required]
+    [StringLength(256, MinimumLength = 6)]
+    [PasswordPropertyText]
+    public string? Password { get; set; }
 }

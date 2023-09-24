@@ -55,6 +55,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("CallbackUrl")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("CallbackURL");
@@ -99,6 +100,9 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Property<string>("Password")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool?>("RegistrationEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Username")
                         .HasMaxLength(100)
@@ -240,6 +244,12 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AccountCreatedDateTime")
+                        .HasColumnType("datetime");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -247,6 +257,13 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastPasswordChangeDateTime")
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -258,6 +275,10 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -337,35 +358,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.HasIndex(new[] { "UserId" }, "IX_UserLogs_UserId");
 
                     b.ToTable("UserLogs");
-                });
-
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.UserPassword", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("HashedPassword")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Salt")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "UserId" }, "IX_UserPasswords_UserId");
-
-                    b.ToTable("UserPasswords");
                 });
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.UserPermission", b =>
@@ -559,17 +551,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Navigation("Application");
                 });
 
-            modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.UserPassword", b =>
-                {
-                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.User", "User")
-                        .WithMany("UserPasswords")
-                        .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("FK_UserPasswords_Users");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.UserPermission", b =>
                 {
                     b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationPermission", "Permission")
@@ -665,8 +646,6 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Navigation("ApplicationUsers");
 
                     b.Navigation("UserAuthenticationProviderMappings");
-
-                    b.Navigation("UserPasswords");
 
                     b.Navigation("UserPermissions");
 

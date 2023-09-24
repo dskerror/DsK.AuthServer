@@ -17,4 +17,6 @@ public partial class ApplicationAuthenticationProviderDto
     public string? Password { get; set; }
 
     public bool ApplicationAuthenticationProviderDisabled { get; set; }
+
+    public bool RegistrationEnabled { get; set; }
 }
