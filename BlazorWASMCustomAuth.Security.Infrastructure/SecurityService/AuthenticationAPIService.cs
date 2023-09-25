@@ -7,117 +7,115 @@ using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+namespace BlazorWASMCustomAuth.Security.Infrastructure;
 
-
-namespace BlazorWASMCustomAuth.Security.Infrastructure
+public partial class SecurityService
 {
-    public partial class SecurityService
+    public async Task<TokenModel> ValidateLoginToken(ValidateLoginTokenDto model)
     {
-        public async Task<TokenModel> ValidateLoginToken(ValidateLoginTokenDto model)
+        var userToken = db.UserTokens.Where(x => x.LoginToken == Guid.Parse(model.LoginToken)).Include(x => x.User).FirstOrDefault();
+
+        if (model.TokenKey == "")
+            model.TokenKey = _tokenSettings.Key;
+
+        var token = await GenerateAuthenticationToken(userToken.User, model.TokenKey);
+
+        userToken.RefreshToken = token.RefreshToken;
+        await db.SaveChangesAsync();
+
+        return token;
+    }
+
+    public async Task<LoginResponseDto> Login(LoginRequestDto model)
+    {
+        var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
+
+        var user = await AuthenticateUser(model, applicationAuthenticationProvider);
+        if (user == null)
+            return null;
+
+        string CallbackURL = applicationAuthenticationProvider.Application.CallbackUrl;
+
+        var newguid = Guid.NewGuid();
+
+        db.UserTokens.Add(new UserToken()
         {
-            var userToken = db.UserTokens.Where(x => x.LoginToken == Guid.Parse(model.LoginToken)).Include(x => x.User).FirstOrDefault();
+            ApplicationId = applicationAuthenticationProvider.Application.Id,
+            UserId = user.Id,
+            LoginToken = newguid,
+            TokenCreatedDateTime = DateTime.Now,
+            TokenRefreshedDateTime = DateTime.Now,
+            RefreshToken = ""
+        });
 
-            if (model.TokenKey == "")
-                model.TokenKey = _tokenSettings.Key;
+        CallbackURL += newguid;
 
-            var token = await GenerateAuthenticationToken(userToken.User, model.TokenKey);
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
 
-            userToken.RefreshToken = token.RefreshToken;
+        var loginResponseDto = new LoginResponseDto();
+        loginResponseDto.CallbackURL = CallbackURL;
+        return loginResponseDto;
+    }
+
+    public async Task<bool> Register(RegisterRequestDto model)
+    {
+        var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
+        var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
+
+
+        if ((bool)applicationAuthenticationProvider.RegistrationEnabled)
+        {
+            if (user == null)
+            {
+                var ramdomSalt = SecurityHelpers.RandomizeSalt;
+
+                user = new User()
+                {
+                    Email = model.Email,
+                    Name = model.Name,
+                    HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt),
+                    Salt = Convert.ToHexString(ramdomSalt),
+                    EmailConfirmed = true
+                };
+
+                db.Users.Add(user);
+            }
+
             await db.SaveChangesAsync();
 
-            return token;
+            if (user.Id != 0)
+            {
+                var applicationUser = await db.ApplicationUsers.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+                if (applicationUser == null)
+                {
+                    applicationUser = new ApplicationUser()
+                    {
+                        UserId = user.Id,
+                        ApplicationId = applicationAuthenticationProvider.ApplicationId
+                    };
+
+                    db.ApplicationUsers.Add(applicationUser);
+
+                    await db.SaveChangesAsync();
+
+                    return true;
+                }
+            }
         }
 
-        public async Task<LoginResponseDto> Login(LoginRequestDto model)
-        {
-            var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
-
-            var user = await AuthenticateUser(model, applicationAuthenticationProvider);
-            if (user == null)
-                return null;
-
-            string CallbackURL = applicationAuthenticationProvider.Application.CallbackUrl;
-
-            var newguid = Guid.NewGuid();
-
-            db.UserTokens.Add(new UserToken()
-            {
-                ApplicationId = applicationAuthenticationProvider.Application.Id,
-                UserId = user.Id,
-                LoginToken = newguid,
-                TokenCreatedDateTime = DateTime.Now,
-                TokenRefreshedDateTime = DateTime.Now,
-                RefreshToken = ""
-            });
-
-            CallbackURL += newguid;
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            var loginResponseDto = new LoginResponseDto();
-            loginResponseDto.CallbackURL = CallbackURL;
-            return loginResponseDto;
-        }
-
-        //public async Task<LoginResponseDto> Register(RegisterRequestDto model)
-        //{
-            //var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
-
-            //if ((bool)applicationAuthenticationProvider.RegistrationEnabled)
-            //{
-            //    var newUser = new User()
-            //    {
-            //        Email = model.Email,
-                    
-            //    };
-
-            //    db.Users.Add(newUser);
-            //    await db.SaveChangesAsync();
-            //}
-
-            //var user = await AuthenticateUser(model, applicationAuthenticationProvider);
-            //if (user == null)
-            //    return null;
-
-            //string CallbackURL = applicationAuthenticationProvider.Application.CallbackUrl;
-
-            //var newguid = Guid.NewGuid();
-
-            //db.UserTokens.Add(new UserToken()
-            //{
-            //    ApplicationId = applicationAuthenticationProvider.Application.Id,
-            //    UserId = user.Id,
-            //    LoginToken = newguid,
-            //    TokenCreatedDateTime = DateTime.Now,
-            //    TokenRefreshedDateTime = DateTime.Now,
-            //    RefreshToken = ""
-            //});
-
-            //CallbackURL += newguid;
-
-            //try
-            //{
-            //    await db.SaveChangesAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.ToString());
-            //}
-
-            //var loginResponseDto = new LoginResponseDto();
-            //loginResponseDto.CallbackURL = CallbackURL;
-            //return loginResponseDto;
-        //}
+        return false;
+    }
 
         public async Task<APIResult<UserTokenDto>> RefreshToken(TokenModel model)
         {
@@ -287,7 +285,6 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             else
                 return null;
         }
-
         private async Task<User> CreateADUserIfNotExists(LoginRequestDto model, User? user, ApplicationAuthenticationProvider applicationAuthenticationProvider)
         {
             if (user == null)
@@ -311,11 +308,10 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             }
             return user;
         }
-
         private async Task<bool> AuthenticateUserWithLocalPassword(User user, string password)
         {
             try
-            {   
+            {
                 byte[] bytesalt = Convert.FromHexString(user.Salt);
                 const int keySize = 64;
                 const int iterations = 350000;
@@ -367,4 +363,3 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             return realname;
         }
     }
-}

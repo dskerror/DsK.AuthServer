@@ -4,5 +4,6 @@ namespace BlazorWASMCustomAuth.Security.Shared;
 
 public class LoginResponseDto
 {
-    public string CallbackURL { get; set; }
+    public string? CallbackURL{ get; set; }
+    
 }
