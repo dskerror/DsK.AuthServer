@@ -18,22 +18,9 @@ public class UsersController : ControllerBase
         this.Mapper = Mapper;
     }
 
-    //TODO : ChangePassword
-    //TODO : Forgot Password
-    
-    [HttpPost]
-    [Route("Register")]
-    public async Task<IActionResult> Register(UserRegisterDto model)
-    {
-        var record = new UserCreateDto();
-        Mapper.Map(model, record);
-        var result = await SecurityService.UserCreate(record);        
-        return Ok(result);
-    }
-
     [HttpPost]
     [Authorize(Roles = $"{Access.Admin}, {Access.Users.Create}")]
-    public async Task<IActionResult> UserCreate(UserCreateDto model)
+    public async Task<IActionResult> Create(UserCreateDto model)
     {
         var result = await SecurityService.UserCreate(model);
         return Ok(result);
@@ -41,7 +28,7 @@ public class UsersController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.Users.View}")]
-    public async Task<IActionResult> UsersGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+    public async Task<IActionResult> Get(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
     {
         var result = await SecurityService.UsersGet(id, pageNumber, pageSize, searchString, orderBy);
         return Ok(result);
@@ -49,7 +36,7 @@ public class UsersController : ControllerBase
 
     [HttpPut]
     [Authorize(Roles = $"{Access.Admin}, {Access.Users.Edit}")]
-    public async Task<IActionResult> UserUpdate(UserDto model)
+    public async Task<IActionResult> Update(UserDto model)
     {
         var result = await SecurityService.UserUpdate(model);
         return Ok(result);
@@ -57,7 +44,7 @@ public class UsersController : ControllerBase
 
     [HttpDelete]
     [Authorize(Roles = $"{Access.Admin}, {Access.Users.Delete}")]
-    public async Task<IActionResult> UserDelete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         var result = await SecurityService.UserDelete(id);
         return Ok(result);

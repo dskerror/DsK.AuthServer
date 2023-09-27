@@ -1,6 +1,9 @@
 ﻿<MudNavMenu>    
     <AuthorizeView>
         <Authorized>
+
+            <MudNavLink Href="/MyProfile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.VerifiedUser">My Profile</MudNavLink>
+
             @if (_AccessApplications)
             {
                 <MudNavLink Href="/Applications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Applications</MudNavLink>
@@ -9,11 +12,6 @@
             {
                 <MudNavLink Href="/Users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
             }
-
-            <MudNavGroup Title="Administration">
-                <MudNavLink Href="/Applications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Applications</MudNavLink>
-                <MudNavLink Href="/Users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Users</MudNavLink>
-            </MudNavGroup>
         </Authorized>
     </AuthorizeView>
 </MudNavMenu>

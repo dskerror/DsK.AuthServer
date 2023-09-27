@@ -41,14 +41,14 @@ public partial class SecurityService
         };
         await db.UserRoles.AddAsync(userRole);
 
-        var userAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
+        var applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
         {
 
             UserId = record.Id,
             Username = record.Email,
         };
 
-        await db.UserAuthenticationProviderMappings.AddAsync(userAuthenticationProviderMapping);
+        await db.ApplicationAuthenticationProviderUserMappings.AddAsync(applicationAuthenticationProviderUserMapping);
 
         try
         {
@@ -174,7 +174,7 @@ public partial class SecurityService
     private async Task<User> GetUserByMappedUsernameAsync(string username, int applicationAuthenticationProviderId)
     {
         var user = await (from u in db.Users
-                          join uap in db.UserAuthenticationProviderMappings on u.Id equals uap.UserId                          
+                          join uap in db.ApplicationAuthenticationProviderUserMappings on u.Id equals uap.UserId                          
                           where uap.Username == username && uap.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId
                           select u).FirstOrDefaultAsync();
         return user;

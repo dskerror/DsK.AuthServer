@@ -19,6 +19,8 @@ public partial class Application
 
     public bool ApplicationDisabled { get; set; }
 
+    public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; } = new List<ApplicationAuthenticationProviderUserToken>();
+
     public virtual ICollection<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; } = new List<ApplicationAuthenticationProvider>();
 
     public virtual ICollection<ApplicationPermission> ApplicationPermissions { get; } = new List<ApplicationPermission>();
@@ -28,6 +30,4 @@ public partial class Application
     public virtual ICollection<ApplicationUser> ApplicationUsers { get; } = new List<ApplicationUser>();
 
     public virtual ICollection<UserLog> UserLogs { get; } = new List<UserLog>();
-
-    public virtual ICollection<UserToken> UserTokens { get; } = new List<UserToken>();
 }

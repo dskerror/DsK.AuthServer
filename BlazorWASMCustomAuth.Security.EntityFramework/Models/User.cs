@@ -27,13 +27,13 @@ public partial class User
 
     public DateTime LastPasswordChangeDateTime { get; set; }
 
-    public virtual ICollection<ApplicationUser> ApplicationUsers { get; } = new List<ApplicationUser>();
+    public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; } = new List<ApplicationAuthenticationProviderUserMapping>();
 
-    public virtual ICollection<UserAuthenticationProviderMapping> UserAuthenticationProviderMappings { get; } = new List<UserAuthenticationProviderMapping>();
+    public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; } = new List<ApplicationAuthenticationProviderUserToken>();
+
+    public virtual ICollection<ApplicationUser> ApplicationUsers { get; } = new List<ApplicationUser>();
 
     public virtual ICollection<UserPermission> UserPermissions { get; } = new List<UserPermission>();
 
     public virtual ICollection<UserRole> UserRoles { get; } = new List<UserRole>();
-
-    public virtual ICollection<UserToken> UserTokens { get; } = new List<UserToken>();
 }

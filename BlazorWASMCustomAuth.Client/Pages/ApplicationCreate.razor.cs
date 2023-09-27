@@ -8,7 +8,7 @@ public partial class ApplicationCreate
 {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private ApplicationCreateDto model = new ApplicationCreateDto();
-    private bool _AccessApplicationCreate;
+    private bool _AccessCreate;
     private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Applications", href: "Applications"),
@@ -21,13 +21,13 @@ public partial class ApplicationCreate
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationCreate)
+        if (!_AccessCreate)
             _navigationManager.NavigateTo("/noaccess");
     }
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationCreate = securityService.HasPermission(state.User, Access.Application.Create);
+        _AccessCreate = securityService.HasPermission(state.User, Access.Application.Create);
     }
 
     private async Task Create()

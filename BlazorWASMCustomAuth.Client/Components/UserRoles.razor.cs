@@ -10,8 +10,8 @@ public partial class UserRoles
     public List<UserRoleGridDto> userRoles { get; set; }
     [Parameter] public int UserId { get; set; }
     [Parameter] public EventCallback UserRoleChanged { get; set; }
-    private bool _AccessUserRolesEdit;
-    private bool _AccessUserRolesView;
+    private bool _AccessEdit;
+    private bool _AccessView;
 
 
     protected override async Task OnInitializedAsync()
@@ -19,13 +19,13 @@ public partial class UserRoles
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (_AccessUserRolesView)
+        if (_AccessView)
             await LoadUserRoles();
     }
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessUserRolesView = securityService.HasPermission(state.User, Access.UserRoles.View);
-        _AccessUserRolesEdit = securityService.HasPermission(state.User, Access.UserRoles.Edit);
+        _AccessView = securityService.HasPermission(state.User, Access.UserRoles.View);
+        _AccessEdit = securityService.HasPermission(state.User, Access.UserRoles.Edit);
     }
 
     private async Task LoadUserRoles()

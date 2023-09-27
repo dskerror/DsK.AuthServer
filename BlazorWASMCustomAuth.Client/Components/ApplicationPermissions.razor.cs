@@ -17,23 +17,21 @@ public partial class ApplicationPermissions
     private int _totalItems;
     private int _currentPage;
     private string _searchString = "";
-    private bool _AccessApplicationPermissionsView;
-    private bool _AccessApplicationPermissionsEdit;
-    private bool _AccessApplicationPermissionsCreate;
+    private bool _AccessView;    
+    private bool _AccessCreate;
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationPermissionsView)
+        if (!_AccessView)
             _navigationManager.NavigateTo("/noaccess");
     }
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationPermissionsView = securityService.HasPermission(state.User, Access.ApplicationPermissions.View);
-        _AccessApplicationPermissionsEdit = securityService.HasPermission(state.User, Access.ApplicationPermissions.Edit);
-        _AccessApplicationPermissionsCreate = securityService.HasPermission(state.User, Access.ApplicationPermissions.Create);
+        _AccessView = securityService.HasPermission(state.User, Access.ApplicationPermissions.View);        
+        _AccessCreate = securityService.HasPermission(state.User, Access.ApplicationPermissions.Create);
     }
 
     private async Task LoadData(int pageNumber, int pageSize, TableState state)

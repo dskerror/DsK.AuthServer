@@ -31,12 +31,8 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Register(RegisterRequestDto model)
     {
         //todo : implement captcha
-        var callbackUrl = await SecurityService.Register(model);
-
-        if (callbackUrl == null)
-            return NotFound();
-
-        return Ok(callbackUrl);
+        var registerSuccessfull = await SecurityService.Register(model);
+        return Ok(registerSuccessfull);
     }
 
     [HttpPost]

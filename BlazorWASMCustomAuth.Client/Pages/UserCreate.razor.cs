@@ -8,20 +8,20 @@ public partial class UserCreate
 {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private UserCreateDto model = new UserCreateDto();
-    private bool _AccessUsersCreate;
+    private bool _AccessCreate;
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessUsersCreate)
+        if (!_AccessCreate)
             _navigationManager.NavigateTo("/noaccess");
     }
 
     private void SetPermissions(AuthenticationState state)
     {   
-        _AccessUsersCreate = securityService.HasPermission(state.User, Access.Users.Create);
+        _AccessCreate = securityService.HasPermission(state.User, Access.Users.Create);
     }
 
     private async Task Create()

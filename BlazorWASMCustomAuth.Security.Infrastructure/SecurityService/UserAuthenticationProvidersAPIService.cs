@@ -7,16 +7,16 @@ using System.Data;
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<UserAuthenticationProviderMappingDto>> UserAuthenticationProviderCreate(UserAuthenticationProviderCreateDto model)
+    public async Task<APIResult<ApplicationAuthenticationProviderUserMappingDto>> ApplicationAuthenticationProviderUserMappingCreate(ApplicationAuthenticationProviderUserMappingCreateDto model)
     {
-        APIResult<UserAuthenticationProviderMappingDto> result = new APIResult<UserAuthenticationProviderMappingDto>();
+        APIResult<ApplicationAuthenticationProviderUserMappingDto> result = new APIResult<ApplicationAuthenticationProviderUserMappingDto>();
 
         int recordsCreated = 0;
 
-        var record = new UserAuthenticationProviderMapping();
+        var record = new ApplicationAuthenticationProviderUserMapping();
         Mapper.Map(model, record);
 
-        var checkDuplicateUsername = await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username);
+        var checkDuplicateUsername = await db.ApplicationAuthenticationProviderUserMappings.FirstOrDefaultAsync(x => x.Username == model.Username);
 
         if (checkDuplicateUsername != null)
         {
@@ -25,7 +25,7 @@ public partial class SecurityService
             return result;
         }
 
-        db.UserAuthenticationProviderMappings.Add(record);
+        db.ApplicationAuthenticationProviderUserMappings.Add(record);
 
         try
         {
@@ -45,49 +45,49 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<UserAuthenticationProviderMappingsGridDto>>> UserAuthenticationProvidersGet(int userId)
+    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGet(int userId)
     {
 
-        var result = new APIResult<List<UserAuthenticationProviderMappingsGridDto>>();
+        var result = new APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>();
         var authenticationProviderList = await db.ApplicationAuthenticationProviders.ToListAsync();
 
 
-        var userAuthenticationProviderList = await (from uap in db.UserAuthenticationProviderMappings
-                                                    //join ap in db.ApplicationAuthenticationProviders on uap.ApplicationAuthenticationProviderId equals ap.Id
+        var applicationAuthenticationProviderUserMappingsList = await (from uap in db.ApplicationAuthenticationProviderUserMappings
+                                                        //join ap in db.ApplicationAuthenticationProviders on uap.ApplicationAuthenticationProviderId equals ap.Id
                                                     where uap.UserId == userId
                                                     select new { uap.Id, uap.Username }).ToListAsync();
 
-        List<UserAuthenticationProviderMappingsGridDto> userAuthenticationProvidersGridDtoList = new List<UserAuthenticationProviderMappingsGridDto>();
+        List<ApplicationAuthenticationProviderUserMappingsGridDto> applicationAuthenticationProviderUserMappingGridDtoList = new List<ApplicationAuthenticationProviderUserMappingsGridDto>();
 
         foreach (var item in authenticationProviderList)
         {
-            userAuthenticationProvidersGridDtoList.Add(new UserAuthenticationProviderMappingsGridDto
+            applicationAuthenticationProviderUserMappingGridDtoList.Add(new ApplicationAuthenticationProviderUserMappingsGridDto
             {   
                 Name = item.Name,
                 AuthenticationProviderType = item.AuthenticationProviderType
             });
         }
 
-        foreach (var item in userAuthenticationProviderList)
+        foreach (var item in applicationAuthenticationProviderUserMappingsList)
         {
-            var value = userAuthenticationProvidersGridDtoList.First();
+            var value = applicationAuthenticationProviderUserMappingGridDtoList.First();
             value.Username = item.Username;
             value.Id = item.Id;
         }
 
-        result.Result = userAuthenticationProvidersGridDtoList;
+        result.Result = applicationAuthenticationProviderUserMappingGridDtoList;
         return result;
     }
-    public async Task<APIResult<string>> UserAuthenticationProviderUpdate(UserAuthenticationProviderUpdateDto model)
+    public async Task<APIResult<string>> ApplicationAuthenticationProviderUserMappingUpdate(ApplicationAuthenticationProviderUserMappingUpdateDto model)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
-        var record = await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Id == model.Id);
+        var record = await db.ApplicationAuthenticationProviderUserMappings.FirstOrDefaultAsync(x => x.Id == model.Id);
 
         if (record != null)
             Mapper.Map(model, record);
 
-        var checkDuplicateUsername =  await db.UserAuthenticationProviderMappings.FirstOrDefaultAsync(x => x.Username == model.Username);
+        var checkDuplicateUsername =  await db.ApplicationAuthenticationProviderUserMappings.FirstOrDefaultAsync(x => x.Username == model.Username);
 
         if (checkDuplicateUsername != null)
         {
@@ -111,11 +111,11 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> UserAuthenticationProviderDelete(int id)
+    public async Task<APIResult<string>> ApplicationAuthenticationProviderUserMappingDelete(int id)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsDeleted = 0;
-        var record = db.UserAuthenticationProviderMappings.Attach(new UserAuthenticationProviderMapping { Id = id });
+        var record = db.ApplicationAuthenticationProviderUserMappings.Attach(new ApplicationAuthenticationProviderUserMapping { Id = id });
         record.State = EntityState.Deleted;
         try
         {

@@ -9,7 +9,7 @@ public partial class ApplicationAuthenticationProviderCreate
     [Parameter] public int ApplicationId { get; set; }
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private ApplicationAuthenticationProviderCreateDto model = new ApplicationAuthenticationProviderCreateDto();
-    private bool _AccessAuthenticationProviderCreate;
+    private bool _AccessCreate;
     private List<BreadcrumbItem> _breadcrumbs;
 
     protected override async Task OnInitializedAsync()
@@ -17,7 +17,7 @@ public partial class ApplicationAuthenticationProviderCreate
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessAuthenticationProviderCreate)
+        if (!_AccessCreate)
             _navigationManager.NavigateTo("/noaccess");
 
         _breadcrumbs = new List<BreadcrumbItem>
@@ -30,7 +30,7 @@ public partial class ApplicationAuthenticationProviderCreate
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessAuthenticationProviderCreate = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.Create);
+        _AccessCreate = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.Create);
     }
 
     private async Task Create()

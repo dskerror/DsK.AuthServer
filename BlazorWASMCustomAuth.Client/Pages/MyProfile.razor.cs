@@ -5,43 +5,36 @@ using MudBlazor;
 using BlazorWASMCustomAuth.Client.Components;
 
 namespace BlazorWASMCustomAuth.Client.Pages;
-public partial class UserViewEdit
+public partial class MyProfile
 {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-    public UserDto user { get; set; }        
-    [Parameter] public int id { get; set; }
+    public UserDto user { get; set; }
+    
     private bool _loaded;
-    private bool _AccessView;
-    private bool _AccessEdit;
-    private bool _AccessUserPermissionsView;
-    private bool _AccessUserRolesView;
     protected UserPermissions userPermissionsComponent;
     private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("Users", href: "users"),
-        new BreadcrumbItem("User View/Edit", href: null, disabled: true)
+    {        
+        new BreadcrumbItem("My Profile", href: null, disabled: true)
     };
 
     protected override async Task OnInitializedAsync()
     {
-        var state = await authenticationState;
-        SetPermissions(state);
+        int userId = await GetUsedIdFromAuthenticationState();
+        await LoadUserData(userId);
+    }
 
-        if (!_AccessView)            
-            _navigationManager.NavigateTo("/noaccess");            
-        else            
-            await LoadUserData();            
-    }
-    private void SetPermissions(AuthenticationState state)
+    private async Task<int> GetUsedIdFromAuthenticationState()
     {
-        _AccessView = securityService.HasPermission(state.User, Access.Users.View);
-        _AccessEdit = securityService.HasPermission(state.User, Access.Users.Edit);
-        _AccessUserPermissionsView = securityService.HasPermission(state.User, Access.UserPermissions.View);
-        _AccessUserRolesView = securityService.HasPermission(state.User, Access.UserRoles.View);        
+        var state = await authenticationState;
+        var userIdString = state.User.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();
+        int userId = int.Parse(userIdString);
+        return userId;
     }
-    private async Task LoadUserData()
+
+    private async Task LoadUserData(int userId)
     {
-        var result = await securityService.UserGetAsync(id);
+        
+        var result = await securityService.UserGetAsync(userId);
         if (result != null)
         {
             user = result.Result;
@@ -63,7 +56,9 @@ public partial class UserViewEdit
     private async Task CancelChanges()
     {
         Snackbar.Add("Edit canceled", Severity.Warning);
-        await LoadUserData();
+
+        int userId = await GetUsedIdFromAuthenticationState();
+        await LoadUserData(userId);
     }
 
     private async Task RefreshUserPermissions()

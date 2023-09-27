@@ -14,36 +14,80 @@ internal class Program
         db.Database.Migrate(); //CREATES DATABASE IF IT DOESNT EXISTS
         db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
 
-        Application newApplication = CreateApplication(db);        
-        ApplicationAuthenticationProvider applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newApplication);
-        ApplicationPermission adminPermission = CreateAdminPermission(db);
-        ApplicationRole adminRole = CreateAdminRole(db);
-        CreateUserRole(db);
-        AddAdminPermissionToAdminRole(db, adminPermission, adminRole);
-        User adminUser = CreateAdminUser(db);
-        ApplicationUser adminApplicationUser = AddAdminUserToApplicationUser(db, adminUser);
-        AddAuthenticationProviderMappingToAdminUser(db, applicationAuthenticationProvider, adminUser);
+        //Security App
+        var newApp = CreateApplication(db);
+        var applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newApp);
+                
+        var adminPermission = CreateAppPermission(db, newApp.Id, "Admin", "Admin Permission");
+        var permissionList = CreateApplicationPermissions(db, newApp); //Create list of permissions based on Security.Shared Permissions
+
+        var adminRole = CreateApplicationRole(db, newApp.Id, "Admin", "Admin Role");
+        AddPermissionToRole(db, adminPermission.Id, adminRole.Id);
+        var adminUser = CreateUser(db, "admin@admin.com", "Admin", "admin123");
+        AddUserToApplicationUser(db, adminUser, newApp);
+        AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, adminUser);
         AddRoleToUser(db, adminRole, adminUser);
-        var permissionList = Access.GetRegisteredPermissions();
-        foreach (var permission in permissionList)
-        {
-            db.ApplicationPermissions.Add(new ApplicationPermission() { ApplicationId = 1, PermissionName = permission, PermissionDescription = "" });
-        }
-        db.SaveChanges();
 
+        var userRole = CreateApplicationRole(db, newApp.Id, "User", "User Role");
+        AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.Edit, permissionList), userRole.Id);
+        var regularUser = CreateUser(db, "user@user.com", "User", "user123");
+        AddUserToApplicationUser(db, regularUser, newApp);
+        AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, regularUser);
+        AddRoleToUser(db, adminRole, regularUser);
 
+        //Test App
+        var TestApp = CreateTestApp(db);
+        var testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp);
 
-        Application TestApp = CreateTestApp(db);
-        ApplicationRole TestAppUserRole = CreateTestAppUserRole(db);
-        CreateTestAppPermissions(db);
-        AddAdminPermissionToAdminRole(db, TestAppUserRole);
-        AddAdminUserToTestApp(db, adminUser);        
-        ApplicationAuthenticationProvider testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp);
-        AddAuthenticationProviderMappingToAdminUser(db, testAppAuthenticationProvider, adminUser);
+        var TestAppUserRole = CreateApplicationRole(db, TestApp.Id, "User", "UserRole");
+        
+        var counterPermission = CreateAppPermission(db, newApp.Id, "Counter", "Counter Permission");
+        AddPermissionToRole(db, counterPermission.Id, TestAppUserRole.Id);
+        
+        var fetchDataPermission = CreateAppPermission(db, newApp.Id, "FetchData", "Fetch Data Permission");
+        AddPermissionToRole(db, fetchDataPermission.Id, TestAppUserRole.Id);
+        
+        AddUserToApplicationUser(db, adminUser, TestApp);        
+        AddAuthenticationProviderMappingToUser(db, testAppAuthenticationProvider, adminUser);
         AddRoleToUser(db, TestAppUserRole, adminUser);
 
     }
 
+    private static int GetPermissionIdByName(string permissionName, Dictionary<string, ApplicationPermission> permissionList)
+    {
+        permissionList.TryGetValue(permissionName, out var value);
+        return value.ApplicationId;
+    }
+    private static Dictionary<string, ApplicationPermission> CreateApplicationPermissions(SecurityTablesTestContext db, Application application)
+    {
+        var permissionList = Access.GetRegisteredPermissions();
+        Dictionary<string, ApplicationPermission> outputList = new Dictionary<string, ApplicationPermission>();
+
+        foreach (var permission in permissionList)
+        {
+            var newPermission = new ApplicationPermission() { ApplicationId = application.Id, PermissionName = permission, PermissionDescription = "" };
+            outputList.Add(permission, newPermission);
+            db.ApplicationPermissions.Add(newPermission);
+        }
+        db.SaveChanges();
+
+        return outputList;
+    }
+    private static Application CreateApplication(SecurityTablesTestContext db)
+    {
+        Application newApplication = new Application()
+        {
+            ApplicationName = "DsK.AuthorizarionServer",
+            ApplicationDesc = "Manages authentication and authorization for other applications",
+            ApplicationGuid = Guid.Parse("D9847B27-B28A-4223-B7F7-ACD0C365331C"),
+            AppApiKey = Guid.Parse("CAB41EEC-6002-4738-BE23-128B0A7276C1"),
+            CallbackUrl = "/Callback/"
+        };
+
+        db.Applications.Add(newApplication);
+        db.SaveChanges();
+        return newApplication;
+    }
     private static ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(SecurityTablesTestContext db, Application newApplication)
     {
         ApplicationAuthenticationProvider applicationAuthenticationProvider =
@@ -64,66 +108,51 @@ internal class Program
 
         return applicationAuthenticationProvider;
     }
-    private static Application CreateApplication(SecurityTablesTestContext db)
-    {
-        Application newApplication = new Application()
-        {
-            ApplicationName = "DsK.AuthorizarionServer",
-            ApplicationDesc = "Manages authentication and authorization for other applications",
-            ApplicationGuid = Guid.Parse("D9847B27-B28A-4223-B7F7-ACD0C365331C"),
-            AppApiKey = Guid.Parse("CAB41EEC-6002-4738-BE23-128B0A7276C1"),
-            CallbackUrl = "/Callback/"
-        };
-
-        db.Applications.Add(newApplication);
-        db.SaveChanges();
-        return newApplication;
-    }
     private static void AddRoleToUser(SecurityTablesTestContext db, ApplicationRole adminRole, User adminUser)
     {
         var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
         db.UserRoles.Add(adminUserRole);
         db.SaveChanges();
     }
-    private static void AddAuthenticationProviderMappingToAdminUser(SecurityTablesTestContext db, ApplicationAuthenticationProvider authProvider, User adminUser)
+    private static void AddAuthenticationProviderMappingToUser(SecurityTablesTestContext db, ApplicationAuthenticationProvider authProvider, User adminUser)
     {
-        var adminAuthenticationProviderMapping = new UserAuthenticationProviderMapping()
-        {   
+        var applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
+        {
             User = adminUser,
             Username = adminUser.Email,
             ApplicationAuthenticationProvider = authProvider
         };
-        db.UserAuthenticationProviderMappings.Add(adminAuthenticationProviderMapping);
+        db.ApplicationAuthenticationProviderUserMappings.Add(applicationAuthenticationProviderUserMapping);
         db.SaveChanges();
     }
-    private static User CreateAdminUser(SecurityTablesTestContext db)
+    private static User CreateUser(SecurityTablesTestContext db, string email, string name, string password)
     {
         var ramdomSalt = SecurityHelpers.RandomizeSalt;
 
         var adminUser = new User()
         {
-            Email = "admin@admin.com",
-            Name = "admin",            
+            Email = email,
+            Name = name,
             EmailConfirmed = true,
-            AccessFailedCount = 0,            
+            AccessFailedCount = 0,
             LockoutEnabled = false,
-            HashedPassword = SecurityHelpers.HashPasword("admin123", ramdomSalt),
+            HashedPassword = SecurityHelpers.HashPasword(password, ramdomSalt),
             Salt = Convert.ToHexString(ramdomSalt),
             AccountCreatedDateTime = DateTime.Now,
             LastPasswordChangeDateTime = DateTime.Now
-            
+
         };
 
         db.Users.Add(adminUser);
         db.SaveChanges();
         return adminUser;
     }
-    private static ApplicationUser AddAdminUserToApplicationUser(SecurityTablesTestContext db, User user)
+    private static ApplicationUser AddUserToApplicationUser(SecurityTablesTestContext db, User user, Application application)
     {
         var adminApplicationUser = new ApplicationUser()
         {
             UserId = user.Id,
-            ApplicationId = 1,
+            ApplicationId = application.Id,
             AccessFailedCount = 0,
             TwoFactorEnabled = false,
             LockoutEnabled = false
@@ -133,54 +162,28 @@ internal class Program
         db.SaveChanges();
         return adminApplicationUser;
     }
-    private static void AddAdminPermissionToAdminRole(SecurityTablesTestContext db, ApplicationPermission adminPermission, ApplicationRole adminRole)
+    private static void AddPermissionToRole(SecurityTablesTestContext db, int permissionId, int roleId)
     {
         var adminRolePermission = new ApplicationRolePermission()
-        {            
-            RoleId = adminRole.Id,
-            PermissionId = adminPermission.Id
+        {
+            RoleId = roleId,
+            PermissionId = permissionId
         };
         db.ApplicationRolePermissions.Add(adminRolePermission);
         db.SaveChanges();
     }
-    private static ApplicationRole CreateAdminRole(SecurityTablesTestContext db)
+    private static ApplicationRole CreateApplicationRole(SecurityTablesTestContext db, int applicationId, string RoleName, string RoleDescription)
     {
         var adminRole = new ApplicationRole()
         {
-            ApplicationId = 1,
-            RoleName = "Admin",
-            RoleDescription = "Admin Role"
+            ApplicationId = applicationId,
+            RoleName = RoleName,
+            RoleDescription = RoleDescription
         };
         db.ApplicationRoles.Add(adminRole);
         db.SaveChanges();
         return adminRole;
     }
-    private static ApplicationRole CreateUserRole(SecurityTablesTestContext db)
-    {
-        var role = new ApplicationRole()
-        {
-            ApplicationId = 1,
-            RoleName = "User",
-            RoleDescription = "User Role"
-        };
-        db.ApplicationRoles.Add(role);
-        db.SaveChanges();
-        return role;
-    }
-    private static ApplicationPermission CreateAdminPermission(SecurityTablesTestContext db)
-    {
-        var adminPermission = new ApplicationPermission()
-        {
-            ApplicationId = 1,
-            PermissionName = "Admin",
-            PermissionDescription = "Admin Permission"
-        };
-        db.ApplicationPermissions.Add(adminPermission);
-        db.SaveChanges();
-        return adminPermission;
-    }
-
-
     private static Application CreateTestApp(SecurityTablesTestContext db)
     {
         Application newApplication = new Application()
@@ -196,69 +199,18 @@ internal class Program
         db.SaveChanges();
         return newApplication;
     }
-    private static ApplicationRole CreateTestAppUserRole(SecurityTablesTestContext db)
+    private static ApplicationPermission CreateAppPermission(SecurityTablesTestContext db, int applicationId, string permissionName, string permissionDescription)
     {
-        var role = new ApplicationRole()
+        var permission = new ApplicationPermission()
         {
-            ApplicationId = 2,
-            RoleName = "User Role",
-            RoleDescription = "User Role"
+            ApplicationId = applicationId,
+            PermissionName = permissionName,
+            PermissionDescription = permissionDescription
         };
-        db.ApplicationRoles.Add(role);
+        db.ApplicationPermissions.Add(permission);
         db.SaveChanges();
-        return role;
-    }
-    private static void CreateTestAppPermissions(SecurityTablesTestContext db)
-    {
-        var counterPermission = new ApplicationPermission()
-        {
-            ApplicationId = 2,
-            PermissionName = "Counter",
-            PermissionDescription = "Counter Permission"
-        };
-        db.ApplicationPermissions.Add(counterPermission);
 
-        var fetchDataPermission = new ApplicationPermission()
-        {
-            ApplicationId = 2,
-            PermissionName = "FetchData",
-            PermissionDescription = "Fetch Data Permission"
-        };
-        db.ApplicationPermissions.Add(fetchDataPermission);
-
-        db.SaveChanges();
-    }
-    private static void AddAdminPermissionToAdminRole(SecurityTablesTestContext db, ApplicationRole TestAppUserRole)
-    {
-        var counterRolePermission = new ApplicationRolePermission()
-        {
-            RoleId = TestAppUserRole.Id,
-            PermissionId = 38
-        };
-        db.ApplicationRolePermissions.Add(counterRolePermission);
-
-        var fetchdataRolePermission = new ApplicationRolePermission()
-        {
-            RoleId = TestAppUserRole.Id,
-            PermissionId = 39
-        };
-        db.ApplicationRolePermissions.Add(fetchdataRolePermission);
-        db.SaveChanges();
+        return permission;
     }
 
-    private static ApplicationUser AddAdminUserToTestApp(SecurityTablesTestContext db, User user)
-    {
-        var adminApplicationUser = new ApplicationUser()
-        {
-            UserId = user.Id,
-            ApplicationId = 2,
-            AccessFailedCount = 0,
-            TwoFactorEnabled = false,
-            LockoutEnabled = false
-        };
-
-        db.ApplicationUsers.Add(adminApplicationUser);
-        db.SaveChanges();
-        return adminApplicationUser;
-    }
 }

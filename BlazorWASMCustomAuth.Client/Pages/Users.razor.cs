@@ -14,22 +14,22 @@ public partial class Users
     private int _totalItems;
     private int _currentPage;
     private string _searchString = "";
-    private bool _AccessUsersView;
-    private bool _AccessUsersCreate;
+    private bool _AccessView;
+    private bool _AccessCreate;
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessUsersView)
+        if (!_AccessView)
             _navigationManager.NavigateTo("/noaccess");
     }
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessUsersView = securityService.HasPermission(state.User, Access.Users.View);
-        _AccessUsersCreate = securityService.HasPermission(state.User, Access.Users.Create);
+        _AccessView = securityService.HasPermission(state.User, Access.Users.View);
+        _AccessCreate = securityService.HasPermission(state.User, Access.Users.Create);
     }
 
     private async Task<TableData<UserDto>> ServerReload(TableState state)

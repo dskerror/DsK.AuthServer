@@ -6,7 +6,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="RoleSwitch">
-            <MudSwitch Color="Color.Success" Disabled="!_AccessUserRolesEdit" @bind-Checked="@context.Enable" @oninput="(e)=>ToggleRoleSwitch(e,context.Id)" />
+            <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.Enable" @oninput="(e)=>ToggleRoleSwitch(e,context.Id)" />
         </MudTd>
         <MudTd DataLabel="RoleName">@context.RoleName</MudTd>
         <MudTd DataLabel="RoleDescription">@context.RoleDescription</MudTd>

@@ -31,6 +31,9 @@
     <Content Update="Pages\Applications.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="Pages\Register.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="Pages\UserCreate.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

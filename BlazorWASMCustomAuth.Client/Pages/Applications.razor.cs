@@ -16,22 +16,22 @@ public partial class Applications
     private int _currentPage;
     private string _searchString = "";
     private bool _loaded;
-    private bool _AccessApplicationView;
-    private bool _AccessApplicationCreate;
+    private bool _AccessView;
+    private bool _AccessCreate;
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationView)
+        if (!_AccessView)
             _navigationManager.NavigateTo("/noaccess");
     }
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationView = securityService.HasPermission(state.User, Access.Application.View);
-        _AccessApplicationCreate = securityService.HasPermission(state.User, Access.Application.Create);
+        _AccessView = securityService.HasPermission(state.User, Access.Application.View);
+        _AccessCreate = securityService.HasPermission(state.User, Access.Application.Create);
     }
     private async Task<TableData<ApplicationDto>> ServerReload(TableState state)
     {

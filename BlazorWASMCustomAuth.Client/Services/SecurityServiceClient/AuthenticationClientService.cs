@@ -22,7 +22,6 @@ public partial class SecurityServiceClient
         
         return result.CallbackURL;
     }
-
     public async Task<bool> ValidateLoginTokenAsync(string loginToken)
     {
         var model = new ValidateLoginTokenDto() { LoginToken = loginToken };
@@ -41,12 +40,19 @@ public partial class SecurityServiceClient
         (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
         return true;
     }
-
     public async Task<bool> LogoutAsync()
     {
         await _localStorageService.RemoveItemAsync("token");
         await _localStorageService.RemoveItemAsync("refreshToken");
         (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
         return true;
+    }
+    public async Task<bool> RegisterAsync(RegisterRequestDto model)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Register, model);
+        if (!response.IsSuccessStatusCode) return false;        
+        
+        var result = await response.Content.ReadFromJsonAsync<bool>();        
+        return result;
     }
 }

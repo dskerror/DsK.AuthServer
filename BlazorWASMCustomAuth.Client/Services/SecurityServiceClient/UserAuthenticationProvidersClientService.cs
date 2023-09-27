@@ -5,20 +5,20 @@ using Newtonsoft.Json;
 namespace BlazorWASMCustomAuth.Client.Services;
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<UserAuthenticationProviderMappingDto>> UserAuthenticationProviderCreateAsync(UserAuthenticationProviderCreateDto model)
+    public async Task<APIResult<ApplicationAuthenticationProviderUserMappingDto>> ApplicationAuthenticationProviderUserMappingCreateAsync(ApplicationAuthenticationProviderUserMappingCreateDto model)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.PostAsJsonAsync(Routes.UserAuthenticationProvidersEndpoints.Post, model);
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<UserAuthenticationProviderMappingDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationAuthenticationProviderUserMappingDto>>();
         return result;
     }
-    public async Task<APIResult<string>> UserAuthenticationProviderEditAsync(UserAuthenticationProviderUpdateDto model)
+    public async Task<APIResult<string>> ApplicationAuthenticationProviderUserMappingEditAsync(ApplicationAuthenticationProviderUserMappingUpdateDto model)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.PutAsJsonAsync(Routes.UserAuthenticationProvidersEndpoints.Put, model);
+        var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Put, model);
         if (!response.IsSuccessStatusCode)        
             return null;
         
@@ -26,10 +26,10 @@ public partial class SecurityServiceClient
         return result;
     }
 
-    public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> UserAuthenticationProvidersGetAsync(int userId)
+    public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProviderUserMappingsGetAsync(int userId)
     {
         await PrepareBearerToken();
-        var url = Routes.UserAuthenticationProvidersEndpoints.Get(userId);
+        var url = Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Get(userId);
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
             return null;
@@ -48,32 +48,10 @@ public partial class SecurityServiceClient
             return null;
         }
     }
-    //public async Task<APIResult<List<ApplicationUserAuthenticationProviderMappingsGridDto>>> ApplicationAuthenticationProvidersGetAsync(int UserId)
-    //{
-    //    await PrepareBearerToken();
-    //    var response = await _httpClient.GetAsync(Routes.ApplicationAuthenticationProvidersEndpoints.Get(UserId));
-    //    if (!response.IsSuccessStatusCode)
-    //        return null;        
-
-    //    var responseAsString = await response.Content.ReadAsStringAsync();
-
-    //    try
-    //    {
-    //        var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationUserAuthenticationProviderMappingsGridDto>>>(responseAsString);
-    //        return responseObject;
-    //    }
-    //    catch (Exception ex)
-    //    {
-
-    //        Console.Write(ex.Message);
-    //        return null;
-    //    }
-    //}
-
-    public async Task<APIResult<string>> UserAuthenticationProviderDeleteAsync(int id)
+    public async Task<APIResult<string>> ApplicationAuthenticationProviderUserMappingDeleteAsync(int id)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.DeleteAsync(Routes.UserAuthenticationProvidersEndpoints.Delete(id));
+        var response = await _httpClient.DeleteAsync(Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Delete(id));
         if (!response.IsSuccessStatusCode)
             return null;
 

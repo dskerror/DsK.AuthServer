@@ -19,7 +19,7 @@ else
                               For="@(()=>model.ApplicationName)">
                 </MudTextField>
 
-                <MudTextField Disabled="!_AccessApplicationEdit" ReadOnly="false" Label="Description" @bind-Value="model.ApplicationDesc"
+                <MudTextField Disabled="!_AccessEdit" ReadOnly="false" Label="Description" @bind-Value="model.ApplicationDesc"
                               For="@(()=>model.ApplicationDesc)">
                 </MudTextField>
 
@@ -33,13 +33,13 @@ else
 
                 <br />
 
-                <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => GenerateNewAPIKey(model)" Class="mb-2">Generate New API Key</MudButton>
+                <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => GenerateNewAPIKey(model)" Class="mb-2">Generate New API Key</MudButton>
 
             </MudCardContent>
         </MudCard>
 
-        <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
-        <MudButton Disabled="!_AccessApplicationEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
+        <MudButton Disabled="!_AccessEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
 
     </EditForm>
 

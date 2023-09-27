@@ -67,12 +67,12 @@ namespace BlazorWASMCustomAuth.Security.Shared
 
         [DisplayName("User Authentication Providers")]
         [Description("AppliUsercation Authentication Providers Permissions")]
-        public static class UserAuthenticationProviders
+        public static class ApplicationAuthenticationProviderUserMappings
         {
-            public const string View = "UserAuthenticationProviders.View";
-            public const string Create = "UserAuthenticationProviders.Create";
-            public const string Edit = "UserAuthenticationProviders.Edit";
-            public const string Delete = "UserAuthenticationProviders.Delete";
+            public const string View = "ApplicationAuthenticationProviderUserMappings.View";
+            public const string Create = "ApplicationAuthenticationProviderUserMappings.Create";
+            public const string Edit = "ApplicationAuthenticationProviderUserMappings.Edit";
+            public const string Delete = "ApplicationAuthenticationProviderUserMappings.Delete";
         }
 
         [DisplayName("Users Permissions")]
@@ -110,6 +110,15 @@ namespace BlazorWASMCustomAuth.Security.Shared
             public const string Create = "ApplicationUsers.Create";
             public const string Edit = "ApplicationUsers.Edit";
             public const string Delete = "ApplicationUsers.Delete";
+        }
+
+
+        [DisplayName("My Profile")]
+        [Description("My Profile Permissions")]
+        public static class MyProfile
+        {
+            public const string View = "MyProfile.View";
+            public const string Edit = "MyProfile.Edit";
         }
 
 

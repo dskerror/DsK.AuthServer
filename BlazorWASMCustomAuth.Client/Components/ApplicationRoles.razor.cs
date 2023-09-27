@@ -15,8 +15,8 @@ public partial class ApplicationRoles
     private int _totalItems;
     private int _currentPage;
     private string _searchString = "";
-    private bool _AccessApplicationRolesCreate;
-    private bool _AccessApplicationRolesView;
+    private bool _AccessCreate;
+    private bool _AccessView;
 
 
     protected override async Task OnInitializedAsync()
@@ -24,14 +24,14 @@ public partial class ApplicationRoles
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationRolesView)
+        if (!_AccessView)
             _navigationManager.NavigateTo("/noaccess");
     }
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationRolesView = securityService.HasPermission(state.User, Access.ApplicationRoles.View);
-        _AccessApplicationRolesCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
+        _AccessView = securityService.HasPermission(state.User, Access.ApplicationRoles.View);
+        _AccessCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
     }
 
     private async Task<TableData<ApplicationRoleDto>> ServerReload(TableState state)

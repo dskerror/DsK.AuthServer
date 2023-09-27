@@ -15,22 +15,22 @@ public partial class ApplicationAuthenticationProviders
     private int _currentPage;
     private string _searchString = "";
     private bool _loaded;
-    private bool _AccessApplicationAuthenticationProviderView;
-    private bool _AccessApplicationAuthenticationProviderCreate;
+    private bool _AccessView;
+    private bool _AccessCreate;
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationAuthenticationProviderView)
+        if (!_AccessView)
             _navigationManager.NavigateTo("/noaccess");
     }
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationAuthenticationProviderView = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.View);
-        _AccessApplicationAuthenticationProviderCreate = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.Create);
+        _AccessView = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.View);
+        _AccessCreate = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.Create);
     }
     private async Task<TableData<ApplicationAuthenticationProviderDto>> ServerReload(TableState state)
     {

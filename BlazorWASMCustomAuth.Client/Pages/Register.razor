@@ -1,28 +1,27 @@
-﻿@page "/login"
-@page "/login/{ApplicationAuthenticationProviderGUID}"
+﻿@page "/Register"
+@page "/Register/{ApplicationAuthenticationProviderGUID}"
 @layout LoginLayout
 @attribute [AllowAnonymous]
 
-<EditForm Model="userLoginModel" OnValidSubmit="SubmitAsync">
+<EditForm Model="userRegisterModel" OnValidSubmit="SubmitAsync">
     <MudGrid>
         <DataAnnotationsValidator />
         <MudItem xs="12">
             <div class="d-flex justify-center">
-                <MudText Typo="Typo.h4">Sign In</MudText>
+                <MudText Typo="Typo.h4">Register</MudText>
             </div>
         </MudItem>
         <MudItem xs="12">
-            <div class="d-flex justify-center">
-                <MudText>Login with your Credentials.</MudText>
-            </div>
+            <MudTextField T="string" Label="Name" Variant="Variant.Outlined"
+                          @bind-Value="userRegisterModel.Name" For="@(() => userRegisterModel.Name)" />
         </MudItem>
         <MudItem xs="12">
-            <MudTextField T="string" Label="Email" Variant="Variant.Outlined"
-                          @bind-Value="userLoginModel.Email" For="@(() => userLoginModel.Email)" />
+            <MudTextField T="string" Label="Username" Variant="Variant.Outlined"
+                          @bind-Value="userRegisterModel.Email" For="@(() => userRegisterModel.Email)" />
         </MudItem>
         <MudItem xs="12">
             <MudTextField Label="Password" Variant="Variant.Outlined"
-                          @bind-Value="userLoginModel.Password" For="@(() => userLoginModel.Password)"
+                          @bind-Value="userRegisterModel.Password" For="@(() => userRegisterModel.Password)"
                           InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
         </MudItem>
         <MudItem xs="12" Class="d-flex justify-center">

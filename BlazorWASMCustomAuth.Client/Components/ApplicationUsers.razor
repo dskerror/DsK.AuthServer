@@ -9,7 +9,7 @@
 
 <MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationUserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
-        @if (_AccessApplicationUsersCreate)
+        @if (_AccessCreate)
         {
             <div class="justify-center mud-text-align-center">
                 <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateUser())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create User</MudButton>

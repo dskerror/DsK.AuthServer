@@ -1,5 +1,5 @@
 ﻿namespace BlazorWASMCustomAuth.Security.Shared;
-public partial class UserTokenDto
+public partial class ApplicationAuthenticationProviderUserTokenDto
 {
     public int Id { get; set; }
 

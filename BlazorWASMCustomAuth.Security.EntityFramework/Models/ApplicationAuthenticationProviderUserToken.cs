@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
 
-public partial class UserToken
+public partial class ApplicationAuthenticationProviderUserToken
 {
     public int Id { get; set; }
 
-    public int? ApplicationId { get; set; }
+    public int ApplicationId { get; set; }
 
     public int UserId { get; set; }
 
@@ -19,7 +19,7 @@ public partial class UserToken
 
     public DateTime TokenRefreshedDateTime { get; set; }
 
-    public virtual Application? Application { get; set; }
+    public virtual Application Application { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

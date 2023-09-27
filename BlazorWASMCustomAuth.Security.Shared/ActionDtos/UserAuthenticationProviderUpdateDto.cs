@@ -2,7 +2,7 @@
 using System.ComponentModel;
 
 namespace BlazorWASMCustomAuth.Security.Shared;
-public class UserAuthenticationProviderUpdateDto
+public class ApplicationAuthenticationProviderUserMappingUpdateDto
 {
     [Required]
     public int Id { get; set; }

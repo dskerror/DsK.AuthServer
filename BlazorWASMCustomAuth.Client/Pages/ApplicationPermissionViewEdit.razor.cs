@@ -13,8 +13,8 @@ public partial class ApplicationPermissionViewEdit
     [Parameter] public int ApplicationPermissionsId { get; set; }
     private bool _loadedPermissionData;
     private bool _loadedApplicationRolePermissionData;
-    private bool _AccessApplicationPermissionView;
-    private bool _AccessApplicationPermissionEdit;
+    private bool _AccessView;
+    private bool _AccessEdit;
     private bool _AccessApplicationRolesPermissionsView;
     private bool _AccessApplicationRolesPermissionsEdit;
     private List<BreadcrumbItem> _breadcrumbs;
@@ -24,7 +24,7 @@ public partial class ApplicationPermissionViewEdit
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationPermissionView)
+        if (!_AccessView)
         {
             _navigationManager.NavigateTo("/noaccess");
         }
@@ -43,8 +43,8 @@ public partial class ApplicationPermissionViewEdit
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationPermissionView = securityService.HasPermission(state.User, Access.ApplicationPermissions.View);
-        _AccessApplicationPermissionEdit = securityService.HasPermission(state.User, Access.ApplicationPermissions.Edit);
+        _AccessView = securityService.HasPermission(state.User, Access.ApplicationPermissions.View);
+        _AccessEdit = securityService.HasPermission(state.User, Access.ApplicationPermissions.Edit);
     }
 
     private async Task LoadPermissionData()

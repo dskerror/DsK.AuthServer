@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
 
-public partial class UserAuthenticationProviderMapping
+public partial class ApplicationAuthenticationProviderUserMapping
 {
     public int Id { get; set; }
 

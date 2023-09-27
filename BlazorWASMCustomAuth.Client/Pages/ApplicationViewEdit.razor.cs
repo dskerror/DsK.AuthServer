@@ -11,8 +11,8 @@ public partial class ApplicationViewEdit
     public ApplicationDto model { get; set; }
     [Parameter] public int id { get; set; }
     private bool _loaded;
-    private bool _AccessApplicationView;
-    private bool _AccessApplicationEdit;
+    private bool _AccessView;
+    private bool _AccessEdit;
     private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Applications", href: "Applications"),
@@ -24,7 +24,7 @@ public partial class ApplicationViewEdit
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationView)
+        if (!_AccessView)
             _navigationManager.NavigateTo("/noaccess");
         else
             await LoadData();
@@ -32,8 +32,8 @@ public partial class ApplicationViewEdit
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationView = securityService.HasPermission(state.User, Access.Application.View);
-        _AccessApplicationEdit = securityService.HasPermission(state.User, Access.Application.Edit);
+        _AccessView = securityService.HasPermission(state.User, Access.Application.View);
+        _AccessEdit = securityService.HasPermission(state.User, Access.Application.Edit);
     }
 
     private async Task LoadData()

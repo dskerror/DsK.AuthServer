@@ -10,21 +10,21 @@ public partial class UserPermissions
     public List<UserPermissionGridDto> userPermissions { get; set; }
     [Parameter] public int UserId { get; set; }
 
-    private bool _AccessUserPermissionsView;
-    private bool _AccessUserPermissionsEdit;
+    private bool _AccessView;
+    private bool _AccessEdit;
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationState;
         SetPermissions(state);
         
-        if (_AccessUserPermissionsView)
+        if (_AccessView)
             await LoadUserPermissions();
     }
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessUserPermissionsView = securityService.HasPermission(state.User, Access.UserPermissions.View);
-        _AccessUserPermissionsEdit = securityService.HasPermission(state.User, Access.UserPermissions.Edit);
+        _AccessView = securityService.HasPermission(state.User, Access.UserPermissions.View);
+        _AccessEdit = securityService.HasPermission(state.User, Access.UserPermissions.Edit);
     }
     public async Task LoadUserPermissions()
     {

@@ -1,13 +1,11 @@
-register endpoint
-register page
-validate registration
+user profile (my profile)
 change password page
 forgot password page
 disable user in app
-user profile (my profile)
 log page
 implement two factor
 Rename project to DsK.AuthorizarionServer
 test active directory before adding
 test whole application
 document testapp
+validate registration via email

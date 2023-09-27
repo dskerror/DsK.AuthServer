@@ -15,29 +15,29 @@ else
         <MudCard Class="mb-2">
             <MudCardContent>
 
-                <MudTextField Disabled="!_AccessUsersEdit" Label="Email" @bind-Value="user.Email"
+                <MudTextField Disabled="!_AccessEdit" Label="Email" @bind-Value="user.Email"
                           For="@(()=>user.Email)">
                 </MudTextField>
 
-                <MudTextField Disabled="!_AccessUsersEdit" Label="Name" @bind-Value="user.Name"
+                <MudTextField Disabled="!_AccessEdit" Label="Name" @bind-Value="user.Name"
                           For="@(()=>user.Name)">
                 </MudTextField>
 
-                <MudSwitch Disabled="!_AccessUsersEdit" @bind-Checked="@user.EmailConfirmed" Label="Email Confirmed" Color="Color.Success" />
+                <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@user.EmailConfirmed" Label="Email Confirmed" Color="Color.Success" />
 
-                <MudDatePicker Disabled="!_AccessUsersEdit" Label="Lockout End" Editable="true" @bind-Date="user.LockoutEnd" />
+                <MudDatePicker Disabled="!_AccessEdit" Label="Lockout End" Editable="true" @bind-Date="user.LockoutEnd" />
 
-                <MudSwitch Disabled="!_AccessUsersEdit" @bind-Checked="@user.LockoutEnabled" Label="Lockout" Color="Color.Success" />
+                <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@user.LockoutEnabled" Label="Lockout" Color="Color.Success" />
 
-                <MudTextField Disabled="!_AccessUsersEdit" Label="Access Failed Count" @bind-Value="user.AccessFailedCount"
+                <MudTextField Disabled="!_AccessEdit" Label="Access Failed Count" @bind-Value="user.AccessFailedCount"
                           For="@(()=>user.AccessFailedCount)">
                 </MudTextField>
 
             </MudCardContent>
         </MudCard>
 
-        <MudButton Disabled="!_AccessUsersEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
-        <MudButton Disabled="!_AccessUsersEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
+        <MudButton Disabled="!_AccessEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
 
     </EditForm>
 

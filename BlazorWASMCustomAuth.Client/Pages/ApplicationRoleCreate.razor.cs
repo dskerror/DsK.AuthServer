@@ -9,7 +9,7 @@ public partial class ApplicationRoleCreate
     [Parameter] public int ApplicationId { get; set; }
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private ApplicationRoleCreateDto model = new ApplicationRoleCreateDto();
-    private bool _AccessApplicationRolesCreate;
+    private bool _AccessCreate;
     private List<BreadcrumbItem> _breadcrumbs;
 
     protected override async Task OnInitializedAsync()
@@ -17,7 +17,7 @@ public partial class ApplicationRoleCreate
         var state = await authenticationState;
         SetPermissions(state);
 
-        if (!_AccessApplicationRolesCreate)
+        if (!_AccessCreate)
             _navigationManager.NavigateTo("/noaccess");
 
         _breadcrumbs = new List<BreadcrumbItem>
@@ -30,7 +30,7 @@ public partial class ApplicationRoleCreate
 
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessApplicationRolesCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
+        _AccessCreate = securityService.HasPermission(state.User, Access.ApplicationRoles.Create);
     }
 
     private async Task Create()

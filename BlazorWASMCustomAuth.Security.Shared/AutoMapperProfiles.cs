@@ -16,8 +16,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<ApplicationRolePermissionChangeDto, ApplicationRolePermission>().ReverseMap();
         CreateMap<ApplicationRoleCreateDto, ApplicationRole>().ReverseMap();
         CreateMap<ApplicationRoleUpdateDto, ApplicationRole>().ReverseMap();
-        CreateMap<UserAuthenticationProviderCreateDto, UserAuthenticationProviderMapping>().ReverseMap();
-        CreateMap<UserAuthenticationProviderUpdateDto, UserAuthenticationProviderMapping>().ReverseMap();
+        CreateMap<ApplicationAuthenticationProviderUserMappingCreateDto, ApplicationAuthenticationProviderUserMapping>().ReverseMap();
+        CreateMap<ApplicationAuthenticationProviderUserMappingUpdateDto, ApplicationAuthenticationProviderUserMapping>().ReverseMap();
         CreateMap<UserPermissionChangeDto, UserPermission>().ReverseMap();
         CreateMap<UserCreateDto, User>().ReverseMap();
         CreateMap<UserCreateDto, UserRegisterDto>().ReverseMap();
@@ -37,7 +37,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<ApplicationRolePermissionGridDto, ApplicationPermission>().ReverseMap();
         CreateMap<ApplicationRoleDto, ApplicationRole>().ReverseMap();
         CreateMap<ApplicationRolePermissionDto, ApplicationRolePermission>().ReverseMap();
-        CreateMap<UserAuthenticationProviderMappingDto, UserAuthenticationProviderMapping>().ReverseMap();
+        CreateMap<ApplicationAuthenticationProviderUserMappingDto, ApplicationAuthenticationProviderUserMapping>().ReverseMap();
         CreateMap<UserDto, User>().ReverseMap();
         CreateMap<UserLogDto, UserLog>().ReverseMap();
         CreateMap<UserPermissionDto, UserPermission>().ReverseMap();
@@ -45,6 +45,6 @@ public class AutoMapperProfiles : Profile
         CreateMap<UserRoleGridDto, ApplicationRole>().ReverseMap();
         CreateMap<UserPermissionGridDto, ApplicationPermission>().ReverseMap();
 
-        CreateMap<UserTokenDto, UserToken>().ReverseMap();
+        CreateMap<ApplicationAuthenticationProviderUserTokenDto, ApplicationAuthenticationProviderUserToken>().ReverseMap();
     }
 }

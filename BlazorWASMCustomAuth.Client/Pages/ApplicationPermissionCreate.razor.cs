@@ -10,7 +10,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
         [Parameter] public int ApplicationId { get; set; }
         [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
         private ApplicationPermissionCreateDto model = new ApplicationPermissionCreateDto();
-        private bool _AccessApplicationPermissionsCreate;
+        private bool _AccessCreate;
         private List<BreadcrumbItem> _breadcrumbs;
 
         protected override async Task OnInitializedAsync()
@@ -18,7 +18,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
             var state = await authenticationState;
             SetPermissions(state);
 
-            if (!_AccessApplicationPermissionsCreate)
+            if (!_AccessCreate)
                 _navigationManager.NavigateTo("/noaccess");
 
             _breadcrumbs = new List<BreadcrumbItem>
@@ -31,7 +31,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
 
         private void SetPermissions(AuthenticationState state)
         {
-            _AccessApplicationPermissionsCreate = securityService.HasPermission(state.User, Access.ApplicationPermissions.Create);
+            _AccessCreate = securityService.HasPermission(state.User, Access.ApplicationPermissions.Create);
         }
 
         private async Task Create()

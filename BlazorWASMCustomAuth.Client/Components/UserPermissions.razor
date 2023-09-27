@@ -8,7 +8,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="PermissionSwitchEnabled">
-            <MudSwitch Color="Color.Success" Disabled="!_AccessUserPermissionsEdit" @bind-Checked="@context.Enabled" @oninput="(e)=>TogglePermissionEnabledSwitch(e,context.Id, context.Allow)" />
+            <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.Enabled" @oninput="(e)=>TogglePermissionEnabledSwitch(e,context.Id, context.Allow)" />
         </MudTd>
         <MudTd DataLabel="PermissionSwitchAllow">
             <MudSwitch Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>TogglePermissionAllowSwitch(e,context.Id)" Disabled=@(!context.Enabled) UnCheckedColor="MudBlazor.Color.Error" />
