@@ -47,4 +47,14 @@ public partial class Login
             _passwordInput = InputType.Text;
         }
     }
+
+    private void ChangePassword()
+    {
+        _navigationManager.NavigateTo("/PasswordChangeRequest");
+    }
+
+    private void Register()
+    {
+        _navigationManager.NavigateTo("/Register");
+    }
 }

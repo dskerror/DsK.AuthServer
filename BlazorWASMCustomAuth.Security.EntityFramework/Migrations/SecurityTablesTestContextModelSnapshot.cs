@@ -331,12 +331,18 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LockoutEnd")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("PasswordChangeDateTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<Guid?>("PasswordChangeGuid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Salt")
                         .IsRequired()

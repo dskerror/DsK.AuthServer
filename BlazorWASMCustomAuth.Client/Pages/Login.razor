@@ -28,5 +28,15 @@
         <MudItem xs="12" Class="d-flex justify-center">
             <MudButton Disabled="_LoginButtonDisabled" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign In</MudButton>
         </MudItem>
+
+        <MudItem xs="6" Class="d-flex justify-center">
+            <MudButton OnClick="@(() => ChangePassword())" StartIcon="@Icons.Material.Filled.Password" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Change Password</MudButton>
+        </MudItem>
+
+        <MudItem xs="6" Class="d-flex justify-center">
+            <MudButton OnClick="@(() => Register())" StartIcon="@Icons.Material.Filled.AppRegistration" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign Up</MudButton>
+        </MudItem>
     </MudGrid>
-</EditForm>
+
+    
+ </EditForm>

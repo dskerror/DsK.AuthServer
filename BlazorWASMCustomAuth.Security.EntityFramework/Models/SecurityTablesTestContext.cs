@@ -188,8 +188,9 @@ public partial class SecurityTablesTestContext : DbContext
             entity.Property(e => e.AccountCreatedDateTime).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.LastPasswordChangeDateTime).HasColumnType("datetime");
-            entity.Property(e => e.LockoutEnd).HasColumnType("date");
+            entity.Property(e => e.LockoutEnd).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.PasswordChangeDateTime).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<UserLog>(entity =>

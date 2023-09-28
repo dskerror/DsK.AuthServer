@@ -29,7 +29,6 @@ public partial class SecurityService
 
         return token;
     }
-
     public async Task<LoginResponseDto> Login(LoginRequestDto model)
     {
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
@@ -67,7 +66,6 @@ public partial class SecurityService
         loginResponseDto.CallbackURL = CallbackURL;
         return loginResponseDto;
     }
-
     public async Task<bool> Register(RegisterRequestDto model)
     {
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
@@ -111,7 +109,7 @@ public partial class SecurityService
 
                     db.ApplicationUsers.Add(applicationUser);
 
-                    await db.SaveChangesAsync();                                       
+                    await db.SaveChangesAsync();
                 }
 
                 var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
@@ -133,6 +131,41 @@ public partial class SecurityService
             }
         }
 
+        return false;
+    }
+    public async Task<bool> PasswordChangeRequest(PasswordChangeRequestDto model)
+    {
+        var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
+        if (user != null)
+        {
+            user.PasswordChangeDateTime = DateTime.Now;
+            user.PasswordChangeGuid = Guid.NewGuid();
+            await db.SaveChangesAsync();
+            return true;
+
+            //todo: send email
+        }
+
+        return false;
+    }
+
+    public async Task<bool> PasswordChange(PasswordChangeDto model)
+    {
+        var user = db.Users.Where(x => x.PasswordChangeGuid == model.PasswordChangeGuid).FirstOrDefault();
+        if (user != null)
+        {
+            var ramdomSalt = SecurityHelpers.RandomizeSalt;
+
+            user.HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt);
+            user.Salt = Convert.ToHexString(ramdomSalt);
+            user.LastPasswordChangeDateTime = DateTime.Now;
+            user.PasswordChangeDateTime = null;
+            user.PasswordChangeGuid = null;
+            await db.SaveChangesAsync();
+            return true;
+        };
+
+        //todo: send email
         return false;
     }
 
@@ -299,10 +332,37 @@ public partial class SecurityService
                 IsUserAuthenticated = await AuthenticateUserWithLocalPassword(user, model.Password);
                 break;
         }
+
         if (IsUserAuthenticated)
-            return user;
+            if (user.LockoutEnabled)
+                return null;
+            else if (user.LockoutEnabled && user.LockoutEnd > DateTime.Now)
+                return null;
+            else if (user.LockoutEnabled && user.LockoutEnd <= DateTime.Now)
+            {
+                user.AccessFailedCount = 0;
+                user.LockoutEnabled = false;
+                user.LockoutEnd = null;
+                await db.SaveChangesAsync();
+                return user;
+            }
+            else
+                return user;
         else
+        {
+            if (user != null)
+            {
+                user.AccessFailedCount++;
+                if (user.AccessFailedCount >= 5)
+                {
+                    user.LockoutEnabled = true;
+                    user.LockoutEnd = DateTime.Now.AddMinutes(5);
+                }
+                await db.SaveChangesAsync();
+            }
             return null;
+        }
+
     }
     private async Task<User> CreateADUserIfNotExists(LoginRequestDto model, User? user, ApplicationAuthenticationProvider applicationAuthenticationProvider)
     {

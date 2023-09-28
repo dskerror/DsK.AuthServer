@@ -6,5 +6,7 @@
         public static string ValidateLoginToken = "/api/Authentication/ValidateLoginToken";
         public static string RefreshToken = "/api/Authentication/RefreshToken";
         public static string Register = "/api/Authentication/Register";
+        public static string PasswordChangeRequest = "/api/Authentication/PasswordChangeRequest";
+        public static string PasswordChange = "/api/Authentication/PasswordChange";
     }
 }

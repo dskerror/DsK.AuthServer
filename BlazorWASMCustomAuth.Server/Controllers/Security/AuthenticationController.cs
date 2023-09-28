@@ -36,6 +36,24 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost]
+    [Route("PasswordChangeRequest")]
+    public async Task<IActionResult> PasswordChangeRequest(PasswordChangeRequestDto model)
+    {
+        //todo : implement captcha
+        var status = await SecurityService.PasswordChangeRequest(model);
+        return Ok(status);
+    }
+
+    [HttpPost]
+    [Route("PasswordChange")]
+    public async Task<IActionResult> PasswordChange(PasswordChangeDto model)
+    {
+        //todo : implement captcha
+        var status = await SecurityService.PasswordChange(model);
+        return Ok(status);
+    }
+
+    [HttpPost]
     [Route("ValidateLoginToken")]
     public async Task<IActionResult> ValidateLoginToken(ValidateLoginTokenDto model)
     {   

@@ -21,7 +21,6 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<UserDto>>();
         return result;
     }
-
     public async Task<bool> MyProfileChangePasswordAsync(MyProfileChangePasswordDto model)
     {
         await PrepareBearerToken();

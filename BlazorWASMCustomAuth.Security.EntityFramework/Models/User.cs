@@ -27,6 +27,10 @@ public partial class User
 
     public DateTime LastPasswordChangeDateTime { get; set; }
 
+    public DateTime? PasswordChangeDateTime { get; set; }
+
+    public Guid? PasswordChangeGuid { get; set; }
+
     public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; } = new List<ApplicationAuthenticationProviderUserMapping>();
 
     public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; } = new List<ApplicationAuthenticationProviderUserToken>();

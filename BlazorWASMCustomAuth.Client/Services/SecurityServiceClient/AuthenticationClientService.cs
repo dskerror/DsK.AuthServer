@@ -55,4 +55,20 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<bool>();        
         return result;
     }
+    public async Task<bool> PasswordChangeRequestAsync(PasswordChangeRequestDto model)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.PasswordChangeRequest, model);
+        if (!response.IsSuccessStatusCode) return false;
+
+        var result = await response.Content.ReadFromJsonAsync<bool>();
+        return result;
+    }
+    public async Task<bool> PasswordChangeAsync(PasswordChangeDto model)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.PasswordChange, model);
+        if (!response.IsSuccessStatusCode) return false;
+
+        var result = await response.Content.ReadFromJsonAsync<bool>();
+        return result;
+    }
 }

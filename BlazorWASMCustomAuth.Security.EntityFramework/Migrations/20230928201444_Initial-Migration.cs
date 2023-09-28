@@ -39,12 +39,14 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false),
-                    LockoutEnd = table.Column<DateTime>(type: "date", nullable: true),
+                    LockoutEnd = table.Column<DateTime>(type: "datetime", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
                     HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AccountCreatedDateTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    LastPasswordChangeDateTime = table.Column<DateTime>(type: "datetime", nullable: false)
+                    LastPasswordChangeDateTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    PasswordChangeDateTime = table.Column<DateTime>(type: "datetime", nullable: true),
+                    PasswordChangeGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
