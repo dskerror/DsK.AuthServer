@@ -9,7 +9,7 @@
 }
 else
 {
-    <EditForm Model="user" OnValidSubmit="EditUser">
+    <EditForm Model="user" OnValidSubmit="Edit">
         <DataAnnotationsValidator />
         <ValidationSummary />
         <MudCard Class="mb-2">
@@ -30,5 +30,6 @@ else
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
 
     </EditForm>
-   
+
+    <MyProfileChangePassword />
 }

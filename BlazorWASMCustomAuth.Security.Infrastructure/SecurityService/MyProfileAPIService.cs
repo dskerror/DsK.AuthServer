@@ -13,7 +13,7 @@ public partial class SecurityService
         result.Result = Mapper.Map<User, UserDto>(user);
         return result;
     }
-    public async Task<APIResult<string>> MyProfileUpdate(UserDto model)
+    public async Task<APIResult<string>> MyProfileUpdate(MyProfileUpdateDto model)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
@@ -36,6 +36,31 @@ public partial class SecurityService
             result.Message = "Record Updated";
 
         return result;
+    }
+
+    public async Task<bool> MyProfileChangePassword(MyProfileChangePasswordDto model)
+    {
+        int recordsUpdated = 0;
+        var record = await db.Users.FirstOrDefaultAsync(x => x.Id == model.UserId);
+
+        //Password
+        var ramdomSalt = SecurityHelpers.RandomizeSalt;
+        record.HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt);
+        record.Salt = Convert.ToHexString(ramdomSalt);
+
+        try
+        {
+            recordsUpdated = await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+
+        if (recordsUpdated == 1)
+            return true;
+
+        return false;
     }
 }
 

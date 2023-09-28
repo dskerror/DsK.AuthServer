@@ -1,5 +1,3 @@
-user profile (my profile)
-change password page
 forgot password page
 disable user in app
 log page

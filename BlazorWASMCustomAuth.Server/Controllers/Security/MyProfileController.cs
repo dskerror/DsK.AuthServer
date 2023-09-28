@@ -25,9 +25,17 @@ public class MyProfileController : ControllerBase
 
     [HttpPut]
     [Authorize(Roles = $"{Access.Admin}, {Access.MyProfile.Edit}")]
-    public async Task<IActionResult> Update(UserDto model)
+    public async Task<IActionResult> Update(MyProfileUpdateDto model)
     {
         var result = await SecurityService.MyProfileUpdate(model);
+        return Ok(result);
+    }
+
+    [HttpPut("ChangePassword")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.MyProfile.Edit}")]
+    public async Task<IActionResult> ChangePassword(MyProfileChangePasswordDto model)
+    {
+        var result = await SecurityService.MyProfileChangePassword(model);
         return Ok(result);
     }
 }

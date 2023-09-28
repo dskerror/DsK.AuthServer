@@ -11,7 +11,7 @@ public partial class MyProfile
     public UserDto user { get; set; }
     
     private bool _loaded;
-    protected UserPermissions userPermissionsComponent;
+    
     private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
     {        
         new BreadcrumbItem("My Profile", href: null, disabled: true)
@@ -20,7 +20,7 @@ public partial class MyProfile
     protected override async Task OnInitializedAsync()
     {
         int userId = await GetUsedIdFromAuthenticationState();
-        await LoadUserData(userId);
+        await LoadData(userId);
     }
 
     private async Task<int> GetUsedIdFromAuthenticationState()
@@ -31,19 +31,22 @@ public partial class MyProfile
         return userId;
     }
 
-    private async Task LoadUserData(int userId)
+    private async Task LoadData(int userId)
     {
         
-        var result = await securityService.UserGetAsync(userId);
+        var result = await securityService.MyProfileGetAsync(userId);
         if (result != null)
         {
             user = result.Result;
             _loaded = true;
+        } else
+        {
+            _navigationManager.NavigateTo("/noaccess");
         }
     }
-    private async Task EditUser()
+    private async Task Edit()
     {
-        var result = await securityService.UserEditAsync(user);
+        var result = await securityService.MyProfileEditAsync(user);
 
         if (result != null)
             if (result.HasError)
@@ -58,11 +61,6 @@ public partial class MyProfile
         Snackbar.Add("Edit canceled", Severity.Warning);
 
         int userId = await GetUsedIdFromAuthenticationState();
-        await LoadUserData(userId);
-    }
-
-    private async Task RefreshUserPermissions()
-    {
-        await userPermissionsComponent.LoadUserPermissions();
+        await LoadData(userId);
     }
 }

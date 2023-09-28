@@ -48,6 +48,7 @@ public partial class SecurityServiceClient
     }
     public async Task<APIResult<UserDto>> UserGetAsync(int id)
     {
+        await PrepareBearerToken();
         var result = await UsersGetAsync(new PagedRequest() { Id = id});
         var newResult = new APIResult<UserDto>
         {
