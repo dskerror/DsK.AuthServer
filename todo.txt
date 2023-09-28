@@ -1,9 +1,13 @@
+smtpproviders
+	https://www.emailvendorselection.com/free-smtp-servers/#1_Brevo
 forgot password page
 disable user in app
 log page
+add default app role to auth provider page and api
+add option to auto register in ad auth provider
 implement two factor
 Rename project to DsK.AuthorizarionServer
 test active directory before adding
-test whole application
-document testapp
 validate registration via email
+document changes made in testapp
+test whole application

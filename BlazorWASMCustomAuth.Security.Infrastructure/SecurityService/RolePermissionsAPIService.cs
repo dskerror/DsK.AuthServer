@@ -60,8 +60,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
 
             var RolePermissionList = await (from r in db.ApplicationRoles
-                                            join rp in db.ApplicationRolePermissions on r.Id equals rp.RoleId
-                                            join p in db.ApplicationPermissions on rp.PermissionId equals p.Id
+                                            join rp in db.ApplicationRolePermissions on r.Id equals rp.ApplicationRoleId
+                                            join p in db.ApplicationPermissions on rp.ApplicationPermissionId equals p.Id
                                             where r.Id == ApplicationRoleId
                                             select p.PermissionName).ToListAsync();
 

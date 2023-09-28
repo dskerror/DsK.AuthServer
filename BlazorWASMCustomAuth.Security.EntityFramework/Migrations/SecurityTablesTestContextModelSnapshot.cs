@@ -47,8 +47,8 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
                     b.Property<string>("ApplicationName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("CallbackUrl")
                         .IsRequired()
@@ -57,6 +57,9 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasColumnName("CallbackURL");
 
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "ApplicationName" }, "IX_Applications")
+                        .IsUnique();
 
                     b.ToTable("Applications");
                 });
@@ -82,6 +85,9 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     b.Property<string>("AuthenticationProviderType")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("DefaultApplicationRoleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Domain")
                         .HasMaxLength(100)
@@ -199,13 +205,12 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("Id")
-                        .HasName("PK_Permissions");
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "PermissionName", "ApplicationId" }, "IX_ApplicationPermissions")
+                        .IsUnique();
 
                     b.HasIndex(new[] { "ApplicationId" }, "IX_ApplicationPermissions_ApplicationId");
-
-                    b.HasIndex(new[] { "PermissionName", "ApplicationId" }, "IX_Permissions")
-                        .IsUnique();
 
                     b.ToTable("ApplicationPermissions");
                 });
@@ -247,14 +252,13 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRolePermission", b =>
                 {
-                    b.Property<int>("RoleId")
+                    b.Property<int>("ApplicationRoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PermissionId")
+                    b.Property<int>("ApplicationPermissionId")
                         .HasColumnType("int");
 
-                    b.HasKey("RoleId", "PermissionId")
-                        .HasName("PK_RolePermissions_1");
+                    b.HasKey("ApplicationRoleId", "ApplicationPermissionId");
 
                     b.ToTable("ApplicationRolePermissions");
                 });
@@ -513,21 +517,21 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRolePermission", b =>
                 {
-                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationPermission", "Role")
+                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationPermission", "ApplicationRole")
                         .WithMany("ApplicationRolePermissions")
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("ApplicationRoleId")
                         .IsRequired()
-                        .HasConstraintName("FK_RolePermissions_Permissions");
+                        .HasConstraintName("FK_ApplicationRolePermissions_ApplicationPermissions");
 
-                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRole", "RoleNavigation")
+                    b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationRole", "ApplicationRoleNavigation")
                         .WithMany("ApplicationRolePermissions")
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("ApplicationRoleId")
                         .IsRequired()
-                        .HasConstraintName("FK_RolePermissions_Roles");
+                        .HasConstraintName("FK_ApplicationRolePermissions_ApplicationRoles");
 
-                    b.Navigation("Role");
+                    b.Navigation("ApplicationRole");
 
-                    b.Navigation("RoleNavigation");
+                    b.Navigation("ApplicationRoleNavigation");
                 });
 
             modelBuilder.Entity("BlazorWASMCustomAuth.Security.EntityFramework.Models.ApplicationUser", b =>
@@ -566,7 +570,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .WithMany("UserPermissions")
                         .HasForeignKey("PermissionId")
                         .IsRequired()
-                        .HasConstraintName("FK_UserPermissions_Permissions");
+                        .HasConstraintName("FK_UserPermissions_ApplicationPermissions");
 
                     b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.User", "User")
                         .WithMany("UserPermissions")
@@ -585,7 +589,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .IsRequired()
-                        .HasConstraintName("FK_UserRoles_Roles");
+                        .HasConstraintName("FK_UserRoles_ApplicationRoles");
 
                     b.HasOne("BlazorWASMCustomAuth.Security.EntityFramework.Models.User", "User")
                         .WithMany("UserRoles")

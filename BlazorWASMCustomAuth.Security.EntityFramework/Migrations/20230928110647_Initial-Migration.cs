@@ -18,7 +18,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationGUID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ApplicationName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ApplicationName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     ApplicationDesc = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     AppApiKey = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CallbackURL = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
@@ -59,6 +59,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationAuthenticationProviderGUID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ApplicationId = table.Column<int>(type: "int", nullable: false),
+                    DefaultApplicationRoleId = table.Column<int>(type: "int", nullable: true),
                     AuthenticationProviderType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -90,7 +91,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                    table.PrimaryKey("PK_ApplicationPermissions", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ApplicationPermissions_Applications",
                         column: x => x.ApplicationId,
@@ -238,7 +239,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 {
                     table.PrimaryKey("PK_UserPermissions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserPermissions_Permissions",
+                        name: "FK_UserPermissions_ApplicationPermissions",
                         column: x => x.PermissionId,
                         principalTable: "ApplicationPermissions",
                         principalColumn: "Id");
@@ -253,20 +254,20 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 name: "ApplicationRolePermissions",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    PermissionId = table.Column<int>(type: "int", nullable: false)
+                    ApplicationRoleId = table.Column<int>(type: "int", nullable: false),
+                    ApplicationPermissionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RolePermissions_1", x => new { x.RoleId, x.PermissionId });
+                    table.PrimaryKey("PK_ApplicationRolePermissions", x => new { x.ApplicationRoleId, x.ApplicationPermissionId });
                     table.ForeignKey(
-                        name: "FK_RolePermissions_Permissions",
-                        column: x => x.RoleId,
+                        name: "FK_ApplicationRolePermissions_ApplicationPermissions",
+                        column: x => x.ApplicationRoleId,
                         principalTable: "ApplicationPermissions",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_RolePermissions_Roles",
-                        column: x => x.RoleId,
+                        name: "FK_ApplicationRolePermissions_ApplicationRoles",
+                        column: x => x.ApplicationRoleId,
                         principalTable: "ApplicationRoles",
                         principalColumn: "Id");
                 });
@@ -284,7 +285,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 {
                     table.PrimaryKey("PK_UserRoles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserRoles_Roles",
+                        name: "FK_UserRoles_ApplicationRoles",
                         column: x => x.RoleId,
                         principalTable: "ApplicationRoles",
                         principalColumn: "Id");
@@ -326,15 +327,15 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApplicationPermissions_ApplicationId",
-                table: "ApplicationPermissions",
-                column: "ApplicationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Permissions",
+                name: "IX_ApplicationPermissions",
                 table: "ApplicationPermissions",
                 columns: new[] { "PermissionName", "ApplicationId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationPermissions_ApplicationId",
+                table: "ApplicationPermissions",
+                column: "ApplicationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationRoles_ApplicationId",
@@ -345,6 +346,12 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                 name: "IX_Roles",
                 table: "ApplicationRoles",
                 columns: new[] { "RoleName", "ApplicationId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Applications",
+                table: "Applications",
+                column: "ApplicationName",
                 unique: true);
 
             migrationBuilder.CreateIndex(

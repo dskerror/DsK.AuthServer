@@ -11,6 +11,8 @@ public partial class ApplicationAuthenticationProvider
 
     public int ApplicationId { get; set; }
 
+    public int? DefaultApplicationRoleId { get; set; }
+
     public string? AuthenticationProviderType { get; set; }
 
     public string? Name { get; set; }

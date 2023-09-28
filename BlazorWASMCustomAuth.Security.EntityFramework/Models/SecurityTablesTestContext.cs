@@ -47,9 +47,11 @@ public partial class SecurityTablesTestContext : DbContext
     {
         modelBuilder.Entity<Application>(entity =>
         {
+            entity.HasIndex(e => e.ApplicationName, "IX_Applications").IsUnique();
+
             entity.Property(e => e.ApplicationDesc).HasMaxLength(250);
             entity.Property(e => e.ApplicationGuid).HasColumnName("ApplicationGUID");
-            entity.Property(e => e.ApplicationName).HasMaxLength(50);
+            entity.Property(e => e.ApplicationName).HasMaxLength(250);
             entity.Property(e => e.CallbackUrl)
                 .HasMaxLength(500)
                 .HasColumnName("CallbackURL");
@@ -115,11 +117,9 @@ public partial class SecurityTablesTestContext : DbContext
 
         modelBuilder.Entity<ApplicationPermission>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_Permissions");
+            entity.HasIndex(e => new { e.PermissionName, e.ApplicationId }, "IX_ApplicationPermissions").IsUnique();
 
             entity.HasIndex(e => e.ApplicationId, "IX_ApplicationPermissions_ApplicationId");
-
-            entity.HasIndex(e => new { e.PermissionName, e.ApplicationId }, "IX_Permissions").IsUnique();
 
             entity.Property(e => e.PermissionDescription).HasMaxLength(250);
             entity.Property(e => e.PermissionName).HasMaxLength(250);
@@ -149,17 +149,17 @@ public partial class SecurityTablesTestContext : DbContext
 
         modelBuilder.Entity<ApplicationRolePermission>(entity =>
         {
-            entity.HasKey(e => new { e.RoleId, e.PermissionId }).HasName("PK_RolePermissions_1");
+            entity.HasKey(e => new { e.ApplicationRoleId, e.ApplicationPermissionId });
 
-            entity.HasOne(d => d.Role).WithMany(p => p.ApplicationRolePermissions)
-                .HasForeignKey(d => d.RoleId)
+            entity.HasOne(d => d.ApplicationRole).WithMany(p => p.ApplicationRolePermissions)
+                .HasForeignKey(d => d.ApplicationRoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RolePermissions_Permissions");
+                .HasConstraintName("FK_ApplicationRolePermissions_ApplicationPermissions");
 
-            entity.HasOne(d => d.RoleNavigation).WithMany(p => p.ApplicationRolePermissions)
-                .HasForeignKey(d => d.RoleId)
+            entity.HasOne(d => d.ApplicationRoleNavigation).WithMany(p => p.ApplicationRolePermissions)
+                .HasForeignKey(d => d.ApplicationRoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RolePermissions_Roles");
+                .HasConstraintName("FK_ApplicationRolePermissions_ApplicationRoles");
         });
 
         modelBuilder.Entity<ApplicationUser>(entity =>
@@ -216,7 +216,7 @@ public partial class SecurityTablesTestContext : DbContext
             entity.HasOne(d => d.Permission).WithMany(p => p.UserPermissions)
                 .HasForeignKey(d => d.PermissionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserPermissions_Permissions");
+                .HasConstraintName("FK_UserPermissions_ApplicationPermissions");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserPermissions)
                 .HasForeignKey(d => d.UserId)
@@ -233,7 +233,7 @@ public partial class SecurityTablesTestContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.UserRoles)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserRoles_Roles");
+                .HasConstraintName("FK_UserRoles_ApplicationRoles");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserRoles)
                 .HasForeignKey(d => d.UserId)

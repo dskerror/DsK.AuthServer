@@ -168,8 +168,8 @@ internal class Program
     {
         var rolePermission = new ApplicationRolePermission()
         {
-            RoleId = roleId,
-            PermissionId = permissionId
+            ApplicationRoleId = roleId,
+            ApplicationPermissionId = permissionId
         };
         db.ApplicationRolePermissions.Add(rolePermission);
         db.SaveChanges();

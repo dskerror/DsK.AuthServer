@@ -79,8 +79,8 @@ public partial class SecurityService
         var RolePermissions = await (from u in db.Users
                                      join ur in db.UserRoles on u.Id equals ur.UserId
                                      join r in db.ApplicationRoles on ur.RoleId equals r.Id
-                                     join rp in db.ApplicationRolePermissions on r.Id equals rp.RoleId
-                                     join p in db.ApplicationPermissions on rp.PermissionId equals p.Id
+                                     join rp in db.ApplicationRolePermissions on r.Id equals rp.ApplicationRoleId
+                                     join p in db.ApplicationPermissions on rp.ApplicationPermissionId equals p.Id
                                      where u.Id == userId
                                      select p.PermissionName).ToListAsync();
 
@@ -122,8 +122,8 @@ public partial class SecurityService
         var RolePermissions = await (from u in db.Users
                                      join ur in db.UserRoles on u.Id equals ur.UserId
                                      join r in db.ApplicationRoles on ur.RoleId equals r.Id
-                                     join rp in db.ApplicationRolePermissions on r.Id equals rp.RoleId
-                                     join p in db.ApplicationPermissions on rp.PermissionId equals p.Id
+                                     join rp in db.ApplicationRolePermissions on r.Id equals rp.ApplicationRoleId
+                                     join p in db.ApplicationPermissions on rp.ApplicationPermissionId equals p.Id
                                      where u.Id == userId
                                      select new { p.PermissionName, r.RoleName }).ToListAsync();
 
