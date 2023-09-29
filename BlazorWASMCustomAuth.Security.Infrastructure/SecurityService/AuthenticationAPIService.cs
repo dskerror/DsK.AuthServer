@@ -138,7 +138,7 @@ public partial class SecurityService
         var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
         if (user != null)
         {
-            user.PasswordChangeDateTime = DateTime.Now;
+            user.LastPasswordChangeDateTime = DateTime.Now;
             user.PasswordChangeGuid = Guid.NewGuid();
             await db.SaveChangesAsync();
             return true;

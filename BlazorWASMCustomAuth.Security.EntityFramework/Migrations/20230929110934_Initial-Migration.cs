@@ -39,7 +39,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false),
-                    LockoutEnd = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LockoutEnd = table.Column<DateTime>(type: "date", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
                     HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -68,7 +68,8 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ApplicationAuthenticationProviderDisabled = table.Column<bool>(type: "bit", nullable: false),
-                    RegistrationEnabled = table.Column<bool>(type: "bit", nullable: true)
+                    RegistrationEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    RegistrationAutoEmailConfirm = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

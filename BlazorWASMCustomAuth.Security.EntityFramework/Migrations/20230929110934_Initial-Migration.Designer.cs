@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
 {
     [DbContext(typeof(SecurityTablesTestContext))]
-    [Migration("20230928201444_Initial-Migration")]
+    [Migration("20230929110934_Initial-Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -104,7 +104,10 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool?>("RegistrationEnabled")
+                    b.Property<bool>("RegistrationAutoEmailConfirm")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RegistrationEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("Username")
@@ -334,7 +337,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LockoutEnd")
-                        .HasColumnType("datetime");
+                        .HasColumnType("date");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -15,4 +15,10 @@ public partial class ApplicationAuthenticationProviderUpdateDto
 
     [Required]    
     public string? Password { get; set; }
+
+    public bool ApplicationAuthenticationProviderDisabled { get; set; }
+
+    public bool RegistrationEnabled { get; set; }
+
+    public bool RegistrationAutoEmailConfirm { get; set; }
 }

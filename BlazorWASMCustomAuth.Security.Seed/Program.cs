@@ -16,12 +16,14 @@ internal class Program
 
         //Security App
         var newApp = CreateApplication(db);
-        var applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newApp, "67A09D32-7664-49F8-8E8E-471A56A2858E");
                 
         var adminPermission = CreateAppPermission(db, newApp.Id, "Admin", "Admin Permission");
         var permissionList = CreateApplicationPermissions(db, newApp); //Create list of permissions based on Security.Shared Permissions
 
         var adminRole = CreateApplicationRole(db, newApp.Id, "Admin", "Admin Role");
+        
+        var applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newApp, adminRole, "67A09D32-7664-49F8-8E8E-471A56A2858E");
+
         AddPermissionToRole(db, adminPermission.Id, adminRole.Id);
         var adminUser = CreateUser(db, "admin@admin.com", "Admin", "admin123");
         AddUserToApplicationUser(db, adminUser, newApp);
@@ -38,10 +40,11 @@ internal class Program
 
         //Test App
         var TestApp = CreateTestApp(db);
-        var testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp, "9EBA0CCD-FF5B-42AB-B6FB-861D18BD68D3");
-
-        var TestAppUserRole = CreateApplicationRole(db, TestApp.Id, "User", "UserRole");
         
+        var TestAppUserRole = CreateApplicationRole(db, TestApp.Id, "User", "UserRole");
+
+        var testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp, TestAppUserRole, "9EBA0CCD-FF5B-42AB-B6FB-861D18BD68D3");
+
         var counterPermission = CreateAppPermission(db, newApp.Id, "Counter", "Counter Permission");
         AddPermissionToRole(db, counterPermission.Id, TestAppUserRole.Id);
         
@@ -89,12 +92,14 @@ internal class Program
         db.SaveChanges();
         return newApplication;
     }
-    private static ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(SecurityTablesTestContext db, Application newApplication, string guid)
+    private static ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(SecurityTablesTestContext db, Application newApplication, ApplicationRole role,  string guid)
     {
         ApplicationAuthenticationProvider applicationAuthenticationProvider =
                 new ApplicationAuthenticationProvider()
                 {
+                    ApplicationAuthenticationProviderGuid = Guid.Parse(guid),
                     ApplicationId = newApplication.Id,
+                    DefaultApplicationRoleId = role.Id,
                     Name = "Local",
                     AuthenticationProviderType = "Local",
                     Domain = "",
@@ -102,7 +107,7 @@ internal class Program
                     Password = "",
                     ApplicationAuthenticationProviderDisabled = false,
                     RegistrationEnabled = true,
-                    ApplicationAuthenticationProviderGuid = Guid.Parse(guid)
+                    RegistrationAutoEmailConfirm = true                    
                 };
 
         db.ApplicationAuthenticationProviders.Add(applicationAuthenticationProvider);

@@ -2,13 +2,16 @@
 public partial class ApplicationAuthenticationProviderDto
 {
     public int Id { get; set; }
+
     public Guid ApplicationAuthenticationProviderGUID { get; set; }
 
     public int ApplicationId { get; set; }
 
-    public string Name { get; set; } = null!;
+    public int? DefaultApplicationRoleId { get; set; }
 
     public string? AuthenticationProviderType { get; set; }
+
+    public string Name { get; set; } = null!;
 
     public string? Domain { get; set; }
 
@@ -19,4 +22,6 @@ public partial class ApplicationAuthenticationProviderDto
     public bool ApplicationAuthenticationProviderDisabled { get; set; }
 
     public bool RegistrationEnabled { get; set; }
+
+    public bool RegistrationAutoEmailConfirm { get; set; }
 }

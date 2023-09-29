@@ -33,7 +33,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
 
     [HttpPut]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.Edit}")]
-    public async Task<IActionResult> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderUpdateDto model)
+    public async Task<IActionResult> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderDto model)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersUpdate(model);
         return Ok(result);

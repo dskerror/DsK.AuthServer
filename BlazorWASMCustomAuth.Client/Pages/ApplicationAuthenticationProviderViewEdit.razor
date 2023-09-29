@@ -15,27 +15,38 @@ else
         <MudCard Class="mb-2">
             <MudCardContent>
                 <MudTextField Disabled="true" ReadOnly="true" Label="Authentication Provider Name" @bind-Value="model.Name"
-                          For="@(()=>model.Name)">
+                              For="@(()=>model.Name)">
                 </MudTextField>
                 <MudTextField Disabled="true" ReadOnly="true" Label="Authentication Provider GUID" @bind-Value="model.ApplicationAuthenticationProviderGUID"
                               For="@(()=>model.ApplicationAuthenticationProviderGUID)">
                 </MudTextField>
                 <MudTextField Disabled="true" ReadOnly="true" Label="Authentication Provider Type" @bind-Value="model.AuthenticationProviderType"
-                          For="@(()=>model.AuthenticationProviderType)">
+                              For="@(()=>model.AuthenticationProviderType)">
                 </MudTextField>
-                <MudTextField Disabled="!_AccessEdit" Label="Domain" @bind-Value="model.Domain"
-                          For="@(()=>model.Domain)">
-                </MudTextField>
-                <MudTextField Disabled="!_AccessEdit" Label="Username" @bind-Value="model.Username"
-                          For="@(()=>model.Username)">
-                </MudTextField>
-                <MudTextField Disabled="!_AccessEdit" Label="Password" @bind-Value="model.Password"
-                          For="@(()=>model.Password)" InputType="InputType.Password">
-                </MudTextField>
+
+                @if (model.AuthenticationProviderType == "Active Directory")
+                {
+                    <MudTextField Disabled="!_AccessEdit" Label="Domain" @bind-Value="model.Domain"
+                                  For="@(()=>model.Domain)">
+                    </MudTextField>
+                    <MudTextField Disabled="!_AccessEdit" Label="Username" @bind-Value="model.Username"
+                                  For="@(()=>model.Username)">
+                    </MudTextField>
+                    <MudTextField Disabled="!_AccessEdit" Label="Password" @bind-Value="model.Password"
+                                  For="@(()=>model.Password)" InputType="InputType.Password">
+                    </MudTextField>
+                }
+
+                <br />
+                <MudSwitch Disabled="!_AccessEdit" Label="Disable Application Authentication Provider" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.ApplicationAuthenticationProviderDisabled" />
+                <br />
+                <MudSwitch Disabled="!_AccessEdit" Label="Registration Enabled" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.RegistrationEnabled" />
+                <br />
+                <MudSwitch Disabled="!_AccessEdit" Label="Disable Application Authentication Provider" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.RegistrationAutoEmailConfirm" />
             </MudCardContent>
         </MudCard>
 
-        @if (model.AuthenticationProviderType != "Local")
+        @if (model.Id != 1)
         {
             <MudButton Disabled="!_AccessEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
             <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>

@@ -101,7 +101,10 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool?>("RegistrationEnabled")
+                    b.Property<bool>("RegistrationAutoEmailConfirm")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RegistrationEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("Username")
@@ -331,7 +334,7 @@ namespace BlazorWASMCustomAuth.Security.EntityFramework.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LockoutEnd")
-                        .HasColumnType("datetime");
+                        .HasColumnType("date");
 
                     b.Property<string>("Name")
                         .IsRequired()

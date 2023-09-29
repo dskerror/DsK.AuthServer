@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TestApp.Server.HttpClients;
+using TestApp.Shared;
 
 namespace TestApp
 {
@@ -16,7 +20,30 @@ namespace TestApp
             {
                 c.BaseAddress = new System.Uri("https://localhost:7045");
             });
-            
+
+
+            builder.Services.Configure<TokenSettingsModel>(builder.Configuration.GetSection("TokenSettings"));
+
+            var IssuerSigningKey = builder.Configuration.GetSection("TokenSettings").GetValue<string>("Key") ?? "";
+            if (IssuerSigningKey == "")
+            {
+                return; //Exit app if IssuerSigningKey is not found
+            }
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = builder.Configuration.GetSection("TokenSettings").GetValue<string>("Issuer"),
+                    ValidateIssuer = true,
+                    ValidAudience = builder.Configuration.GetSection("TokenSettings").GetValue<string>("Audience"),
+                    ValidateAudience = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IssuerSigningKey)),
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                };
+            });
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();

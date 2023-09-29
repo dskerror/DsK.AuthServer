@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
-
+﻿namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
 public partial class ApplicationAuthenticationProvider
 {
     public int Id { get; set; }
@@ -25,7 +21,9 @@ public partial class ApplicationAuthenticationProvider
 
     public bool ApplicationAuthenticationProviderDisabled { get; set; }
 
-    public bool? RegistrationEnabled { get; set; }
+    public bool RegistrationEnabled { get; set; }
+
+    public bool RegistrationAutoEmailConfirm { get; set; }
 
     public virtual Application Application { get; set; } = null!;
 

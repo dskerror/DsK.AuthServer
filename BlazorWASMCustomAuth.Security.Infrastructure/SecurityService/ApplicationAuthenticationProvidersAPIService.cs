@@ -99,18 +99,12 @@ public partial class SecurityService
             return applicationAuthenticationProvider;
         }
     }
-    public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderUpdateDto model)
+    public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderDto model)
     {
         APIResult<string> result = new APIResult<string>();
 
         int recordsUpdated = 0;
         var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == model.Id);
-
-        if (record.AuthenticationProviderType == "Local")
-        {
-            result.HasError = true;
-            result.Message = "Local Authentication Provider can't be updated";
-        }
 
         if (record != null)
             Mapper.Map(model, record);
