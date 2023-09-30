@@ -71,4 +71,13 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<bool>();
         return result;
     }
+
+    public async Task<bool> EmailConfirmAsync(EmailConfirmCodeDto model)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.EmailConfirm, model);
+        if (!response.IsSuccessStatusCode) return false;
+
+        var result = await response.Content.ReadFromJsonAsync<bool>();
+        return result;
+    }
 }

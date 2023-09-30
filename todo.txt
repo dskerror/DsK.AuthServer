@@ -2,7 +2,6 @@
 password change request email
 
 --pipeline--
-validate registration via email
 log page
 application auth provider - add optional default app role on account create
 application auth provider - add option to auto register on 1st login using active directory

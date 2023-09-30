@@ -8,5 +8,6 @@
         public static string Register = "/api/Authentication/Register";
         public static string PasswordChangeRequest = "/api/Authentication/PasswordChangeRequest";
         public static string PasswordChange = "/api/Authentication/PasswordChange";
+        public static string EmailConfirm = "/api/Authentication/EmailConfirm";
     }
 }

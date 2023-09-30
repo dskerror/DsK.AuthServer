@@ -33,7 +33,7 @@ internal class Program
         mail.IsBodyHtml = true;
 
         SmtpServer.Port = 587;
-        SmtpServer.Credentials = new NetworkCredential("dskerror@gmail.com", "SEB5KP6qV4QGmfJz");
+        SmtpServer.Credentials = new NetworkCredential("","");
         SmtpServer.EnableSsl = true;
         SmtpServer.UseDefaultCredentials = false;
         SmtpServer.Send(mail);

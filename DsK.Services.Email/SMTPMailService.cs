@@ -1,7 +1,6 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using Microsoft.Extensions.Options;
-using MimeKit;
+﻿using Microsoft.Extensions.Options;
+using System.Net;
+using System.Net.Mail;
 
 namespace DsK.Services.Email;
 public class SMTPMailService : IMailService
@@ -16,21 +15,19 @@ public class SMTPMailService : IMailService
     {
         try
         {
-            var email = new MimeMessage
-            {
-                Sender = new MailboxAddress(_config.DisplayName, request.From ?? _config.From),
-                Subject = request.Subject,
-                Body = new BodyBuilder
-                {
-                    HtmlBody = request.Body
-                }.ToMessageBody()
-            };
-            email.To.Add(MailboxAddress.Parse(request.To));
-            using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(_config.Host, _config.Port, SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(_config.UserName, _config.Password);
-            await smtp.SendAsync(email);
-            await smtp.DisconnectAsync(true);
+            MailMessage mail = new MailMessage();
+            SmtpClient smtp = new SmtpClient(_config.Host);
+            mail.From = new MailAddress(request.From ?? _config.From, _config.DisplayName);
+            mail.To.Add(request.To);
+            mail.Subject = request.Subject;
+            mail.Body = request.Body;
+            mail.IsBodyHtml = true;
+            smtp.Port = 587;
+            smtp.Credentials = new NetworkCredential(_config.UserName, _config.Password);
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false;            
+            smtp.Send(mail);
+            mail.Dispose();            
         }
         catch (Exception ex)
         {

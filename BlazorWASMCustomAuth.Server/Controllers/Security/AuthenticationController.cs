@@ -32,7 +32,7 @@ public class AuthenticationController : ControllerBase
     {
         //todo : implement captcha
         var origin = Request.Headers["origin"];
-        var registerSuccessfull = await SecurityService.Register(model);
+        var registerSuccessfull = await SecurityService.Register(model, origin);
         return Ok(registerSuccessfull);
     }
 
@@ -51,6 +51,15 @@ public class AuthenticationController : ControllerBase
     {
         //todo : implement captcha
         var status = await SecurityService.PasswordChange(model);
+        return Ok(status);
+    }
+
+    [HttpPost]
+    [Route("EmailConfirm")]
+    public async Task<IActionResult> EmailConfirm(EmailConfirmCodeDto model)
+    {
+        //todo : implement captcha
+        var status = await SecurityService.EmailConfirmCode(model);
         return Ok(status);
     }
 

@@ -39,6 +39,9 @@ public partial class SecurityService
         if (user == null)
             return null;
 
+        if(!user.EmailConfirmed)
+            return null;
+
         string CallbackURL = applicationAuthenticationProvider.Application.CallbackUrl;
 
         var newguid = Guid.NewGuid();
@@ -68,7 +71,7 @@ public partial class SecurityService
         loginResponseDto.CallbackURL = CallbackURL;
         return loginResponseDto;
     }
-    public async Task<bool> Register(RegisterRequestDto model)
+    public async Task<bool> Register(RegisterRequestDto model, string origin)
     {
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
@@ -132,7 +135,7 @@ public partial class SecurityService
                 //send email
                 if (!applicationAuthenticationProvider.RegistrationAutoEmailConfirm)
                 {
-                    var verificationUri = $"https://localhost:1234/EmailConfirm/{user.Salt}";
+                    var verificationUri = $"{origin}/EmailConfirm/{user.Salt}";
                     var mailRequest = new MailRequest
                     {
                         From = "noreply@dsk.com",
@@ -140,7 +143,7 @@ public partial class SecurityService
                         Body = $"Please confirm your account by <a href='{verificationUri}'>clicking here</a>.",
                         Subject = "Confirm Registration"
                     };
-                    await _mailService.SendAsync(mailRequest));
+                    await _mailService.SendAsync(mailRequest);
                 }
                 return true;
 
@@ -177,6 +180,20 @@ public partial class SecurityService
             user.LastPasswordChangeDateTime = DateTime.Now;
             user.PasswordChangeDateTime = null;
             user.PasswordChangeGuid = null;
+            await db.SaveChangesAsync();
+            return true;
+        };
+
+        //todo: send email
+        return false;
+    }
+
+    public async Task<bool> EmailConfirmCode(EmailConfirmCodeDto model)
+    {
+        var user = db.Users.Where(x => x.Salt == model.EmailConfirmCode).FirstOrDefault();
+        if (user != null)
+        {
+            user.EmailConfirmed = true;
             await db.SaveChangesAsync();
             return true;
         };
