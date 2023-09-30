@@ -27,5 +27,9 @@
         <MudItem xs="12" Class="d-flex justify-center">
             <MudButton Disabled="_LoginButtonDisabled" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign In</MudButton>
         </MudItem>
+
+        <MudItem xs="12" Class="d-flex justify-center">
+            <MudButton OnClick="@(() => GoBackToLogin())" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Go back to login</MudButton>
+        </MudItem>
     </MudGrid>
 </EditForm>

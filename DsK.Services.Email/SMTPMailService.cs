@@ -10,7 +10,6 @@ public class SMTPMailService : IMailService
     {
         _config = config.Value;
     }
-
     public async Task SendAsync(MailRequest request)
     {
         try

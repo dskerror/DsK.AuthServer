@@ -143,7 +143,7 @@ public partial class SecurityService
                         Body = $"Please confirm your account by <a href='{verificationUri}'>clicking here</a>.",
                         Subject = "Confirm Registration"
                     };
-                    await _mailService.SendAsync(mailRequest);
+                    await _mailService.SendAsync(mailRequest).ConfigureAwait(false);
                 }
                 return true;
 
@@ -152,7 +152,7 @@ public partial class SecurityService
 
         return false;
     }
-    public async Task<bool> PasswordChangeRequest(PasswordChangeRequestDto model)
+    public async Task<bool> PasswordChangeRequest(PasswordChangeRequestDto model, string origin)
     {
         var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
         if (user != null)
@@ -160,9 +160,18 @@ public partial class SecurityService
             user.LastPasswordChangeDateTime = DateTime.Now;
             user.PasswordChangeGuid = Guid.NewGuid();
             await db.SaveChangesAsync();
-            return true;
+            
+            var passwordChangeUri = $"{origin}/PasswordChange/{user.PasswordChangeGuid}";
+            var mailRequest = new MailRequest
+            {
+                From = "noreply@dsk.com",
+                To = user.Email,
+                Body = $"Reset your password by <a href='{passwordChangeUri}'>clicking here</a>.",
+                Subject = "Password Reset"
+            };
+            await _mailService.SendAsync(mailRequest).ConfigureAwait(false);
 
-            //todo: send email
+            return true;
         }
 
         return false;

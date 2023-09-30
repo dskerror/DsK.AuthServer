@@ -41,7 +41,8 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> PasswordChangeRequest(PasswordChangeRequestDto model)
     {
         //todo : implement captcha
-        var status = await SecurityService.PasswordChangeRequest(model);
+        var origin = Request.Headers["origin"];
+        var status = await SecurityService.PasswordChangeRequest(model, origin);
         return Ok(status);
     }
 

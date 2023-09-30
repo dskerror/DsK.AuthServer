@@ -72,6 +72,19 @@ public partial class SecurityService
                 .Where(u => u.Id == Id)
                 .ToListAsync();
         }
+        else if (PageNumber == -1)
+        {
+            if (ApplicationId > 0)
+            {
+                count = await db.ApplicationRoles.Where(u => u.ApplicationId == ApplicationId).CountAsync();
+                items = await db.ApplicationRoles.Where(u => u.ApplicationId == ApplicationId).ToListAsync();
+            }
+            else
+            {
+                count = await db.ApplicationRoles.CountAsync();
+                items = await db.ApplicationRoles.OrderBy(ordering).ToListAsync();
+            }
+        }
         else
         {
             count = await db.ApplicationRoles.Where(u => u.ApplicationId == ApplicationId).CountAsync();
@@ -117,14 +130,14 @@ public partial class SecurityService
         record.State = EntityState.Deleted;
         try
         {
-            recordsDeleted = await db.SaveChangesAsync();            
+            recordsDeleted = await db.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             result.HasError = true;
             result.Message = ex.Message;
         }
-        
+
         result.Result = recordsDeleted.ToString();
 
         return result;

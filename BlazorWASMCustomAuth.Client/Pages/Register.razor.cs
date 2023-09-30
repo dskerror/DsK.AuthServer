@@ -32,6 +32,13 @@ public partial class Register
 
         _LoginButtonDisabled = false;
     }
+
+    private void GoBackToLogin()
+    {
+        //todo : GoBackToLogin doesn't go back to login with auth prov id
+        _navigationManager.NavigateTo("/Login");
+    }
+
     void TogglePasswordVisibility()
     {
         if (_passwordVisibility)

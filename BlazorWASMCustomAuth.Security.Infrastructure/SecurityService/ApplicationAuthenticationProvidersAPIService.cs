@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
+using System;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
@@ -73,10 +74,14 @@ public partial class SecurityService
                 .Where(u => u.Id == Id)
                 .ToListAsync();
         }
+        else if (PageNumber == -1)
+        {
+            count = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationId == ApplicationId).CountAsync();
+            items = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationId == ApplicationId).ToListAsync();
+        }
         else
         {
             count = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationId == ApplicationId).CountAsync();
-
             items = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationId == ApplicationId).OrderBy(ordering)
                 .Skip((PageNumber - 1) * PageSize)
                 .Take(PageSize)

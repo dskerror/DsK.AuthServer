@@ -20,6 +20,10 @@ public partial class PasswordChange
 
     private async Task ChangePassword()
     {
+        //todo : PasswordChangePage : compare both passwords
+        //todo : PasswordChangePage : password complexity
+        //todo : PasswordChangePage : password complexity
+
         var result = await securityService.PasswordChangeAsync(model);
 
         if (result)

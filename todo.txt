@@ -1,16 +1,13 @@
 --in progress--
-password change request email
+
 
 --pipeline--
 log page
-application auth provider - add optional default app role on account create
 application auth provider - add option to auto register on 1st login using active directory
 application auth provider - test active directory before adding
 application auth provider - delete the other providers
 login - when doing login from test app, generate and store local token fisrt and the redirect to test app
 add option to require two factor
-customize login page depending on the app
-customize login page depending on the app
 customize login page depending on the app
 link to my profile from the Test App
 Rename project to DsK.AuthorizarionServer
@@ -19,3 +16,5 @@ test whole application
 
 smtpproviders
 	https://www.emailvendorselection.com/free-smtp-servers/#1_Brevo
+
+	
