@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.EntityFramework\BlazorWASMCustomAuth.Security.EntityFramework.csproj" />
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Shared\BlazorWASMCustomAuth.Security.Shared.csproj" />
+    <ProjectReference Include="..\DsK.Services.Email\DsK.Services.Email.csproj" />
   </ItemGroup>
 
 </Project>

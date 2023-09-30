@@ -31,6 +31,7 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Register(RegisterRequestDto model)
     {
         //todo : implement captcha
+        var origin = Request.Headers["origin"];
         var registerSuccessfull = await SecurityService.Register(model);
         return Ok(registerSuccessfull);
     }

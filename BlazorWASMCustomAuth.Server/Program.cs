@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpLogging;
+using System.Configuration;
+using DsK.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +41,9 @@ builder.Services.AddEndpointsApiExplorer();
 //    logging.RequestBodyLogLimit = 4096;
 //    logging.ResponseBodyLogLimit = 4096;
 //});
+
+builder.Services.Configure<MailConfiguration>(builder.Configuration.GetSection("MailConfiguration"));
+builder.Services.AddTransient<IMailService, SMTPMailService>();
 
 builder.Services.AddDbContext<SecurityTablesTestContext>(options =>
 {

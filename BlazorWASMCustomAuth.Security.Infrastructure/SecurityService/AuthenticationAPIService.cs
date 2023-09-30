@@ -1,6 +1,8 @@
-﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿using AutoMapper.Internal;
+using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.ActionDtos;
+using DsK.Services.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
@@ -82,7 +84,7 @@ public partial class SecurityService
                 {
                     Email = model.Email,
                     Name = model.Name,
-                    EmailConfirmed = true,
+                    EmailConfirmed = applicationAuthenticationProvider.RegistrationAutoEmailConfirm,
                     AccessFailedCount = 0,
                     LockoutEnabled = false,
                     HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt),
@@ -127,7 +129,21 @@ public partial class SecurityService
                     await db.SaveChangesAsync();
                 }
 
+                //send email
+                if (!applicationAuthenticationProvider.RegistrationAutoEmailConfirm)
+                {
+                    var verificationUri = $"https://localhost:1234/EmailConfirm/{user.Salt}";
+                    var mailRequest = new MailRequest
+                    {
+                        From = "noreply@dsk.com",
+                        To = user.Email,
+                        Body = $"Please confirm your account by <a href='{verificationUri}'>clicking here</a>.",
+                        Subject = "Confirm Registration"
+                    };
+                    await _mailService.SendAsync(mailRequest));
+                }
                 return true;
+
             }
         }
 

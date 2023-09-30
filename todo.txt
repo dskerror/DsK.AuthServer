@@ -1,9 +1,7 @@
 --in progress--
-application auth provider - option to require account validation (email)
-
+password change request email
 
 --pipeline--
-password change request email
 validate registration via email
 log page
 application auth provider - add optional default app role on account create
