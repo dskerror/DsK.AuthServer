@@ -5,27 +5,20 @@
 
 <h1>Login</h1>
 
-<button @onclick="LoginLogic">Click here to login</button>
+<button @onclick="LoginLocal">Click here to login locally</button>
+<button @onclick="LoginAD">Click here to login with Active Directory</button>
 
 @code {
 
-    public async Task LoginLogic()
-    {
-
-        // string result = "";
-        // try
-        // {
-        //     result = await Http.GetStringAsync("Security/ApplicationLoginRequest?applicationAuthenticationProviderGUID=xxx");
-        // }
-        // catch (Exception ex)
-        // {
-        //     Console.WriteLine(ex.Message);
-        // }
-        
+    public async Task LoginLocal()
+    {   
         string loginurl = "https://localhost:7190/login/68F57754-72F4-4E98-B308-78DAD0D6BCDD";
-        
-        //redirect lo login
         _navigationManager.NavigateTo(loginurl);
+    }
 
+    public async Task LoginAD()
+    {
+        string loginurl = "https://localhost:7190/login/B06D47B8-093F-4A85-86B5-407F977B366C";
+        _navigationManager.NavigateTo(loginurl);
     }
 }

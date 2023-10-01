@@ -2,8 +2,9 @@
 
 
 --pipeline--
+validate ApplicationAuthenticationProviderGUID in login redirect
+user permission found in token in TestApp
 log page
-application auth provider - add option to auto register on 1st login using active directory
 application auth provider - test active directory before adding
 application auth provider - delete the other providers
 login - when doing login from test app, generate and store local token fisrt and the redirect to test app
@@ -13,6 +14,7 @@ link to my profile from the Test App
 Rename project to DsK.AuthorizarionServer
 document changes made in testapp
 test whole application
+encrypt domain password
 
 smtpproviders
 	https://www.emailvendorselection.com/free-smtp-servers/#1_Brevo

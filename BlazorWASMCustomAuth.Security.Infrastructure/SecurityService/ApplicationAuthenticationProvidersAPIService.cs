@@ -17,6 +17,8 @@ public partial class SecurityService
         var record = new ApplicationAuthenticationProvider();
         Mapper.Map(model, record);
 
+        record.ApplicationAuthenticationProviderGuid = Guid.NewGuid();
+
         db.ApplicationAuthenticationProviders.Add(record);
 
         try

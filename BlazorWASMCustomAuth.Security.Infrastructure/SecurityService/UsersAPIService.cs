@@ -21,7 +21,7 @@ public partial class SecurityService
         record.HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt);
         record.Salt = Convert.ToHexString(ramdomSalt);
 
-        record.EmailConfirmed = true;
+        record.EmailConfirmed = true;       
         await db.Users.AddAsync(record);
 
         try

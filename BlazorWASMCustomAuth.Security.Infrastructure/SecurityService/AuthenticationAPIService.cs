@@ -39,7 +39,7 @@ public partial class SecurityService
         if (user == null)
             return null;
 
-        if(!user.EmailConfirmed)
+        if (!user.EmailConfirmed)
             return null;
 
         string CallbackURL = applicationAuthenticationProvider.Application.CallbackUrl;
@@ -77,11 +77,13 @@ public partial class SecurityService
 
         var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
 
-        if ((bool)applicationAuthenticationProvider.RegistrationEnabled)
+        if ((bool)applicationAuthenticationProvider.RegistrationEnabled || applicationAuthenticationProvider.ActiveDirectoryFirstLoginAutoRegister)
         {
             if (user == null)
             {
                 var ramdomSalt = SecurityHelpers.RandomizeSalt;
+                if (model.Password == null)
+                    model.Password = Convert.ToHexString(ramdomSalt);
 
                 user = new User()
                 {
@@ -113,18 +115,37 @@ public partial class SecurityService
                     };
 
                     db.ApplicationUsers.Add(applicationUser);
-
                     await db.SaveChangesAsync();
+                }
+
+                if (applicationAuthenticationProvider.DefaultApplicationRoleId != null)
+                {
+                    var userRoles = await db.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+                    if (userRoles == null)
+                    {
+                        var userRole = new UserRole()
+                        {
+                            RoleId = (int)applicationAuthenticationProvider.DefaultApplicationRoleId,
+                            UserId = user.Id,
+                        };
+
+                        db.UserRoles.Add(userRole);
+                        await db.SaveChangesAsync();
+                    }
                 }
 
                 var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
                 if (applicationAuthenticationProviderUserMapping == null)
                 {
+                    var username = user.Email;
+                    if (applicationAuthenticationProvider.AuthenticationProviderType == "Active Directory")
+                        username = model.ADUsername;
+
                     applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
                     {
                         UserId = user.Id,
-                        ApplicationAuthenticationProviderId = applicationAuthenticationProvider.ApplicationId,
-                        Username = user.Email
+                        ApplicationAuthenticationProviderId = applicationAuthenticationProvider.Id,
+                        Username = username
                     };
 
                     db.ApplicationAuthenticationProviderUserMappings.Add(applicationAuthenticationProviderUserMapping);
@@ -160,7 +181,7 @@ public partial class SecurityService
             user.LastPasswordChangeDateTime = DateTime.Now;
             user.PasswordChangeGuid = Guid.NewGuid();
             await db.SaveChangesAsync();
-            
+
             var passwordChangeUri = $"{origin}/PasswordChange/{user.PasswordChangeGuid}";
             var mailRequest = new MailRequest
             {
@@ -367,8 +388,10 @@ public partial class SecurityService
         {
             case "Active Directory":
                 IsUserAuthenticated = AuthenticateUserWithDomain(model.Email, model.Password, applicationAuthenticationProvider);
-                if (IsUserAuthenticated)
+                if (IsUserAuthenticated && applicationAuthenticationProvider.ActiveDirectoryFirstLoginAutoRegister)
                     user = await CreateADUserIfNotExists(model, user, applicationAuthenticationProvider);
+                else
+                    IsUserAuthenticated = false;
                 break;
             default: //Local
                 IsUserAuthenticated = await AuthenticateUserWithLocalPassword(user, model.Password);
@@ -410,21 +433,31 @@ public partial class SecurityService
     {
         if (user == null)
         {
-            UserCreateDto userCreateDto = new UserCreateDto()
+            //UserCreateDto userCreateDto = new UserCreateDto()
+            //{
+            //    Email = GetADUserEmail(model.Email, applicationAuthenticationProvider),
+            //    Name = GetADUserDisplayName(model.Email, applicationAuthenticationProvider)
+            //};
+
+            //var result = await UserCreate(userCreateDto);
+
+            RegisterRequestDto registerRequestDto = new RegisterRequestDto()
             {
+                ADUsername = model.Email,
                 Email = GetADUserEmail(model.Email, applicationAuthenticationProvider),
-                Name = GetADUserDisplayName(model.Email, applicationAuthenticationProvider)
+                Name = GetADUserDisplayName(model.Email, applicationAuthenticationProvider),
+                ApplicationAuthenticationProviderGUID = applicationAuthenticationProvider.ApplicationAuthenticationProviderGuid
             };
 
-            var result = await UserCreate(userCreateDto);
+            var result = await Register(registerRequestDto, "");
 
-            ApplicationAuthenticationProviderUserMappingCreateDto applicationAuthenticationProviderUserMappingCreateDto = new ApplicationAuthenticationProviderUserMappingCreateDto()
-            {
-                Username = model.Email,
-                UserId = result.Result.Id
-            };
+            //ApplicationAuthenticationProviderUserMappingCreateDto applicationAuthenticationProviderUserMappingCreateDto = new ApplicationAuthenticationProviderUserMappingCreateDto()
+            //{
+            //    Username = model.Email,
+            //    UserId = result.Result.Id
+            //};
 
-            ApplicationAuthenticationProviderUserMappingCreate(applicationAuthenticationProviderUserMappingCreateDto);
+            //ApplicationAuthenticationProviderUserMappingCreate(applicationAuthenticationProviderUserMappingCreateDto);
             user = await GetUserByMappedUsernameAsync(model.Email, applicationAuthenticationProvider.Id);
         }
         return user;

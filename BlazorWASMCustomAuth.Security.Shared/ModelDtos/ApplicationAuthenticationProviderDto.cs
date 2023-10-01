@@ -24,4 +24,6 @@ public partial class ApplicationAuthenticationProviderDto
     public bool RegistrationEnabled { get; set; }
 
     public bool RegistrationAutoEmailConfirm { get; set; }
+
+    public bool ActiveDirectoryFirstLoginAutoRegister { get; set; }
 }

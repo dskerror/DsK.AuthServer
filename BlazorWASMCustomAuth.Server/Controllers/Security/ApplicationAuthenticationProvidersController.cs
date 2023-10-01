@@ -17,7 +17,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
 
     [HttpPost]        
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.Create}")]
-    public async Task<IActionResult> ApplicationAuthenticationProvidersCreate(ApplicationAuthenticationProviderCreateDto model)
+    public async Task<IActionResult> Create(ApplicationAuthenticationProviderCreateDto model)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersCreate(model);
         return Ok(result);
@@ -25,7 +25,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.View}")]
-    public async Task<IActionResult> ApplicationAuthenticationProvidersGet(int applicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+    public async Task<IActionResult> Get(int applicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersGet(applicationId, id, pageNumber, pageSize, searchString, orderBy);
         return Ok(result);
@@ -33,7 +33,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
 
     [HttpPut]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.Edit}")]
-    public async Task<IActionResult> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderDto model)
+    public async Task<IActionResult> Update(ApplicationAuthenticationProviderDto model)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersUpdate(model);
         return Ok(result);
@@ -41,7 +41,7 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
 
     [HttpDelete]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.Delete}")]
-    public async Task<IActionResult> ApplicationAuthenticationProvidersDelete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersDelete(id);
         return Ok(result);

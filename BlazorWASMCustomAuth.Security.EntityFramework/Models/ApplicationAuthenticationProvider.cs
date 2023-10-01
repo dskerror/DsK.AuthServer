@@ -25,6 +25,8 @@ public partial class ApplicationAuthenticationProvider
 
     public bool RegistrationAutoEmailConfirm { get; set; }
 
+    public bool ActiveDirectoryFirstLoginAutoRegister { get; set; }
+
     public virtual Application Application { get; set; } = null!;
 
     public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; } = new List<ApplicationAuthenticationProviderUserMapping>();
