@@ -6,7 +6,6 @@ validate ApplicationAuthenticationProviderGUID in login redirect
 user permission found in token in TestApp
 log page
 application auth provider - test active directory before adding
-application auth provider - delete the other providers
 login - when doing login from test app, generate and store local token fisrt and the redirect to test app
 add option to require two factor
 customize login page depending on the app

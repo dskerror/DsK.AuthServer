@@ -135,7 +135,6 @@ public partial class SecurityService
     {
         APIResult<string> result = new APIResult<string>();
         int recordsDeleted = 0;
-
         var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == id);
 
         try
@@ -147,6 +146,11 @@ public partial class SecurityService
             }
             else
             {
+                //Delete All User Mapping First
+                var mappings = await db.ApplicationAuthenticationProviderUserMappings.FirstOrDefaultAsync(x => x.ApplicationAuthenticationProviderId == record.Id);
+                db.Remove(mappings);
+                await db.SaveChangesAsync();
+
                 db.Remove(record);
                 recordsDeleted = await db.SaveChangesAsync();
             }
@@ -155,11 +159,10 @@ public partial class SecurityService
         catch (Exception ex)
         {
             result.HasError = true;
-            result.Message = ex.Message;
+            result.Message = $"Message : {ex.Message}{Environment.NewLine}Inner Exception : {ex.InnerException}";
         }
 
         result.Result = recordsDeleted.ToString();
-
         return result;
     }
 

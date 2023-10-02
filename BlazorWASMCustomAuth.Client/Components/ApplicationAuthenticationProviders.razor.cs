@@ -78,6 +78,7 @@ public partial class ApplicationAuthenticationProviders
                     Snackbar.Add(result.Message, Severity.Error);
                 else
                 {
+                    //todo : DeleteApplicationAuthenticationProvider : check why success message is not showing.
                     Snackbar.Add(result.Message, Severity.Success);
                     await _table.ReloadServerData();
                 }
