@@ -1,4 +1,9 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using TestApp.Client.Services;
+@inject ILocalStorageService _localStorageService;
+@inject AuthenticationStateProvider _authenticationStateProvider;
+@inject IJSRuntime JSRuntime;
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TestApp</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -25,6 +30,11 @@
             </NotAuthorized>
             <Authorized>
                 <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="MyProfile">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> My Profile
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
                     <NavLink class="nav-link" href="counter">
                         <span class="oi oi-plus" aria-hidden="true"></span> Counter
                     </NavLink>
@@ -35,7 +45,7 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="logout">
+                    <NavLink class="nav-link" @onclick="Logout">
                         <span class="oi oi-plus" aria-hidden="true"></span> Logout
                     </NavLink>
                 </div>
@@ -52,5 +62,19 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task Logout()
+    {
+        await _localStorageService.RemoveItemAsync("token");
+        await _localStorageService.RemoveItemAsync("refreshToken");
+        (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
+    }
+
+    public async Task MyProfile()
+    {
+        string loginurl = "https://localhost:7190/MyProfile";
+        //_navigationManager.NavigateTo(loginurl);
+        await JSRuntime.InvokeVoidAsync("open", loginurl, "_blank");
     }
 }

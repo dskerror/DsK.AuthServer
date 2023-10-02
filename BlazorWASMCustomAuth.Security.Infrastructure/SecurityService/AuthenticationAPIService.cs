@@ -35,6 +35,9 @@ public partial class SecurityService
     {
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
+        if (applicationAuthenticationProvider.ApplicationAuthenticationProviderDisabled)
+            return null;
+
         var user = await AuthenticateUser(model, applicationAuthenticationProvider);
         if (user == null)
             return null;
@@ -69,10 +72,22 @@ public partial class SecurityService
 
         var loginResponseDto = new LoginResponseDto();
         loginResponseDto.CallbackURL = CallbackURL;
+        loginResponseDto.LoginToken = newguid;
         return loginResponseDto;
     }
     public async Task<bool> Register(RegisterRequestDto model, string origin)
     {
+        if (model.ApplicationAuthenticationProviderGUID.ToString() != "00000000-0000-0000-0000-000000000000")
+        {
+            RegisterRequestDto newAppUser = new RegisterRequestDto()
+            {
+                ApplicationAuthenticationProviderGUID = Guid.Parse("00000000-0000-0000-0000-000000000000"),
+                ADUsername = model.ADUsername,
+                Email = model.Email,
+                Name = model.Name,
+                Password = model.Password,
+            };
+        }
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
         var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
@@ -382,7 +397,7 @@ public partial class SecurityService
     {
         var user = await GetUserByMappedUsernameAsync(model.Email, applicationAuthenticationProvider.Id);
 
-        bool IsUserAuthenticated;
+        bool IsUserAuthenticated = false;
 
         switch (applicationAuthenticationProvider.AuthenticationProviderType)
         {
@@ -394,7 +409,8 @@ public partial class SecurityService
                     IsUserAuthenticated = false;
                 break;
             default: //Local
-                IsUserAuthenticated = await AuthenticateUserWithLocalPassword(user, model.Password);
+                if (user != null)
+                    IsUserAuthenticated = await AuthenticateUserWithLocalPassword(user, model.Password);
                 break;
         }
 

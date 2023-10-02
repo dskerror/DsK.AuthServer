@@ -7,7 +7,7 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {   
-    public async Task<string> LoginAsync(LoginRequestDto model)
+    public async Task<LoginResponseDto> LoginAsync(LoginRequestDto model)
     {   
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Login, model);
         if (!response.IsSuccessStatusCode)
@@ -20,7 +20,7 @@ public partial class SecurityServiceClient
             return null;
         }
         
-        return result.CallbackURL;
+        return result;
     }
     public async Task<bool> ValidateLoginTokenAsync(string loginToken)
     {

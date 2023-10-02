@@ -10,7 +10,7 @@
             <MudTextField Label="Authentication Provider Name" @bind-Value="model.Name"
                           For="@(()=>model.Name)">
             </MudTextField>
-            <MudSelect T="string" Label="AuthenticationProviderType" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.AuthenticationProviderType">
+            <MudSelect T="string" Label="Authentication Provider Type" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.AuthenticationProviderType">
                 <MudSelectItem Value="@("Active Directory")" />
             </MudSelect>
             <MudTextField Label="Domain" @bind-Value="model.Domain"

@@ -165,7 +165,6 @@ public partial class SecurityService
         result.Result = recordsDeleted.ToString();
         return result;
     }
-
     public async Task<APIResult<string>> ApplicationAuthenticationProviderDisableEnabled(int id)
     {
         APIResult<string> result = new APIResult<string>();
@@ -196,6 +195,24 @@ public partial class SecurityService
         }
 
         result.Result = recordsUpdated.ToString();
+
+        return result;
+    }
+    public async Task<APIResult<ApplicationAuthenticationProviderValidateDto>> ValidateApplicationAuthenticationProviderGuid(string applicationAuthenticationProviderGuid)
+    {
+        var result = new APIResult<ApplicationAuthenticationProviderValidateDto>();
+
+        try
+        {
+            var providerDto = new ApplicationAuthenticationProviderValidateDto();
+            var provider = await db.ApplicationAuthenticationProviders.Where(m => m.ApplicationAuthenticationProviderGuid == Guid.Parse(applicationAuthenticationProviderGuid)).FirstOrDefaultAsync();
+            Mapper.Map(provider, providerDto);
+            result.Result = providerDto;
+        }
+        catch (Exception)
+        {
+            result.Result = null;
+        }
 
         return result;
     }

@@ -3,38 +3,58 @@
 @layout LoginLayout
 @attribute [AllowAnonymous]
 
-<EditForm Model="userLoginModel" OnValidSubmit="SubmitAsync">
-    <MudGrid>
-        <DataAnnotationsValidator />
-        <MudItem xs="12">
-            <div class="d-flex justify-center">
-                <MudText Typo="Typo.h4">Sign In</MudText>
-            </div>
-        </MudItem>
-        <MudItem xs="12">
-            <div class="d-flex justify-center">
-                <MudText>Login with your Credentials.</MudText>
-            </div>
-        </MudItem>
-        <MudItem xs="12">
-            <MudTextField T="string" Label="Email" Variant="Variant.Outlined"
-                          @bind-Value="userLoginModel.Email" For="@(() => userLoginModel.Email)" />
-        </MudItem>
-        <MudItem xs="12">
-            <MudTextField Label="Password" Variant="Variant.Outlined"
-                          @bind-Value="userLoginModel.Password" For="@(() => userLoginModel.Password)"
-                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
-        </MudItem>
-        <MudItem xs="12" Class="d-flex justify-center">
-            <MudButton Disabled="_LoginButtonDisabled" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign In</MudButton>
-        </MudItem>
+@if (!_IsLoaded)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    @if (!_GuidIsValid)
+    {
+        <h3>Application Authentication Provider Invalid</h3>
+    }
+    else
+    {
+        <EditForm Model="userLoginModel" OnValidSubmit="SubmitAsync">
+            <MudGrid>
+                <DataAnnotationsValidator />
+                <MudItem xs="12">
+                    <div class="d-flex justify-center">
+                        <MudText Typo="Typo.h4">Sign In</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12">
+                    <div class="d-flex justify-center">
+                        <MudText>Login with your Credentials.</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="@_EmailLabel" Variant="Variant.Outlined"
+                    @bind-Value="userLoginModel.Email" For="@(() => userLoginModel.Email)" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField Label="Password" Variant="Variant.Outlined"
+                    @bind-Value="userLoginModel.Password" For="@(() => userLoginModel.Password)"
+                                  InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
+                </MudItem>
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudButton Disabled="_LoginButtonDisabled" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign In</MudButton>
+                </MudItem>
 
-        <MudItem xs="6" Class="d-flex justify-center">
-            <MudButton OnClick="@(() => ChangePassword())" StartIcon="@Icons.Material.Filled.Password" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Forgot your password?</MudButton>
-        </MudItem>
+                @if (appAuthProvValidModel.AuthenticationProviderType == "Local")
+                {
+                    <MudItem xs="6" Class="d-flex justify-center">
+                        <MudButton OnClick="@(() => ChangePassword())" StartIcon="@Icons.Material.Filled.Password" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Forgot your password?</MudButton>
+                    </MudItem>
+                }
 
-        <MudItem xs="6" Class="d-flex justify-center">
-            <MudButton OnClick="@(() => Register())" StartIcon="@Icons.Material.Filled.AppRegistration" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign Up</MudButton>
-        </MudItem>
-    </MudGrid>    
- </EditForm>
+                @if (_RegistrationEnabled)
+                {
+                    <MudItem xs="6" Class="d-flex justify-center">
+                        <MudButton OnClick="@(() => Register())" StartIcon="@Icons.Material.Filled.AppRegistration" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign Up</MudButton>
+                    </MudItem>
+                }
+            </MudGrid>
+        </EditForm>
+    }
+}

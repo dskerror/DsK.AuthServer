@@ -1,10 +1,5 @@
-﻿using BlazorWASMCustomAuth.Security.Shared;
-using BlazorWASMCustomAuth.Security.Shared.ActionDtos;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-
 namespace BlazorWASMCustomAuth.Client.Pages;
 public partial class Callback
 {
@@ -27,10 +22,6 @@ public partial class Callback
                 _navigationManager.NavigateTo("/noaccess");
                 Snackbar.Add("Username and/or Password incorrect", Severity.Error);
             }
-        }
-        
+        }        
     }
-
-
-
 }

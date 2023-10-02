@@ -1,49 +1,74 @@
 ﻿@page "/fetchdata"
 @using Microsoft.AspNetCore.Authorization;
+@using System.Security.Claims;
 @using TestApp.Shared
+@using TestApp.Client.Services;
 @inject HttpClient Http
+@inject SecurityServiceClient securityService;
+@inject NavigationManager NavigationManager
 @attribute [Authorize]
 
 <PageTitle>Weather forecast</PageTitle>
 
-<h1>Weather forecast</h1>
-
-<p>This component demonstrates fetching data from the server.</p>
-
-@if (forecasts == null)
+@if (!_Access)
 {
-    <p><em>Loading...</em></p>
+    <h1>You dont have access to this page.</h1>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    <h1>Weather forecast</h1>
 
+    <p>This component demonstrates fetching data from the server.</p>
+
+    @if (forecasts == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Temp. (C)</th>
+                    <th>Temp. (F)</th>
+                    <th>Summary</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var forecast in forecasts)
+                {
+                    <tr>
+                        <td>@forecast.Date.ToShortDateString()</td>
+                        <td>@forecast.TemperatureC</td>
+                        <td>@forecast.TemperatureF</td>
+                        <td>@forecast.Summary</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
 @code {
     private WeatherForecast[]? forecasts;
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+    private bool _Access;
 
-    protected override async Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        base.OnInitialized();
+        var user = (await AuthStat).User;
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo($"login?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}");
+        }
+        else
+        {
+            _Access = securityService.HasPermission(user, Access.CounterPage.CounterFunction);
+            if (_Access)
+            {
+                forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+            }
+        }
     }
 }

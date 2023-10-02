@@ -2,7 +2,6 @@
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 namespace BlazorWASMCustomAuth.Server.Controllers.Security;
 
 [Route("api/[controller]")]
@@ -28,6 +27,14 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
     public async Task<IActionResult> Get(int applicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
     {
         var result = await SecurityService.ApplicationAuthenticationProvidersGet(applicationId, id, pageNumber, pageSize, searchString, orderBy);
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Route("ValidateApplicationAuthenticationProviderGuid")]
+    public async Task<IActionResult> ValidateApplicationAuthenticationProviderGuid(string ApplicationAuthenticationProviderGuid)
+    {
+        var result = await SecurityService.ValidateApplicationAuthenticationProviderGuid(ApplicationAuthenticationProviderGuid);
         return Ok(result);
     }
 

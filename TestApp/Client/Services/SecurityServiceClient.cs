@@ -80,6 +80,7 @@ public partial class SecurityServiceClient
         else
             return false;
     }
+
     public int GetUserId(ClaimsPrincipal user)
     {
         string userId = user.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();

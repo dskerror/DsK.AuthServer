@@ -3,6 +3,7 @@ using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.ActionDtos;
 using Microsoft.AspNetCore.Mvc;
 namespace BlazorWASMCustomAuth.Server.Controllers.Security;
+
 [Route("api/[controller]")]
 [ApiController]
 public class AuthenticationController : ControllerBase

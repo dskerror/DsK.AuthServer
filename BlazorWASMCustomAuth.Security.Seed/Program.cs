@@ -85,7 +85,7 @@ internal class Program
             ApplicationDesc = "Manages authentication and authorization for other applications",
             ApplicationGuid = Guid.Parse("00000000-0000-0000-0000-000000000000"),
             AppApiKey = Guid.Parse("CAB41EEC-6002-4738-BE23-128B0A7276C1"),
-            CallbackUrl = "/Callback/"
+            CallbackUrl = "/"
         };
 
         db.Applications.Add(newApplication);

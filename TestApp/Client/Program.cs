@@ -20,6 +20,7 @@ namespace TestApp.Client
             builder.Services.AddAuthorizationCore();
             //The CustomAuthenticationStateProvider is to be able to use tokens as the mode of authentication.
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            builder.Services.AddScoped<SecurityServiceClient>();
 
             /* ---Manages saving to local storage--- */
             builder.Services.AddBlazoredLocalStorage();

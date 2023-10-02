@@ -19,9 +19,9 @@ public partial class SecurityServiceClient
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationAuthenticationProvidersEndpoints.Put, model);
-        if (!response.IsSuccessStatusCode)        
+        if (!response.IsSuccessStatusCode)
             return null;
-        
+
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationAuthenticationProviderDto>>();
         return result;
     }
@@ -31,7 +31,7 @@ public partial class SecurityServiceClient
         var url = Routes.ApplicationAuthenticationProvidersEndpoints.Get(request);
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
-            return null;        
+            return null;
 
         var responseAsString = await response.Content.ReadAsStringAsync();
 
@@ -47,6 +47,29 @@ public partial class SecurityServiceClient
             return null;
         }
     }
+
+    public async Task<ApplicationAuthenticationProviderValidateDto> ValidateApplicationAuthenticationProviderGuid(string applicationAuthenticationProviderGuid)
+    {
+        var url = Routes.ApplicationAuthenticationProvidersEndpoints.ValidateApplicationAuthenticationProviderGuid(applicationAuthenticationProviderGuid);
+        var response = await _httpClient.GetAsync(url);
+        if (!response.IsSuccessStatusCode)
+            return null;   
+
+        var responseAsString = await response.Content.ReadAsStringAsync();
+
+        try
+        {
+            var responseObject = JsonConvert.DeserializeObject<APIResult<ApplicationAuthenticationProviderValidateDto>>(responseAsString);
+            return responseObject.Result;
+        }
+        catch (Exception ex)
+        {
+
+            Console.Write(ex.Message);
+            return null;
+        }
+    }
+
     public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProviderGetAsync(int id)
     {
         var result = await ApplicationAuthenticationProvidersGetAsync(new ApplicationPagedRequest() { Id = id });
