@@ -1,14 +1,20 @@
 --in progress--
-test register if other app create appuser of main app
+
 
 --pipeline--
+test register if other app create appuser of main app
+add Application to User Role
+add Application to User Permissions
+add LastPasswordChangeDateTime to user
+usercreate password field required
+application user details does nothing
 log page
 application auth provider - test active directory before adding
 login - when doing login from test app, generate and store local token first and the redirect to test app
 add option to require two factor
 customize login page depending on the app
 link to my profile from the Test App
-Rename project to DsK.AuthorizarionServer
+Rename project to DsK.AuthServer
 document changes made in testapp
 test whole application
 encrypt domain password

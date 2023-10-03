@@ -26,10 +26,11 @@ public partial class Login
             Guid.TryParse(ApplicationAuthenticationProviderGUID, out guid);
             userLoginModel.ApplicationAuthenticationProviderGUID = guid;
             appAuthProvValidModel = await securityService.ValidateApplicationAuthenticationProviderGuid(guid.ToString());
-            if (appAuthProvValidModel != null && appAuthProvValidModel.Id != 0) { 
+            if (appAuthProvValidModel != null && appAuthProvValidModel.Id != 0)
+            {
                 _GuidIsValid = true;
                 _RegistrationEnabled = appAuthProvValidModel.RegistrationEnabled;
-                if(appAuthProvValidModel.AuthenticationProviderType == "Active Directory")
+                if (appAuthProvValidModel.AuthenticationProviderType == "Active Directory")
                 {
                     _EmailLabel = "Username";
                 }

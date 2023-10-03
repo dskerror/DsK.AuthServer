@@ -21,8 +21,6 @@
     <HeaderContent>
         <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Name">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="AuthenticationProviderType">Type</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Domain">Domain</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="ApplicationAuthenticationProviderDto" SortLabel="Username">Username</MudTableSortLabel></MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -31,12 +29,6 @@
         </MudTd>
         <MudTd DataLabel="AuthenticationProviderType">
             <MudHighlighter Text="@context.AuthenticationProviderType" HighlightedText="@_searchString" />
-        </MudTd>
-        <MudTd DataLabel="Domain">
-            <MudHighlighter Text="@context.Domain" HighlightedText="@_searchString" />
-        </MudTd>
-        <MudTd DataLabel="Username">
-            <MudHighlighter Text="@context.Username" HighlightedText="@_searchString" />
         </MudTd>
         <MudTd DataLabel="">
 

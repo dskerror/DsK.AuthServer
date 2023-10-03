@@ -41,7 +41,7 @@ else
                     <MudButton Disabled="_LoginButtonDisabled" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign In</MudButton>
                 </MudItem>
 
-                @if (appAuthProvValidModel.AuthenticationProviderType == "Local")
+                @if (appAuthProvValidModel.AuthenticationProviderType == "Local" || appAuthProvValidModel.AuthenticationProviderType == null)
                 {
                     <MudItem xs="6" Class="d-flex justify-center">
                         <MudButton OnClick="@(() => ChangePassword())" StartIcon="@Icons.Material.Filled.Password" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Forgot your password?</MudButton>

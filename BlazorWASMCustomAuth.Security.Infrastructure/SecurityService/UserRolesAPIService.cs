@@ -2,6 +2,7 @@
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using static BlazorWASMCustomAuth.Security.Shared.Access;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
@@ -33,7 +34,7 @@ public partial class SecurityService
         }
         else
         {
-            var recordFind = await db.UserRoles.Where(x=> x.UserId == model.UserId && x.RoleId == model.RoleId).FirstOrDefaultAsync();
+            var recordFind = await db.UserRoles.Where(x => x.UserId == model.UserId && x.RoleId == model.RoleId).FirstOrDefaultAsync();
             var recordToDelete = db.UserRoles.Attach(recordFind);
             recordToDelete.State = EntityState.Deleted;
 
@@ -53,80 +54,37 @@ public partial class SecurityService
 
     public async Task<APIResult<List<UserRoleGridDto>>> UserRolesGet(int userId)
     {
-        //APIResult<List<UserRoleDto>> result = new APIResult<List<UserRoleDto>>();
-        //var items = await db.UserRoles.Where(x => x.UserId == userId).Include(x => x.Role).ToListAsync();
-        //result.Result = Mapper.Map<List<UserRole>, List<UserRoleDto>>(items);
-        //return result;
-
-
-
         APIResult<List<UserRoleGridDto>> result = new APIResult<List<UserRoleGridDto>>();
-        var roleList = await db.ApplicationRoles.ToListAsync();
+        var applicationRoles = await db.ApplicationRoles.Include(x => x.Application).ToListAsync();
 
+        var userRoles = await (from u in db.Users
+                               join ur in db.UserRoles on u.Id equals ur.UserId
+                               join r in db.ApplicationRoles on ur.RoleId equals r.Id
+                               join a in db.Applications on r.ApplicationId equals a.Id
+                               where u.Id == userId
+                               select new { r.RoleName, a.Id }).ToListAsync();
 
-        var userPermissionList = await (from u in db.Users
-                                        join ur in db.UserRoles on u.Id equals ur.UserId
-                                        join r in db.ApplicationRoles on ur.RoleId equals r.Id
-                                        where u.Id == userId
-                                        select r.RoleName).ToListAsync();
+        //var roleGrid = Mapper.Map<List<ApplicationRole>, List<UserRoleGridDto>>(roleList);
 
-        var roleGrid = Mapper.Map<List<ApplicationRole>, List<UserRoleGridDto>>(roleList);
+        List<UserRoleGridDto> userRoleGridDtos = new List<UserRoleGridDto>();
 
-        foreach (var role in userPermissionList)
+        foreach (var role in applicationRoles)
         {
-            var value = roleGrid.First(x => x.RoleName == role);
-            value.Enable = true;
+            var value = new UserRoleGridDto()
+            {
+                Id = role.Id,
+                ApplicationName = role.Application.ApplicationName,
+                RoleName = role.RoleName,
+                RoleDescription = role.RoleDescription,
+            };
+
+            var lookupInUserRole = userRoles.Where(x => x.RoleName == role.RoleName && x.Id == role.ApplicationId).FirstOrDefault();
+            if(lookupInUserRole != null) { value.Enable = true; }
+
+            userRoleGridDtos.Add(value);
         }
 
-        result.Result = roleGrid;
+        result.Result = userRoleGridDtos;
         return result;
     }
-
-    //public async Task<APIResult<string>> UserRoleCreate(UserRoleChangeDto model)
-    //{
-    //    APIResult<string> result = new APIResult<string>();
-    //    int recordsCreated = 0;
-
-    //    var record = new UserRole();
-    //    Mapper.Map(model, record);
-
-    //    db.UserRoles.Add(record);
-
-    //    try
-    //    {
-    //        recordsCreated = await db.SaveChangesAsync();
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        result.HasError = true;
-    //        result.Message = ex.InnerException.Message;
-    //    }
-
-    //    if (recordsCreated == 1)
-    //    {
-    //        result.Result = recordsCreated.ToString();
-    //        result.Message = "Record Created";
-    //    }
-
-    //    return result;
-    //}
-    //public async Task<APIResult<string>> UserRoleDelete(int id)
-    //{
-    //    APIResult<string> result = new APIResult<string>();
-    //    int recordsDeleted = 0;
-    //    var record = db.UserRoles.Attach(new UserRole { Id=id });
-    //    record.State = EntityState.Deleted;
-    //    try
-    //    {
-    //        recordsDeleted = await db.SaveChangesAsync();
-    //        result.Result = recordsDeleted.ToString();
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        result.HasError = true;
-    //        result.Message = ex.Message;
-    //    }
-
-    //    return result;
-    //}
 }
