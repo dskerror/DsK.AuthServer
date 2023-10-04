@@ -47,19 +47,18 @@ public partial class Login
     {
         _LoginButtonDisabled = true;
 
-        //if (ApplicationAuthenticationProviderGUID != null)
-        //    userLoginModel.ApplicationAuthenticationProviderGUID = Guid.Parse(ApplicationAuthenticationProviderGUID);
-
-        var result = await securityService.LoginAsync(userLoginModel);
-
-        if (result != null)
+        var response = await securityService.LoginAsync(userLoginModel);
+        if (response != null)
         {
-            await securityService.ValidateLoginTokenAsync(result.LoginToken.ToString());
-            _navigationManager.NavigateTo(result.CallbackURL);
-            Snackbar.Add("Authenticating...", Severity.Success);
+            if (response.HasError)            
+                Snackbar.Add(response.Message, Severity.Error);            
+            else
+            {
+                await securityService.ValidateLoginTokenAsync(response.Result.LoginToken.ToString());
+                _navigationManager.NavigateTo(response.Result.CallbackURL);
+                Snackbar.Add("Authenticating...", Severity.Success);
+            }
         }
-        else
-            Snackbar.Add("Username and/or Password incorrect", Severity.Error);
 
         _LoginButtonDisabled = false;
     }

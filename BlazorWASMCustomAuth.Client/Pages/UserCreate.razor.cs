@@ -9,6 +9,9 @@ public partial class UserCreate
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private UserCreateDto model = new UserCreateDto();
     private bool _AccessCreate;
+    private InputType _passwordInput = InputType.Password;
+    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private bool _passwordVisibility;
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,5 +42,21 @@ public partial class UserCreate
         else
             Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
 
+    }
+
+    void TogglePasswordVisibility()
+    {
+        if (_passwordVisibility)
+        {
+            _passwordVisibility = false;
+            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+            _passwordInput = InputType.Password;
+        }
+        else
+        {
+            _passwordVisibility = true;
+            _passwordInputIcon = Icons.Material.Filled.Visibility;
+            _passwordInput = InputType.Text;
+        }
     }
 }

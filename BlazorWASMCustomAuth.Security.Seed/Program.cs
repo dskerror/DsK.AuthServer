@@ -21,8 +21,9 @@ internal class Program
         var permissionList = CreateApplicationPermissions(db, newApp); //Create list of permissions based on Security.Shared Permissions
 
         var adminRole = CreateApplicationRole(db, newApp.Id, "Admin", "Admin Role");
-        
-        var applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newApp, adminRole, "67A09D32-7664-49F8-8E8E-471A56A2858E");
+        var userRole = CreateApplicationRole(db, newApp.Id, "User", "User Role");
+
+        var applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newApp, userRole, "67A09D32-7664-49F8-8E8E-471A56A2858E");
 
         AddPermissionToRole(db, adminPermission.Id, adminRole.Id);
         var adminUser = CreateUser(db, "admin@admin.com", "Admin", "admin123");
@@ -30,7 +31,7 @@ internal class Program
         AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, adminUser);
         AddRoleToUser(db, adminRole, adminUser);
 
-        var userRole = CreateApplicationRole(db, newApp.Id, "User", "User Role");
+        
         AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.View, permissionList), userRole.Id);
         AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.Edit, permissionList), userRole.Id);
         var regularUser = CreateUser(db, "user@user.com", "User", "user123");

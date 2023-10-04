@@ -28,19 +28,32 @@ public partial class SecurityService
 
         return token;
     }
-    public async Task<LoginResponseDto> Login(LoginRequestDto model)
+    public async Task<APIResult<LoginResponseDto>> Login(LoginRequestDto model)
     {
+        APIResult<LoginResponseDto> apiResult = new APIResult<LoginResponseDto>() { HasError = false };
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
         if (applicationAuthenticationProvider.ApplicationAuthenticationProviderDisabled)
-            return null;
+        {
+            apiResult.HasError = true;
+            apiResult.Message = "This Application Authentication Provider Is Disabled";
+            return apiResult;
+        }
 
         var user = await AuthenticateUser(model, applicationAuthenticationProvider);
         if (user == null)
-            return null;
+        {
+            apiResult.HasError = true;
+            apiResult.Message = "Username and/or Password incorrect";
+            return apiResult;
+        }
 
         if (!user.EmailConfirmed)
-            return null;
+        {
+            apiResult.HasError = true;
+            apiResult.Message = "Email hasn't been confirmed yet.";
+            return apiResult;
+        }
 
         string CallbackURL = applicationAuthenticationProvider.Application.CallbackUrl;
 
@@ -60,53 +73,86 @@ public partial class SecurityService
 
         try
         {
+            apiResult.HasError = false;
             await db.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString());
+            apiResult.HasError = true;
+            apiResult.Message = ex.Message;
         }
 
         var loginResponseDto = new LoginResponseDto();
         loginResponseDto.CallbackURL = CallbackURL;
         loginResponseDto.LoginToken = newguid;
-        return loginResponseDto;
+
+        apiResult.Result = loginResponseDto;
+
+        return apiResult;
     }
-    public async Task<bool> Register(RegisterRequestDto model, string origin)
+    public async Task<APIResult<string>> Register(RegisterRequestDto model, string origin)
     {
-        //todo : check if this works
-        CheckApplicationAuthenticationProviderGuid(model);
-
+        APIResult<string> apiResult = new APIResult<string>() { HasError = true };
+        bool userAlreadyExists = false;
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
-
         var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
 
-        if ((bool)applicationAuthenticationProvider.RegistrationEnabled || applicationAuthenticationProvider.ActiveDirectoryFirstLoginAutoRegister)
+        if (!applicationAuthenticationProvider.RegistrationEnabled && !applicationAuthenticationProvider.ActiveDirectoryFirstLoginAutoRegister)
         {
-            user = await CreateUser(model, applicationAuthenticationProvider, user);
-            await CreateApplicationUser(applicationAuthenticationProvider, user);
-            await AddDefaultRoleToUser(applicationAuthenticationProvider, user);
-            await AddApplicationAuthenticationProviderUserMapping(model, applicationAuthenticationProvider, user);
-            await SendRegistrationEmail(origin, applicationAuthenticationProvider, user).ConfigureAwait(false);
-
-            if (user.Id != 0 && !user.EmailConfirmed)
-                return true;
+            apiResult.HasError = true;
+            apiResult.Message = "Registration is disabled for this Application Authentication Provider";
+            return apiResult;
         }
 
-        return false;
-    }
-    private static void CheckApplicationAuthenticationProviderGuid(RegisterRequestDto model)
-    {
-        if (model.ApplicationAuthenticationProviderGUID.ToString() != "00000000-0000-0000-0000-000000000000")
+        if (user == null)
+            user = await CreateUser(model, applicationAuthenticationProvider, user);
+        else
+            userAlreadyExists = true;
+
+        await RegisterAuthApp(model, origin, applicationAuthenticationProvider);
+        await CreateApplicationUser(applicationAuthenticationProvider, user);
+        await AddDefaultRoleToUser(applicationAuthenticationProvider, user);
+        await AddApplicationAuthenticationProviderUserMapping(model, applicationAuthenticationProvider, user);
+        await SendRegistrationEmail(origin, applicationAuthenticationProvider, user).ConfigureAwait(false);
+
+        if (user.Id != 0)
         {
-            RegisterRequestDto newAppUser = new RegisterRequestDto()
+            apiResult.HasError = false;
+            if (!user.EmailConfirmed)
             {
-                ApplicationAuthenticationProviderGUID = Guid.Parse("00000000-0000-0000-0000-000000000000"),
-                ADUsername = model.ADUsername,
-                Email = model.Email,
+                apiResult.Message = "User has been created. An email has been sent to the user for confirmation.";
+                return apiResult;
+            }
+
+            if (userAlreadyExists)
+            {
+                apiResult.Message = "User already exists and has been added to application.";
+                return apiResult;
+            }
+
+            if (!userAlreadyExists && user.EmailConfirmed)
+            {
+                apiResult.Message = "User has been created. Please login to access application.";
+                return apiResult;
+            }
+        }
+
+        return apiResult;
+    }
+
+    private async Task RegisterAuthApp(RegisterRequestDto model, string origin, ApplicationAuthenticationProvider applicationAuthenticationProvider)
+    {
+        if (applicationAuthenticationProvider.Id != 1)
+        {
+            RegisterRequestDto newModel = new RegisterRequestDto()
+            {
                 Name = model.Name,
-                Password = model.Password,
+                ADUsername = model.ADUsername,
+                ApplicationAuthenticationProviderGUID = Guid.Parse("67A09D32-7664-49F8-8E8E-471A56A2858E"),
+                Email = model.Email,
+                Password = model.Password
             };
+            await Register(newModel, origin);
         }
     }
     private async Task SendRegistrationEmail(string origin, ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
@@ -132,7 +178,7 @@ public partial class SecurityService
     {
         if (user.Id != 0)
         {
-            var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+            var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.UserId == user.Id && x.ApplicationAuthenticationProviderId == applicationAuthenticationProvider.Id).FirstOrDefaultAsync();
             if (applicationAuthenticationProviderUserMapping == null)
             {
                 var username = user.Email;
@@ -158,7 +204,7 @@ public partial class SecurityService
         {
             if (applicationAuthenticationProvider.DefaultApplicationRoleId != null)
             {
-                var userRoles = await db.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+                var userRoles = await db.UserRoles.Where(x => x.UserId == user.Id && x.RoleId == applicationAuthenticationProvider.DefaultApplicationRoleId).FirstOrDefaultAsync();
                 if (userRoles == null)
                 {
                     var userRole = new UserRole()
@@ -177,7 +223,7 @@ public partial class SecurityService
     {
         if (user.Id != 0)
         {
-            var applicationUser = await db.ApplicationUsers.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+            var applicationUser = await db.ApplicationUsers.Where(x => x.UserId == user.Id && x.ApplicationId == applicationAuthenticationProvider.Id).FirstOrDefaultAsync();
             if (applicationUser == null)
             {
                 applicationUser = new ApplicationUser()
@@ -199,6 +245,8 @@ public partial class SecurityService
             if (model.Password == null)
                 model.Password = Convert.ToHexString(ramdomSalt);
 
+            model.Email ??= $"{Convert.ToHexString(ramdomSalt)}@noemail.com";
+
             user = new User()
             {
                 Email = model.Email,
@@ -213,9 +261,9 @@ public partial class SecurityService
             };
 
             db.Users.Add(user);
+            await db.SaveChangesAsync();
         }
 
-        await db.SaveChangesAsync();
         return user;
     }
     public async Task<bool> PasswordChangeRequest(PasswordChangeRequestDto model, string origin)

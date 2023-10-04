@@ -3,8 +3,6 @@ using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
-using System.Diagnostics.Eventing.Reader;
-using System;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
@@ -18,7 +16,8 @@ public partial class SecurityService
         Mapper.Map(model, record);
 
         record.ApplicationAuthenticationProviderGuid = Guid.NewGuid();
-
+        //record.Password = DsK.Services.E
+        
         db.ApplicationAuthenticationProviders.Add(record);
 
         try

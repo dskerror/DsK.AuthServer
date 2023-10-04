@@ -105,7 +105,8 @@ public partial class SecurityService
         }
         else
         {
-            count = await db.ApplicationUsers.CountAsync();
+            count = await db.ApplicationUsers.Where(u => u.ApplicationId == applicationId)
+                .CountAsync();
 
             items = await db.ApplicationUsers
                 .Where(u => u.ApplicationId == applicationId)

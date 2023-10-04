@@ -48,16 +48,19 @@ public partial class Register
     private async Task SubmitAsync()
     {
         _LoginButtonDisabled = true;
+        //if (userRegisterModel.ADUsername == null) { userRegisterModel.ADUsername = userRegisterModel.Email};
+        userRegisterModel.ADUsername ??= userRegisterModel.Email;
 
         var result = await securityService.RegisterAsync(userRegisterModel);
 
-        if (result)
+
+        if (result.HasError)        
+            Snackbar.Add("Register failed.", Severity.Error);         
+        else
         {
             _navigationManager.NavigateTo($"/login/{ApplicationAuthenticationProviderGUID}");
-            Snackbar.Add("Register successful. Please login.", Severity.Success);
-        }
-        else
-            Snackbar.Add("Register failed.", Severity.Error);
+            Snackbar.Add(result.Message, Severity.Success);
+        }   
 
         _LoginButtonDisabled = false;
     }

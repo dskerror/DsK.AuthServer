@@ -1,24 +1,23 @@
 --in progress--
-register - creates appuser in authapp when registering in testapp
 
 --pipeline--
-test register if testapp creates appuser existing authapp
-usercreate password field required
+encrypt domain password
+User View/Edit change password
+fix "Sorry, there's nothing at this address." message when login to AuthApp
 application user details does nothing
-user create requires password
 log page
 application auth provider - test active directory before adding
-login - when doing login from test app, generate and store local token first and the redirect to test app
 add option to require two factor
 link to my profile from the Test App
 Rename project to DsK.AuthServer
 document changes made in testapp
 test whole application
-encrypt domain password
+
 
 smtpproviders
 	https://www.emailvendorselection.com/free-smtp-servers/#1_Brevo
 
 --future--
 customize login page depending on the app
+email confirmation flag may be better at the ApplicationUsers level because that way one may require validation for each registration
 

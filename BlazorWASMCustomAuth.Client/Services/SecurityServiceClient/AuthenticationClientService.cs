@@ -7,19 +7,14 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {   
-    public async Task<LoginResponseDto> LoginAsync(LoginRequestDto model)
+    public async Task<APIResult<LoginResponseDto>> LoginAsync(LoginRequestDto model)
     {   
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Login, model);
         if (!response.IsSuccessStatusCode)
-        {
             return null;
-        }
-        var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
-        if (result == null)
-        {
-            return null;
-        }
-        
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<LoginResponseDto>>();        
+
         return result;
     }
     public async Task<bool> ValidateLoginTokenAsync(string loginToken)
@@ -47,12 +42,13 @@ public partial class SecurityServiceClient
         (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
         return true;
     }
-    public async Task<bool> RegisterAsync(RegisterRequestDto model)
+    public async Task<APIResult<string>> RegisterAsync(RegisterRequestDto model)
     {
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Register, model);
-        if (!response.IsSuccessStatusCode) return false;        
-        
-        var result = await response.Content.ReadFromJsonAsync<bool>();        
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
         return result;
     }
     public async Task<bool> PasswordChangeRequestAsync(PasswordChangeRequestDto model)

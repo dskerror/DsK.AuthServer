@@ -13,6 +13,10 @@
             <MudTextField Label="Name" @bind-Value="model.Name"
                           For="@(()=>model.Name)">
             </MudTextField>
+
+            <MudTextField Label="Password" @bind-Value="model.Password" For="@(() => model.Password)"
+                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
+
         </MudCardContent>
     </MudCard>
 

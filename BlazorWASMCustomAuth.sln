@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{A9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DsK.Services.Email", "DsK.Services.Email\DsK.Services.Email.csproj", "{A51C0625-3922-4415-B2BB-0041BD06105B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DsK.Services.Encryption", "DsK.Services.Encryption\DsK.Services.Encryption.csproj", "{C4AE7937-4643-491B-B910-25BD49C4281E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{A51C0625-3922-4415-B2BB-0041BD06105B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A51C0625-3922-4415-B2BB-0041BD06105B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A51C0625-3922-4415-B2BB-0041BD06105B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4AE7937-4643-491B-B910-25BD49C4281E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4AE7937-4643-491B-B910-25BD49C4281E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4AE7937-4643-491B-B910-25BD49C4281E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4AE7937-4643-491B-B910-25BD49C4281E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +106,7 @@ Global
 		{5F5A80D8-9AB1-43F5-854F-3D4CADD2470E} = {D2624D01-D600-4CDB-843B-1A3FBDE3A7AB}
 		{CC2B39FE-5E78-4A25-841E-249072261BA0} = {D2624D01-D600-4CDB-843B-1A3FBDE3A7AB}
 		{A51C0625-3922-4415-B2BB-0041BD06105B} = {A9748129-6756-4A44-A3BA-4E99E1B4BD5A}
+		{C4AE7937-4643-491B-B910-25BD49C4281E} = {A9748129-6756-4A44-A3BA-4E99E1B4BD5A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09193D87-55E9-428E-B303-D3EC67366ACD}

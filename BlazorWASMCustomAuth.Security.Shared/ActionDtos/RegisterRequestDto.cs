@@ -20,7 +20,7 @@ public class RegisterRequestDto
     [StringLength(256, MinimumLength = 6)]
     [PasswordPropertyText]
 
-    public string? ADUsername{ get; set; }
+    public string? ADUsername { get; set; }
     public string? Password { get; set; }
-    public Guid ApplicationAuthenticationProviderGUID  { get; set; }
+    public Guid ApplicationAuthenticationProviderGUID { get; set; }
 }

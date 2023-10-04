@@ -21,7 +21,10 @@ public partial class SecurityService
         record.HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt);
         record.Salt = Convert.ToHexString(ramdomSalt);
 
-        record.EmailConfirmed = true;       
+        record.EmailConfirmed = true;         
+        record.AccountCreatedDateTime = DateTime.Now;
+        record.EmailConfirmed = true;
+        record.LastPasswordChangeDateTime = DateTime.Now;
         await db.Users.AddAsync(record);
 
         try
@@ -32,32 +35,7 @@ public partial class SecurityService
         {
             result.HasError = true;
             result.Message = ex.InnerException.Message;
-        }
-
-        var userRole = new UserRole()
-        {
-            RoleId = 2,
-            UserId = record.Id
-        };
-        await db.UserRoles.AddAsync(userRole);
-
-        var applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
-        {
-
-            UserId = record.Id,
-            Username = record.Email,
-        };
-
-        await db.ApplicationAuthenticationProviderUserMappings.AddAsync(applicationAuthenticationProviderUserMapping);
-
-        try
-        {
-            await db.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            result.HasError = true;
-            result.Message = ex.InnerException.Message;
+            return result;
         }
 
         if (recordsCreated == 1)
@@ -174,10 +152,9 @@ public partial class SecurityService
     private async Task<User> GetUserByMappedUsernameAsync(string username, int applicationAuthenticationProviderId)
     {
         var user = await (from u in db.Users
-                          join uap in db.ApplicationAuthenticationProviderUserMappings on u.Id equals uap.UserId                          
-                          where uap.Username == username && uap.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId
-                          select u).FirstOrDefaultAsync();
+                    join aapum in db.ApplicationAuthenticationProviderUserMappings on u.Id equals aapum.UserId
+                    where aapum.Username == username && aapum.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId
+                    select u).FirstOrDefaultAsync();
         return user;
     }
 }
-
