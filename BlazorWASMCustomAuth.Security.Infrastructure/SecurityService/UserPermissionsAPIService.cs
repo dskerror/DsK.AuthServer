@@ -1,7 +1,9 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Data;
+using static BlazorWASMCustomAuth.Security.Shared.Access;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
@@ -96,11 +98,11 @@ public partial class SecurityService
     public async Task<APIResult<List<UserPermissionGridDto>>> GetUserPermissions(int userId)
     {
         APIResult<List<UserPermissionGridDto>> result = new APIResult<List<UserPermissionGridDto>>();
-        var permissionList = await db.ApplicationPermissions.ToListAsync();
+        var applicationPermissions = await db.ApplicationPermissions.Include(x => x.Application).ToListAsync();
 
-        var permissioinGrid = Mapper.Map<List<ApplicationPermission>, List<UserPermissionGridDto>>(permissionList);
+        //var permissioinGrid = Mapper.Map<List<ApplicationPermission>, List<UserPermissionGridDto>>(permissionList);
 
-        var UserPermissions = await (from u in db.Users
+        var userPermissions = await (from u in db.Users
                                      join up in db.UserPermissions on u.Id equals up.UserId
                                      join p in db.ApplicationPermissions on up.PermissionId equals p.Id
                                      where u.Id == userId
@@ -112,24 +114,46 @@ public partial class SecurityService
                                          Allow = up.Allow
                                      }).ToListAsync();
 
-        foreach (var userPermission in UserPermissions)
+        List<UserPermissionGridDto> userPermissionGridDto = new List<UserPermissionGridDto>();
+
+        //foreach (var userPermission in UserPermissions)
+        //{
+        //    var value = permissioinGrid.First(x => x.PermissionName == userPermission.PermissionName);
+        //    value.Enabled = true;
+        //    value.Allow = userPermission.Allow;
+        //}
+
+
+        foreach (var permission in applicationPermissions)
         {
-            var value = permissioinGrid.First(x => x.PermissionName == userPermission.PermissionName);
-            value.Enabled = true;
-            value.Allow = userPermission.Allow;
+            var value = new UserPermissionGridDto()
+            {
+                Id = permission.Id,
+                ApplicationName = permission.Application.ApplicationName,
+                ApplicationId = permission.Application.Id,
+                PermissionName = permission.PermissionName,
+                PermissionDescription = permission.PermissionDescription
+            };
+
+            var lookupInUserPermission = userPermissions.Where(x => x.PermissionName == permission.PermissionName && x.Id == permission.ApplicationId).FirstOrDefault();
+            if (lookupInUserPermission != null) { value.Enabled = true; }
+
+            userPermissionGridDto.Add(value);
         }
+
 
         var RolePermissions = await (from u in db.Users
                                      join ur in db.UserRoles on u.Id equals ur.UserId
                                      join r in db.ApplicationRoles on ur.RoleId equals r.Id
                                      join rp in db.ApplicationRolePermissions on r.Id equals rp.ApplicationRoleId
                                      join p in db.ApplicationPermissions on rp.ApplicationPermissionId equals p.Id
+                                     join a in db.Applications on p.ApplicationId equals a.Id
                                      where u.Id == userId
-                                     select new { p.PermissionName, r.RoleName }).ToListAsync();
+                                     select new { p.PermissionName, r.RoleName, ApplicationId = a.Id }).ToListAsync();
 
         foreach (var rolePermission in RolePermissions)
         {
-            var value = permissioinGrid.First(x => x.PermissionName == rolePermission.PermissionName);
+            var value = userPermissionGridDto.First(x => x.PermissionName == rolePermission.PermissionName && x.ApplicationId == rolePermission.ApplicationId);
             if (string.IsNullOrEmpty(value.Roles))
             {
                 value.Roles = rolePermission.RoleName;
@@ -140,7 +164,7 @@ public partial class SecurityService
             }
         }
 
-        result.Result = permissioinGrid;
+        result.Result = userPermissionGridDto;
         return result;
     }
 }

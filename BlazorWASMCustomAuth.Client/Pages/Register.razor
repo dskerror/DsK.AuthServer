@@ -3,33 +3,51 @@
 @layout LoginLayout
 @attribute [AllowAnonymous]
 
-<EditForm Model="userRegisterModel" OnValidSubmit="SubmitAsync">
-    <MudGrid>
-        <DataAnnotationsValidator />
-        <MudItem xs="12">
-            <div class="d-flex justify-center">
-                <MudText Typo="Typo.h4">Register</MudText>
-            </div>
-        </MudItem>
-        <MudItem xs="12">
-            <MudTextField T="string" Label="Name" Variant="Variant.Outlined"
-                          @bind-Value="userRegisterModel.Name" For="@(() => userRegisterModel.Name)" />
-        </MudItem>
-        <MudItem xs="12">
-            <MudTextField T="string" Label="Username" Variant="Variant.Outlined"
-                          @bind-Value="userRegisterModel.Email" For="@(() => userRegisterModel.Email)" />
-        </MudItem>
-        <MudItem xs="12">
-            <MudTextField Label="Password" Variant="Variant.Outlined"
-                          @bind-Value="userRegisterModel.Password" For="@(() => userRegisterModel.Password)"
-                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
-        </MudItem>
-        <MudItem xs="12" Class="d-flex justify-center">
-            <MudButton Disabled="_LoginButtonDisabled" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Sign In</MudButton>
-        </MudItem>
+@if (!_IsLoaded)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    @if (!_GuidIsValid)
+    {
+        <h3>Application Authentication Provider Invalid</h3>
+    }
+    else if (!_RegistrationEnabled)
+    {
+        <h3>Registration is disabled for this Application Authentication Provider</h3>
+    }
+    else
+    {
+        <EditForm Model="userRegisterModel" OnValidSubmit="SubmitAsync">
+            <MudGrid>
+                <DataAnnotationsValidator />
+                <MudItem xs="12">
+                    <div class="d-flex justify-center">
+                        <MudText Typo="Typo.h4">Register</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Name" Variant="Variant.Outlined"
+                    @bind-Value="userRegisterModel.Name" For="@(() => userRegisterModel.Name)" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="@_EmailLabel" Variant="Variant.Outlined"
+                    @bind-Value="userRegisterModel.Email" For="@(() => userRegisterModel.Email)" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField Label="Password" Variant="Variant.Outlined"
+                    @bind-Value="userRegisterModel.Password" For="@(() => userRegisterModel.Password)"
+                                  InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
+                </MudItem>
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudButton Disabled="_LoginButtonDisabled" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Register</MudButton>
+                </MudItem>
 
-        <MudItem xs="12" Class="d-flex justify-center">
-            <MudButton OnClick="@(() => GoBackToLogin())" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Go back to login</MudButton>
-        </MudItem>
-    </MudGrid>
-</EditForm>
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudButton OnClick="@(() => GoBackToLogin())" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Go back to login</MudButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    }
+}

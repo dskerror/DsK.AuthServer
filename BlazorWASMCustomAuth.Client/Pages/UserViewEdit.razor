@@ -12,27 +12,17 @@ else
     <EditForm Model="user" OnValidSubmit="EditUser">
         <DataAnnotationsValidator />
         <ValidationSummary />
+        
         <MudCard Class="mb-2">
             <MudCardContent>
-
-                <MudTextField Disabled="!_AccessEdit" Label="Email" @bind-Value="user.Email"
-                          For="@(()=>user.Email)">
-                </MudTextField>
-
-                <MudTextField Disabled="!_AccessEdit" Label="Name" @bind-Value="user.Name"
-                          For="@(()=>user.Name)">
-                </MudTextField>
-
+                <MudTextField Disabled="true" Label="Email" @bind-Value="user.Email" For="@(()=>user.Email)" />
+                <MudTextField Disabled="!_AccessEdit" Label="Name" @bind-Value="user.Name" For="@(()=>user.Name)" />
                 <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@user.EmailConfirmed" Label="Email Confirmed" Color="Color.Success" />
-
                 <MudDatePicker Disabled="!_AccessEdit" Label="Lockout End" Editable="true" @bind-Date="user.LockoutEnd" />
-
                 <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@user.LockoutEnabled" Label="Lockout" Color="Color.Success" />
-
-                <MudTextField Disabled="!_AccessEdit" Label="Access Failed Count" @bind-Value="user.AccessFailedCount"
-                          For="@(()=>user.AccessFailedCount)">
-                </MudTextField>
-
+                <MudTextField Disabled="!_AccessEdit" Label="Access Failed Count" @bind-Value="user.AccessFailedCount" For="@(()=>user.AccessFailedCount)" />
+                <MudTextField Disabled="true" Label="Account Created" @bind-Value="user.AccountCreatedDateTime" For="@(()=>user.AccountCreatedDateTime)" />
+                <MudTextField Disabled="true" Label="Last Password Change" @bind-Value="user.LastPasswordChangeDateTime" For="@(()=>user.LastPasswordChangeDateTime)" />
             </MudCardContent>
         </MudCard>
 

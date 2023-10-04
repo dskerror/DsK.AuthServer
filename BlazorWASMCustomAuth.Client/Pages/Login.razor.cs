@@ -86,6 +86,9 @@ public partial class Login
 
     private void Register()
     {
-        _navigationManager.NavigateTo("/Register");
+        if (ApplicationAuthenticationProviderGUID != null)
+            _navigationManager.NavigateTo($"/Register/{ApplicationAuthenticationProviderGUID}");
+        else
+            _navigationManager.NavigateTo("/Register");
     }
 }

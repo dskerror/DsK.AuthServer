@@ -2,8 +2,9 @@
     <HeaderContent>
         <MudTh>Disabled/Enabled</MudTh>
         <MudTh>Deny/Allow</MudTh>
+        <MudTh>Application Name</MudTh>
         <MudTh>Permission Name</MudTh>
-        <MudTh>Permission Description</MudTh>
+        <MudTh>Permission Description</MudTh>        
         <MudTh>In Roles</MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -13,8 +14,9 @@
         <MudTd DataLabel="PermissionSwitchAllow">
             <MudSwitch Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>TogglePermissionAllowSwitch(e,context.Id)" Disabled=@(!context.Enabled) UnCheckedColor="MudBlazor.Color.Error" />
         </MudTd>
-        <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
-        <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>
+        <MudTd DataLabel="Application Name">@context.ApplicationName</MudTd>
+        <MudTd DataLabel="Permission Name">@context.PermissionName</MudTd>
+        <MudTd DataLabel="Permission Description">@context.PermissionDescription</MudTd>
         <MudTd DataLabel="Roles">@context.Roles</MudTd>
     </RowTemplate>
     <PagerContent>

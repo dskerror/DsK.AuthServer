@@ -8,17 +8,46 @@ public partial class Register
 {
     [Parameter] public string ApplicationAuthenticationProviderGUID { get; set; }
     private RegisterRequestDto userRegisterModel = new RegisterRequestDto();
+    private ApplicationAuthenticationProviderValidateDto appAuthProvValidModel = new ApplicationAuthenticationProviderValidateDto();
     private bool _LoginButtonDisabled;
     private bool _passwordVisibility;
+    private string _EmailLabel = "Email";
+    private bool _GuidIsValid;
+    private bool _IsLoaded = false;
+    private bool _RegistrationEnabled = true;
     private InputType _passwordInput = InputType.Password;
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ApplicationAuthenticationProviderGUID != null)
+        {
+            Guid guid = Guid.Empty;
+            Guid.TryParse(ApplicationAuthenticationProviderGUID, out guid);
+            userRegisterModel.ApplicationAuthenticationProviderGUID = guid;
+            appAuthProvValidModel = await securityService.ValidateApplicationAuthenticationProviderGuid(guid.ToString());
+            if (appAuthProvValidModel != null && appAuthProvValidModel.Id != 0)
+            {
+                _GuidIsValid = true;
+                _RegistrationEnabled = appAuthProvValidModel.RegistrationEnabled;
+                if (appAuthProvValidModel.AuthenticationProviderType == "Active Directory")
+                {
+                    _EmailLabel = "Username";
+                }
+            }
+        }
+        else
+        {
+            _GuidIsValid = true;
+        }
+
+        _IsLoaded = true;
+    }
 
     private async Task SubmitAsync()
     {
         _LoginButtonDisabled = true;
-
-        if (ApplicationAuthenticationProviderGUID != null)
-            userRegisterModel.ApplicationAuthenticationProviderGUID = Guid.Parse(ApplicationAuthenticationProviderGUID);
 
         var result = await securityService.RegisterAsync(userRegisterModel);
 
@@ -35,8 +64,10 @@ public partial class Register
 
     private void GoBackToLogin()
     {
-        //todo : GoBackToLogin doesn't go back to login with auth prov id
-        _navigationManager.NavigateTo("/Login");
+        if (ApplicationAuthenticationProviderGUID != null)
+            _navigationManager.NavigateTo($"/Login/{ApplicationAuthenticationProviderGUID}");
+        else
+            _navigationManager.NavigateTo("/Login");
     }
 
     void TogglePasswordVisibility()
