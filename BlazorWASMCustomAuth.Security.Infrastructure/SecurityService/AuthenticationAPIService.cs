@@ -1,15 +1,12 @@
-﻿using AutoMapper.Internal;
-using BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.ActionDtos;
 using DsK.Services.Email;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
 using System.IdentityModel.Tokens.Jwt;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -77,6 +74,29 @@ public partial class SecurityService
     }
     public async Task<bool> Register(RegisterRequestDto model, string origin)
     {
+        //todo : check if this works
+        CheckApplicationAuthenticationProviderGuid(model);
+
+        var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
+
+        var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
+
+        if ((bool)applicationAuthenticationProvider.RegistrationEnabled || applicationAuthenticationProvider.ActiveDirectoryFirstLoginAutoRegister)
+        {
+            user = await CreateUser(model, applicationAuthenticationProvider, user);
+            await CreateApplicationUser(applicationAuthenticationProvider, user);
+            await AddDefaultRoleToUser(applicationAuthenticationProvider, user);
+            await AddApplicationAuthenticationProviderUserMapping(model, applicationAuthenticationProvider, user);
+            await SendRegistrationEmail(origin, applicationAuthenticationProvider, user).ConfigureAwait(false);
+
+            if (user.Id != 0 && !user.EmailConfirmed)
+                return true;
+        }
+
+        return false;
+    }
+    private static void CheckApplicationAuthenticationProviderGuid(RegisterRequestDto model)
+    {
         if (model.ApplicationAuthenticationProviderGUID.ToString() != "00000000-0000-0000-0000-000000000000")
         {
             RegisterRequestDto newAppUser = new RegisterRequestDto()
@@ -88,105 +108,115 @@ public partial class SecurityService
                 Password = model.Password,
             };
         }
-        var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
-
-        var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
-
-        if ((bool)applicationAuthenticationProvider.RegistrationEnabled || applicationAuthenticationProvider.ActiveDirectoryFirstLoginAutoRegister)
+    }
+    private async Task SendRegistrationEmail(string origin, ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
+    {
+        if (user.Id != 0 && !user.EmailConfirmed)
         {
-            if (user == null)
+            //send email
+            if (!applicationAuthenticationProvider.RegistrationAutoEmailConfirm)
             {
-                var ramdomSalt = SecurityHelpers.RandomizeSalt;
-                if (model.Password == null)
-                    model.Password = Convert.ToHexString(ramdomSalt);
-
-                user = new User()
+                var verificationUri = $"{origin}/EmailConfirm/{user.Salt}";
+                var mailRequest = new MailRequest
                 {
-                    Email = model.Email,
-                    Name = model.Name,
-                    EmailConfirmed = applicationAuthenticationProvider.RegistrationAutoEmailConfirm,
-                    AccessFailedCount = 0,
-                    LockoutEnabled = false,
-                    HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt),
-                    Salt = Convert.ToHexString(ramdomSalt),
-                    AccountCreatedDateTime = DateTime.Now,
-                    LastPasswordChangeDateTime = DateTime.Now
+                    From = "noreply@dsk.com",
+                    To = user.Email,
+                    Body = $"Please confirm your account by <a href='{verificationUri}'>clicking here</a>.",
+                    Subject = "Confirm Registration"
                 };
-
-                db.Users.Add(user);
-            }
-
-            await db.SaveChangesAsync();
-
-            if (user.Id != 0)
-            {
-                var applicationUser = await db.ApplicationUsers.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
-                if (applicationUser == null)
-                {
-                    applicationUser = new ApplicationUser()
-                    {
-                        UserId = user.Id,
-                        ApplicationId = applicationAuthenticationProvider.ApplicationId
-                    };
-
-                    db.ApplicationUsers.Add(applicationUser);
-                    await db.SaveChangesAsync();
-                }
-
-                if (applicationAuthenticationProvider.DefaultApplicationRoleId != null)
-                {
-                    var userRoles = await db.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
-                    if (userRoles == null)
-                    {
-                        var userRole = new UserRole()
-                        {
-                            RoleId = (int)applicationAuthenticationProvider.DefaultApplicationRoleId,
-                            UserId = user.Id,
-                        };
-
-                        db.UserRoles.Add(userRole);
-                        await db.SaveChangesAsync();
-                    }
-                }
-
-                var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
-                if (applicationAuthenticationProviderUserMapping == null)
-                {
-                    var username = user.Email;
-                    if (applicationAuthenticationProvider.AuthenticationProviderType == "Active Directory")
-                        username = model.ADUsername;
-
-                    applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
-                    {
-                        UserId = user.Id,
-                        ApplicationAuthenticationProviderId = applicationAuthenticationProvider.Id,
-                        Username = username
-                    };
-
-                    db.ApplicationAuthenticationProviderUserMappings.Add(applicationAuthenticationProviderUserMapping);
-
-                    await db.SaveChangesAsync();
-                }
-
-                //send email
-                if (!applicationAuthenticationProvider.RegistrationAutoEmailConfirm)
-                {
-                    var verificationUri = $"{origin}/EmailConfirm/{user.Salt}";
-                    var mailRequest = new MailRequest
-                    {
-                        From = "noreply@dsk.com",
-                        To = user.Email,
-                        Body = $"Please confirm your account by <a href='{verificationUri}'>clicking here</a>.",
-                        Subject = "Confirm Registration"
-                    };
-                    await _mailService.SendAsync(mailRequest).ConfigureAwait(false);
-                }
-                return true;
-
+                await _mailService.SendAsync(mailRequest).ConfigureAwait(false);
             }
         }
+    }
+    private async Task AddApplicationAuthenticationProviderUserMapping(RegisterRequestDto model, ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
+    {
+        if (user.Id != 0)
+        {
+            var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+            if (applicationAuthenticationProviderUserMapping == null)
+            {
+                var username = user.Email;
+                if (applicationAuthenticationProvider.AuthenticationProviderType == "Active Directory")
+                    username = model.ADUsername;
 
-        return false;
+                applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
+                {
+                    UserId = user.Id,
+                    ApplicationAuthenticationProviderId = applicationAuthenticationProvider.Id,
+                    Username = username
+                };
+
+                db.ApplicationAuthenticationProviderUserMappings.Add(applicationAuthenticationProviderUserMapping);
+
+                await db.SaveChangesAsync();
+            }
+        }
+    }
+    private async Task AddDefaultRoleToUser(ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
+    {
+        if (user.Id != 0)
+        {
+            if (applicationAuthenticationProvider.DefaultApplicationRoleId != null)
+            {
+                var userRoles = await db.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+                if (userRoles == null)
+                {
+                    var userRole = new UserRole()
+                    {
+                        RoleId = (int)applicationAuthenticationProvider.DefaultApplicationRoleId,
+                        UserId = user.Id,
+                    };
+
+                    db.UserRoles.Add(userRole);
+                    await db.SaveChangesAsync();
+                }
+            }
+        }
+    }
+    private async Task CreateApplicationUser(ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
+    {
+        if (user.Id != 0)
+        {
+            var applicationUser = await db.ApplicationUsers.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+            if (applicationUser == null)
+            {
+                applicationUser = new ApplicationUser()
+                {
+                    UserId = user.Id,
+                    ApplicationId = applicationAuthenticationProvider.ApplicationId
+                };
+
+                db.ApplicationUsers.Add(applicationUser);
+                await db.SaveChangesAsync();
+            }
+        }
+    }
+    private async Task<User?> CreateUser(RegisterRequestDto model, ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
+    {
+        if (user == null)
+        {
+            var ramdomSalt = SecurityHelpers.RandomizeSalt;
+            if (model.Password == null)
+                model.Password = Convert.ToHexString(ramdomSalt);
+
+            user = new User()
+            {
+                Email = model.Email,
+                Name = model.Name,
+                EmailConfirmed = applicationAuthenticationProvider.RegistrationAutoEmailConfirm,
+                AccessFailedCount = 0,
+                LockoutEnabled = false,
+                HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt),
+                Salt = Convert.ToHexString(ramdomSalt),
+                AccountCreatedDateTime = DateTime.Now,
+                LastPasswordChangeDateTime = DateTime.Now
+            };
+
+            db.Users.Add(user);
+        }
+
+        await db.SaveChangesAsync();
+        return user;
     }
     public async Task<bool> PasswordChangeRequest(PasswordChangeRequestDto model, string origin)
     {
@@ -212,7 +242,6 @@ public partial class SecurityService
 
         return false;
     }
-
     public async Task<bool> PasswordChange(PasswordChangeDto model)
     {
         var user = db.Users.Where(x => x.PasswordChangeGuid == model.PasswordChangeGuid).FirstOrDefault();
@@ -232,7 +261,6 @@ public partial class SecurityService
         //todo: send email
         return false;
     }
-
     public async Task<bool> EmailConfirmCode(EmailConfirmCodeDto model)
     {
         var user = db.Users.Where(x => x.Salt == model.EmailConfirmCode).FirstOrDefault();
@@ -246,7 +274,6 @@ public partial class SecurityService
         //todo: send email
         return false;
     }
-
     public async Task<APIResult<ApplicationAuthenticationProviderUserTokenDto>> RefreshToken(TokenModel model)
     {
         APIResult<ApplicationAuthenticationProviderUserTokenDto> result = new APIResult<ApplicationAuthenticationProviderUserTokenDto>();

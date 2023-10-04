@@ -1,9 +1,11 @@
 --in progress--
+register - creates appuser in authapp when registering in testapp
 
 --pipeline--
-test register if other app create appuser of main app
+test register if testapp creates appuser existing authapp
 usercreate password field required
 application user details does nothing
+user create requires password
 log page
 application auth provider - test active directory before adding
 login - when doing login from test app, generate and store local token first and the redirect to test app
