@@ -117,35 +117,35 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             return result;
         }
-        public async Task<APIResult<string>> ApplicationDelete(int id)
-        {
-            APIResult<string> result = new APIResult<string>();
+        //public async Task<APIResult<string>> ApplicationDelete(int id)
+        //{
+        //    APIResult<string> result = new APIResult<string>();
 
-            int recordsDeleted = 0;
+        //    int recordsDeleted = 0;
 
-            if (id == 1)
-            {
-                result.HasError = true;
-                result.Message = "Error: Can't delete this application";
-                return result;
-            }
+        //    if (id == 1)
+        //    {
+        //        result.HasError = true;
+        //        result.Message = "Error: Can't delete this application";
+        //        return result;
+        //    }
 
-            var record = await db.Applications.FirstOrDefaultAsync(x => x.Id == id);
-            try
-            {
-                db.Remove(record);
-                recordsDeleted = await db.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.Message;
-            }
+        //    var record = await db.Applications.FirstOrDefaultAsync(x => x.Id == id);
+        //    try
+        //    {
+        //        db.Remove(record);
+        //        recordsDeleted = await db.SaveChangesAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.HasError = true;
+        //        result.Message = ex.Message;
+        //    }
 
-            result.Result = recordsDeleted.ToString();
+        //    result.Result = recordsDeleted.ToString();
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public async Task<APIResult<string>> ApplicationGenerateNewAPIKey(int id)
         {

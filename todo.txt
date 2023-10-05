@@ -5,6 +5,8 @@ Create User Application section in user view edit
 Add user to application User Application section
 user view edit - show only roles of applications added to the user
 user view edit - show only permissions of applications added to the user
+remove deletes from app, only disables
+hide disabled with option to show
 Rename project to DsK.AuthServer
 document changes made in testapp
 test whole application

@@ -68,34 +68,34 @@ public partial class Applications
         _navigationManager.NavigateTo($"/ApplicationViewEdit/{id}");
     }
 
-    private async Task DeleteApplication(ApplicationDto context)
-    {
-        var parameters = new DialogParameters();
-        parameters.Add("ContentText", "Are you sure you want to delete this application?");
-        parameters.Add("ButtonText", "Yes");
-        var dialogresult = DialogService.Show<GenericDialog>("Delete Application", parameters);
-        var dialogResult = await dialogresult.Result;
-        if (!dialogResult.Canceled && bool.TryParse(dialogResult.Data.ToString(), out bool resultbool))
-        {
-            var result = await securityService.ApplicationDeleteAsync(context.Id);
+    //private async Task DeleteApplication(ApplicationDto context)
+    //{
+    //    var parameters = new DialogParameters();
+    //    parameters.Add("ContentText", "Are you sure you want to delete this application?");
+    //    parameters.Add("ButtonText", "Yes");
+    //    var dialogresult = DialogService.Show<GenericDialog>("Delete Application", parameters);
+    //    var dialogResult = await dialogresult.Result;
+    //    if (!dialogResult.Canceled && bool.TryParse(dialogResult.Data.ToString(), out bool resultbool))
+    //    {
+    //        var result = await securityService.ApplicationDeleteAsync(context.Id);
 
-            if (result != null)
-                if (result.HasError)
-                    Snackbar.Add(result.Message, Severity.Error);
-                else
-                {
-                    Snackbar.Add(result.Message, Severity.Success);
-                    await _table.ReloadServerData();
-                }
+    //        if (result != null)
+    //            if (result.HasError)
+    //                Snackbar.Add(result.Message, Severity.Error);
+    //            else
+    //            {
+    //                Snackbar.Add(result.Message, Severity.Success);
+    //                await _table.ReloadServerData();
+    //            }
 
-            else
-                Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
-        }
-        else
-        {
-            Snackbar.Add("Operation Canceled", Severity.Warning);
-        }
-    }
+    //        else
+    //            Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
+    //    }
+    //    else
+    //    {
+    //        Snackbar.Add("Operation Canceled", Severity.Warning);
+    //    }
+    //}
     private async Task DisableEnableApplication(ApplicationDto context)
     {
         string DisableEnabledHeader = "";

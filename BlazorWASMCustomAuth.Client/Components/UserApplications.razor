@@ -1,0 +1,19 @@
+﻿<MudTable Items="@model" Hover="true">
+    <HeaderContent>
+        <MudTh>Disabled/Enabled</MudTh>
+        <MudTh>Application Name</MudTh>
+        <MudTh>Role Name</MudTh>
+        <MudTh>Role Description</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="RoleSwitch">
+            <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.Enable" @oninput="(e)=>ToggleRoleSwitch(e,context.Id)" />
+        </MudTd>
+        <MudTd DataLabel="ApplicationName">@context.ApplicationName</MudTd>
+        <MudTd DataLabel="RoleName">@context.RoleName</MudTd>
+        <MudTd DataLabel="RoleDescription">@context.RoleDescription</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>

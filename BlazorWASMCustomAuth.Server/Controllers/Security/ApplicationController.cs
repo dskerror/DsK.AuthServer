@@ -17,7 +17,7 @@ public class ApplicationController : ControllerBase
 
     [HttpPost]        
     [Authorize(Roles = $"{Access.Admin}, {Access.Application.Create}")]
-    public async Task<IActionResult> ApplicationCreate(ApplicationCreateDto model)
+    public async Task<IActionResult> Create(ApplicationCreateDto model)
     {
         var result = await SecurityService.ApplicationCreate(model);
         return Ok(result);
@@ -41,7 +41,7 @@ public class ApplicationController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.Application.View}")]
-    public async Task<IActionResult> ApplicationGet(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+    public async Task<IActionResult> Get(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
     {
         var result = await SecurityService.ApplicationGet(id, pageNumber, pageSize, searchString, orderBy);
         return Ok(result);
@@ -49,18 +49,18 @@ public class ApplicationController : ControllerBase
 
     [HttpPut]
     [Authorize(Roles = $"{Access.Admin}, {Access.Application.Edit}")]
-    public async Task<IActionResult> ApplicationUpdate(ApplicationUpdateDto model)
+    public async Task<IActionResult> Update(ApplicationUpdateDto model)
     {
         var result = await SecurityService.ApplicationUpdate(model);
         return Ok(result);
     }
 
-    [HttpDelete]
-    [Authorize(Roles = $"{Access.Admin}, {Access.Application.Delete}")]
-    public async Task<IActionResult> ApplicationDelete(int id)
-    {
-        var result = await SecurityService.ApplicationDelete(id);
-        return Ok(result);
-    }
+    //[HttpDelete]
+    //[Authorize(Roles = $"{Access.Admin}, {Access.Application.Delete}")]
+    //public async Task<IActionResult> Delete(int id)
+    //{
+    //    var result = await SecurityService.ApplicationDelete(id);
+    //    return Ok(result);
+    //}
 }
 
