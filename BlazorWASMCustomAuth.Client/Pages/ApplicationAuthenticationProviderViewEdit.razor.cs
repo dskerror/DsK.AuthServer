@@ -57,7 +57,7 @@ public partial class ApplicationAuthenticationProviderViewEdit
     {
         var result = await securityService.ApplicationAuthenticationProviderGetAsync(ApplicationAuthenticationProviderId);
         if (result != null)
-        { 
+        {
             model = result.Result;
             DefaultApplicationRoleIdValue = model.DefaultApplicationRoleId == null ? 0 : (int)model.DefaultApplicationRoleId;
         }
@@ -72,7 +72,7 @@ public partial class ApplicationAuthenticationProviderViewEdit
         if (response != null)
         {
             roleList = response.Result;
-            roleList.Insert(0, NONERole);            
+            roleList.Insert(0, NONERole);
         }
         else
         {
@@ -102,5 +102,15 @@ public partial class ApplicationAuthenticationProviderViewEdit
     {
         Snackbar.Add("Edit canceled", Severity.Warning);
         await LoadData();
+    }
+
+    private async Task ValidateConnection()
+    {
+        var IsValid = await securityService.ValidateDomainConnectionAsync(model.Domain, model.Username, model.Password);
+
+        if (IsValid)
+            Snackbar.Add("Connection is valid.", Severity.Success);
+        else
+            Snackbar.Add("Connection is not valid.", Severity.Error);
     }
 }

@@ -25,6 +25,25 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationAuthenticationProviderDto>>();
         return result;
     }
+
+    public async Task<bool> ValidateDomainConnectionAsync(string domain, string username, string password)
+    {
+        await PrepareBearerToken();
+
+        var model = new ApplicationAuthenticationProviderValidateDomainConnectionDto()
+        {
+            Domain = domain,
+            Username = username,
+            Password = password
+        };
+
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationAuthenticationProvidersEndpoints.ValidateDomainConnection, model);
+        if (!response.IsSuccessStatusCode)
+            return false;
+
+        var result = await response.Content.ReadFromJsonAsync<bool>();
+        return result;
+    }
     public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGetAsync(ApplicationPagedRequest request)
     {
         await PrepareBearerToken();

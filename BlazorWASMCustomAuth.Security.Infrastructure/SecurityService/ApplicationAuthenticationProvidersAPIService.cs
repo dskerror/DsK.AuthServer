@@ -18,7 +18,7 @@ public partial class SecurityService
 
         record.ApplicationAuthenticationProviderGuid = Guid.NewGuid();
         string key = $"{record.Id.ToString()} {record.Name}";
-        record.Password = await Encryption.EncryptAsync(record.Password, key);
+        record.Password = Encryption.AesOperation.EncryptString(key, record.Password);
 
         db.ApplicationAuthenticationProviders.Add(record);
 
@@ -104,7 +104,7 @@ public partial class SecurityService
             applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).Include(x => x.Application).FirstOrDefaultAsync();
 
         string key = $"{applicationAuthenticationProvider.Id.ToString()} {applicationAuthenticationProvider.Name}";
-        applicationAuthenticationProvider.Password = DsK.Services.Encryption.DecryptAsync(applicationAuthenticationProvider.Password, key)
+        applicationAuthenticationProvider.Password = Encryption.AesOperation.DecryptString(key, applicationAuthenticationProvider.Password);
 
         return applicationAuthenticationProvider;
     }
@@ -117,6 +117,9 @@ public partial class SecurityService
 
         if (record != null)
             Mapper.Map(model, record);
+
+        string key = $"{record.Id.ToString()} {record.Name}";
+        record.Password = Encryption.AesOperation.EncryptString(key, record.Password);
 
         try
         {

@@ -42,6 +42,8 @@ else
                     <MudTextField Disabled="!_AccessEdit" Label="Password" @bind-Value="model.Password"
                                   For="@(()=>model.Password)" InputType="InputType.Password">
                     </MudTextField>
+
+                    <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="ValidateConnection" Class="mb-2">Validate Connection</MudButton>
                 }
 
                 <br />

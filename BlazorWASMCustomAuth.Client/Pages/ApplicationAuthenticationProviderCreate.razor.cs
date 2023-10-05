@@ -50,4 +50,14 @@ public partial class ApplicationAuthenticationProviderCreate
             Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
 
     }
+
+    private async Task ValidateConnection()
+    {
+        var IsValid = await securityService.ValidateDomainConnectionAsync(model.Domain, model.Username, model.Password);
+
+        if (IsValid)
+            Snackbar.Add("Connection is valid.", Severity.Success);
+        else
+            Snackbar.Add("Connection is not valid.", Severity.Error);
+    }
 }

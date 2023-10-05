@@ -61,5 +61,14 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
         var result = await SecurityService.ApplicationAuthenticationProviderDisableEnabled(id);
         return Ok(result);
     }
+
+
+    [HttpPost("ValidateDomainConnection")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.Edit}")]    
+    public async Task<IActionResult> ValidateDomainConnection(ApplicationAuthenticationProviderValidateDomainConnectionDto model)
+    {
+        var IsValid = await SecurityService.ValidateDomainConnection(model);
+        return Ok(IsValid);
+    }
 }
 

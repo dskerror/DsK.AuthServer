@@ -1,23 +1,23 @@
 --in progress--
-
+Create User Application section in user view edit
 --pipeline--
-encrypt domain password
-User View/Edit change password
-fix "Sorry, there's nothing at this address." message when login to AuthApp
-application user details does nothing
-log page
-application auth provider - test active directory before adding
-add option to require two factor
-link to my profile from the Test App
+
+Add user to application User Application section
+user view edit - show only roles of applications added to the user
+user view edit - show only permissions of applications added to the user
 Rename project to DsK.AuthServer
 document changes made in testapp
 test whole application
+test RefreshToken
 
-
-smtpproviders
-	https://www.emailvendorselection.com/free-smtp-servers/#1_Brevo
 
 --future--
+add option to require two factor
 customize login page depending on the app
 email confirmation flag may be better at the ApplicationUsers level because that way one may require validation for each registration
+logout - delete RefreshToken on ApplicationAuthenticationProviderUserTokens table
+ApplicationAuthenticationProviderUserTokens cleanup
+log page
 
+--other--
+	smtpproviders - https://www.emailvendorselection.com/free-smtp-servers/#1_Brevo

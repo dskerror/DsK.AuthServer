@@ -1,8 +1,10 @@
 ﻿using BlazorWASMCustomAuth.Security.EntityFramework.Models;
 using BlazorWASMCustomAuth.Security.Shared;
 using BlazorWASMCustomAuth.Security.Shared.ActionDtos;
+using DsK.Services;
 using DsK.Services.Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
@@ -30,7 +32,7 @@ public partial class SecurityService
     }
     public async Task<APIResult<LoginResponseDto>> Login(LoginRequestDto model)
     {
-        APIResult<LoginResponseDto> apiResult = new APIResult<LoginResponseDto>() { HasError = false };
+        APIResult<LoginResponseDto> apiResult = new APIResult<LoginResponseDto>();
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
         if (applicationAuthenticationProvider.ApplicationAuthenticationProviderDisabled)
@@ -572,15 +574,48 @@ public partial class SecurityService
     }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
-    private bool AuthenticateUserWithDomain(string username, string password, ApplicationAuthenticationProvider ApplicationAuthenticationProvider)
+    private bool AuthenticateUserWithDomain(string username, string password, ApplicationAuthenticationProvider applicationAuthenticationProvider)
     {
-        //todo : encrypt Authentication Provider password 
-        using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, ApplicationAuthenticationProvider.Domain, ApplicationAuthenticationProvider.Username, ApplicationAuthenticationProvider.Password))
+        bool isValid = false;
+        try
         {
-            // validate the credentials
-            bool isValid = pc.ValidateCredentials(username, password);
-            return isValid;
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain,
+                                applicationAuthenticationProvider.Domain,
+                                applicationAuthenticationProvider.Username,
+                                applicationAuthenticationProvider.Password))
+                isValid = pc.ValidateCredentials(username, password);
         }
+        catch (Exception ex)
+        {
+
+        }
+
+        return isValid;
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
+    public async Task<bool> ValidateDomainConnection(ApplicationAuthenticationProviderValidateDomainConnectionDto model)
+    {
+        bool isValid = false;
+        try
+        {
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain,
+                                model.Domain,
+                                model.Username,
+                                model.Password))
+            {
+
+            }
+
+            isValid = true;
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return isValid;
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
