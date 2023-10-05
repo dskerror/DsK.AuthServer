@@ -3,6 +3,7 @@ using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
+using DsK.Services;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
@@ -16,8 +17,9 @@ public partial class SecurityService
         Mapper.Map(model, record);
 
         record.ApplicationAuthenticationProviderGuid = Guid.NewGuid();
-        //record.Password = DsK.Services.E
-        
+        string key = $"{record.Id.ToString()} {record.Name}";
+        record.Password = await Encryption.EncryptAsync(record.Password, key);
+
         db.ApplicationAuthenticationProviders.Add(record);
 
         try
@@ -94,16 +96,17 @@ public partial class SecurityService
     }
     public async Task<ApplicationAuthenticationProvider> ApplicationAuthenticationProviderGet(Guid ApplicationAuthenticationProviderGUID)
     {
+        ApplicationAuthenticationProvider applicationAuthenticationProvider;
+
         if (ApplicationAuthenticationProviderGUID == Guid.Empty)
-        {
-            var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == 1).Include(x => x.Application).FirstOrDefaultAsync();
-            return applicationAuthenticationProvider;
-        }
+            applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.Id == 1).Include(x => x.Application).FirstOrDefaultAsync();
         else
-        {
-            var applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).Include(x => x.Application).FirstOrDefaultAsync();
-            return applicationAuthenticationProvider;
-        }
+            applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).Include(x => x.Application).FirstOrDefaultAsync();
+
+        string key = $"{applicationAuthenticationProvider.Id.ToString()} {applicationAuthenticationProvider.Name}";
+        applicationAuthenticationProvider.Password = DsK.Services.Encryption.DecryptAsync(applicationAuthenticationProvider.Password, key)
+
+        return applicationAuthenticationProvider;
     }
     public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderDto model)
     {

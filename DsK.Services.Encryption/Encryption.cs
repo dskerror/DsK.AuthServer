@@ -2,15 +2,15 @@
 using System.Text;
 
 namespace DsK.Services;
-public class Encryption
+public static class Encryption
 {
-    private byte[] IV =
+    private static byte[] IV =
     {
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
         0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
     };
 
-    public async Task<string> EncryptAsync(string clearText, string passphrase)
+    public static async Task<string> EncryptAsync(string clearText, string passphrase)
     {
         using Aes aes = Aes.Create();
         aes.Key = DeriveKeyFromPassword(passphrase);
@@ -22,8 +22,9 @@ public class Encryption
         return output.ToArray().ToString();
     }
 
-    public async Task<string> DecryptAsync(byte[] encrypted, string passphrase)
+    public static async Task<string> DecryptAsync(string encrypted, string passphrase)
     {
+        byte[] encryptedBytes = encrypted.ToArray();
         using Aes aes = Aes.Create();
         aes.Key = DeriveKeyFromPassword(passphrase);
         aes.IV = IV;
@@ -34,7 +35,7 @@ public class Encryption
         return Encoding.Unicode.GetString(output.ToArray());
     }
 
-    private byte[] DeriveKeyFromPassword(string password)
+    private static byte[] DeriveKeyFromPassword(string password)
     {
         var emptySalt = Array.Empty<byte>();
         var iterations = 1000;
