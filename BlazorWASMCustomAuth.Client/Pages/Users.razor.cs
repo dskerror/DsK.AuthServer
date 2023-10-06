@@ -64,11 +64,11 @@ public partial class Users
 
     private void ViewUser(int id)
     {
-        _navigationManager.NavigateTo($"/userviewedit/{id}");
+        _navigationManager.NavigateTo($"/UserViewEdit/{id}");
     }
 
     private void CreateUser()
     {
-        _navigationManager.NavigateTo("/usercreate");
+        _navigationManager.NavigateTo("/UserCreate");
     }
 }

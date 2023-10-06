@@ -1,19 +1,35 @@
-﻿<MudTable Items="@model" Hover="true">
+﻿@if (!_loaded)
+{
+    <h3>Loading...</h3>
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+}
+
+
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationUserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
     <HeaderContent>
-        <MudTh>Disabled/Enabled</MudTh>
-        <MudTh>Application Name</MudTh>
-        <MudTh>Role Name</MudTh>
-        <MudTh>Role Description</MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationUserDto" SortLabel="ApplicationName">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ApplicationUserDto" SortLabel="ApplicationDesc">Description</MudTableSortLabel></MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="RoleSwitch">
-            <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.Enable" @oninput="(e)=>ToggleRoleSwitch(e,context.Id)" />
+@*         <MudTd DataLabel="ApplicationSwitch">
+            <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.En" @oninput="(e)=>ToggleApplicationSwitch(e,context.Id)" />
         </MudTd>
-        <MudTd DataLabel="ApplicationName">@context.ApplicationName</MudTd>
-        <MudTd DataLabel="RoleName">@context.RoleName</MudTd>
-        <MudTd DataLabel="RoleDescription">@context.RoleDescription</MudTd>
+ *@
+        <MudTd DataLabel="ApplicationName">
+            <MudHighlighter Text="@context.Application.ApplicationName" HighlightedText="@_searchString" />
+        </MudTd>
+        <MudTd DataLabel="ApplicationDesc">
+            <MudHighlighter Text="@context.Application.ApplicationDesc" HighlightedText="@_searchString" />
+        </MudTd>
+
+        
     </RowTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
     </PagerContent>
 </MudTable>

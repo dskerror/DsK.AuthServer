@@ -36,6 +36,12 @@ else
     <MudDivider />
 
     <MudExpansionPanels>
+        @if(_AccessUserRolesView)
+        {
+            <MudExpansionPanel Text="User Roles">
+                <UserApplications UserId="@id"  />
+            </MudExpansionPanel>
+        }
         @if (_AccessUserRolesView)
         {
             <MudExpansionPanel Text="User Roles">
