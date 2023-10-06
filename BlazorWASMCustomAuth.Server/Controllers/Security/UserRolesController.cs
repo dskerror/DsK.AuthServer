@@ -18,9 +18,6 @@ public class UserRolesController : ControllerBase
     [Authorize(Roles = $"{Access.Admin}, {Access.UserRoles.View}")]
     public async Task<IActionResult> UserRolesGet(int userId = 0)
     {
-        if (userId == 0)
-            return BadRequest();
-
         var result = await SecurityService.UserRolesGet(userId);
         return Ok(result);
     }

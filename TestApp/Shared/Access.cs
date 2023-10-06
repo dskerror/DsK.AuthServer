@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace TestApp.Client.Services;
+namespace TestApp.Shared;
 public static class Access
 {
     public const string Admin = "Admin";
@@ -10,14 +10,14 @@ public static class Access
     [Description("Counter Permissions")]
     public static class CounterPage
     {
-        public const string CounterFunction = "Counter";        
+        public const string CounterFunction = "TestApp.Counter";        
     }
 
     [DisplayName("Fetch Data")]
     [Description("Fetch Data Permissions")]
     public static class FetchDataPage
     {
-        public const string FetchDataFunction = "FetchData";
+        public const string FetchDataFunction = "TestApp.FetchData";
     }
 
     /// <summary>

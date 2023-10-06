@@ -24,6 +24,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<MyProfileUpdateDto, User>().ReverseMap();
         CreateMap<UserCreateDto, UserRegisterDto>().ReverseMap();
         CreateMap<UserRoleChangeDto, UserRole>().ReverseMap();
+        CreateMap<ApplicationUserChangeDto, ApplicationUser>().ReverseMap();
 
         //.ForMember(dest => dest.ConfirmEmail,
         //           opt => opt.MapFrom(src => src.Email));
@@ -32,7 +33,8 @@ public class AutoMapperProfiles : Profile
         //CreateMap<User, User>().ReverseMap().ForMember(dest => dest.Username, act => act.Ignore());
 
         //ModelDtos
-        CreateMap<ApplicationUserDto, ApplicationUser>().ReverseMap();
+        CreateMap<ApplicationUserDto, ApplicationUser>().ReverseMap()
+            .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
         CreateMap<ApplicationDto, Application>().ReverseMap();
         CreateMap<ApplicationAuthenticationProviderDto, ApplicationAuthenticationProvider>().ReverseMap();
         CreateMap<ApplicationPermissionDto, ApplicationPermission>().ReverseMap();
@@ -44,8 +46,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<UserLogDto, UserLog>().ReverseMap();
         CreateMap<UserPermissionDto, UserPermission>().ReverseMap();
         CreateMap<UserRoleDto, UserRole>().ReverseMap();
-        CreateMap<UserRoleGridDto, ApplicationRole>().ReverseMap();
-        CreateMap<UserPermissionGridDto, ApplicationPermission>().ReverseMap();
+        //CreateMap<UserRoleGridDto, ApplicationRole>().ReverseMap();
+        //CreateMap<UserPermissionGridDto, ApplicationPermission>().ReverseMap();
 
         CreateMap<ApplicationAuthenticationProviderUserTokenDto, ApplicationAuthenticationProviderUserToken>().ReverseMap();
     }

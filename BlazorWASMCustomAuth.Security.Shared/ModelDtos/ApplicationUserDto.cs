@@ -16,6 +16,8 @@ public partial class ApplicationUserDto
 
     public bool TwoFactorEnabled { get; set; }
 
+    public bool UserEnabled { get; set; }
+
     public virtual ApplicationDto Application { get; set; } = null!;
 
     public virtual UserDto User { get; set; } = null!;

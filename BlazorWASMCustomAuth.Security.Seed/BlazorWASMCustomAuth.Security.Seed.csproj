@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlazorWASMCustomAuth.Security.Infrastructure\BlazorWASMCustomAuth.Security.Infrastructure.csproj" />
+    <ProjectReference Include="..\TestApp\Shared\TestApp.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

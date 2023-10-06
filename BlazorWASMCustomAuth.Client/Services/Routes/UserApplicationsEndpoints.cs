@@ -2,9 +2,9 @@
 {
     public static class UserApplicationsEndpoints
     {
-        public static string Get(int id, int pageNumber, int pageSize, string searchString, string orderBy)
+        public static string Get(int userid)
         {
-            var url = $"api/UserApplications?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy={orderBy}";
+            var url = $"api/UserApplications?userId={userid}";
             return url;
         }
 

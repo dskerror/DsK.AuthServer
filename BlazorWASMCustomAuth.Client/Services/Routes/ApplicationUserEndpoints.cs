@@ -3,16 +3,9 @@
 namespace BlazorWASMCustomAuth.Client.Services.Routes;
 public static class ApplicationUserEndpoints
 {
-    public static string Get(ApplicationPagedRequest request)
+    public static string Get(int applicationId)
     {
-        var url = $"api/ApplicationUsers?Id={request.Id}&" +
-            $"pageNumber={request.PageNumber}&" + 
-            $"pageSize={request.PageSize}&" +
-            $"searchString={request.SearchString}&" +
-            $"orderBy={request.Orderby}";
+        var url = $"api/ApplicationUsers?ApplicationId={applicationId}";
         return url;
     }
-
-    public static string Post = "api/ApplicationUsers";
-    public static string Put = "api/ApplicationUsers";
 }

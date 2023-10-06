@@ -16,10 +16,18 @@ public class UserApplicationsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationUsers.View}")]
-    public async Task<IActionResult> Get(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+    [Authorize(Roles = $"{Access.Admin}, {Access.UserApplications.View}")]
+    public async Task<IActionResult> Get(int userId = 0)
     {
-        var result = await SecurityService.UserApplicationsGet(id, pageNumber, pageSize, searchString, orderBy);
+        var result = await SecurityService.UserApplicationsGet(userId);
+        return Ok(result);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = $"{Access.Admin}, {Access.UserApplications.Edit}, {Access.ApplicationUsers.Edit}")]
+    public async Task<IActionResult> UserApplicationChange(ApplicationUserChangeDto model)
+    {
+        var result = await SecurityService.UserApplicationChange(model);
         return Ok(result);
     }
 }

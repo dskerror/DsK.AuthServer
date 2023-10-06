@@ -4,58 +4,91 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
 
-namespace BlazorWASMCustomAuth.Security.Infrastructure
+namespace BlazorWASMCustomAuth.Security.Infrastructure;
+
+public partial class SecurityService
 {
-    public partial class SecurityService
-    {       
-        public async Task<APIResult<List<ApplicationUserDto>>> UserApplicationsGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
+    public async Task<APIResult<List<UserApplicationGridDto>>> UserApplicationsGet(int userId)
+    {
+        APIResult<List<UserApplicationGridDto>> result = new APIResult<List<UserApplicationGridDto>>();
+
+        var applications = await db.Applications.ToListAsync();
+
+        var userApplications = await (from au in db.ApplicationUsers
+                               join a in db.Applications on au.ApplicationId equals a.Id
+                               where au.UserId == userId
+                               select new { a.ApplicationName, au.UserId, au.ApplicationId }).ToListAsync();
+
+        List<UserApplicationGridDto> userApplicationGridDto = new List<UserApplicationGridDto>();
+
+        foreach (var application in applications)
         {
-            var result = new APIResult<List<ApplicationUserDto>>();
+            var value = new UserApplicationGridDto()
+            {   
+                ApplicationName = application.ApplicationName,
+                ApplicationId = application.Id,
+                UserId = userId,                
+            };
 
-            string ordering = "Id";
-            if (!string.IsNullOrWhiteSpace(orderBy))
-            {
-                string[] OrderBy = orderBy.Split(',');
-                ordering = string.Join(",", OrderBy);
-            }
-            result.Paging.CurrentPage = pageNumber;
-            pageNumber = pageNumber == 0 ? 1 : pageNumber;
-            pageSize = pageSize == 0 ? 10 : pageSize;
-            int count = 0;
-            List<ApplicationUser> items;
-            if (!string.IsNullOrWhiteSpace(searchString))
-            {
-                count = await db.ApplicationUsers
-                    .Include(x => x.Application)
-                    .Where(m => m.Id == id && m.Application.ApplicationName.Contains(searchString) || m.Application.ApplicationDesc.Contains(searchString))
-                    .CountAsync();
+            var lookupInuserApplications = userApplications.Where(x => x.UserId == userId && x.ApplicationId == application.Id).FirstOrDefault();
+            if (lookupInuserApplications != null) { value.UserEnabled = true; }
 
-                items = await db.ApplicationUsers
-                    .Include(x => x.Application)
-                    .OrderBy(ordering)                    
-                    .Where(m => m.Id == id && m.Application.ApplicationName.Contains(searchString) || m.Application.ApplicationDesc.Contains(searchString))
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
-            }
-            else
-            {
-                count = await db.ApplicationUsers
-                    .Include(x => x.Application)
-                    .Where(m => m.Id == id && m.Application.ApplicationName.Contains(searchString) || m.Application.ApplicationDesc.Contains(searchString))
-                    .CountAsync();
+            userApplicationGridDto.Add(value);
+        }
 
-                items = await db.ApplicationUsers
-                    .Include(x => x.Application)
-                    .OrderBy(ordering)
-                    .Where(m => m.Id == id && m.Application.ApplicationName.Contains(searchString) || m.Application.ApplicationDesc.Contains(searchString))
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
-            }
-            result.Paging.TotalItems = count;
-            result.Result = Mapper.Map<List<ApplicationUser>, List<ApplicationUserDto>>(items);
+        result.Result = userApplicationGridDto;
+        return result;
+    }
+    public async Task<APIResult<string>> UserApplicationChange(ApplicationUserChangeDto model)
+    {
+        APIResult<string> result = new APIResult<string>();
+
+        if(model.UserId == 1 & model.ApplicationId == 1)
+        {
+            result.HasError = true;
+            result.Message = "Admin can't be disabled from main app";
             return result;
-        }        
+        }
+
+        int recordsModifiedCount = 0;
+        var record = new ApplicationUser();
+        Mapper.Map(model, record);
+
+        if (model.UserEnabled)
+        {
+            db.ApplicationUsers.Add(record);
+            try
+            {
+                recordsModifiedCount = await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                result.Message = ex.InnerException.Message;
+            }
+            if (recordsModifiedCount == 1)
+            {
+                result.Result = recordsModifiedCount.ToString();
+                result.Message = "Record Created";
+            }
+        }
+        else
+        {
+            var recordFind = await db.ApplicationUsers.Where(x => x.ApplicationId == model.ApplicationId && x.UserId == model.UserId).FirstOrDefaultAsync();
+            var recordToDelete = db.ApplicationUsers.Attach(recordFind);
+            recordToDelete.State = EntityState.Deleted;
+
+            try
+            {
+                recordsModifiedCount = await db.SaveChangesAsync();
+                result.Result = recordsModifiedCount.ToString();
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                result.Message = ex.Message;
+            }
+        }
+        return result;
     }
 }

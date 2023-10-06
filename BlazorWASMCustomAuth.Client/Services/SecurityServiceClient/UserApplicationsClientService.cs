@@ -9,16 +9,20 @@ namespace BlazorWASMCustomAuth.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<ApplicationUserDto>>> UserApplicationsGetAsync(PagedRequest request)
+    public async Task<APIResult<List<UserApplicationGridDto>>> UserApplicationsGetAsync(int UserId)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.GetAsync(Routes.UserApplicationsEndpoints.Get(request.Id, request.PageNumber, request.PageSize, request.SearchString, request.Orderby));
+        var response = await _httpClient.GetAsync(Routes.UserApplicationsEndpoints.Get(UserId));
+        
+        
         if (!response.IsSuccessStatusCode)
             return null;
+
         var responseAsString = await response.Content.ReadAsStringAsync();
+
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationUserDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserApplicationGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -29,20 +33,20 @@ public partial class SecurityServiceClient
         }
     }
 
-    //public async Task<APIResult<string>> UserApplicationChangeAsync(int userId, int roleId, bool roleEnabled)
-    //{
-    //    await PrepareBearerToken();
-    //    var model = new UserRoleChangeDto()
-    //    {
-    //        UserId = userId,
-    //        RoleId = roleId,
-    //        RoleEnabled = roleEnabled
-    //    };
-    //    var response = await _httpClient.PostAsJsonAsync(Routes.UserRolesEndpoints.Post, model);
-    //    if (!response.IsSuccessStatusCode)
-    //        return null;
+    public async Task<APIResult<string>> UserApplicationChangeAsync(int userId, int applicationId, bool userEnabled)
+    {
+        await PrepareBearerToken();
+        var model = new ApplicationUserChangeDto()
+        {
+            ApplicationId = applicationId,
+            UserId = userId,
+            UserEnabled = userEnabled
+        };
+        var response = await _httpClient.PostAsJsonAsync(Routes.UserApplicationsEndpoints.Post, model);
+        if (!response.IsSuccessStatusCode)
+            return null;
 
-    //    var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
-    //    return result;
-    //}
+        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        return result;
+    }
 }

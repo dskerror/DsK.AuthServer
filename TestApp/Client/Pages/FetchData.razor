@@ -1,8 +1,9 @@
 ﻿@page "/fetchdata"
 @using Microsoft.AspNetCore.Authorization;
 @using System.Security.Claims;
-@using TestApp.Shared
+
 @using TestApp.Client.Services;
+@using TestApp.Shared;
 @inject HttpClient Http
 @inject SecurityServiceClient securityService;
 @inject NavigationManager NavigationManager

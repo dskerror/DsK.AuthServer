@@ -7,71 +7,49 @@ using BlazorWASMCustomAuth.Client.Services;
 namespace BlazorWASMCustomAuth.Client.Components;
 public partial class UserApplications
 {
-    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }    
+    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
+    public List<UserApplicationGridDto> userApplications { get; set; }
     [Parameter] public int UserId { get; set; }
     [Parameter] public EventCallback UserApplicationChanged { get; set; }
-    
-    private IEnumerable<ApplicationUserDto> _pagedData;
-    private MudTable<ApplicationUserDto> _table;
-    private int _totalItems;
-    private int _currentPage;
-    private string _searchString = "";
-    private bool _loaded;
-    private bool _AccessView;
     private bool _AccessEdit;
+    private bool _AccessView;
 
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationState;
         SetPermissions(state);
-    }
 
+        if (_AccessView)
+            await Load();
+    }
     private void SetPermissions(AuthenticationState state)
     {
-        _AccessView = securityService.HasPermission(state.User, Access.ApplicationUsers.View);
-        _AccessEdit = securityService.HasPermission(state.User, Access.ApplicationUsers.Edit);
+        _AccessView = securityService.HasPermission(state.User, Access.UserApplications.View);
+        _AccessEdit = securityService.HasPermission(state.User, Access.UserApplications.Edit);
     }
 
-    private async Task<TableData<ApplicationUserDto>> ServerReload(TableState state)
+    private async Task Load()
     {
-        await LoadData(state.Page, state.PageSize, state);
-        _loaded = true;
-        base.StateHasChanged();
-        return new TableData<ApplicationUserDto> { TotalItems = _totalItems, Items = _pagedData };
+        var result = await securityService.UserApplicationsGetAsync(UserId);
+        if (result != null)
+        {
+            userApplications = result.Result;
+            //_loadedRolePermissionData = true;
+        }
     }
 
-    private async Task LoadData(int pageNumber, int pageSize, TableState state)
+    private async Task ToggleApplicationSwitch(ChangeEventArgs e, int applicationId)
     {
-        var request = new ApplicationPagedRequest { Id = UserId, PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString() };
-        var response = await securityService.ApplicationUsersGetAsync(request);
-        if (!response.HasError)
+        var result = await securityService.UserApplicationChangeAsync(UserId, applicationId, (bool)e.Value);
+        if (result != null)
         {
-            _totalItems = response.Paging.TotalItems;
-            _currentPage = response.Paging.CurrentPage;
-            _pagedData = response.Result;
+            if (!result.HasError)
+            {
+                Snackbar.Add("Application User Changed", Severity.Warning);
+                await UserApplicationChanged.InvokeAsync();
+                //await LoadUserPermissions();
+            }
         }
-        else
-        {
-            Snackbar.Add(response.Message, Severity.Error);
-        }
-    }
-    private void OnSearch(string text)
-    {
-        _searchString = text;
-        _table.ReloadServerData();
-    }
-    private async Task TogglApplicationSwitch(ChangeEventArgs e, int id)
-    {   
-        //var result = await securityService.UserRoleChangUseAsync(UserId, roleId, (bool)e.Value);
-        //if (result != null)
-        //{
-        //    if (!result.HasError)
-        //    {
-        //        Snackbar.Add("Role Changed", Severity.Warning);
-        //        await UserRoleChanged.InvokeAsync();
-        //        //await LoadUserPermissions();
-        //    }
-        //}
     }
 }

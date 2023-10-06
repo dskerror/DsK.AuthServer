@@ -17,9 +17,9 @@ public class ApplicationUsersController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationUsers.View}")]
-    public async Task<IActionResult> ApplicationUsersGet(int applicationId, int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+    public async Task<IActionResult> Get(int applicationId)
     {
-        var result = await SecurityService.ApplicationUsersGet(applicationId, id, pageNumber, pageSize, searchString, orderBy);
+        var result = await SecurityService.ApplicationUsersGet(applicationId);
         return Ok(result);
     }
 }

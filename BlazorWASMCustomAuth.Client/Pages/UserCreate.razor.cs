@@ -12,6 +12,11 @@ public partial class UserCreate
     private InputType _passwordInput = InputType.Password;
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
     private bool _passwordVisibility;
+    private List<BreadcrumbItem> _breadcrumbs = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Users", href: "users"),
+        new BreadcrumbItem("User Create", href: null, disabled: true)
+    };
 
     protected override async Task OnInitializedAsync()
     {

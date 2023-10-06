@@ -18,7 +18,7 @@ internal class Program
         var newApp = CreateApplication(db);
                 
         var adminPermission = CreateAppPermission(db, newApp.Id, "Admin", "Admin Permission");
-        var permissionList = CreateApplicationPermissions(db, newApp); //Create list of permissions based on Security.Shared Permissions
+        var authAppPermissionList = CreateApplicationPermissions(db, newApp); //Create list of permissions based on Security.Shared Permissions
 
         var adminRole = CreateApplicationRole(db, newApp.Id, "Admin", "Admin Role");
         var userRole = CreateApplicationRole(db, newApp.Id, "User", "User Role");
@@ -30,29 +30,32 @@ internal class Program
         AddUserToApplicationUser(db, adminUser, newApp);
         AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, adminUser);
         AddRoleToUser(db, adminRole, adminUser);
+        AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.View, authAppPermissionList), userRole.Id);
+        AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.Edit, authAppPermissionList), userRole.Id);
 
-        
-        AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.View, permissionList), userRole.Id);
-        AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.Edit, permissionList), userRole.Id);
         var regularUser = CreateUser(db, "user@user.com", "User", "user123");
         AddUserToApplicationUser(db, regularUser, newApp);
         AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, regularUser);
         AddRoleToUser(db, userRole, regularUser);
 
         //Test App
-        var TestApp = CreateTestApp(db);
+        var newTestApp = CreateTestApp(db);
+        var testAppPermissionList = CreateTestAppPermissions(db, newTestApp); //Create list of permissions based on Security.Shared Permissions
         
-        var TestAppUserRole = CreateApplicationRole(db, TestApp.Id, "User", "UserRole");
+        AddPermissionToRole(db, GetPermissionIdByName(TestApp.Shared.Access.FetchDataPage.FetchDataFunction, testAppPermissionList), userRole.Id);
+        AddPermissionToRole(db, GetPermissionIdByName(TestApp.Shared.Access.CounterPage.CounterFunction, testAppPermissionList), userRole.Id);
 
-        var testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, TestApp, TestAppUserRole, "9EBA0CCD-FF5B-42AB-B6FB-861D18BD68D3");
+        var TestAppUserRole = CreateApplicationRole(db, newTestApp.Id, "User", "UserRole");
 
-        var counterPermission = CreateAppPermission(db, newApp.Id, "Counter", "Counter Permission");
-        AddPermissionToRole(db, counterPermission.Id, TestAppUserRole.Id);
+        var testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newTestApp, TestAppUserRole, "9EBA0CCD-FF5B-42AB-B6FB-861D18BD68D3");
+
+        //var counterPermission = CreateAppPermission(db, newApp.Id, "Counter", "Counter Permission");
+        //AddPermissionToRole(db, counterPermission.Id, TestAppUserRole.Id);
         
-        var fetchDataPermission = CreateAppPermission(db, newApp.Id, "FetchData", "Fetch Data Permission");
-        AddPermissionToRole(db, fetchDataPermission.Id, TestAppUserRole.Id);
+        //var fetchDataPermission = CreateAppPermission(db, newApp.Id, "FetchData", "Fetch Data Permission");
+        //AddPermissionToRole(db, fetchDataPermission.Id, TestAppUserRole.Id);
         
-        AddUserToApplicationUser(db, adminUser, TestApp);        
+        AddUserToApplicationUser(db, adminUser, newTestApp);        
         AddAuthenticationProviderMappingToUser(db, testAppAuthenticationProvider, adminUser);
         AddRoleToUser(db, TestAppUserRole, adminUser);
 
@@ -78,6 +81,22 @@ internal class Program
 
         return outputList;
     }
+
+    private static Dictionary<string, ApplicationPermission> CreateTestAppPermissions(SecurityTablesTestContext db, Application application)
+    {
+        var permissionList = TestApp.Shared.Access.GetRegisteredPermissions();
+        Dictionary<string, ApplicationPermission> outputList = new Dictionary<string, ApplicationPermission>();
+
+        foreach (var permission in permissionList)
+        {
+            var newPermission = new ApplicationPermission() { ApplicationId = application.Id, PermissionName = permission, PermissionDescription = "" };
+            outputList.Add(permission, newPermission);
+            db.ApplicationPermissions.Add(newPermission);
+        }
+        db.SaveChanges();
+
+        return outputList;
+    }
     private static Application CreateApplication(SecurityTablesTestContext db)
     {
         Application newApplication = new Application()
@@ -86,7 +105,7 @@ internal class Program
             ApplicationDesc = "Manages authentication and authorization for other applications",
             ApplicationGuid = Guid.Parse("00000000-0000-0000-0000-000000000000"),
             AppApiKey = Guid.Parse("CAB41EEC-6002-4738-BE23-128B0A7276C1"),
-            CallbackUrl = "/"
+            CallbackUrl = "/Callback/"
         };
 
         db.Applications.Add(newApplication);
@@ -148,7 +167,6 @@ internal class Program
             Salt = Convert.ToHexString(ramdomSalt),
             AccountCreatedDateTime = DateTime.Now,
             LastPasswordChangeDateTime = DateTime.Now
-
         };
 
         db.Users.Add(adminUser);
@@ -163,7 +181,7 @@ internal class Program
             ApplicationId = application.Id,
             AccessFailedCount = 0,
             TwoFactorEnabled = false,
-            LockoutEnabled = false
+            LockoutEnabled = false,
         };
 
         db.ApplicationUsers.Add(adminApplicationUser);
@@ -220,5 +238,4 @@ internal class Program
 
         return permission;
     }
-
 }

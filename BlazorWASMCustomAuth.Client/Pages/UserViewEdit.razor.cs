@@ -13,6 +13,7 @@ public partial class UserViewEdit
     private bool _loaded;
     private bool _AccessView;
     private bool _AccessEdit;
+    private bool _AccessUserApplicationsView;
     private bool _AccessUserPermissionsView;
     private bool _AccessUserRolesView;
     protected UserPermissions userPermissionsComponent;
@@ -36,8 +37,9 @@ public partial class UserViewEdit
     {
         _AccessView = securityService.HasPermission(state.User, Access.Users.View);
         _AccessEdit = securityService.HasPermission(state.User, Access.Users.Edit);
+        _AccessUserApplicationsView = securityService.HasPermission(state.User, Access.UserApplications.View);
         _AccessUserPermissionsView = securityService.HasPermission(state.User, Access.UserPermissions.View);
-        _AccessUserRolesView = securityService.HasPermission(state.User, Access.UserRoles.View);        
+        _AccessUserRolesView = securityService.HasPermission(state.User, Access.UserRoles.View);
     }
     private async Task LoadUserData()
     {

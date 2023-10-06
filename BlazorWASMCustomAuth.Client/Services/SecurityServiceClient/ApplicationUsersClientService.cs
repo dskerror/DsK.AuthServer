@@ -1,33 +1,14 @@
 ﻿using BlazorWASMCustomAuth.Security.Shared;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 
 namespace BlazorWASMCustomAuth.Client.Services;
 public partial class SecurityServiceClient
 {  
-    //public async Task<APIResult<UserDto>> UserCreateAsync(UserCreateDto model)
-    //{
-    //    await PrepareBearerToken();
-    //    var response = await _httpClient.PostAsJsonAsync(Routes.UserEndpoints.Post, model);
-    //    if (!response.IsSuccessStatusCode)        
-    //        return null;
-        
-    //    var result = await response.Content.ReadFromJsonAsync<APIResult<UserDto>>();
-    //    return result;
-    //}
-    //public async Task<APIResult<UserDto>> UserEditAsync(UserDto model)
-    //{
-    //    await PrepareBearerToken();
-    //    var response = await _httpClient.PutAsJsonAsync(Routes.UserEndpoints.Put, model);
-    //    if (!response.IsSuccessStatusCode)        
-    //        return null;
-        
-    //    var result = await response.Content.ReadFromJsonAsync<APIResult<UserDto>>();
-    //    return result;
-    //}
-    public async Task<APIResult<List<ApplicationUserDto>>> ApplicationUsersGetAsync(ApplicationPagedRequest request)
+    public async Task<APIResult<List<ApplicationUserGridDto>>> ApplicationUsersGetAsync(int applicationId)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.GetAsync(Routes.ApplicationUserEndpoints.Get(request));
+        var response = await _httpClient.GetAsync(Routes.ApplicationUserEndpoints.Get(applicationId));
 
         if (!response.IsSuccessStatusCode)        
             return null;
@@ -36,7 +17,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationUserDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationUserGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -45,17 +26,4 @@ public partial class SecurityServiceClient
             return null;
         }
     }
-    //public async Task<APIResult<UserDto>> UserGetAsync(int id)
-    //{
-    //    var result = await UsersGetAsync(new PagedRequest() { Id = id});
-    //    var newResult = new APIResult<UserDto>
-    //    {
-    //        Exception = result.Exception,
-    //        HasError = result.HasError,
-    //        Message = result.Message,
-    //        Result = result.Result.FirstOrDefault()
-    //    };
-
-    //    return newResult;
-    //}
 }

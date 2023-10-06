@@ -68,6 +68,15 @@ public static class Access
         public const string Delete = "ApplicationAuthenticationProviderUserMappings.Delete";
     }
 
+    [DisplayName("Users Applications")]
+    [Description("Users Applications Permissions")]
+    public static class UserApplications
+    {
+        public const string View = "UserApplications.View";
+        public const string Edit = "UserApplications.Edit";
+    }
+
+
     [DisplayName("Users Permissions")]
     [Description("Users Permissions Permissions")]
     public static class UserPermissions

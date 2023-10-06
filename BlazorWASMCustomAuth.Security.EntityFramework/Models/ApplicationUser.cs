@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
 
 public partial class ApplicationUser
 {

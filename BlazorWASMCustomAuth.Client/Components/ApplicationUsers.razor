@@ -1,44 +1,26 @@
-﻿@using BlazorWASMCustomAuth.Security.Shared;
-@using System.Security.Claims;
-
-@if (!_loaded)
-{
-    <h3>Loading...</h3>
-    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
-}
-
-<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationUserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
-    <ToolBarContent>
-        @if (_AccessCreate)
-        {
-            <div class="justify-center mud-text-align-center">
-                <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateUser())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create User</MudButton>
-            </div>
-        }
-        <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>    
-    <HeaderContent>        
-        <MudTh><MudTableSortLabel T="UserDto" SortLabel="Name">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="UserDto" SortLabel="Email">Email</MudTableSortLabel></MudTh>
-        <MudTh>Details</MudTh>
+﻿
+<MudTable Items="@applicationsUsers" Hover="true">
+    <HeaderContent>
+        <MudTh>Disabled/Enabled</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Email</MudTh>
     </HeaderContent>
-    <RowTemplate>        
-        <MudTd DataLabel="Name">
-            <MudHighlighter Text="@context.User.Name" HighlightedText="@_searchString" />
+    <RowTemplate>
+        <MudTd DataLabel="ApplicationSwitch">
+            @if (context.UserId == 1 && context.ApplicationId == 1)
+            {
+                <MudSwitch Color="Color.Success" Disabled="true" @bind-Checked="@context.UserEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
+            }
+            else
+            {
+                <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.UserEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
+            }
+
         </MudTd>
-        <MudTd DataLabel="Email">
-            <MudHighlighter Text="@context.User.Email" HighlightedText="@_searchString" />
-        </MudTd>
-        <MudTd DataLabel="Details">
-            <MudIconButton OnClick="() => ViewUser(context.UserId)"
-                           Icon="@Icons.Material.Filled.Edit"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled">
-            </MudIconButton>
-        </MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
     </PagerContent>
 </MudTable>

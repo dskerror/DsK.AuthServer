@@ -46,6 +46,10 @@ else
     <br />
 
     <MudExpansionPanels>
+        
+        <MudExpansionPanel Text="Application Users">
+            <ApplicationUsers ApplicationId="model.Id" />
+        </MudExpansionPanel>
 
         <MudExpansionPanel Text="Application Roles">
             <ApplicationRoles ApplicationId="model.Id" />
@@ -57,10 +61,6 @@ else
 
         <MudExpansionPanel Text="Application Authentication Providers">
             <ApplicationAuthenticationProviders ApplicationId="model.Id" />
-        </MudExpansionPanel>
-
-        <MudExpansionPanel Text="Application Users">
-            <ApplicationUsers ApplicationId="model.Id" />
         </MudExpansionPanel>
 
     </MudExpansionPanels>
