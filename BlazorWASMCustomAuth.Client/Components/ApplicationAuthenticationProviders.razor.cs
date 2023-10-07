@@ -93,24 +93,24 @@ public partial class ApplicationAuthenticationProviders
     }
     private async Task DisableEnableApplicationAuthenticationProvider(ApplicationAuthenticationProviderDto context)
     {
-        string DisableEnabledHeader = "";
-        string DisableEnabledMessage = "";
+        string IsEnabledToggleHeader = "";
+        string IsEnabledToggleMessage = "";
 
-        if (context.ApplicationAuthenticationProviderDisabled == false)
+        if (context.IsEnabled)
         {
-            DisableEnabledHeader = "Disable";
-            DisableEnabledMessage = "disable";
+            IsEnabledToggleHeader = "Disable";
+            IsEnabledToggleMessage = "disable";
         }
         else
         {
-            DisableEnabledHeader = "Enable";
-            DisableEnabledMessage = "enable";
+            IsEnabledToggleHeader = "Enable";
+            IsEnabledToggleMessage = "enable";
         }
 
         var parameters = new DialogParameters();
-        parameters.Add("ContentText", $"Are you sure you want to {DisableEnabledMessage} this Authentication Provider?");
+        parameters.Add("ContentText", $"Are you sure you want to {IsEnabledToggleMessage} this Authentication Provider?");
         parameters.Add("ButtonText", "Yes");
-        var dialogresult = DialogService.Show<GenericDialog>($"{DisableEnabledHeader} Authentication Provider", parameters);
+        var dialogresult = DialogService.Show<GenericDialog>($"{IsEnabledToggleHeader} Authentication Provider", parameters);
         var dialogResult = await dialogresult.Result;
         if (!dialogResult.Canceled && bool.TryParse(dialogResult.Data.ToString(), out bool resultbool))
         {

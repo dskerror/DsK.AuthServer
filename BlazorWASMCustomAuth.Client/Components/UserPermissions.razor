@@ -1,7 +1,7 @@
 ﻿<MudTable Items="@userPermissions" Hover="true">
     <HeaderContent>
-        <MudTh>Disabled/Enabled</MudTh>
-        <MudTh>Deny/Allow</MudTh>
+        <MudTh>Overwrite</MudTh>
+        <MudTh>Deny/Allow Toggle</MudTh>
         <MudTh>Application Name</MudTh>
         <MudTh>Permission Name</MudTh>
         <MudTh>Permission Description</MudTh>        
@@ -9,10 +9,10 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="PermissionSwitchEnabled">
-            <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.Enabled" @oninput="(e)=>TogglePermissionEnabledSwitch(e,context.Id, context.Allow)" />
+            <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.IsEnabled" @oninput="(e)=>TogglePermissionEnabledSwitch(e,context.Id, context.Overwrite)" />
         </MudTd>
         <MudTd DataLabel="PermissionSwitchAllow">
-            <MudSwitch Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>TogglePermissionAllowSwitch(e,context.Id)" Disabled=@(!context.Enabled) UnCheckedColor="MudBlazor.Color.Error" />
+            <MudSwitch Color="Color.Success" @bind-Checked="@context.Overwrite" @oninput="(e)=>TogglePermissionAllowSwitch(e,context.Id)" Disabled=@(!context.IsEnabled) UnCheckedColor="MudBlazor.Color.Error" />
         </MudTd>
         <MudTd DataLabel="Application Name">@context.ApplicationName</MudTd>
         <MudTd DataLabel="Permission Name">@context.PermissionName</MudTd>

@@ -31,11 +31,11 @@ public class ApplicationController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("DisableEnable")]
-    [Authorize(Roles = $"{Access.Admin}, {Access.Application.DisableEnable}")]
-    public async Task<IActionResult> DisableEnable([FromBody] int id)
+    [HttpPost("IsEnabledToggle")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.Application.IsEnabledToggle}")]
+    public async Task<IActionResult> IsEnabledToggle([FromBody] int id)
     {
-        var result = await SecurityService.ApplicationDisableEnabled(id);
+        var result = await SecurityService.ApplicationIsEnabledToggle(id);
         return Ok(result);
     }
 

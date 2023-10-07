@@ -14,7 +14,7 @@
         {
             <div class="justify-center mud-text-align-center">
                 <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateApplicationRole())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Role</MudButton>
-            </div>
+             </div>
         }
         <MudSpacer />
         <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -32,37 +32,40 @@
         <MudTd DataLabel="RoleDescription">
             <MudHighlighter Text="@context.RoleDescription" HighlightedText="@_searchString" />
         </MudTd>
-        <MudTd DataLabel="">     
+        <MudTd DataLabel="">
 
-            <MudTooltip Text="View/Edit Role">
-                <MudIconButton OnClick="() => ViewApplicationRole(context.Id)"
-                               Icon="@Icons.Material.Filled.Edit"
-                               Color="Color.Primary"
-                               Variant="Variant.Filled">
-                </MudIconButton>
-            </MudTooltip>
+            @if (context.Id != 1)
+            {
+                <MudTooltip Text="View/Edit Role">
+                    <MudIconButton OnClick="() => ViewApplicationRole(context.Id)"
+                                   Icon="@Icons.Material.Filled.Edit"
+                                   Color="Color.Success"
+                                   Variant="Variant.Outlined">
+                    </MudIconButton>
+                </MudTooltip>
 
-            &nbsp;
+                @:&nbsp;
+            }
 
             @if (context.ApplicationId != 1)
             {
-                if (context.RoleDisabled == false)
+                if (context.IsEnabled)
                 {
                     <MudTooltip Text="Disable Role">
-                        <MudIconButton OnClick="@( async() => await DisableEnableApplicationRole(context))"
-                                       Icon="@Icons.Material.Filled.WorkOff"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
+                        <MudIconButton OnClick="@( async() => await IsEnabledToggle(context))"
+                                       Icon="@Icons.Material.Filled.Work"
+                                       Color="Color.Success"
+                                       Variant="Variant.Outlined">
                         </MudIconButton>
                     </MudTooltip>
                 }
                 else
                 {
                     <MudTooltip Text="Enable Role">
-                        <MudIconButton OnClick="@( async() => await DisableEnableApplicationRole(context))"
-                                       Icon="@Icons.Material.Filled.Work"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
+                        <MudIconButton OnClick="@( async() => await IsEnabledToggle(context))"
+                                       Icon="@Icons.Material.Filled.WorkOff"
+                                       Color="Color.Error"
+                                       Variant="Variant.Outlined">
                         </MudIconButton>
                     </MudTooltip>
                 }
@@ -72,8 +75,8 @@
                 <MudTooltip Text="Delete Role">
                     <MudIconButton OnClick="@( async() => await DeleteApplicationRole(context))"
                                    Icon="@Icons.Material.Filled.Delete"
-                                   Color="Color.Primary"
-                                   Variant="Variant.Filled">
+                                   Color="Color.Error"
+                                   Variant="Variant.Outlined">
                     </MudIconButton>
                 </MudTooltip>
 

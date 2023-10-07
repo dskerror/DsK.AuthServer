@@ -14,7 +14,7 @@ public partial class SecurityService
         var record = new UserRole();
         Mapper.Map(model, record);
 
-        if (model.RoleEnabled)
+        if (model.IsEnabled)
         {
             db.UserRoles.Add(record);
             try
@@ -79,7 +79,7 @@ public partial class SecurityService
             };
 
             var lookupInUserRole = userRoles.Where(x => x.RoleName == role.RoleName && x.Id == role.ApplicationId).FirstOrDefault();
-            if(lookupInUserRole != null) { value.Enable = true; }
+            if(lookupInUserRole != null) { value.IsEnabled = true; }
 
             userRoleGridDtos.Add(value);
         }

@@ -65,7 +65,7 @@ public partial class Applications
 
     private void ViewApplication(int id)
     {
-        _navigationManager.NavigateTo($"/ApplicationViewEdit/{id}");
+        _navigationManager.NavigateTo($"/Application/{id}");
     }
 
     //private async Task DeleteApplication(ApplicationDto context)
@@ -96,26 +96,26 @@ public partial class Applications
     //        Snackbar.Add("Operation Canceled", Severity.Warning);
     //    }
     //}
-    private async Task DisableEnableApplication(ApplicationDto context)
+    private async Task IsEnabledToggle(ApplicationDto context)
     {
-        string DisableEnabledHeader = "";
-        string DisableEnabledMessage = "";
+        string IsEnabledToggleHeader = "";
+        string IsEnabledToggleMessage = "";
 
-        if (context.ApplicationDisabled == false)
+        if (context.IsEnabled)
         {
-            DisableEnabledHeader = "Disable";
-            DisableEnabledMessage = "disable";
+            IsEnabledToggleHeader = "Disable";
+            IsEnabledToggleMessage = "disable";
         }
         else
         {
-            DisableEnabledHeader = "Enable";
-            DisableEnabledMessage = "enable";
+            IsEnabledToggleHeader = "Enable";
+            IsEnabledToggleMessage = "enable";
         }
 
         var parameters = new DialogParameters();
-        parameters.Add("ContentText", $"Are you sure you want to {DisableEnabledMessage} this application?");
+        parameters.Add("ContentText", $"Are you sure you want to {IsEnabledToggleMessage} this application?");
         parameters.Add("ButtonText", "Yes");
-        var dialogresult = DialogService.Show<GenericDialog>($"{DisableEnabledHeader} Application", parameters);
+        var dialogresult = DialogService.Show<GenericDialog>($"{IsEnabledToggleHeader} Application", parameters);
         var dialogResult = await dialogresult.Result;
         if (!dialogResult.Canceled && bool.TryParse(dialogResult.Data.ToString(), out bool resultbool))
         {

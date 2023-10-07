@@ -7,13 +7,13 @@ public partial class ApplicationPermission
 {
     public int Id { get; set; }
 
+    public bool IsEnabled { get; set; }
+
     public int ApplicationId { get; set; }
 
     public string PermissionName { get; set; } = null!;
 
-    public string PermissionDescription { get; set; } = null!;
-
-    public bool PermissionDisabled { get; set; }
+    public string PermissionDescription { get; set; } = null!;    
 
     public virtual Application Application { get; set; } = null!;
 

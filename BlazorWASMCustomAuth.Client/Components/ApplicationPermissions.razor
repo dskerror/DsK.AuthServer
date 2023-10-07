@@ -7,7 +7,7 @@
 <MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationPermissionDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
 
-        @if (_AccessCreate)
+        @if (_AccessCreate && ApplicationId != 1)
         {
             <div class="justify-center mud-text-align-center">
                 <MudButton DisableElevation Variant="Variant.Filled" OnClick="@(() => CreateApplicationPermission())" StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Surface" Color="Color.Primary">Create Permission</MudButton>
@@ -31,33 +31,33 @@
         </MudTd>
         <MudTd DataLabel="">
 
-            <MudIconButton OnClick="() => ViewApplicationPermission(context.Id)"
-                           Icon="@Icons.Material.Filled.Edit"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled">
-            </MudIconButton>
-
-            &nbsp;
-
             @if (context.ApplicationId != 1)
             {
-                if (context.PermissionDisabled == false)
+                <MudIconButton OnClick="() => ViewApplicationPermission(context.Id)"
+                               Icon="@Icons.Material.Filled.Edit"
+                               Color="Color.Success"
+                               Variant="Variant.Outlined">
+                </MudIconButton>
+
+                @:&nbsp;
+
+                if (context.IsEnabled)
                 {
                     <MudTooltip Text="Disable Permission">
-                        <MudIconButton OnClick="@( async() => await DisableEnableApplicationPermission(context))"
-                                       Icon="@Icons.Material.Filled.WorkOff"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
+                        <MudIconButton OnClick="@( async() => await IsEnabledToggle(context))"
+                                       Icon="@Icons.Material.Filled.Work"
+                                       Color="Color.Success"
+                                       Variant="Variant.Outlined">
                         </MudIconButton>
                     </MudTooltip>
                 }
                 else
                 {
                     <MudTooltip Text="Enable Permission">
-                        <MudIconButton OnClick="@( async() => await DisableEnableApplicationPermission(context))"
-                                       Icon="@Icons.Material.Filled.Work"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
+                        <MudIconButton OnClick="@( async() => await IsEnabledToggle(context))"
+                                       Icon="@Icons.Material.Filled.WorkOff"
+                                       Color="Color.Error"
+                                       Variant="Variant.Outlined">
                         </MudIconButton>
                     </MudTooltip>
                 }
@@ -67,8 +67,8 @@
                 <MudTooltip Text="Delete Permission">
                     <MudIconButton OnClick="@( async() => await DeleteApplicationPermission(context))"
                                    Icon="@Icons.Material.Filled.Delete"
-                                   Color="Color.Primary"
-                                   Variant="Variant.Filled">
+                                   Color="Color.Error"
+                                   Variant="Variant.Outlined">
                     </MudIconButton>
                 </MudTooltip>
 

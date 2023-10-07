@@ -15,7 +15,7 @@ public static class Access
         public const string Edit = "Applications.Edit";
         public const string Delete = "Applications.Delete";
         public const string GenerateNewAPIKey = "Applications.GenerateNewAPIKey";
-        public const string DisableEnable = "Applications.DisableEnable";
+        public const string IsEnabledToggle = "Applications.IsEnabledToggle";
     }
 
     [DisplayName("Authentication Providers")]
@@ -26,7 +26,7 @@ public static class Access
         public const string Create = "ApplicationAuthenticationProviders.Create";
         public const string Edit = "ApplicationAuthenticationProviders.Edit";
         public const string Delete = "ApplicationAuthenticationProviders.Delete";
-        public const string DisableEnable = "ApplicationAuthenticationProviders.DisableEnable";
+        public const string IsEnabledToggle = "ApplicationAuthenticationProviders.IsEnabledToggle";
     }
 
     [DisplayName("Application Permissions")]
@@ -37,7 +37,7 @@ public static class Access
         public const string Create = "ApplicationPermissions.Create";
         public const string Edit = "ApplicationPermissions.Edit";
         public const string Delete = "ApplicationPermissions.Delete";
-        public const string DisableEnable = "ApplicationPermissions.DisableEnable";            
+        public const string IsEnabledToggle = "ApplicationPermissions.IsEnabledToggle";            
     }
     [DisplayName("Application Role Permissions")]
     [Description("Application Role Permissions Permissions")]
@@ -55,7 +55,7 @@ public static class Access
         public const string Create = "ApplicationRoles.Create";
         public const string Edit = "ApplicationRoles.Edit";
         public const string Delete = "ApplicationRoles.Delete";
-        public const string DisableEnable = "ApplicationRoles.DisableEnable";
+        public const string IsEnabledToggle = "ApplicationRoles.IsEnabledToggle";
     }
 
     [DisplayName("User Authentication Providers")]

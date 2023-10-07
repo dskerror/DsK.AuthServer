@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
+﻿namespace BlazorWASMCustomAuth.Security.EntityFramework.Models;
 
 public partial class UserPermission
 {
@@ -11,7 +8,7 @@ public partial class UserPermission
 
     public int PermissionId { get; set; }
 
-    public bool Allow { get; set; }
+    public bool Overwrite { get; set; }
 
     public virtual ApplicationPermission Permission { get; set; } = null!;
 

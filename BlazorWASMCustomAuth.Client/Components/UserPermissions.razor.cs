@@ -36,14 +36,14 @@ public partial class UserPermissions
         StateHasChanged();
     }
 
-    private async Task TogglePermissionEnabledSwitch(ChangeEventArgs e, int permissionId, bool allow)
+    private async Task TogglePermissionEnabledSwitch(ChangeEventArgs e, int permissionId, bool overwrite)
     {
         UserPermissionChangeDto userPermissionChangeDto = new UserPermissionChangeDto()
         {
             UserId = UserId,
             PermissionId = permissionId,
-            Enabled = (bool)e.Value,
-            Allow = allow
+            IsEnabled = (bool)e.Value,
+            Overwrite = overwrite
         };
         var result = await securityService.UserPermissionChangeAsync(userPermissionChangeDto);
         if (result != null)
@@ -60,8 +60,8 @@ public partial class UserPermissions
         {
             UserId = UserId,
             PermissionId = permissionId,
-            Enabled = true,
-            Allow = (bool)e.Value
+            IsEnabled = true,
+            Overwrite = (bool)e.Value
         };
 
         var result = await securityService.UserPermissionChangeAsync(userPermissionChangeDto);

@@ -35,7 +35,7 @@ public partial class SecurityService
         APIResult<LoginResponseDto> apiResult = new APIResult<LoginResponseDto>();
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
-        if (applicationAuthenticationProvider.ApplicationAuthenticationProviderDisabled)
+        if (!applicationAuthenticationProvider.IsEnabled)
         {
             apiResult.HasError = true;
             apiResult.Message = "This Application Authentication Provider Is Disabled";

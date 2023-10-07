@@ -54,11 +54,11 @@ public class ApplicationAuthenticationProvidersController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("DisableEnable")]
-    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.DisableEnable}")]
-    public async Task<IActionResult> DisableEnable([FromBody] int id)
+    [HttpPost("IsEnabledToggle")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProvider.IsEnabledToggle}")]
+    public async Task<IActionResult> IsEnabledToggle([FromBody] int id)
     {
-        var result = await SecurityService.ApplicationAuthenticationProviderDisableEnabled(id);
+        var result = await SecurityService.ApplicationAuthenticationProviderIsEnabledToggle(id);
         return Ok(result);
     }
 

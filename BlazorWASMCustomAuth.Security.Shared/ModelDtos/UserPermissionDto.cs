@@ -7,7 +7,7 @@ public partial class UserPermissionDto
 
     public int PermissionId { get; set; }
 
-    public bool Allow { get; set; }
+    public bool Overwrite { get; set; }
 
     public virtual ApplicationPermissionDto Permission { get; set; } = null!;
 

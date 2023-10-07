@@ -33,14 +33,14 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> UserApplicationChangeAsync(int userId, int applicationId, bool userEnabled)
+    public async Task<APIResult<string>> UserApplicationChangeAsync(int userId, int applicationId, bool isEnabled)
     {
         await PrepareBearerToken();
         var model = new ApplicationUserChangeDto()
         {
             ApplicationId = applicationId,
             UserId = userId,
-            UserEnabled = userEnabled
+            IsEnabled = isEnabled
         };
         var response = await _httpClient.PostAsJsonAsync(Routes.UserApplicationsEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)

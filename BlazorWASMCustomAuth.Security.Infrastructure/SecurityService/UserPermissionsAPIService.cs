@@ -16,7 +16,7 @@ public partial class SecurityService
         var record = new UserPermission();
         Mapper.Map(model, record);
 
-        if (model.Enabled)
+        if (model.IsEnabled)
         {
             var recordFind = await db.UserPermissions.Where(x => x.UserId == model.UserId && x.PermissionId == model.PermissionId).FirstOrDefaultAsync();
             if (recordFind is null)
@@ -25,7 +25,7 @@ public partial class SecurityService
             }
             else
             {
-                recordFind.Allow = model.Allow;
+                recordFind.Overwrite = model.Overwrite;
             }
 
             try
@@ -68,14 +68,14 @@ public partial class SecurityService
         var permissionAllow = await (from u in db.Users
                                      join up in db.UserPermissions on u.Id equals up.UserId
                                      join p in db.ApplicationPermissions on up.PermissionId equals p.Id
-                                     where u.Id == userId && up.Allow == true
+                                     where u.Id == userId && up.Overwrite == true
                                      select p.PermissionName).ToListAsync();
 
 
         var permissionDeny = await (from u in db.Users
                                     join up in db.UserPermissions on u.Id equals up.UserId
                                     join p in db.ApplicationPermissions on up.PermissionId equals p.Id
-                                    where u.Id == userId && up.Allow == false
+                                    where u.Id == userId && up.Overwrite == false
                                     select p.PermissionName).ToListAsync();
 
         var RolePermissions = await (from u in db.Users
@@ -111,7 +111,7 @@ public partial class SecurityService
                                          Id = p.Id,
                                          PermissionName = p.PermissionName,
                                          PermissionDescription = p.PermissionDescription,
-                                         Allow = up.Allow
+                                         Overwrite = up.Overwrite
                                      }).ToListAsync();
 
         List<UserPermissionGridDto> userPermissionGridDto = new List<UserPermissionGridDto>();
@@ -136,7 +136,7 @@ public partial class SecurityService
             };
 
             var lookupInUserPermission = userPermissions.Where(x => x.PermissionName == permission.PermissionName && x.Id == permission.ApplicationId).FirstOrDefault();
-            if (lookupInUserPermission != null) { value.Enabled = true; }
+            if (lookupInUserPermission != null) { value.IsEnabled = true; }
 
             userPermissionGridDto.Add(value);
         }

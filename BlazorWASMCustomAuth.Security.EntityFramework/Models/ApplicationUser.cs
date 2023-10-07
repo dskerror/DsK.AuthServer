@@ -4,6 +4,8 @@ public partial class ApplicationUser
 {
     public int Id { get; set; }
 
+    public bool IsEnabled { get; set; }
+
     public int ApplicationId { get; set; }
 
     public int UserId { get; set; }

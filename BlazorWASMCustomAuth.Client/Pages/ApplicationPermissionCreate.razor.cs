@@ -24,7 +24,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
             _breadcrumbs = new List<BreadcrumbItem>
             {
                 new BreadcrumbItem("Applications", href: "Applications"),
-                new BreadcrumbItem("Applications View/Edit", href: $"ApplicationViewEdit/{ ApplicationId }"),
+                new BreadcrumbItem("Application View/Edit", href: $"Application/{ ApplicationId }"),
                 new BreadcrumbItem("Application Permission Create", href: null, disabled: true)
             };
         }

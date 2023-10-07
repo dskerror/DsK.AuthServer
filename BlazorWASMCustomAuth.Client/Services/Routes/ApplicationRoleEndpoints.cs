@@ -11,7 +11,7 @@ public static class ApplicationRoleEndpoints
 
     public static string Post = "api/ApplicationRoles";
     public static string Put = "api/ApplicationRoles";
-    public static string DisableEnable = "api/ApplicationRoles/DisableEnable";
+    public static string IsEnabledToggle = "api/ApplicationRoles/IsEnabledToggle";
 
     public static string Delete(int id)
     {

@@ -23,7 +23,7 @@ public partial class ApplicationRoleCreate
         _breadcrumbs = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("Applications", href: "Applications"),
-            new BreadcrumbItem("Applications View/Edit", href: $"ApplicationViewEdit/{ ApplicationId }"),
+            new BreadcrumbItem("Application View/Edit", href: $"Application/{ ApplicationId }"),
             new BreadcrumbItem("Application Role Create", href: null, disabled: true)
         };
     }
@@ -44,7 +44,7 @@ public partial class ApplicationRoleCreate
             else
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                _navigationManager.NavigateTo($"/ApplicationRoleViewEdit/{ApplicationId}/{result.Result.Id}");
+                _navigationManager.NavigateTo($"/ApplicationRole/{ApplicationId}/{result.Result.Id}");
             }
         else
             Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

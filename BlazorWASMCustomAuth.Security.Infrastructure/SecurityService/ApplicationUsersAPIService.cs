@@ -86,7 +86,7 @@ public partial class SecurityService
             };
 
             var lookupInApplicationsUsers = applicationsUsers.Where(x => x.UserId == user.Id && x.ApplicationId == applicationId).FirstOrDefault();
-            if (lookupInApplicationsUsers != null) { value.UserEnabled = true; }
+            if (lookupInApplicationsUsers != null) { value.IsEnabled = true; }
 
             gridDto.Add(value);
         }

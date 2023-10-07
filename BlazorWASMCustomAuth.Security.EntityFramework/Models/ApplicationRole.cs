@@ -7,13 +7,13 @@ public partial class ApplicationRole
 {
     public int Id { get; set; }
 
+    public bool IsEnabled { get; set; }
+
     public int ApplicationId { get; set; }
 
     public string RoleName { get; set; } = null!;
 
     public string RoleDescription { get; set; } = null!;
-
-    public bool RoleDisabled { get; set; }
 
     public virtual Application Application { get; set; } = null!;
 

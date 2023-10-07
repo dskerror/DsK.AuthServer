@@ -3,6 +3,8 @@ public partial class ApplicationAuthenticationProviderDto
 {
     public int Id { get; set; }
 
+    public bool IsEnabled { get; set; }
+
     public Guid ApplicationAuthenticationProviderGUID { get; set; }
 
     public int ApplicationId { get; set; }
@@ -17,9 +19,7 @@ public partial class ApplicationAuthenticationProviderDto
 
     public string? Username { get; set; }
 
-    public string? Password { get; set; }
-
-    public bool ApplicationAuthenticationProviderDisabled { get; set; }
+    public string? Password { get; set; }    
 
     public bool RegistrationEnabled { get; set; }
 

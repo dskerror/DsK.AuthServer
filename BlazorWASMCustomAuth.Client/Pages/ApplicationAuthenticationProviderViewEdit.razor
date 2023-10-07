@@ -47,7 +47,7 @@ else
                 }
 
                 <br />
-                <MudSwitch Disabled="!_AccessEdit" Label="Disable Application Authentication Provider" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.ApplicationAuthenticationProviderDisabled" />
+                <MudSwitch Disabled="!_AccessEdit" Label="Application Authentication Provider IsEnabled" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.IsEnabled" />
                 <br />
                 <MudSwitch Disabled="!_AccessEdit" Label="Registration Enabled" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.RegistrationEnabled" />
                 <br />

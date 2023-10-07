@@ -34,7 +34,7 @@ public partial class SecurityServiceClient
         {
             PermissionId = permissionId,
             RoleId = roleId,
-            PermissionEnabled = permissionEnabled
+            IsEnabled = permissionEnabled
         };
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationRolePermissionsEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)

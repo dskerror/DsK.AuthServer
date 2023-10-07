@@ -48,7 +48,7 @@ public partial class ApplicationViewEdit
 
     private async Task Edit()
     {
-        ApplicationUpdateDto applicationUpdateDto = new ApplicationUpdateDto() { Id = model.Id, ApplicationDesc = model.ApplicationDesc, ApplicationDisabled = model.ApplicationDisabled };
+        ApplicationUpdateDto applicationUpdateDto = new ApplicationUpdateDto() { Id = model.Id, ApplicationDesc = model.ApplicationDesc, IsEnabled = model.IsEnabled };
         var result = await securityService.ApplicationEditAsync(applicationUpdateDto);
 
         if (result != null)

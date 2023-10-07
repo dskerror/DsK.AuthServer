@@ -12,7 +12,7 @@ public static class ApplicationAuthenticationProvidersEndpoints
     
     public static string Post = "api/ApplicationAuthenticationProviders";
     public static string Put = "api/ApplicationAuthenticationProviders";
-    public static string DisableEnable = "api/ApplicationAuthenticationProviders/DisableEnable";
+    public static string IsEnabledToggle = "api/ApplicationAuthenticationProviders/IsEnabledToggle";
     public static string ValidateDomainConnection = "api/ApplicationAuthenticationProviders/ValidateDomainConnection";
     
     public static string ValidateApplicationAuthenticationProviderGuid(string ApplicationAuthenticationProviderGuid)

@@ -9,11 +9,11 @@
         <MudTd DataLabel="ApplicationSwitch">
             @if (context.UserId == 1 && context.ApplicationId == 1)
             {
-                <MudSwitch Color="Color.Success" Disabled="true" @bind-Checked="@context.UserEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
+                <MudSwitch Color="Color.Success" Disabled="true" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
             }
             else
             {
-                <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.UserEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
+                <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
             }
 
         </MudTd>

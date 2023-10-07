@@ -4,13 +4,13 @@ public partial class ApplicationRoleDto
 {
     public int Id { get; set; }
 
+    public bool IsEnabled { get; set; }
+
     public int ApplicationId { get; set; }
 
     public string RoleName { get; set; } = null!;
 
     public string RoleDescription { get; set; } = null!;
-
-    public bool RoleDisabled { get; set; }
 
     public virtual ICollection<ApplicationRolePermissionDto> RolePermissions { get; } = new List<ApplicationRolePermissionDto>();
 

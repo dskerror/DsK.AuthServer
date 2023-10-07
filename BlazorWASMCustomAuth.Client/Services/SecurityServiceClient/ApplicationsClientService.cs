@@ -83,7 +83,7 @@ public partial class SecurityServiceClient
     public async Task<APIResult<string>> ApplicationDisableEnableAsync(int id)
     {        
         await PrepareBearerToken();
-        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationsEndpoints.DisableEnable, id);
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationsEndpoints.IsEnabledToggle, id);
         if (!response.IsSuccessStatusCode)
             return null;
 

@@ -17,6 +17,6 @@
         }
 
         public static string GenerateNewAPIKey = "api/Application/GenerateNewAPIKey";
-        public static string DisableEnable = "api/Application/DisableEnable";
+        public static string IsEnabledToggle = "api/Application/IsEnabledToggle";
     }
 }

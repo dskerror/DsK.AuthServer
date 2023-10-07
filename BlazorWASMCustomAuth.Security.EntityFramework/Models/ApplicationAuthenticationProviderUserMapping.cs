@@ -7,6 +7,8 @@ public partial class ApplicationAuthenticationProviderUserMapping
 {
     public int Id { get; set; }
 
+    public bool IsEnabled { get; set; }
+
     public int ApplicationAuthenticationProviderId { get; set; }
 
     public int UserId { get; set; }

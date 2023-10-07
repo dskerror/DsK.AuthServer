@@ -116,7 +116,7 @@ public partial class SecurityServiceClient
     public async Task<APIResult<string>> ApplicationAuthenticationProviderDisableEnableAsync(int id)
     {
         await PrepareBearerToken();
-        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationAuthenticationProvidersEndpoints.DisableEnable, id);
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationAuthenticationProvidersEndpoints.IsEnabledToggle, id);
         if (!response.IsSuccessStatusCode)
             return null;
 

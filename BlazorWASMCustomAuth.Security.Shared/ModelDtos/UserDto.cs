@@ -4,6 +4,7 @@ namespace BlazorWASMCustomAuth.Security.Shared;
 public partial class UserDto
 {
     public int Id { get; set; }
+    public bool IsEnabled { get; set; }
 
     [Required]
     [StringLength(256, MinimumLength = 3)]

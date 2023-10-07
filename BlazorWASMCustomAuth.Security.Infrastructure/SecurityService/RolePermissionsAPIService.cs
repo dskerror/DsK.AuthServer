@@ -14,7 +14,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             var record = new ApplicationRolePermission();
             Mapper.Map(model, record);
 
-            if (model.PermissionEnabled)
+            if (model.IsEnabled)
             {
                 db.ApplicationRolePermissions.Add(record);
                 try
@@ -70,7 +70,7 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
             foreach (var permission in RolePermissionList)
             {
                 var value = permissionGrid.First(x => x.PermissionName == permission);
-                value.Allow = true;
+                value.Overwrite = true;
             }
 
             result.Result = permissionGrid;

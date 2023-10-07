@@ -47,11 +47,11 @@ public class ApplicationRolesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("DisableEnable")]
-    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationRoles.DisableEnable}")]
-    public async Task<IActionResult> DisableEnable([FromBody] int id)
+    [HttpPost("IsEnabledToggle")]
+    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationRoles.IsEnabledToggle}")]
+    public async Task<IActionResult> IsEnabledToggle([FromBody] int id)
     {
-        var result = await SecurityService.ApplicationRoleDisableEnabled(id);
+        var result = await SecurityService.ApplicationRoleIsEnabledToggle(id);
         return Ok(result);
     }
 }

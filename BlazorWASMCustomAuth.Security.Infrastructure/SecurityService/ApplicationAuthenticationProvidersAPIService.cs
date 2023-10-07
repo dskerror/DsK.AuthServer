@@ -170,7 +170,7 @@ public partial class SecurityService
         result.Result = recordsDeleted.ToString();
         return result;
     }
-    public async Task<APIResult<string>> ApplicationAuthenticationProviderDisableEnabled(int id)
+    public async Task<APIResult<string>> ApplicationAuthenticationProviderIsEnabledToggle(int id)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
@@ -186,10 +186,7 @@ public partial class SecurityService
             }
             else
             {
-                if (record.ApplicationAuthenticationProviderDisabled == true)
-                    record.ApplicationAuthenticationProviderDisabled = false;
-                else
-                    record.ApplicationAuthenticationProviderDisabled = true;
+                record.IsEnabled = record.IsEnabled ? false : true;
                 recordsUpdated = await db.SaveChangesAsync();
             }
         }

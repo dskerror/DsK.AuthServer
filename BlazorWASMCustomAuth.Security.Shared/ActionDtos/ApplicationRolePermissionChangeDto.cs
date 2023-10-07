@@ -6,5 +6,5 @@ public partial class ApplicationRolePermissionChangeDto
 
     public int PermissionId { get; set; }
 
-    public bool PermissionEnabled{ get; set; }
+    public bool IsEnabled { get; set; }
 }

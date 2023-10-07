@@ -2,18 +2,17 @@
 
 --pipeline--
 Application > Application Roles > Enable/Disable
-Application > Application Roles > Delete
 Application > Application Roles > Admin Role > Cant Edit This Role
 Application > Application Roles > User Role > Error: Loading Permission Data...
 Application > Application Permissions > Main app permissions cant be created or deleted
-Application > Application Permissions > Delete Permission
 Application > Application Permissions > Disable Permission
-Application > Application Authentication Providers > Delete (except main app local)
 Application > Application Authentication Providers > Disable (except main app local)
 User > Disable
 User View/Edit > show only roles of applications added to the user
 User View/Edit > show only permissions of applications added to the user
 User View/Edit > User Mappings
+User View/Edit > User Mappings > Create
+User View/Edit > User Mappings > Disable
 Login > Validate user is an application user
 
 
@@ -25,6 +24,10 @@ test whole application
 test RefreshToken
 
 --future--
+Application > Application Roles > Delete if it hasn't been used
+Application > Application Permissions > Delete if it hasn't been used
+Application > Application Authentication Providers > Delete if it hasn't been used (except main app local)
+Application > Delete if it hasn't been used (except main app local)
 add option to require two factor
 customize login page depending on the app
 email confirmation flag may be better at the ApplicationUsers level because that way one may require validation for each registration

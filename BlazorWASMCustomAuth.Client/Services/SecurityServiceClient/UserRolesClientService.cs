@@ -30,14 +30,14 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> UserRoleChangeAsync(int userId, int roleId, bool roleEnabled)
+    public async Task<APIResult<string>> UserRoleChangeAsync(int userId, int roleId, bool isEnabled)
     {
         await PrepareBearerToken();
         var model = new UserRoleChangeDto()
         {
             UserId = userId,
             RoleId = roleId,
-            RoleEnabled = roleEnabled
+            IsEnabled = isEnabled
         };
         var response = await _httpClient.PostAsJsonAsync(Routes.UserRolesEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)

@@ -5,6 +5,9 @@ public partial class ApplicationAuthenticationProviderUpdateDto
 {    
     [Key]
     public int Id { get; set; }
+
+    public bool IsEnabled { get; set; }
+
     public Guid ApplicationAuthenticationProviderGUID { get; set; }
 
     [Required]
@@ -15,8 +18,6 @@ public partial class ApplicationAuthenticationProviderUpdateDto
 
     [Required]    
     public string? Password { get; set; }
-
-    public bool ApplicationAuthenticationProviderDisabled { get; set; }
 
     public bool RegistrationEnabled { get; set; }
 

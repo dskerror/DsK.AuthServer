@@ -5,5 +5,5 @@ public partial class UserRoleGridDto
     public string ApplicationName { get; set; }
     public string RoleName { get; set; }
     public string RoleDescription { get; set; }
-    public bool Enable { get; set; }
+    public bool IsEnabled { get; set; }
 }

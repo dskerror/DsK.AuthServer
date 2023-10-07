@@ -16,7 +16,7 @@ internal class Program
 
         //Security App
         var newApp = CreateApplication(db);
-                
+
         var adminPermission = CreateAppPermission(db, newApp.Id, "Admin", "Admin Permission");
         var authAppPermissionList = CreateApplicationPermissions(db, newApp); //Create list of permissions based on Security.Shared Permissions
 
@@ -41,7 +41,7 @@ internal class Program
         //Test App
         var newTestApp = CreateTestApp(db);
         var testAppPermissionList = CreateTestAppPermissions(db, newTestApp); //Create list of permissions based on Security.Shared Permissions
-        
+
         AddPermissionToRole(db, GetPermissionIdByName(TestApp.Shared.Access.FetchDataPage.FetchDataFunction, testAppPermissionList), userRole.Id);
         AddPermissionToRole(db, GetPermissionIdByName(TestApp.Shared.Access.CounterPage.CounterFunction, testAppPermissionList), userRole.Id);
 
@@ -51,11 +51,11 @@ internal class Program
 
         //var counterPermission = CreateAppPermission(db, newApp.Id, "Counter", "Counter Permission");
         //AddPermissionToRole(db, counterPermission.Id, TestAppUserRole.Id);
-        
+
         //var fetchDataPermission = CreateAppPermission(db, newApp.Id, "FetchData", "Fetch Data Permission");
         //AddPermissionToRole(db, fetchDataPermission.Id, TestAppUserRole.Id);
-        
-        AddUserToApplicationUser(db, adminUser, newTestApp);        
+
+        AddUserToApplicationUser(db, adminUser, newTestApp);
         AddAuthenticationProviderMappingToUser(db, testAppAuthenticationProvider, adminUser);
         AddRoleToUser(db, TestAppUserRole, adminUser);
 
@@ -89,7 +89,13 @@ internal class Program
 
         foreach (var permission in permissionList)
         {
-            var newPermission = new ApplicationPermission() { ApplicationId = application.Id, PermissionName = permission, PermissionDescription = "" };
+            var newPermission = new ApplicationPermission()
+            {
+                IsEnabled = true,
+                ApplicationId = application.Id,
+                PermissionName = permission,
+                PermissionDescription = ""
+            };
             outputList.Add(permission, newPermission);
             db.ApplicationPermissions.Add(newPermission);
         }
@@ -101,9 +107,10 @@ internal class Program
     {
         Application newApplication = new Application()
         {
+            IsEnabled = true,
             ApplicationName = "DsK.AuthorizarionServer",
             ApplicationDesc = "Manages authentication and authorization for other applications",
-            ApplicationGuid = Guid.Parse("00000000-0000-0000-0000-000000000000"),
+            ApplicationGuid = Guid.Parse("870F0BC1-DF58-447E-99BB-DA38D1D56D86"),
             AppApiKey = Guid.Parse("CAB41EEC-6002-4738-BE23-128B0A7276C1"),
             CallbackUrl = "/Callback/"
         };
@@ -112,11 +119,12 @@ internal class Program
         db.SaveChanges();
         return newApplication;
     }
-    private static ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(SecurityTablesTestContext db, Application newApplication, ApplicationRole role,  string guid)
+    private static ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(SecurityTablesTestContext db, Application newApplication, ApplicationRole role, string guid)
     {
         ApplicationAuthenticationProvider applicationAuthenticationProvider =
                 new ApplicationAuthenticationProvider()
                 {
+                    IsEnabled = true,
                     ApplicationAuthenticationProviderGuid = Guid.Parse(guid),
                     ApplicationId = newApplication.Id,
                     DefaultApplicationRoleId = role.Id,
@@ -124,10 +132,9 @@ internal class Program
                     AuthenticationProviderType = "Local",
                     Domain = "",
                     Username = "",
-                    Password = "",
-                    ApplicationAuthenticationProviderDisabled = false,
+                    Password = "",                    
                     RegistrationEnabled = true,
-                    RegistrationAutoEmailConfirm = true                    
+                    RegistrationAutoEmailConfirm = true
                 };
 
         db.ApplicationAuthenticationProviders.Add(applicationAuthenticationProvider);
@@ -202,6 +209,7 @@ internal class Program
     {
         var adminRole = new ApplicationRole()
         {
+            IsEnabled = true,
             ApplicationId = applicationId,
             RoleName = RoleName,
             RoleDescription = RoleDescription

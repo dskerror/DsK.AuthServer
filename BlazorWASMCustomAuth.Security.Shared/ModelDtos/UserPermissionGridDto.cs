@@ -6,7 +6,7 @@ public partial class UserPermissionGridDto
     public string ApplicationName { get; set; }
     public string PermissionName { get; set; }
     public string PermissionDescription { get; set; }
-    public bool Allow { get; set; }
-    public bool Enabled { get; set; }
+    public bool Overwrite { get; set; }
+    public bool IsEnabled { get; set; }
     public string Roles { get; set; }
 }

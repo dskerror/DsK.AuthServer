@@ -34,21 +34,21 @@
 
             <MudIconButton OnClick="() => ViewApplicationAuthenticationProvider(context.Id)"
                            Icon="@Icons.Material.Filled.Edit"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled">
+                           Color="Color.Success"
+                           Variant="Variant.Outlined">
             </MudIconButton>
 
             &nbsp;
 
             @if (context.Name != "Local")
             {
-                if (context.ApplicationAuthenticationProviderDisabled == false)
+                if (context.IsEnabled)
                 {
                     <MudTooltip Text="Disable Authentication Provider">
                         <MudIconButton OnClick="@( async() => await DisableEnableApplicationAuthenticationProvider(context))"
-                                       Icon="@Icons.Material.Filled.WorkOff"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
+                                       Icon="@Icons.Material.Filled.Work"
+                                       Color="Color.Success"
+                                       Variant="Variant.Outlined">
                         </MudIconButton>
                     </MudTooltip>
                 }
@@ -56,9 +56,9 @@
                 {
                     <MudTooltip Text="Enable Authentication Provider">
                         <MudIconButton OnClick="@( async() => await DisableEnableApplicationAuthenticationProvider(context))"
-                                       Icon="@Icons.Material.Filled.Work"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
+                                       Icon="@Icons.Material.Filled.WorkOff"
+                                       Color="Color.Error"
+                                       Variant="Variant.Outlined">
                         </MudIconButton>
                     </MudTooltip>
                 }
@@ -68,8 +68,8 @@
                 <MudTooltip Text="Delete Authentication Provider">
                     <MudIconButton OnClick="@( async() => await DeleteApplicationAuthenticationProvider(context))"
                                    Icon="@Icons.Material.Filled.Delete"
-                                   Color="Color.Primary"
-                                   Variant="Variant.Filled">
+                                   Color="Color.Error"
+                                   Variant="Variant.Outlined">
                     </MudIconButton>
                 </MudTooltip>
 

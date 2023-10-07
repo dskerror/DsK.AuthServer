@@ -142,7 +142,7 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> ApplicationRoleDisableEnabled(int id)
+    public async Task<APIResult<string>> ApplicationRoleIsEnabledToggle(int id)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
@@ -151,10 +151,7 @@ public partial class SecurityService
 
         try
         {
-            if (record.RoleDisabled == true)
-                record.RoleDisabled = false;
-            else
-                record.RoleDisabled = true;
+            record.IsEnabled = record.IsEnabled ? false : true;
             recordsUpdated = await db.SaveChangesAsync();
         }
         catch (Exception ex)

@@ -7,6 +7,8 @@ public partial class Application
 {
     public int Id { get; set; }
 
+    public bool IsEnabled { get; set; }
+
     public Guid ApplicationGuid { get; set; }
 
     public string ApplicationName { get; set; } = null!;
@@ -16,8 +18,6 @@ public partial class Application
     public Guid AppApiKey { get; set; }
 
     public string CallbackUrl { get; set; } = null!;
-
-    public bool ApplicationDisabled { get; set; }
 
     public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; } = new List<ApplicationAuthenticationProviderUserToken>();
 

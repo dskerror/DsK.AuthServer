@@ -43,7 +43,7 @@ public partial class ApplicationAuthenticationProviderViewEdit
         _breadcrumbs = new List<BreadcrumbItem>
         {
             new BreadcrumbItem("Applications", href: "Applications"),
-            new BreadcrumbItem("Applications View/Edit", href: $"ApplicationViewEdit/{ ApplicationId }"),
+            new BreadcrumbItem("Application View/Edit", href: $"Application/{ ApplicationId }"),
             new BreadcrumbItem("Application Authentication Provider View/Edit", href: null, disabled: true)
         };
     }

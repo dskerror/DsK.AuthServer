@@ -1,4 +1,4 @@
-﻿@page "/ApplicationRoleViewEdit/{ApplicationId:int}/{ApplicationRoleId:int}"
+﻿@page "/ApplicationRole/{ApplicationId:int}/{ApplicationRoleId:int}"
 
 <MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
 
@@ -42,7 +42,7 @@ else
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="PermissionSwitch">
-                    <MudSwitch Disabled="!Permissions[Access.ApplicationRolesPermissions.Edit]" Color="Color.Success" @bind-Checked="@context.Allow" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
+                    <MudSwitch Disabled="!Permissions[Access.ApplicationRolesPermissions.Edit]" Color="Color.Success" @bind-Checked="@context.Overwrite" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
                 </MudTd>
                 <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
                 <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>

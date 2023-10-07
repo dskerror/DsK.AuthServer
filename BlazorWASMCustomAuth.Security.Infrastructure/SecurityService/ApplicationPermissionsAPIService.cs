@@ -143,7 +143,7 @@ public partial class SecurityService
         return result;
     }
 
-    public async Task<APIResult<string>> ApplicationPermissionDisableEnabled(int id)
+    public async Task<APIResult<string>> ApplicationPermissionIsEnabledToggle(int id)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
@@ -152,10 +152,7 @@ public partial class SecurityService
 
         try
         {
-            if (record.PermissionDisabled == true)
-                record.PermissionDisabled = false;
-            else
-                record.PermissionDisabled = true;
+            record.IsEnabled = record.IsEnabled ? false : true;
             recordsUpdated = await db.SaveChangesAsync();
         }
         catch (Exception ex)

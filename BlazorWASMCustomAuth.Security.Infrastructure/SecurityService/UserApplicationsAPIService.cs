@@ -31,7 +31,7 @@ public partial class SecurityService
             };
 
             var lookupInuserApplications = userApplications.Where(x => x.UserId == userId && x.ApplicationId == application.Id).FirstOrDefault();
-            if (lookupInuserApplications != null) { value.UserEnabled = true; }
+            if (lookupInuserApplications != null) { value.IsEnabled = true; }
 
             userApplicationGridDto.Add(value);
         }
@@ -54,7 +54,7 @@ public partial class SecurityService
         var record = new ApplicationUser();
         Mapper.Map(model, record);
 
-        if (model.UserEnabled)
+        if (model.IsEnabled)
         {
             db.ApplicationUsers.Add(record);
             try
