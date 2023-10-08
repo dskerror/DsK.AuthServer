@@ -26,7 +26,7 @@ public partial class ApplicationPermissionViewEdit
 
         if (!_AccessView)
         {
-            _navigationManager.NavigateTo("/noaccess");
+            _navigationManager.NavigateTo("/NoAccess");
         }
         else
         {

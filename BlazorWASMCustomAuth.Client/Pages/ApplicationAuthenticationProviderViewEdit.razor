@@ -1,4 +1,4 @@
-﻿@page "/ApplicationAuthenticationProviderViewEdit/{ApplicationId:int}/{ApplicationAuthenticationProviderId:int}"
+﻿@page "/Application/AuthenticationProvider/{ApplicationId:int}/{ApplicationAuthenticationProviderId:int}"
 
 <MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
 
@@ -46,10 +46,13 @@ else
                     <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="ValidateConnection" Class="mb-2">Validate Connection</MudButton>
                 }
 
-                <br />
-                <MudSwitch Disabled="!_AccessEdit" Label="Application Authentication Provider IsEnabled" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.IsEnabled" />
-                <br />
-                <MudSwitch Disabled="!_AccessEdit" Label="Registration Enabled" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.RegistrationEnabled" />
+                @if (!_IsAuthApp)
+                {
+                    <br />
+                    <MudSwitch Disabled="!_AccessEdit" Label="Application Authentication Provider IsEnabled" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.IsEnabled" />
+                    <br />
+                    <MudSwitch Disabled="!_AccessEdit" Label="Registration Enabled" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.RegistrationEnabled" />
+                }
                 <br />
                 <MudSwitch Disabled="!_AccessEdit" Label="Registration Email Auto-Confirm" LabelPosition="LabelPosition.Start" Color="Color.Success" @bind-Checked="@model.RegistrationAutoEmailConfirm" />
 
@@ -61,11 +64,8 @@ else
             </MudCardContent>
         </MudCard>
 
-        @if (model.Id != 1)
-        {
-            <MudButton Disabled="!_AccessEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
-            <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
-        }
+        <MudButton Disabled="!_AccessEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
 
     </EditForm>
 }

@@ -42,10 +42,10 @@ internal class Program
         var newTestApp = CreateTestApp(db);
         var testAppPermissionList = CreateTestAppPermissions(db, newTestApp); //Create list of permissions based on Security.Shared Permissions
 
-        AddPermissionToRole(db, GetPermissionIdByName(TestApp.Shared.Access.FetchDataPage.FetchDataFunction, testAppPermissionList), userRole.Id);
-        AddPermissionToRole(db, GetPermissionIdByName(TestApp.Shared.Access.CounterPage.CounterFunction, testAppPermissionList), userRole.Id);
+        var TestAppUserRole = CreateApplicationRole(db, newTestApp.Id, "User", "User Role");
 
-        var TestAppUserRole = CreateApplicationRole(db, newTestApp.Id, "User", "UserRole");
+        AddPermissionToRole(db, GetPermissionIdByName(TestApp.Shared.Access.FetchDataPage.FetchDataFunction, testAppPermissionList), TestAppUserRole.Id);
+        AddPermissionToRole(db, GetPermissionIdByName(TestApp.Shared.Access.CounterPage.CounterFunction, testAppPermissionList), TestAppUserRole.Id);
 
         var testAppAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newTestApp, TestAppUserRole, "9EBA0CCD-FF5B-42AB-B6FB-861D18BD68D3");
 

@@ -32,8 +32,8 @@ public partial class SecurityServiceClient
         await PrepareBearerToken();
         var model = new ApplicationRolePermissionChangeDto()
         {
-            PermissionId = permissionId,
-            RoleId = roleId,
+            ApplicationPermissionId = permissionId,
+            ApplicationRoleId = roleId,
             IsEnabled = permissionEnabled
         };
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationRolePermissionsEndpoints.Post, model);

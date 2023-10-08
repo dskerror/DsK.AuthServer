@@ -22,7 +22,7 @@ public partial class ApplicationCreate
         SetPermissions(state);
 
         if (!_AccessCreate)
-            _navigationManager.NavigateTo("/noaccess");
+            _navigationManager.NavigateTo("/NoAccess");
     }
 
     private void SetPermissions(AuthenticationState state)

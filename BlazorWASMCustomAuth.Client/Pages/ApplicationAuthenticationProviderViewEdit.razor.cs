@@ -23,6 +23,7 @@ public partial class ApplicationAuthenticationProviderViewEdit
     private bool _loaded;
     private bool _AccessView;
     private bool _AccessEdit;
+    private bool _IsAuthApp;
     private List<BreadcrumbItem> _breadcrumbs;
 
     protected override async Task OnInitializedAsync()
@@ -31,7 +32,7 @@ public partial class ApplicationAuthenticationProviderViewEdit
         SetPermissions(state);
 
         if (!_AccessView)
-            _navigationManager.NavigateTo("/noaccess");
+            _navigationManager.NavigateTo("/NoAccess");
         else
         {
             await LoadData();
@@ -51,6 +52,9 @@ public partial class ApplicationAuthenticationProviderViewEdit
     {
         _AccessView = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.View);
         _AccessEdit = securityService.HasPermission(state.User, Access.ApplicationAuthenticationProvider.Edit);
+
+        if(ApplicationId == 1)
+            _IsAuthApp = true;
     }
 
     private async Task LoadData()

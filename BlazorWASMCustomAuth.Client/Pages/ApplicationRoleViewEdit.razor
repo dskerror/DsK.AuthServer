@@ -1,4 +1,4 @@
-﻿@page "/ApplicationRole/{ApplicationId:int}/{ApplicationRoleId:int}"
+﻿@page "/Application/Role/{ApplicationId:int}/{ApplicationRoleId:int}"
 
 <MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
 
@@ -9,40 +9,40 @@
 }
 else
 {
-    <EditForm Model="applicationRole" OnValidSubmit="EditApplicationRole">
+    <EditForm Model="model" OnValidSubmit="EditApplicationRole">
         <DataAnnotationsValidator />
         <ValidationSummary />
         <MudCard Class="mb-2">
             <MudCardContent>
-                <MudTextField Disabled="true" ReadOnly="true" Label="Role Name" @bind-Value="applicationRole.RoleName"
-                          For="@(()=>applicationRole.RoleName)">
+                <MudTextField Disabled="true" ReadOnly="true" Label="Role Name" @bind-Value="model.RoleName"
+                          For="@(()=>model.RoleName)">
                 </MudTextField>
-                <MudTextField Disabled="!Permissions[Access.ApplicationRoles.Edit]" Label="Role Description" @bind-Value="applicationRole.RoleDescription"
-                          For="@(()=>applicationRole.RoleDescription)">
+                <MudTextField Disabled="!_AccessEdit" Label="Role Description" @bind-Value="model.RoleDescription"
+                          For="@(()=>model.RoleDescription)">
                 </MudTextField>
             </MudCardContent>
         </MudCard>
 
-        <MudButton Disabled="!Permissions[Access.ApplicationRoles.Edit]" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
-        <MudButton Disabled="!Permissions[Access.ApplicationRoles.Edit]" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
+        <MudButton Disabled="!_AccessEdit" Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="mb-2">Save</MudButton>
+        <MudButton Disabled="!_AccessEdit" Color="Color.Primary" Variant="Variant.Filled" OnClick="CancelChanges" Class="mb-2">Cancel</MudButton>
 
     </EditForm>
 
-    @if (Permissions[Access.ApplicationRolesPermissions.View] && !_loadedApplicationRolePermissionData)
+    @if (_AccessApplicationRolesPermissionsView && !_loadedApplicationRolePermissionData)
     {
         <h3>Loading permission data...</h3>
     }
-    else if (Permissions[Access.ApplicationRolesPermissions.View] && _loadedApplicationRolePermissionData)
+    else if (_AccessApplicationRolesPermissionsView && _loadedApplicationRolePermissionData)
     {
         <MudTable Items="@applicationRolePermissions" Hover="true">
             <HeaderContent>
-                <MudTh>On/Off</MudTh>
+                <MudTh>Off/On</MudTh>
                 <MudTh>Permission Name</MudTh>
                 <MudTh>Permission Description</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="PermissionSwitch">
-                    <MudSwitch Disabled="!Permissions[Access.ApplicationRolesPermissions.Edit]" Color="Color.Success" @bind-Checked="@context.Overwrite" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
+                    <MudSwitch Disabled="!_AccessApplicationRolesPermissionsEdit" Color="Color.Success" @bind-Checked="@context.Overwrite" @oninput="(e)=>ToggleSwitch(e,context.Id)" />
                 </MudTd>
                 <MudTd DataLabel="PermissionName">@context.PermissionName</MudTd>
                 <MudTd DataLabel="PermissionDescription">@context.PermissionDescription</MudTd>

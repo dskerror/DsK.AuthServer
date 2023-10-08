@@ -25,7 +25,7 @@ public partial class Applications
         SetPermissions(state);
 
         if (!_AccessView)
-            _navigationManager.NavigateTo("/noaccess");
+            _navigationManager.NavigateTo("/NoAccess");
     }
 
     private void SetPermissions(AuthenticationState state)
@@ -141,6 +141,6 @@ public partial class Applications
 
     private void CreateApplication()
     {
-        _navigationManager.NavigateTo("/ApplicationCreate");
+        _navigationManager.NavigateTo("/Application/Create");
     }
 }

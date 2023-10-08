@@ -19,7 +19,7 @@ public partial class Callback
             }
             else
             {
-                _navigationManager.NavigateTo("/noaccess");
+                _navigationManager.NavigateTo("/NoAccess");
                 Snackbar.Add("Username and/or Password incorrect", Severity.Error);
             }
         }        

@@ -18,7 +18,7 @@ public partial class ApplicationAuthenticationProviderCreate
         SetPermissions(state);
 
         if (!_AccessCreate)
-            _navigationManager.NavigateTo("/noaccess");
+            _navigationManager.NavigateTo("/NoAccess");
 
         _breadcrumbs = new List<BreadcrumbItem>
         {
@@ -44,7 +44,7 @@ public partial class ApplicationAuthenticationProviderCreate
             else
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                _navigationManager.NavigateTo($"/ApplicationAuthenticationProviderViewEdit/{ApplicationId}/{result.Result.Id}");
+                _navigationManager.NavigateTo($"/Application/AuthenticationProvider/{ApplicationId}/{result.Result.Id}");
             }
         else
             Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

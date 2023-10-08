@@ -14,7 +14,7 @@ public partial class SecurityService
 
         var record = new ApplicationPermission();
         Mapper.Map(model, record);
-
+        record.IsEnabled = true;
         db.ApplicationPermissions.Add(record);
 
         try
@@ -35,14 +35,6 @@ public partial class SecurityService
 
         return result;
     }
-    //public async Task<APIResult<List<ApplicationPermissionDto>>> ApplicationPermissionsGet(int applicationId)
-    //{
-    //    APIResult<List<ApplicationPermissionDto>> result = new APIResult<List<ApplicationPermissionDto>>();
-    //    var items = await db.ApplicationPermissions.Where(x => x.ApplicationId == applicationId).ToListAsync();
-    //    result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
-    //    return result;
-    //}
-
     public async Task<APIResult<List<ApplicationPermissionDto>>> ApplicationPermissionsGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
     {
         var result = new APIResult<List<ApplicationPermissionDto>>();

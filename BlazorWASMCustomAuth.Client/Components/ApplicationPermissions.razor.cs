@@ -26,7 +26,7 @@ public partial class ApplicationPermissions
         SetPermissions(state);
 
         if (!_AccessView)
-            _navigationManager.NavigateTo("/noaccess");
+            _navigationManager.NavigateTo("/NoAccess");
     }
     private void SetPermissions(AuthenticationState state)
     {
@@ -52,12 +52,12 @@ public partial class ApplicationPermissions
 
     private void CreateApplicationPermission()
     {
-        _navigationManager.NavigateTo($"/ApplicationPermissionCreate/{ApplicationId}");
+        _navigationManager.NavigateTo($"/Application/Permission/Create/{ApplicationId}");
     }
 
     private void ViewApplicationPermission(int id)
     {
-        _navigationManager.NavigateTo($"/ApplicationPermissionViewEdit/{ApplicationId}/{id}");
+        _navigationManager.NavigateTo($"/Application/Permission/{ApplicationId}/{id}");
     }
 
     private async Task<TableData<ApplicationPermissionDto>> ServerReload(TableState state)

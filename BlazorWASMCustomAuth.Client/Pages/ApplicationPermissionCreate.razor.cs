@@ -19,7 +19,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
             SetPermissions(state);
 
             if (!_AccessCreate)
-                _navigationManager.NavigateTo("/noaccess");
+                _navigationManager.NavigateTo("/NoAccess");
 
             _breadcrumbs = new List<BreadcrumbItem>
             {
@@ -45,7 +45,7 @@ namespace BlazorWASMCustomAuth.Client.Pages
                 else
                 {
                     Snackbar.Add(result.Message, Severity.Success);
-                    _navigationManager.NavigateTo($"/ApplicationPermissionViewEdit/{ApplicationId}/{result.Result.Id}");
+                    _navigationManager.NavigateTo($"/Application/Permission/{ApplicationId}/{result.Result.Id}");
                 }
             else
                 Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

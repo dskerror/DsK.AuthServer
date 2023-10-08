@@ -61,8 +61,8 @@ namespace BlazorWASMCustomAuth.Security.Infrastructure
 
             var RolePermissionList = await (from r in db.ApplicationRoles
                                             join rp in db.ApplicationRolePermissions on r.Id equals rp.ApplicationRoleId
-                                            join p in db.ApplicationPermissions on rp.ApplicationPermissionId equals p.Id
-                                            where r.Id == ApplicationRoleId
+                                            join p in db.ApplicationPermissions on new { Id = rp.ApplicationPermissionId, r.ApplicationId } equals new { p.Id, p.ApplicationId } //rp.ApplicationPermissionId equals p.Id r.ApplicationId equals p.ApplicationId
+                                            where r.ApplicationId == ApplicationId && r.Id == ApplicationRoleId
                                             select p.PermissionName).ToListAsync();
 
             var permissionGrid = Mapper.Map<List<ApplicationPermission>, List<ApplicationRolePermissionGridDto>>(permissionList);

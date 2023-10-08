@@ -18,7 +18,7 @@ public partial class ApplicationRoleCreate
         SetPermissions(state);
 
         if (!_AccessCreate)
-            _navigationManager.NavigateTo("/noaccess");
+            _navigationManager.NavigateTo("/NoAccess");
 
         _breadcrumbs = new List<BreadcrumbItem>
         {
@@ -44,7 +44,7 @@ public partial class ApplicationRoleCreate
             else
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                _navigationManager.NavigateTo($"/ApplicationRole/{ApplicationId}/{result.Result.Id}");
+                _navigationManager.NavigateTo($"/Application/Role/{ApplicationId}/{result.Result.Id}");
             }
         else
             Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

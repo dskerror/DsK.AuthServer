@@ -29,7 +29,7 @@ public partial class UserViewEdit
         SetPermissions(state);
 
         if (!_AccessView)            
-            _navigationManager.NavigateTo("/noaccess");            
+            _navigationManager.NavigateTo("/NoAccess");            
         else            
             await LoadUserData();            
     }
