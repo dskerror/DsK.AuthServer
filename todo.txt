@@ -1,15 +1,11 @@
 --in progress--
 
 --pipeline--
-Application > Create > Create Local Auth Provider
 User > Disable
-User View/Edit > show only roles of applications added to the user
-User View/Edit > show only permissions of applications added to the user
 User View/Edit > User Mappings
 User View/Edit > User Mappings > Create
 User View/Edit > User Mappings > Disable
 Login > Validate user is an application user
-
 
 hide disabled all disabled items with option to show
 	make list

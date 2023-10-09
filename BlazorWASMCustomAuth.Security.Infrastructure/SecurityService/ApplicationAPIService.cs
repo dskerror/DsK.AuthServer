@@ -3,6 +3,7 @@ using BlazorWASMCustomAuth.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
+using System;
 
 namespace BlazorWASMCustomAuth.Security.Infrastructure;
 public partial class SecurityService
@@ -12,26 +13,37 @@ public partial class SecurityService
         APIResult<ApplicationDto> result = new APIResult<ApplicationDto>();
         int recordsCreated = 0;
 
-        var record = new Application();
-        Mapper.Map(model, record);
-
-        db.Applications.Add(record);
-
         try
         {
+            var record = new Application();
+            Mapper.Map(model, record);
+
+            record.ApplicationGuid = Guid.NewGuid();
+            record.AppApiKey = Guid.NewGuid();
+
+            db.Applications.Add(record);
             recordsCreated = await db.SaveChangesAsync();
+
+            if (recordsCreated == 1)
+            {
+                result.Result = Mapper.Map(record, result.Result);
+                result.Message = "Record Created";
+
+                var newAppAuthProvider = new ApplicationAuthenticationProviderCreateDto()
+                {
+                    ApplicationId = record.Id,
+                    AuthenticationProviderType = "Local",
+                    Name = "Local"
+                };
+
+                await ApplicationAuthenticationProvidersCreate(newAppAuthProvider);
+            }
         }
         catch (Exception ex)
         {
             result.HasError = true;
             if (ex.InnerException.Message != null)
                 result.Message = ex.InnerException.Message;
-        }
-
-        if (recordsCreated == 1)
-        {
-            result.Result = Mapper.Map(record, result.Result);
-            result.Message = "Record Created";
         }
 
         return result;
@@ -167,7 +179,7 @@ public partial class SecurityService
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
 
-        if(id == 1)
+        if (id == 1)
         {
             result.HasError = true;
             result.Message = "Error: This Application can't be disabled";

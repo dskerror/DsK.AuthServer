@@ -23,6 +23,10 @@ else
                               For="@(()=>model.ApplicationDesc)">
                 </MudTextField>
 
+                <MudTextField Disabled="!_AccessEdit" ReadOnly="false" Label="Callback URL" @bind-Value="model.CallbackURL"
+                              For="@(()=>model.CallbackURL)">
+                </MudTextField>
+
                 <MudTextField Disabled="true" ReadOnly="true" Label="Application Id" @bind-Value="model.ApplicationGuid"
                               For="@(()=>model.ApplicationGuid)">
                 </MudTextField>

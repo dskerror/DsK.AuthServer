@@ -12,6 +12,6 @@ public partial class ApplicationUpdateDto
     public string ApplicationDesc { get; set; } = null!;
 
     [Required]
-    public string CallbackURL { get; set; }
-    
+    public string CallbackURL { get; set; } = null!;
+
 }

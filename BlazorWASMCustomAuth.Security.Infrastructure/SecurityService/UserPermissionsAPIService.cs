@@ -98,7 +98,12 @@ public partial class SecurityService
     public async Task<APIResult<List<UserPermissionGridDto>>> GetUserPermissions(int userId)
     {
         APIResult<List<UserPermissionGridDto>> result = new APIResult<List<UserPermissionGridDto>>();
-        var applicationPermissions = await db.ApplicationPermissions.Include(x => x.Application).ToListAsync();
+        //var applicationPermissions = await db.ApplicationPermissions.Include(x => x.Application).ToListAsync();
+        var applicationPermissions = await db.ApplicationPermissions
+            .Include(x => x.Application)
+            .ThenInclude(x => x.ApplicationUsers)
+            .Where(w=>w.Application.ApplicationUsers.Any(a=>a.UserId == userId))
+            .ToListAsync();
 
         //var permissioinGrid = Mapper.Map<List<ApplicationPermission>, List<UserPermissionGridDto>>(permissionList);
 

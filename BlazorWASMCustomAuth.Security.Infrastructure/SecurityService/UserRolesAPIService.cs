@@ -55,7 +55,18 @@ public partial class SecurityService
     public async Task<APIResult<List<UserRoleGridDto>>> UserRolesGet(int userId)
     {
         APIResult<List<UserRoleGridDto>> result = new APIResult<List<UserRoleGridDto>>();
-        var applicationRoles = await db.ApplicationRoles.Include(x => x.Application).ToListAsync();
+        var applicationRoles = await db.ApplicationRoles
+            .Include(x => x.Application)
+            .ThenInclude(x => x.ApplicationUsers)
+            .Where(w => w.Application.ApplicationUsers.Any(a => a.UserId == userId))
+            .ToListAsync();
+
+        //var applicationRoles = await (from ar in db.ApplicationRoles
+        //                              join a in db.Applications on ar.ApplicationId equals a.Id
+        //                              join au in db.ApplicationUsers on a.Id equals au.ApplicationId
+        //                              where au.UserId == userId
+        //                              select ar, a
+        //                              ).ToListAsync();
 
         var userRoles = await (from u in db.Users
                                join ur in db.UserRoles on u.Id equals ur.UserId
@@ -79,7 +90,7 @@ public partial class SecurityService
             };
 
             var lookupInUserRole = userRoles.Where(x => x.RoleName == role.RoleName && x.Id == role.ApplicationId).FirstOrDefault();
-            if(lookupInUserRole != null) { value.IsEnabled = true; }
+            if (lookupInUserRole != null) { value.IsEnabled = true; }
 
             userRoleGridDtos.Add(value);
         }
