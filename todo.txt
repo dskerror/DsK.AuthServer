@@ -9,7 +9,7 @@ Login > Validate user is an application user
 
 hide disabled all disabled items with option to show
 	make list
-Rename project to DsK.AuthServer
+
 document changes made in testapp
 test whole application
 test RefreshToken

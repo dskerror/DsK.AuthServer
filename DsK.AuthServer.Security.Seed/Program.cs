@@ -7,10 +7,10 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        var options = new DbContextOptions<SecurityTablesTestContext>();
+        var options = new DbContextOptions<DsKAuthServerDbContext>();
 
-        //var db = new SecurityTablesTestContext(new DbContextOptionsBuilder<SecurityTablesTestContext>().UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true").Options);
-        var db = new SecurityTablesTestContext(new DbContextOptionsBuilder<SecurityTablesTestContext>().UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true").Options);
+        //var db = new SecurityTablesTestContext(new DbContextOptionsBuilder<SecurityTablesTestContext>().UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=DsKAuthServer;Trusted_Connection=True;Trust Server Certificate=true").Options);
+        var db = new DsKAuthServerDbContext(new DbContextOptionsBuilder<DsKAuthServerDbContext>().UseSqlServer("Server=.;Database=DsKAuthServer;Trusted_Connection=True;Trust Server Certificate=true").Options);
         db.Database.Migrate(); //CREATES DATABASE IF IT DOESNT EXISTS
         db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
 
@@ -66,7 +66,7 @@ internal class Program
         permissionList.TryGetValue(permissionName, out var value);
         return value.Id;
     }
-    private static Dictionary<string, ApplicationPermission> CreateApplicationPermissions(SecurityTablesTestContext db, Application application)
+    private static Dictionary<string, ApplicationPermission> CreateApplicationPermissions(DsKAuthServerDbContext db, Application application)
     {
         var permissionList = Access.GetRegisteredPermissions();
         Dictionary<string, ApplicationPermission> outputList = new Dictionary<string, ApplicationPermission>();
@@ -82,7 +82,7 @@ internal class Program
         return outputList;
     }
 
-    private static Dictionary<string, ApplicationPermission> CreateTestAppPermissions(SecurityTablesTestContext db, Application application)
+    private static Dictionary<string, ApplicationPermission> CreateTestAppPermissions(DsKAuthServerDbContext db, Application application)
     {
         var permissionList = TestApp.Shared.Access.GetRegisteredPermissions();
         Dictionary<string, ApplicationPermission> outputList = new Dictionary<string, ApplicationPermission>();
@@ -103,7 +103,7 @@ internal class Program
 
         return outputList;
     }
-    private static Application CreateApplication(SecurityTablesTestContext db)
+    private static Application CreateApplication(DsKAuthServerDbContext db)
     {
         Application newApplication = new Application()
         {
@@ -119,7 +119,7 @@ internal class Program
         db.SaveChanges();
         return newApplication;
     }
-    private static ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(SecurityTablesTestContext db, Application newApplication, ApplicationRole role, string guid)
+    private static ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(DsKAuthServerDbContext db, Application newApplication, ApplicationRole role, string guid)
     {
         ApplicationAuthenticationProvider applicationAuthenticationProvider =
                 new ApplicationAuthenticationProvider()
@@ -142,13 +142,13 @@ internal class Program
 
         return applicationAuthenticationProvider;
     }
-    private static void AddRoleToUser(SecurityTablesTestContext db, ApplicationRole adminRole, User adminUser)
+    private static void AddRoleToUser(DsKAuthServerDbContext db, ApplicationRole adminRole, User adminUser)
     {
         var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
         db.UserRoles.Add(adminUserRole);
         db.SaveChanges();
     }
-    private static void AddAuthenticationProviderMappingToUser(SecurityTablesTestContext db, ApplicationAuthenticationProvider authProvider, User adminUser)
+    private static void AddAuthenticationProviderMappingToUser(DsKAuthServerDbContext db, ApplicationAuthenticationProvider authProvider, User adminUser)
     {
         var applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
         {
@@ -159,7 +159,7 @@ internal class Program
         db.ApplicationAuthenticationProviderUserMappings.Add(applicationAuthenticationProviderUserMapping);
         db.SaveChanges();
     }
-    private static User CreateUser(SecurityTablesTestContext db, string email, string name, string password)
+    private static User CreateUser(DsKAuthServerDbContext db, string email, string name, string password)
     {
         var ramdomSalt = SecurityHelpers.RandomizeSalt;
 
@@ -180,7 +180,7 @@ internal class Program
         db.SaveChanges();
         return adminUser;
     }
-    private static ApplicationUser AddUserToApplicationUser(SecurityTablesTestContext db, User user, Application application)
+    private static ApplicationUser AddUserToApplicationUser(DsKAuthServerDbContext db, User user, Application application)
     {
         var adminApplicationUser = new ApplicationUser()
         {
@@ -195,7 +195,7 @@ internal class Program
         db.SaveChanges();
         return adminApplicationUser;
     }
-    private static void AddPermissionToRole(SecurityTablesTestContext db, int permissionId, int roleId)
+    private static void AddPermissionToRole(DsKAuthServerDbContext db, int permissionId, int roleId)
     {
         var rolePermission = new ApplicationRolePermission()
         {
@@ -205,7 +205,7 @@ internal class Program
         db.ApplicationRolePermissions.Add(rolePermission);
         db.SaveChanges();
     }
-    private static ApplicationRole CreateApplicationRole(SecurityTablesTestContext db, int applicationId, string RoleName, string RoleDescription)
+    private static ApplicationRole CreateApplicationRole(DsKAuthServerDbContext db, int applicationId, string RoleName, string RoleDescription)
     {
         var adminRole = new ApplicationRole()
         {
@@ -218,7 +218,7 @@ internal class Program
         db.SaveChanges();
         return adminRole;
     }
-    private static Application CreateTestApp(SecurityTablesTestContext db)
+    private static Application CreateTestApp(DsKAuthServerDbContext db)
     {
         Application newApplication = new Application()
         {
@@ -233,7 +233,7 @@ internal class Program
         db.SaveChanges();
         return newApplication;
     }
-    private static ApplicationPermission CreateAppPermission(SecurityTablesTestContext db, int applicationId, string permissionName, string permissionDescription)
+    private static ApplicationPermission CreateAppPermission(DsKAuthServerDbContext db, int applicationId, string permissionName, string permissionDescription)
     {
         var permission = new ApplicationPermission()
         {

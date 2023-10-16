@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DsK.AuthServer.Security.EntityFramework.Migrations
 {
-    [DbContext(typeof(SecurityTablesTestContext))]
+    [DbContext(typeof(DsKAuthServerDbContext))]
     [Migration("20231006134750_ApplicationUser_Enabled")]
     partial class ApplicationUser_Enabled
     {

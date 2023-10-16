@@ -45,7 +45,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.Configure<MailConfiguration>(builder.Configuration.GetSection("MailConfiguration"));
 builder.Services.AddTransient<IMailService, SMTPMailService>();
 
-builder.Services.AddDbContext<SecurityTablesTestContext>(options =>
+builder.Services.AddDbContext<DsKAuthServerDbContext>(options =>
 {
 	options.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
 });

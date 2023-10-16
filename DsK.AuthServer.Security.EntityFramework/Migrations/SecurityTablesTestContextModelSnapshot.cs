@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DsK.AuthServer.Security.EntityFramework.Migrations
 {
-    [DbContext(typeof(SecurityTablesTestContext))]
+    [DbContext(typeof(DsKAuthServerDbContext))]
     partial class SecurityTablesTestContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

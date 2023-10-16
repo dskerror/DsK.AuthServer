@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DsK.AuthServer.Security.EntityFramework.Migrations
 {
-    [DbContext(typeof(SecurityTablesTestContext))]
+    [DbContext(typeof(DsKAuthServerDbContext))]
     [Migration("20230929110934_Initial-Migration")]
     partial class InitialMigration
     {

@@ -17,12 +17,12 @@ public class LoggingMiddleware
         _logger = loggerFactory.CreateLogger<LoggingMiddleware>();
     }
 
-    public async Task Invoke(HttpContext context, SecurityTablesTestContext db)
+    public async Task Invoke(HttpContext context, DsKAuthServerDbContext db)
     {
         await LogRequest(context, db);
         await requestProcess(context);
     }
-    private async Task LogRequest(HttpContext context, SecurityTablesTestContext db)
+    private async Task LogRequest(HttpContext context, DsKAuthServerDbContext db)
     {
         //todo : implement applicationid in log
         var userid = context.User.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();
