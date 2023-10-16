@@ -45,17 +45,17 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGet(int userId)
+    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGet(int applicationId, int userId)
     {
-
         var result = new APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>();
         var authenticationProviderList = await db.ApplicationAuthenticationProviders.ToListAsync();
 
 
-        var applicationAuthenticationProviderUserMappingsList = await (from uap in db.ApplicationAuthenticationProviderUserMappings
-                                                        //join ap in db.ApplicationAuthenticationProviders on uap.ApplicationAuthenticationProviderId equals ap.Id
-                                                    where uap.UserId == userId
-                                                    select new { uap.Id, uap.Username }).ToListAsync();
+        var applicationAuthenticationProviderUserMappingsList = 
+            await (from uap in db.ApplicationAuthenticationProviderUserMappings
+            //join ap in db.ApplicationAuthenticationProviders on uap.ApplicationAuthenticationProviderId equals ap.Id
+            where uap.UserId == userId
+            select new { uap.Id, uap.Username }).ToListAsync();
 
         List<ApplicationAuthenticationProviderUserMappingsGridDto> applicationAuthenticationProviderUserMappingGridDtoList = new List<ApplicationAuthenticationProviderUserMappingsGridDto>();
 

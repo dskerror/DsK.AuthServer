@@ -24,9 +24,9 @@ public class ApplicationAuthenticationProviderUserMappingController : Controller
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProviderUserMappings.View}")]
-    public async Task<IActionResult> Get(int userId)
+    public async Task<IActionResult> Get(int applicationId, int userId)
     {
-        var result = await SecurityService.ApplicationAuthenticationProviderUserMappingsGet(userId);
+        var result = await SecurityService.ApplicationAuthenticationProviderUserMappingsGet(applicationId, userId);
         return Ok(result);
     }
 

@@ -4,6 +4,7 @@
         <MudTh>Disabled/Enabled</MudTh>
         <MudTh>Name</MudTh>
         <MudTh>Email</MudTh>
+        <MudTh>User Mappings</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="ApplicationSwitch">
@@ -19,8 +20,21 @@
         </MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="User Mappings">
+            <MudIconButton OnClick="() => ViewApplicationUserMappings(context.ApplicationId, context.UserId)"
+                           Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Success"
+                           Variant="Variant.Outlined" />
+        </MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{50, 100}" />
     </PagerContent>
 </MudTable>
+
+@code {
+    private void ViewApplicationUserMappings(int UserId, int ApplicationId)
+    {
+        _navigationManager.NavigateTo($"/ApplicationUserMapping/{ApplicationId}/{UserId}");
+    }
+}

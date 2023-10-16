@@ -108,7 +108,7 @@ internal class Program
         Application newApplication = new Application()
         {
             IsEnabled = true,
-            ApplicationName = "DsK.AuthorizarionServer",
+            ApplicationName = "DsK.AuthServer",
             ApplicationDesc = "Manages authentication and authorization for other applications",
             ApplicationGuid = Guid.Parse("870F0BC1-DF58-447E-99BB-DA38D1D56D86"),
             AppApiKey = Guid.Parse("CAB41EEC-6002-4738-BE23-128B0A7276C1"),
