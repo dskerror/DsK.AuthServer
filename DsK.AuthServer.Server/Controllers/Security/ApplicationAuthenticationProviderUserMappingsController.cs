@@ -6,19 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 namespace DsK.AuthServer.Server.Controllers.Security;
 [Route("api/[controller]")]
 [ApiController]
-public class ApplicationAuthenticationProviderUserMappingController : ControllerBase
+public class ApplicationAuthenticationProviderUserMappingsController : ControllerBase
 {
     private readonly SecurityService SecurityService;
-    public ApplicationAuthenticationProviderUserMappingController(SecurityService securityService)
+    public ApplicationAuthenticationProviderUserMappingsController(SecurityService securityService)
     {
         SecurityService = securityService;
     }
 
     [HttpPost]
+    [Route("IsEnabledToggle")]
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProviderUserMappings.Create}")]
-    public async Task<IActionResult> Create(ApplicationAuthenticationProviderUserMappingCreateDto model)
+    public async Task<IActionResult> IsEnabledToggle(ApplicationAuthenticationProviderUserMappingIsEnabledToggleDto model)
     {
-        var result = await SecurityService.ApplicationAuthenticationProviderUserMappingCreate(model);
+        var result = await SecurityService.ApplicationAuthenticationProviderUserMappingIsEnabledToggleDto(model);
         return Ok(result);
     }
 
@@ -38,12 +39,12 @@ public class ApplicationAuthenticationProviderUserMappingController : Controller
         return Ok(result);
     }
 
-    [HttpDelete]
-    [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProviderUserMappings.Delete}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var result = await SecurityService.ApplicationAuthenticationProviderUserMappingDelete(id);
-        return Ok(result);
-    }
+    //[HttpDelete]
+    //[Authorize(Roles = $"{Access.Admin}, {Access.ApplicationAuthenticationProviderUserMappings.Delete}")]
+    //public async Task<IActionResult> Delete(int id)
+    //{
+    //    var result = await SecurityService.ApplicationAuthenticationProviderUserMappingDelete(id);
+    //    return Ok(result);
+    //}
 }
 

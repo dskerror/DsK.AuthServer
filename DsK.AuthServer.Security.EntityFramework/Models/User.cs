@@ -7,8 +7,6 @@ public partial class User
 {
     public int Id { get; set; }
 
-    public bool IsEnabled { get; set; }
-
     public string Email { get; set; } = null!;
 
     public string Name { get; set; } = null!;
@@ -33,13 +31,15 @@ public partial class User
 
     public Guid? PasswordChangeGuid { get; set; }
 
-    public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; } = new List<ApplicationAuthenticationProviderUserMapping>();
+    public bool IsEnabled { get; set; }
 
-    public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; } = new List<ApplicationAuthenticationProviderUserToken>();
+    public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; set; } = new List<ApplicationAuthenticationProviderUserMapping>();
 
-    public virtual ICollection<ApplicationUser> ApplicationUsers { get; } = new List<ApplicationUser>();
+    public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; set; } = new List<ApplicationAuthenticationProviderUserToken>();
 
-    public virtual ICollection<UserPermission> UserPermissions { get; } = new List<UserPermission>();
+    public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
 
-    public virtual ICollection<UserRole> UserRoles { get; } = new List<UserRole>();
+    public virtual ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();
+
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

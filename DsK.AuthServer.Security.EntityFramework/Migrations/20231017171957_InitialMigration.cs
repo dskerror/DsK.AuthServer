@@ -22,7 +22,7 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     ApplicationDesc = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     AppApiKey = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CallbackURL = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ApplicationDisabled = table.Column<bool>(type: "bit", nullable: false)
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +46,8 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     AccountCreatedDateTime = table.Column<DateTime>(type: "datetime", nullable: false),
                     LastPasswordChangeDateTime = table.Column<DateTime>(type: "datetime", nullable: false),
                     PasswordChangeDateTime = table.Column<DateTime>(type: "datetime", nullable: true),
-                    PasswordChangeGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    PasswordChangeGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,9 +68,10 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    ApplicationAuthenticationProviderDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
                     RegistrationEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    RegistrationAutoEmailConfirm = table.Column<bool>(type: "bit", nullable: false)
+                    RegistrationAutoEmailConfirm = table.Column<bool>(type: "bit", nullable: false),
+                    ActiveDirectoryFirstLoginAutoRegister = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,7 +92,7 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     ApplicationId = table.Column<int>(type: "int", nullable: false),
                     PermissionName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     PermissionDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    PermissionDisabled = table.Column<bool>(type: "bit", nullable: false)
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,7 +113,7 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     ApplicationId = table.Column<int>(type: "int", nullable: false),
                     RoleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     RoleDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    RoleDisabled = table.Column<bool>(type: "bit", nullable: false)
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -186,7 +188,8 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     LockoutEnd = table.Column<DateTime>(type: "date", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false)
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -211,7 +214,8 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationAuthenticationProviderId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                    Username = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -236,7 +240,7 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     PermissionId = table.Column<int>(type: "int", nullable: false),
-                    Allow = table.Column<bool>(type: "bit", nullable: false)
+                    Overwrite = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -310,14 +314,15 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                 column: "AuthenticationProviderType");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApplicationAuthenticationProviderUserMappings_ApplicationAuthenticationProviderId",
+                name: "IX_AuthProv_UserId",
                 table: "ApplicationAuthenticationProviderUserMappings",
-                column: "ApplicationAuthenticationProviderId");
+                columns: new[] { "UserId", "ApplicationAuthenticationProviderId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApplicationAuthenticationProviderUserMappings_UserId",
+                name: "IX_AuthProv_UserId_Username",
                 table: "ApplicationAuthenticationProviderUserMappings",
-                column: "UserId");
+                columns: new[] { "ApplicationAuthenticationProviderId", "UserId", "Username" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationAuthenticationProviderUserTokens_ApplicationId",

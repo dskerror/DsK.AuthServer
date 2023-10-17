@@ -5,14 +5,14 @@
 3. Go to Tools -> NuGet Package Manger -> Package Manger Console
 4. Select this project as Default project in the Package Manger Console windows.
 5. Run this command:
-	Scaffold-DbContext "Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+	Scaffold-DbContext "Server=.;Database=DsKAuthServer;Trusted_Connection=True;Trust Server Certificate=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 6. Delete ModelsOld Folder
 7. Delete Migrations Folder
 8. Delete __EFMigrationsHistory table on the database
 9. Build and fix any errors.
 10. Run this command:
 	Add-Migration Initial-Migration
-11. Comment the OnConfiguring Method on the SecurityTablesTestContext.cs
+11. Comment the OnConfiguring Method on the DsKauthServerContext.cs
 
 Other:
 Add-Migration: Creates a new migration class as per specified name with the Up() and Down() methods.

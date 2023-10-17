@@ -4,23 +4,20 @@ using DsK.AuthServer.Security.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace DsK.AuthServer.Security.EntityFramework.Migrations
 {
-    [DbContext(typeof(DsKAuthServerDbContext))]
-    [Migration("20231001223341_AddFieldToApplicationAuthenticationProviders")]
-    partial class AddFieldToApplicationAuthenticationProviders
+    [DbContext(typeof(DsKauthServerContext))]
+    partial class DsKauthServerContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.2")
+                .HasAnnotation("ProductVersion", "7.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -41,9 +38,6 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<bool>("ApplicationDisabled")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("ApplicationGuid")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ApplicationGUID");
@@ -58,6 +52,9 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("CallbackURL");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -78,9 +75,6 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     b.Property<bool>("ActiveDirectoryFirstLoginAutoRegister")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("ApplicationAuthenticationProviderDisabled")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("ApplicationAuthenticationProviderGuid")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ApplicationAuthenticationProviderGUID");
@@ -98,6 +92,9 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     b.Property<string>("Domain")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
@@ -137,6 +134,9 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     b.Property<int>("ApplicationAuthenticationProviderId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -147,9 +147,10 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "ApplicationAuthenticationProviderId" }, "IX_ApplicationAuthenticationProviderUserMappings_ApplicationAuthenticationProviderId");
+                    b.HasIndex(new[] { "UserId", "ApplicationAuthenticationProviderId" }, "IX_AuthProv_UserId")
+                        .IsUnique();
 
-                    b.HasIndex(new[] { "UserId" }, "IX_ApplicationAuthenticationProviderUserMappings_UserId");
+                    b.HasIndex(new[] { "ApplicationAuthenticationProviderId", "UserId", "Username" }, "IX_AuthProv_UserId_Username");
 
                     b.ToTable("ApplicationAuthenticationProviderUserMappings");
                 });
@@ -201,13 +202,13 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PermissionDescription")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
-
-                    b.Property<bool>("PermissionDisabled")
-                        .HasColumnType("bit");
 
                     b.Property<string>("PermissionName")
                         .IsRequired()
@@ -235,13 +236,13 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<string>("RoleDescription")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
-
-                    b.Property<bool>("RoleDisabled")
-                        .HasColumnType("bit");
 
                     b.Property<string>("RoleName")
                         .IsRequired()
@@ -285,6 +286,9 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
 
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -332,6 +336,9 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastPasswordChangeDateTime")
                         .HasColumnType("datetime");
@@ -416,7 +423,7 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Allow")
+                    b.Property<bool>("Overwrite")
                         .HasColumnType("bit");
 
                     b.Property<int>("PermissionId")

@@ -7,8 +7,6 @@ public partial class Application
 {
     public int Id { get; set; }
 
-    public bool IsEnabled { get; set; }
-
     public Guid ApplicationGuid { get; set; }
 
     public string ApplicationName { get; set; } = null!;
@@ -19,15 +17,17 @@ public partial class Application
 
     public string CallbackUrl { get; set; } = null!;
 
-    public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; } = new List<ApplicationAuthenticationProviderUserToken>();
+    public bool IsEnabled { get; set; }
 
-    public virtual ICollection<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; } = new List<ApplicationAuthenticationProvider>();
+    public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; set; } = new List<ApplicationAuthenticationProviderUserToken>();
 
-    public virtual ICollection<ApplicationPermission> ApplicationPermissions { get; } = new List<ApplicationPermission>();
+    public virtual ICollection<ApplicationAuthenticationProvider> ApplicationAuthenticationProviders { get; set; } = new List<ApplicationAuthenticationProvider>();
 
-    public virtual ICollection<ApplicationRole> ApplicationRoles { get; } = new List<ApplicationRole>();
+    public virtual ICollection<ApplicationPermission> ApplicationPermissions { get; set; } = new List<ApplicationPermission>();
 
-    public virtual ICollection<ApplicationUser> ApplicationUsers { get; } = new List<ApplicationUser>();
+    public virtual ICollection<ApplicationRole> ApplicationRoles { get; set; } = new List<ApplicationRole>();
 
-    public virtual ICollection<UserLog> UserLogs { get; } = new List<UserLog>();
+    public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
+
+    public virtual ICollection<UserLog> UserLogs { get; set; } = new List<UserLog>();
 }

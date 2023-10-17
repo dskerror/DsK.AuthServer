@@ -1,0 +1,61 @@
+﻿@page "/Application/{ApplicationId:int}/AuthenticationProviderUserMappings/{UserId:int}"
+<MudBreadcrumbs Items="_breadcrumbs"></MudBreadcrumbs>
+
+@if (!_loaded)
+{
+    <h3>Loading...</h3>
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+}
+
+<MudTable Items="@model" Hover="true">
+    <HeaderContent>
+        <MudTh>Disabled/Enabled</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Authentication Provider Name</MudTh>
+        <MudTh>Authentication Provider Type</MudTh>
+        <MudTh>Username</MudTh>
+        <MudTh>Save</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="IsEnabledSwitch">
+            @if (context.UserId == 1 && context.ApplicationId == 1 && _AccessEdit)
+            {
+                <MudSwitch Color="Color.Success" Disabled="true" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleIsEnabled(e,context.ApplicationAuthenticationProviderId)" />
+            }
+            else
+            {
+                <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleIsEnabled(e,context.ApplicationAuthenticationProviderId)" />
+            }
+        </MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="AuthenticationProviderName">@context.AuthenticationProviderName</MudTd>
+        <MudTd DataLabel="AuthenticationProviderType">@context.AuthenticationProviderType</MudTd>
+        <MudTd DataLabel="Username">
+            @if (context.AuthenticationProviderType == "Local")
+            {
+                <MudTextField Disabled="true" @bind-Value="@context.Username" For="@(()=>@context.Username)">@context.Username</MudTextField>
+            }
+            else
+            {
+                @if (@context.IsEnabled && _AccessEdit)
+                {
+                    <MudTextField @bind-Value="@context.Username" For="@(()=>@context.Username)">@context.Username</MudTextField>                    
+                }
+                else
+                {
+                    <MudTextField Disabled="true" @bind-Value="@context.Username" For="@(()=>@context.Username)">@context.Username</MudTextField>
+                }
+            }
+        </MudTd>
+        <MudTd DataLabel="Save">
+            @if (context.AuthenticationProviderType != "Local" && @context.IsEnabled && _AccessEdit)
+            {
+                <MudIconButton OnClick="() => SaveMappedUsername(context.Id, context.Username)"
+                               Icon="@Icons.Material.Filled.Save" Color="Color.Success" Variant="Variant.Outlined" />
+            }            
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>

@@ -1,4 +1,7 @@
-﻿namespace DsK.AuthServer.Security.EntityFramework.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace DsK.AuthServer.Security.EntityFramework.Models;
 
 public partial class UserPermission
 {

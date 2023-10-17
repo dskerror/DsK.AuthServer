@@ -16,15 +16,15 @@
             {
                 <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
             }
-
         </MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Email">@context.Email</MudTd>
         <MudTd DataLabel="User Mappings">
-            <MudIconButton OnClick="() => ViewApplicationUserMappings(context.ApplicationId, context.UserId)"
-                           Icon="@Icons.Material.Filled.Edit"
-                           Color="Color.Success"
-                           Variant="Variant.Outlined" />
+            @if (@context.IsEnabled)
+            {
+                <MudIconButton OnClick="() => ViewApplicationUserMappings(context.ApplicationId, context.UserId)"
+                               Icon="@Icons.Material.Filled.Edit" Color="Color.Success" Variant="Variant.Outlined" />
+            }
         </MudTd>
     </RowTemplate>
     <PagerContent>
@@ -33,8 +33,8 @@
 </MudTable>
 
 @code {
-    private void ViewApplicationUserMappings(int UserId, int ApplicationId)
+    private void ViewApplicationUserMappings(int ApplicationId, int UserId)
     {
-        _navigationManager.NavigateTo($"/ApplicationUserMapping/{ApplicationId}/{UserId}");
+        _navigationManager.NavigateTo($"/Application/{ApplicationId}/AuthenticationProviderUserMappings/{UserId}");
     }
 }

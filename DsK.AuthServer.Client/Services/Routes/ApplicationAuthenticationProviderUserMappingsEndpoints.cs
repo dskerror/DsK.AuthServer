@@ -1,17 +1,13 @@
 ﻿namespace DsK.AuthServer.Client.Services.Routes;
 public static class ApplicationAuthenticationProviderUserMappingsEndpoints
 {
-    public static string Get(int userId)
+    public static string Get(int applicationId, int userId)
     {
-        var url = "";//$"api/ApplicationAuthenticationProviderUserMappings?ApplicationId={request.ApplicationId}?Id={request.Id}&pageNumber={request.PageNumber}&pageSize={request.PageSize}&searchString={request.SearchString}&orderBy={request.Orderby}";
+        var url = $"api/ApplicationAuthenticationProviderUserMappings?ApplicationId={applicationId}&UserId={userId}";
         return url;
     }
 
-    public static string Post = "api/ApplicationAuthenticationProviderUserMappings";
-    public static string Put = "api/ApplicationAuthenticationProviderUserMappings";
-    public static string Delete(int id)
-    {
-        var url = $"api/ApplicationAuthenticationProviderUserMappings?Id={id}";
-        return url;
-    }
+    public static string IsEnabledToggle = "api/ApplicationAuthenticationProviderUserMappings/IsEnabledToggle";
+
+    public static string Put = "api/ApplicationAuthenticationProviderUserMappings";    
 }

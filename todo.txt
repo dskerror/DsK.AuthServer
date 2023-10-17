@@ -1,10 +1,8 @@
 --in progress--
 
 --pipeline--
+prevent creating user mapping with the email of other user
 User > Disable
-User View/Edit > User Mappings
-User View/Edit > User Mappings > Create
-User View/Edit > User Mappings > Disable
 Login > Validate user is an application user
 MyProfileController > Limit to show only to current user
 hide disabled all disabled items with option to show

@@ -9,13 +9,13 @@ namespace DsK.AuthServer.Security.Infrastructure
     public partial class SecurityService
     {   
         private readonly TokenSettingsModel _tokenSettings;
-        private readonly DsKAuthServerDbContext db;
+        private readonly DsKauthServerContext db;
         private IMapper Mapper;
         private readonly IMailService _mailService;
 
         public SecurityService(
             IOptions<TokenSettingsModel> tokenSettings, 
-            DsKAuthServerDbContext db, 
+            DsKauthServerContext db, 
             IMapper Mapper, 
             IMailService mailService)
         {

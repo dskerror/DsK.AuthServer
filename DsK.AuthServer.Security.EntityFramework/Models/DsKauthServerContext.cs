@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DsK.AuthServer.Security.EntityFramework.Models;
 
-public partial class DsKAuthServerDbContext : DbContext
+public partial class DsKauthServerContext : DbContext
 {
-    public DsKAuthServerDbContext()
+    public DsKauthServerContext()
     {
     }
 
-    public DsKAuthServerDbContext(DbContextOptions<DsKAuthServerDbContext> options)
+    public DsKauthServerContext(DbContextOptions<DsKauthServerContext> options)
         : base(options)
     {
     }
@@ -78,9 +78,9 @@ public partial class DsKAuthServerDbContext : DbContext
 
         modelBuilder.Entity<ApplicationAuthenticationProviderUserMapping>(entity =>
         {
-            entity.HasIndex(e => e.ApplicationAuthenticationProviderId, "IX_ApplicationAuthenticationProviderUserMappings_ApplicationAuthenticationProviderId");
+            entity.HasIndex(e => new { e.UserId, e.ApplicationAuthenticationProviderId }, "IX_AuthProv_UserId").IsUnique();
 
-            entity.HasIndex(e => e.UserId, "IX_ApplicationAuthenticationProviderUserMappings_UserId");
+            entity.HasIndex(e => new { e.ApplicationAuthenticationProviderId, e.UserId, e.Username }, "IX_AuthProv_UserId_Username");
 
             entity.Property(e => e.Username).HasMaxLength(256);
 

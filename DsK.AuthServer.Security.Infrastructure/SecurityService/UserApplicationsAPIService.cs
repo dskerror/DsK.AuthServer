@@ -15,19 +15,19 @@ public partial class SecurityService
         var applications = await db.Applications.ToListAsync();
 
         var userApplications = await (from au in db.ApplicationUsers
-                               join a in db.Applications on au.ApplicationId equals a.Id
-                               where au.UserId == userId
-                               select new { a.ApplicationName, au.UserId, au.ApplicationId }).ToListAsync();
+                                      join a in db.Applications on au.ApplicationId equals a.Id
+                                      where au.UserId == userId
+                                      select new { a.ApplicationName, au.UserId, au.ApplicationId }).ToListAsync();
 
         List<UserApplicationGridDto> userApplicationGridDto = new List<UserApplicationGridDto>();
 
         foreach (var application in applications)
         {
             var value = new UserApplicationGridDto()
-            {   
+            {
                 ApplicationName = application.ApplicationName,
                 ApplicationId = application.Id,
-                UserId = userId,                
+                UserId = userId,
             };
 
             var lookupInuserApplications = userApplications.Where(x => x.UserId == userId && x.ApplicationId == application.Id).FirstOrDefault();
@@ -43,7 +43,7 @@ public partial class SecurityService
     {
         APIResult<string> result = new APIResult<string>();
 
-        if(model.UserId == 1 & model.ApplicationId == 1)
+        if (model.UserId == 1 & model.ApplicationId == 1)
         {
             result.HasError = true;
             result.Message = "Admin can't be disabled from main app";
@@ -54,9 +54,25 @@ public partial class SecurityService
         var record = new ApplicationUser();
         Mapper.Map(model, record);
 
-        if (model.IsEnabled)
+        var applicationUser = db.ApplicationUsers.Where(x => x.ApplicationId == model.ApplicationId && x.UserId == model.UserId).SingleOrDefault();
+
+        if (applicationUser == null)
         {
+            var appAuthProvider = await db.ApplicationAuthenticationProviders.Where(x => x.AuthenticationProviderType == "Local" && x.ApplicationId == model.ApplicationId).SingleOrDefaultAsync();
+            var user = await db.Users.FindAsync(model.UserId);
+
             db.ApplicationUsers.Add(record);
+
+            var mapping = new ApplicationAuthenticationProviderUserMapping()
+            {
+                ApplicationAuthenticationProviderId = appAuthProvider.Id,
+                UserId = model.UserId,
+                IsEnabled = true,
+                Username = user.Email
+            };
+
+            db.ApplicationAuthenticationProviderUserMappings.Add(mapping);
+
             try
             {
                 recordsModifiedCount = await db.SaveChangesAsync();
@@ -65,30 +81,21 @@ public partial class SecurityService
             {
                 result.HasError = true;
                 result.Message = ex.InnerException.Message;
+                return result;
             }
-            if (recordsModifiedCount == 1)
-            {
-                result.Result = recordsModifiedCount.ToString();
-                result.Message = "Record Created";
-            }
+
+            result.Result = recordsModifiedCount.ToString();
+            result.Message = "Record Created";
+
         }
         else
         {
-            var recordFind = await db.ApplicationUsers.Where(x => x.ApplicationId == model.ApplicationId && x.UserId == model.UserId).FirstOrDefaultAsync();
-            var recordToDelete = db.ApplicationUsers.Attach(recordFind);
-            recordToDelete.State = EntityState.Deleted;
-
-            try
-            {
-                recordsModifiedCount = await db.SaveChangesAsync();
-                result.Result = recordsModifiedCount.ToString();
-            }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.Message;
-            }
+            applicationUser.IsEnabled = applicationUser.IsEnabled ? false : true;
+            recordsModifiedCount = await db.SaveChangesAsync();
+            result.Result = recordsModifiedCount.ToString();
+            result.Message = "Record Modified";
         }
+
         return result;
     }
 }

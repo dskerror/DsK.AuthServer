@@ -1,10 +1,11 @@
-﻿namespace DsK.AuthServer.Security.EntityFramework.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace DsK.AuthServer.Security.EntityFramework.Models;
 
 public partial class ApplicationUser
 {
     public int Id { get; set; }
-
-    public bool IsEnabled { get; set; }
 
     public int ApplicationId { get; set; }
 
@@ -17,6 +18,8 @@ public partial class ApplicationUser
     public int AccessFailedCount { get; set; }
 
     public bool TwoFactorEnabled { get; set; }
+
+    public bool IsEnabled { get; set; }
 
     public virtual Application Application { get; set; } = null!;
 

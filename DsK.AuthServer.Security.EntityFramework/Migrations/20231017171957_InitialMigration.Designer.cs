@@ -4,16 +4,19 @@ using DsK.AuthServer.Security.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace DsK.AuthServer.Security.EntityFramework.Migrations
 {
-    [DbContext(typeof(DsKAuthServerDbContext))]
-    partial class SecurityTablesTestContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(DsKauthServerContext))]
+    [Migration("20231017171957_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -147,9 +150,10 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "ApplicationAuthenticationProviderId" }, "IX_ApplicationAuthenticationProviderUserMappings_ApplicationAuthenticationProviderId");
+                    b.HasIndex(new[] { "UserId", "ApplicationAuthenticationProviderId" }, "IX_AuthProv_UserId")
+                        .IsUnique();
 
-                    b.HasIndex(new[] { "UserId" }, "IX_ApplicationAuthenticationProviderUserMappings_UserId");
+                    b.HasIndex(new[] { "ApplicationAuthenticationProviderId", "UserId", "Username" }, "IX_AuthProv_UserId_Username");
 
                     b.ToTable("ApplicationAuthenticationProviderUserMappings");
                 });

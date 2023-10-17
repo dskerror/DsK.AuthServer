@@ -1,9 +1,11 @@
-﻿namespace DsK.AuthServer.Security.EntityFramework.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace DsK.AuthServer.Security.EntityFramework.Models;
+
 public partial class ApplicationAuthenticationProvider
 {
     public int Id { get; set; }
-
-    public bool IsEnabled { get; set; }
 
     public Guid ApplicationAuthenticationProviderGuid { get; set; }
 
@@ -19,7 +21,9 @@ public partial class ApplicationAuthenticationProvider
 
     public string? Username { get; set; }
 
-    public string? Password { get; set; }    
+    public string? Password { get; set; }
+
+    public bool IsEnabled { get; set; }
 
     public bool RegistrationEnabled { get; set; }
 
@@ -29,5 +33,5 @@ public partial class ApplicationAuthenticationProvider
 
     public virtual Application Application { get; set; } = null!;
 
-    public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; } = new List<ApplicationAuthenticationProviderUserMapping>();
+    public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; set; } = new List<ApplicationAuthenticationProviderUserMapping>();
 }
