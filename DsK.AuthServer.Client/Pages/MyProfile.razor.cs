@@ -18,23 +18,22 @@ public partial class MyProfile
     };
 
     protected override async Task OnInitializedAsync()
-    {
-        int userId = await GetUsedIdFromAuthenticationState();
-        await LoadData(userId);
+    {        
+        await LoadData();
     }
 
-    private async Task<int> GetUsedIdFromAuthenticationState()
-    {
-        var state = await authenticationState;
-        var userIdString = state.User.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();
-        int userId = int.Parse(userIdString);
-        return userId;
-    }
+    //private async Task<int> GetUsedIdFromAuthenticationState()
+    //{
+    //    var state = await authenticationState;
+    //    var userIdString = state.User.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();
+    //    int userId = int.Parse(userIdString);
+    //    return userId;
+    //}
 
-    private async Task LoadData(int userId)
+    private async Task LoadData()
     {
         
-        var result = await securityService.MyProfileGetAsync(userId);
+        var result = await securityService.MyProfileGetAsync();
         if (result != null)
         {
             user = result.Result;
@@ -60,7 +59,7 @@ public partial class MyProfile
     {
         Snackbar.Add("Edit canceled", Severity.Warning);
 
-        int userId = await GetUsedIdFromAuthenticationState();
-        await LoadData(userId);
+        //int userId = await GetUsedIdFromAuthenticationState();
+        await LoadData();
     }
 }

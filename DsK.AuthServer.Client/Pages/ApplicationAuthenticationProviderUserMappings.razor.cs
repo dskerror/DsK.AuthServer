@@ -56,7 +56,7 @@ public partial class ApplicationAuthenticationProviderUserMappings
     {
         await securityService.ApplicationAuthenticationProviderUserMappingIsEnabledToggle(applicationAuthenticationProviderId, UserId, ApplicationId, (bool)e.Value);
         await LoadApplicationAuthenticationProviderUserMappings();
-        Snackbar.Add("Application Authentication Provider User Mapping WChanged", Severity.Success);
+        Snackbar.Add("Application Authentication Provider User Mapping Changed", Severity.Success);
     }
 
     private async Task SaveMappedUsername(int id, string username)

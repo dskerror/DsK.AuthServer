@@ -96,7 +96,7 @@ public partial class SecurityService
 
         var checkDuplicateUsername = await db.ApplicationAuthenticationProviderUserMappings
             .FirstOrDefaultAsync(x => x.Username == model.Username 
-                && x.ApplicationAuthenticationProviderId == record.ApplicationAuthenticationProviderId 
+                //&& x.ApplicationAuthenticationProviderId == record.ApplicationAuthenticationProviderId 
                 && x.UserId != record.UserId);
 
         if (checkDuplicateUsername != null)

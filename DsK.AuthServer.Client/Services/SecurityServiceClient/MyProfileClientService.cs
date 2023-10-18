@@ -9,7 +9,6 @@ public partial class SecurityServiceClient
     {
         MyProfileUpdateDto mapping = new MyProfileUpdateDto()
         {
-            Id = model.Id,
             Name = model.Name
         };
 
@@ -31,10 +30,10 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<bool>();
         return result;
     }
-    public async Task<APIResult<UserDto>> MyProfileGetAsync(int id)
+    public async Task<APIResult<UserDto>> MyProfileGetAsync()
     {
         await PrepareBearerToken();
-        var response = await _httpClient.GetAsync(Routes.MyProfileEndpoints.Get(id));
+        var response = await _httpClient.GetAsync(Routes.MyProfileEndpoints.Get());
 
         if (!response.IsSuccessStatusCode)        
             return null;

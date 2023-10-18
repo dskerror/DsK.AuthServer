@@ -13,11 +13,11 @@ public partial class SecurityService
         result.Result = Mapper.Map<User, UserDto>(user);
         return result;
     }
-    public async Task<APIResult<string>> MyProfileUpdate(MyProfileUpdateDto model)
+    public async Task<APIResult<string>> MyProfileUpdate(int userId, MyProfileUpdateDto model)
     {
         APIResult<string> result = new APIResult<string>();
         int recordsUpdated = 0;
-        var record = await db.Users.FirstOrDefaultAsync(x => x.Id == model.Id);
+        var record = await db.Users.FirstOrDefaultAsync(x => x.Id == userId);
 
         if (record != null)
             Mapper.Map(model, record);
@@ -38,10 +38,10 @@ public partial class SecurityService
         return result;
     }
 
-    public async Task<bool> MyProfileChangePassword(MyProfileChangePasswordDto model)
+    public async Task<bool> MyProfileChangePassword(int userId, MyProfileChangePasswordDto model)
     {
         int recordsUpdated = 0;
-        var record = await db.Users.FirstOrDefaultAsync(x => x.Id == model.UserId);
+        var record = await db.Users.FirstOrDefaultAsync(x => x.Id == userId);
 
         //Password
         var ramdomSalt = SecurityHelpers.RandomizeSalt;

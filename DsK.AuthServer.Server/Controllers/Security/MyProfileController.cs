@@ -2,6 +2,7 @@
 using DsK.AuthServer.Security.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DsK.AuthServer.Server.Controllers.Security;
 [Route("api/[controller]")]
@@ -17,17 +18,26 @@ public class MyProfileController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.MyProfile.View}")]
-    public async Task<IActionResult> Get(int id)
+    public async Task<IActionResult> Get()
     {
-        var result = await SecurityService.MyProfileGet(id);
-        return Ok(result);
+        var userId = GetUserId();
+        
+        if (userId != 0)
+        {
+            var result = await SecurityService.MyProfileGet(userId);
+            return Ok(result);
+        } else
+        {
+            return NotFound("UserId not found");
+        }
     }
 
     [HttpPut]
     [Authorize(Roles = $"{Access.Admin}, {Access.MyProfile.Edit}")]
     public async Task<IActionResult> Update(MyProfileUpdateDto model)
     {
-        var result = await SecurityService.MyProfileUpdate(model);
+        var userId = GetUserId();
+        var result = await SecurityService.MyProfileUpdate(userId, model);
         return Ok(result);
     }
 
@@ -35,7 +45,21 @@ public class MyProfileController : ControllerBase
     [Authorize(Roles = $"{Access.Admin}, {Access.MyProfile.Edit}")]
     public async Task<IActionResult> ChangePassword(MyProfileChangePasswordDto model)
     {
-        var result = await SecurityService.MyProfileChangePassword(model);
+        var userId = GetUserId();
+        var result = await SecurityService.MyProfileChangePassword(userId, model);
         return Ok(result);
+    }
+
+    private int GetUserId()
+    {
+        var identity = HttpContext.User.Identity as ClaimsIdentity;
+        if (identity != null)
+        {
+            //IEnumerable<Claim> claims = identity.Claims;
+            return int.Parse(identity.FindFirst("UserId").Value);
+            
+        }
+        else        
+            return 0;        
     }
 }

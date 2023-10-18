@@ -15,17 +15,15 @@ public partial class MyProfileChangePassword
     protected override async Task OnInitializedAsync()
     {
         model = new MyProfileChangePasswordDto();
-        int userId = await GetUsedIdFromAuthenticationState();
-        model.UserId = userId;
     }
 
-    private async Task<int> GetUsedIdFromAuthenticationState()
-    {
-        var state = await authenticationState;
-        var userIdString = state.User.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();
-        int userId = int.Parse(userIdString);
-        return userId;
-    }
+    //private async Task<int> GetUsedIdFromAuthenticationState()
+    //{
+    //    var state = await authenticationState;
+    //    var userIdString = state.User.Claims.Where(_ => _.Type == "UserId").Select(_ => _.Value).FirstOrDefault();
+    //    int userId = int.Parse(userIdString);
+    //    return userId;
+    //}
     private async Task ChangePassword()
     {
         var result = await securityService.MyProfileChangePasswordAsync(model);
