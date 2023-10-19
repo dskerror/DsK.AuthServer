@@ -16,10 +16,10 @@ public partial class SecurityServiceClient
         return result;
     }
 
-    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGetAsync(int applicationId, int userId)
+    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGetAsync(int applicationId, int applicationUserId)
     {
         await PrepareBearerToken();
-        var url = Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Get(applicationId, userId);
+        var url = Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Get(applicationId, applicationUserId);
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
             return null;
@@ -38,13 +38,13 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<bool> ApplicationAuthenticationProviderUserMappingIsEnabledToggle(int applicationAuthenticationProviderId, int userId, int applicationId, bool isEnabled)
+    public async Task<bool> ApplicationAuthenticationProviderUserMappingIsEnabledToggle(int applicationAuthenticationProviderId, int applicationUserId, int applicationId, bool isEnabled)
     {
         await PrepareBearerToken();
         var model = new ApplicationAuthenticationProviderUserMappingIsEnabledToggleDto()
         {
             ApplicationAuthenticationProviderId = applicationAuthenticationProviderId,
-            UserId = userId
+            ApplicationUserId = applicationUserId
         };
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.IsEnabledToggle, model);
         if (!response.IsSuccessStatusCode)

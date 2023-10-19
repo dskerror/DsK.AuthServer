@@ -78,9 +78,9 @@ public partial class DsKauthServerContext : DbContext
 
         modelBuilder.Entity<ApplicationAuthenticationProviderUserMapping>(entity =>
         {
-            entity.HasIndex(e => new { e.UserId, e.ApplicationAuthenticationProviderId }, "IX_AuthProv_UserId").IsUnique();
+            entity.HasIndex(e => new { e.ApplicationUserId, e.ApplicationAuthenticationProviderId }, "IX_AuthProv_UserId").IsUnique();
 
-            entity.HasIndex(e => new { e.ApplicationAuthenticationProviderId, e.UserId, e.Username }, "IX_AuthProv_UserId_Username");
+            entity.HasIndex(e => new { e.ApplicationAuthenticationProviderId, e.ApplicationUserId, e.Username }, "IX_AuthProv_UserId_Username");
 
             entity.Property(e => e.Username).HasMaxLength(256);
 
@@ -89,8 +89,8 @@ public partial class DsKauthServerContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ApplicationAuthenticationProviderUserMappings_ApplicationAuthenticationProviders");
 
-            entity.HasOne(d => d.User).WithMany(p => p.ApplicationAuthenticationProviderUserMappings)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.ApplicationUser).WithMany(p => p.ApplicationAuthenticationProviderUserMappings)
+                .HasForeignKey(d => d.ApplicationUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ApplicationAuthenticationProviderUserMappings_Users");
         });

@@ -111,10 +111,10 @@ public partial class SecurityService
         else
             userAlreadyExists = true;
 
-        await RegisterAuthApp(model, origin, applicationAuthenticationProvider);
-        await CreateApplicationUser(applicationAuthenticationProvider, user);
+        await RegisterAuthApp(model, origin, applicationAuthenticationProvider);        
+        var applicationUser = await CreateApplicationUser(applicationAuthenticationProvider, user);
+        await AddApplicationAuthenticationProviderUserMapping(model, applicationAuthenticationProvider, applicationUser);
         await AddDefaultRoleToUser(applicationAuthenticationProvider, user);
-        await AddApplicationAuthenticationProviderUserMapping(model, applicationAuthenticationProvider, user);
         await SendRegistrationEmail(origin, applicationAuthenticationProvider, user).ConfigureAwait(false);
 
         if (user.Id != 0)
@@ -176,28 +176,26 @@ public partial class SecurityService
             }
         }
     }
-    private async Task AddApplicationAuthenticationProviderUserMapping(RegisterRequestDto model, ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
+    private async Task AddApplicationAuthenticationProviderUserMapping(RegisterRequestDto model, ApplicationAuthenticationProvider applicationAuthenticationProvider, ApplicationUser applicationUser)
     {
-        if (user.Id != 0)
+        var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings
+            .Where(x => x.ApplicationUserId == applicationUser.Id && x.ApplicationAuthenticationProviderId == applicationAuthenticationProvider.Id).FirstOrDefaultAsync();
+        if (applicationAuthenticationProviderUserMapping == null)
         {
-            var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.UserId == user.Id && x.ApplicationAuthenticationProviderId == applicationAuthenticationProvider.Id).FirstOrDefaultAsync();
-            if (applicationAuthenticationProviderUserMapping == null)
+            var username = applicationUser.User.Email;
+            if (applicationAuthenticationProvider.AuthenticationProviderType == "Active Directory")
+                username = model.ADUsername;
+
+            applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
             {
-                var username = user.Email;
-                if (applicationAuthenticationProvider.AuthenticationProviderType == "Active Directory")
-                    username = model.ADUsername;
+                ApplicationUserId = applicationUser.Id,
+                ApplicationAuthenticationProviderId = applicationAuthenticationProvider.Id,
+                Username = username
+            };
 
-                applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
-                {
-                    UserId = user.Id,
-                    ApplicationAuthenticationProviderId = applicationAuthenticationProvider.Id,
-                    Username = username
-                };
+            db.ApplicationAuthenticationProviderUserMappings.Add(applicationAuthenticationProviderUserMapping);
 
-                db.ApplicationAuthenticationProviderUserMappings.Add(applicationAuthenticationProviderUserMapping);
-
-                await db.SaveChangesAsync();
-            }
+            await db.SaveChangesAsync();
         }
     }
     private async Task AddDefaultRoleToUser(ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
@@ -221,23 +219,21 @@ public partial class SecurityService
             }
         }
     }
-    private async Task CreateApplicationUser(ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
+    private async Task<ApplicationUser> CreateApplicationUser(ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
     {
-        if (user.Id != 0)
+        var applicationUser = await db.ApplicationUsers.Where(x => x.UserId == user.Id && x.ApplicationId == applicationAuthenticationProvider.Id).FirstOrDefaultAsync();
+        if (applicationUser == null)
         {
-            var applicationUser = await db.ApplicationUsers.Where(x => x.UserId == user.Id && x.ApplicationId == applicationAuthenticationProvider.Id).FirstOrDefaultAsync();
-            if (applicationUser == null)
+            applicationUser = new ApplicationUser()
             {
-                applicationUser = new ApplicationUser()
-                {
-                    UserId = user.Id,
-                    ApplicationId = applicationAuthenticationProvider.ApplicationId
-                };
+                UserId = user.Id,
+                ApplicationId = applicationAuthenticationProvider.ApplicationId
+            };
 
-                db.ApplicationUsers.Add(applicationUser);
-                await db.SaveChangesAsync();
-            }
+            db.ApplicationUsers.Add(applicationUser);
+            await db.SaveChangesAsync();
         }
+        return applicationUser;
     }
     private async Task<User?> CreateUser(RegisterRequestDto model, ApplicationAuthenticationProvider applicationAuthenticationProvider, User? user)
     {

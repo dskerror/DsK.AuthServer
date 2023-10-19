@@ -66,7 +66,7 @@ public partial class SecurityService
             var mapping = new ApplicationAuthenticationProviderUserMapping()
             {
                 ApplicationAuthenticationProviderId = appAuthProvider.Id,
-                UserId = model.UserId,
+                ApplicationUser = applicationUser,
                 IsEnabled = true,
                 Username = user.Email
             };

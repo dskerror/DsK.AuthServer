@@ -21,10 +21,14 @@ public partial class SecurityService
         record.HashedPassword = SecurityHelpers.HashPasword(model.Password, ramdomSalt);
         record.Salt = Convert.ToHexString(ramdomSalt);
 
-        record.EmailConfirmed = true;         
+        record.EmailConfirmed = true;
         record.AccountCreatedDateTime = DateTime.Now;
         record.EmailConfirmed = true;
         record.LastPasswordChangeDateTime = DateTime.Now;
+
+        if (record.Id == 1)
+            record.IsEnabled = true;
+
         await db.Users.AddAsync(record);
 
         try
@@ -151,10 +155,16 @@ public partial class SecurityService
     }
     private async Task<User> GetUserByMappedUsernameAsync(string username, int applicationAuthenticationProviderId)
     {
-        var user = await (from u in db.Users
-                    join aapum in db.ApplicationAuthenticationProviderUserMappings on u.Id equals aapum.UserId
-                    where aapum.Username == username && aapum.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId
-                    select u).FirstOrDefaultAsync();
-        return user;
+        var applicationUser = await db.Users
+            .Include(x => x.ApplicationUsers)
+            .ThenInclude(x => x.ApplicationAuthenticationProviderUserMappings
+                .Where(x => x.Username == username && x.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId)
+            )
+            .SingleOrDefaultAsync();
+        //await (from u in db.Users
+        //        join aapum in db.ApplicationAuthenticationProviderUserMappings on u.Id equals aapum.UserId
+        //        where aapum.Username == username && aapum.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId
+        //        select u).FirstOrDefaultAsync();
+        return applicationUser;
     }
 }

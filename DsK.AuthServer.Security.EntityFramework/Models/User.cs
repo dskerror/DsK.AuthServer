@@ -33,8 +33,6 @@ public partial class User
 
     public bool IsEnabled { get; set; }
 
-    public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; set; } = new List<ApplicationAuthenticationProviderUserMapping>();
-
     public virtual ICollection<ApplicationAuthenticationProviderUserToken> ApplicationAuthenticationProviderUserTokens { get; set; } = new List<ApplicationAuthenticationProviderUserToken>();
 
     public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();

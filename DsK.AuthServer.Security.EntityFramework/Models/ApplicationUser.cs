@@ -23,5 +23,7 @@ public partial class ApplicationUser
 
     public virtual Application Application { get; set; } = null!;
 
+    public virtual ICollection<ApplicationAuthenticationProviderUserMapping> ApplicationAuthenticationProviderUserMappings { get; set; } = new List<ApplicationAuthenticationProviderUserMapping>();
+
     public virtual User User { get; set; } = null!;
 }

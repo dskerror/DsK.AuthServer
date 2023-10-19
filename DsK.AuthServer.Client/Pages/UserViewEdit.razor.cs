@@ -8,7 +8,7 @@ namespace DsK.AuthServer.Client.Pages;
 public partial class UserViewEdit
 {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-    public UserDto user { get; set; }        
+    public UserDto model { get; set; }        
     [Parameter] public int id { get; set; }
     private bool _loaded;
     private bool _AccessView;
@@ -46,13 +46,13 @@ public partial class UserViewEdit
         var result = await securityService.UserGetAsync(id);
         if (result != null)
         {
-            user = result.Result;
+            model = result.Result;
             _loaded = true;
         }
     }
     private async Task EditUser()
     {
-        var result = await securityService.UserEditAsync(user);
+        var result = await securityService.UserEditAsync(model);
 
         if (result != null)
             if (result.HasError)

@@ -8,7 +8,7 @@ public partial class ApplicationAuthenticationProviderUserMappings
 {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     [Parameter] public int ApplicationId { get; set; }
-    [Parameter] public int UserId { get; set; }
+    [Parameter] public int ApplicationUserId { get; set; }
     public List<ApplicationAuthenticationProviderUserMappingsGridDto> model { get; set; }
 
 
@@ -44,7 +44,7 @@ public partial class ApplicationAuthenticationProviderUserMappings
 
     private async Task LoadApplicationAuthenticationProviderUserMappings()
     {
-        var result = await securityService.ApplicationAuthenticationProviderUserMappingsGetAsync(ApplicationId, UserId);
+        var result = await securityService.ApplicationAuthenticationProviderUserMappingsGetAsync(ApplicationId, ApplicationUserId);
         _loaded = true;
         if (result != null)
         {
@@ -54,7 +54,7 @@ public partial class ApplicationAuthenticationProviderUserMappings
 
     private async Task ToggleIsEnabled(ChangeEventArgs e, int applicationAuthenticationProviderId)
     {
-        await securityService.ApplicationAuthenticationProviderUserMappingIsEnabledToggle(applicationAuthenticationProviderId, UserId, ApplicationId, (bool)e.Value);
+        await securityService.ApplicationAuthenticationProviderUserMappingIsEnabledToggle(applicationAuthenticationProviderId, ApplicationUserId, ApplicationId, (bool)e.Value);
         await LoadApplicationAuthenticationProviderUserMappings();
         Snackbar.Add("Application Authentication Provider User Mapping Changed", Severity.Success);
     }

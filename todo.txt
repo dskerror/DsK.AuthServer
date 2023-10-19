@@ -1,16 +1,15 @@
 --in progress--
 
 --pipeline--
-User > Disable
 Login > Validate user is an application user
-hide disabled all disabled items with option to show
-	make list
-
 document changes made in testapp
 test whole application
-test RefreshToken
+test all IsEnabled
+test Token-RefreshToken
 
 --future--
+hide all disabled items with option to show
+	make list
 Application > Application User > Button to jump to user
 Application > Application View/Edit > Application Role View/Edit > Option to see only permissions that are On
 Application > Application View/Edit > Application Role View/Edit > Show if Permission IsEnabled

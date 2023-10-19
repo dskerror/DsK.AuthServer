@@ -9,20 +9,24 @@
 }
 else
 {
-    <EditForm Model="user" OnValidSubmit="EditUser">
+    <EditForm Model="model" OnValidSubmit="EditUser">
         <DataAnnotationsValidator />
         <ValidationSummary />
-        
+
         <MudCard Class="mb-2">
             <MudCardContent>
-                <MudTextField Disabled="true" Label="Email" @bind-Value="user.Email" For="@(()=>user.Email)" />
-                <MudTextField Disabled="!_AccessEdit" Label="Name" @bind-Value="user.Name" For="@(()=>user.Name)" />
-                <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@user.EmailConfirmed" Label="Email Confirmed" Color="Color.Success" />
-                <MudDatePicker Disabled="!_AccessEdit" Label="Lockout End" Editable="true" @bind-Date="user.LockoutEnd" />
-                <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@user.LockoutEnabled" Label="Lockout" Color="Color.Success" />
-                <MudTextField Disabled="!_AccessEdit" Label="Access Failed Count" @bind-Value="user.AccessFailedCount" For="@(()=>user.AccessFailedCount)" />
-                <MudTextField Disabled="true" Label="Account Created" @bind-Value="user.AccountCreatedDateTime" For="@(()=>user.AccountCreatedDateTime)" />
-                <MudTextField Disabled="true" Label="Last Password Change" @bind-Value="user.LastPasswordChangeDateTime" For="@(()=>user.LastPasswordChangeDateTime)" />
+                <MudTextField Disabled="true" Label="Email" @bind-Value="model.Email" For="@(()=>model.Email)" />
+                <MudTextField Disabled="!_AccessEdit" Label="Name" @bind-Value="model.Name" For="@(()=>model.Name)" />
+                <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@model.EmailConfirmed" Label="Email Confirmed" Color="Color.Success" />
+                <MudDatePicker Disabled="!_AccessEdit" Label="Lockout End" Editable="true" @bind-Date="model.LockoutEnd" />
+                <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@model.LockoutEnabled" Label="Lockout" Color="Color.Success" />
+                <MudTextField Disabled="!_AccessEdit" Label="Access Failed Count" @bind-Value="model.AccessFailedCount" For="@(()=>model.AccessFailedCount)" />
+                <MudTextField Disabled="true" Label="Account Created" @bind-Value="model.AccountCreatedDateTime" For="@(()=>model.AccountCreatedDateTime)" />
+                <MudTextField Disabled="true" Label="Last Password Change" @bind-Value="model.LastPasswordChangeDateTime" For="@(()=>model.LastPasswordChangeDateTime)" />
+                @if (model.Id != 1)
+                {
+                    <MudSwitch Disabled="!_AccessEdit" @bind-Checked="@model.IsEnabled" Label="Is Enabled" Color="Color.Success" />
+                }
             </MudCardContent>
         </MudCard>
 
@@ -32,20 +36,20 @@ else
     </EditForm>
     <MudDivider />
 
-    <UserChangePassword UserId="user.Id"/>
+    <UserChangePassword UserId="model.Id" />
     <MudDivider />
 
     <MudExpansionPanels>
-        @if(_AccessUserRolesView)
+        @if (_AccessUserRolesView)
         {
             <MudExpansionPanel Text="User Applications">
-                <UserApplications UserId="@id"  />
+                <UserApplications UserId="@id" />
             </MudExpansionPanel>
         }
         @if (_AccessUserRolesView)
         {
             <MudExpansionPanel Text="User Roles">
-                <UserRoles UserId="@id" UserRoleChanged="RefreshUserPermissions"/>
+                <UserRoles UserId="@id" UserRoleChanged="RefreshUserPermissions" />
             </MudExpansionPanel>
         }
         @if (_AccessUserPermissionsView)

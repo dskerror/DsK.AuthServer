@@ -9,7 +9,7 @@ public partial class ApplicationAuthenticationProviderUserMapping
 
     public int ApplicationAuthenticationProviderId { get; set; }
 
-    public int UserId { get; set; }
+    public int ApplicationUserId { get; set; }
 
     public string Username { get; set; } = null!;
 
@@ -17,5 +17,5 @@ public partial class ApplicationAuthenticationProviderUserMapping
 
     public virtual ApplicationAuthenticationProvider ApplicationAuthenticationProvider { get; set; } = null!;
 
-    public virtual User User { get; set; } = null!;
+    public virtual ApplicationUser ApplicationUser { get; set; } = null!;
 }

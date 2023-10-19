@@ -12,18 +12,18 @@ public partial class SecurityService
         try
         {
             var userMapping = await db.ApplicationAuthenticationProviderUserMappings
-                .Where(x => x.UserId == model.UserId && x.ApplicationAuthenticationProviderId == model.ApplicationAuthenticationProviderId)
+                .Where(x => x.ApplicationUserId == model.ApplicationUserId && x.ApplicationAuthenticationProviderId == model.ApplicationAuthenticationProviderId)
                 .SingleOrDefaultAsync();
 
             if (userMapping == null)
             {
-                var user = await db.Users.FindAsync(model.UserId);
+                var applicationUser = await db.ApplicationUsers.Include(x => x.User).Where(x => x.Id == model.ApplicationUserId).SingleOrDefaultAsync();
                 var mapping = new ApplicationAuthenticationProviderUserMapping()
                 {
                     ApplicationAuthenticationProviderId = model.ApplicationAuthenticationProviderId,
-                    UserId = model.UserId,
+                    ApplicationUserId = model.ApplicationUserId,
                     IsEnabled = true,
-                    Username = user.Email
+                    Username = applicationUser.User.Email
                 };
 
                 db.ApplicationAuthenticationProviderUserMappings.Add(mapping);
@@ -41,7 +41,7 @@ public partial class SecurityService
 
         return true;
     }
-    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGet(int applicationId, int userId)
+    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGet(int applicationId, int applicationUserId)
     {
         var result = new APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>();
         List<ApplicationAuthenticationProviderUserMappingsGridDto> applicationAuthenticationProviderUserMappingGridDtoList = new List<ApplicationAuthenticationProviderUserMappingsGridDto>();
@@ -49,16 +49,16 @@ public partial class SecurityService
         var authenticationProviderList =
             await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationId).ToListAsync();
         var applicationAuthenticationProviderUserMappingsList =
-            await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.UserId == userId).ToListAsync();
-        var user = db.Users.Find(userId);
+            await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.ApplicationUserId == applicationUserId).ToListAsync();
+        var applicationUser = await db.ApplicationUsers.Include(x => x.User).Where(x => x.Id == applicationUserId).SingleOrDefaultAsync();
 
         foreach (var item in authenticationProviderList)
         {
             applicationAuthenticationProviderUserMappingGridDtoList.Add(new ApplicationAuthenticationProviderUserMappingsGridDto
             {
                 ApplicationId = applicationId,
-                UserId = userId,
-                Email = user.Email,
+                UserId = applicationUserId,
+                Email = applicationUser.User.Email,
                 ApplicationAuthenticationProviderId = item.Id,
                 AuthenticationProviderName = item.Name,
                 AuthenticationProviderType = item.AuthenticationProviderType
@@ -67,7 +67,7 @@ public partial class SecurityService
 
         foreach (var item in applicationAuthenticationProviderUserMappingGridDtoList)
         {
-            var value = applicationAuthenticationProviderUserMappingsList.Where(x => x.UserId == userId && x.ApplicationAuthenticationProviderId == item.ApplicationAuthenticationProviderId).SingleOrDefault();
+            var value = applicationAuthenticationProviderUserMappingsList.Where(x => x.ApplicationUserId == applicationUserId && x.ApplicationAuthenticationProviderId == item.ApplicationAuthenticationProviderId).SingleOrDefault();
             if (value != null)
             {
                 item.Id = value.Id;
@@ -95,9 +95,9 @@ public partial class SecurityService
         }
 
         var checkDuplicateUsername = await db.ApplicationAuthenticationProviderUserMappings
-            .FirstOrDefaultAsync(x => x.Username == model.Username 
+            .FirstOrDefaultAsync(x => x.Username == model.Username
                 //&& x.ApplicationAuthenticationProviderId == record.ApplicationAuthenticationProviderId 
-                && x.UserId != record.UserId);
+                && x.ApplicationUserId != record.ApplicationUserId);
 
         if (checkDuplicateUsername != null)
         {

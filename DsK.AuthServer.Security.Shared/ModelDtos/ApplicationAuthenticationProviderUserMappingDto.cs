@@ -3,7 +3,7 @@ public class ApplicationAuthenticationProviderUserMappingDto
 {
     public int Id { get; set; }
 
-    public int UserId { get; set; }
+    public int ApplicationUserId { get; set; }
 
     public int AuthenticationProviderId { get; set; }
 

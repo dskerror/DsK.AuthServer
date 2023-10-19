@@ -1,9 +1,9 @@
 ﻿namespace DsK.AuthServer.Client.Services.Routes;
 public static class ApplicationAuthenticationProviderUserMappingsEndpoints
 {
-    public static string Get(int applicationId, int userId)
+    public static string Get(int applicationId, int applicationUserId)
     {
-        var url = $"api/ApplicationAuthenticationProviderUserMappings?ApplicationId={applicationId}&UserId={userId}";
+        var url = $"api/ApplicationAuthenticationProviderUserMappings?ApplicationId={applicationId}&UserId={applicationUserId}";
         return url;
     }
 

@@ -27,15 +27,15 @@ internal class Program
 
         AddPermissionToRole(db, adminPermission.Id, adminRole.Id);
         var adminUser = CreateUser(db, "admin@admin.com", "Admin", "admin123");
-        AddUserToApplicationUser(db, adminUser, newApp);
-        AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, adminUser);
+        var adminAppUser = AddUserToApplicationUser(db, adminUser, newApp);
+        AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, adminUser, adminAppUser);
         AddRoleToUser(db, adminRole, adminUser);
         AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.View, authAppPermissionList), userRole.Id);
         AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.Edit, authAppPermissionList), userRole.Id);
 
         var regularUser = CreateUser(db, "user@user.com", "User", "user123");
-        AddUserToApplicationUser(db, regularUser, newApp);
-        AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, regularUser);
+        var regularAppUser = AddUserToApplicationUser(db, regularUser, newApp);
+        AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, regularUser, regularAppUser);
         AddRoleToUser(db, userRole, regularUser);
 
         //Test App
@@ -55,8 +55,8 @@ internal class Program
         //var fetchDataPermission = CreateAppPermission(db, newApp.Id, "FetchData", "Fetch Data Permission");
         //AddPermissionToRole(db, fetchDataPermission.Id, TestAppUserRole.Id);
 
-        AddUserToApplicationUser(db, adminUser, newTestApp);
-        AddAuthenticationProviderMappingToUser(db, testAppAuthenticationProvider, adminUser);
+        var adminAppUserTestApp = AddUserToApplicationUser(db, adminUser, newTestApp);
+        AddAuthenticationProviderMappingToUser(db, testAppAuthenticationProvider, adminUser, adminAppUserTestApp);
         AddRoleToUser(db, TestAppUserRole, adminUser);
 
     }
@@ -148,12 +148,12 @@ internal class Program
         db.UserRoles.Add(adminUserRole);
         db.SaveChanges();
     }
-    private static void AddAuthenticationProviderMappingToUser(DsKauthServerContext db, ApplicationAuthenticationProvider authProvider, User adminUser)
+    private static void AddAuthenticationProviderMappingToUser(DsKauthServerContext db, ApplicationAuthenticationProvider authProvider, User user, ApplicationUser appUser)
     {
         var applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
         {
-            User = adminUser,
-            Username = adminUser.Email,
+            ApplicationUser = appUser,
+            Username = user.Email,
             ApplicationAuthenticationProvider = authProvider,
             IsEnabled = true
         };
@@ -174,7 +174,8 @@ internal class Program
             HashedPassword = SecurityHelpers.HashPasword(password, ramdomSalt),
             Salt = Convert.ToHexString(ramdomSalt),
             AccountCreatedDateTime = DateTime.Now,
-            LastPasswordChangeDateTime = DateTime.Now
+            LastPasswordChangeDateTime = DateTime.Now,
+            IsEnabled = true
         };
 
         db.Users.Add(adminUser);

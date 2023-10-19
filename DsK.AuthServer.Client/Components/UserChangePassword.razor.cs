@@ -14,10 +14,7 @@ public partial class UserChangePassword
 
     protected override async Task OnInitializedAsync()
     {
-        model = new MyProfileChangePasswordDto
-        {
-            UserId = UserId
-        };
+        model = new MyProfileChangePasswordDto();
     }
     private async Task ChangePassword()
     {
