@@ -472,6 +472,14 @@ public partial class SecurityService
 
         bool IsUserAuthenticated = false;
 
+        if (user == null 
+            || user.IsEnabled == false 
+            || user.ApplicationUsers.FirstOrDefault().IsEnabled == false 
+            || user.ApplicationUsers.FirstOrDefault().ApplicationAuthenticationProviderUserMappings.FirstOrDefault().IsEnabled == false)
+        {
+            return null;
+        }
+
         switch (applicationAuthenticationProvider.AuthenticationProviderType)
         {
             case "Active Directory":

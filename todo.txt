@@ -1,13 +1,15 @@
 --in progress--
 
 --pipeline--
-Login > Validate user is an application user
 document changes made in testapp
 test whole application
 test all IsEnabled
 test Token-RefreshToken
+test lockout logic
 
 --future--
+add Azure AD and other providers.
+ApplicationAuthenticationProviderGet > dont decrypt password if there is no password
 hide all disabled items with option to show
 	make list
 Application > Application User > Button to jump to user

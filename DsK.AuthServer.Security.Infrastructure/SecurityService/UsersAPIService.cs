@@ -155,16 +155,22 @@ public partial class SecurityService
     }
     private async Task<User> GetUserByMappedUsernameAsync(string username, int applicationAuthenticationProviderId)
     {
-        var applicationUser = await db.Users
-            .Include(x => x.ApplicationUsers)
-            .ThenInclude(x => x.ApplicationAuthenticationProviderUserMappings
-                .Where(x => x.Username == username && x.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId)
-            )
-            .SingleOrDefaultAsync();
-        //await (from u in db.Users
-        //        join aapum in db.ApplicationAuthenticationProviderUserMappings on u.Id equals aapum.UserId
-        //        where aapum.Username == username && aapum.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId
-        //        select u).FirstOrDefaultAsync();
-        return applicationUser;
+        try
+        {
+            var applicationAuthenticationProviderUserMapping = await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.Username == username && x.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId).SingleOrDefaultAsync();
+            var applicationUser = await db.ApplicationUsers.FindAsync(applicationAuthenticationProviderUserMapping.ApplicationUserId);
+            var user = await db.Users.FindAsync(applicationUser.UserId);
+
+            //await (from u in db.Users
+            //        join aapum in db.ApplicationAuthenticationProviderUserMappings on u.Id equals aapum.UserId
+            //        where aapum.Username == username && aapum.ApplicationAuthenticationProviderId == applicationAuthenticationProviderId
+            //        select u).FirstOrDefaultAsync();
+            return user;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+
     }
 }
