@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DsK.AuthServer.Security.Ent
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{411C6F81-19EF-4CB7-B3B1-1F31CB6E62E0}"
 	ProjectSection(SolutionItems) = preProject
+		Instructions to implement DsK.AuthServer.docx = Instructions to implement DsK.AuthServer.docx
+		Notes.txt = Notes.txt
 		todo.txt = todo.txt
 	EndProjectSection
 EndProject
@@ -39,7 +41,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{A9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DsK.Services.Email", "DsK.Services.Email\DsK.Services.Email.csproj", "{A51C0625-3922-4415-B2BB-0041BD06105B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DsK.Services.Encryption", "DsK.Services.Encryption\DsK.Services.Encryption.csproj", "{C4AE7937-4643-491B-B910-25BD49C4281E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DsK.Services.Encryption", "DsK.Services.Encryption\DsK.Services.Encryption.csproj", "{C4AE7937-4643-491B-B910-25BD49C4281E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApp2", "TestApp2", "{D3C8EE1F-B021-4909-B334-01373B3A2D28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp2.Client", "TestApp2\TestApp2.Client\TestApp2.Client.csproj", "{67857705-8AC3-421B-9637-2DED65187A84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp2.Server", "TestApp2\TestApp2.Server\TestApp2.Server.csproj", "{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp2.Shared", "TestApp2\TestApp2.Shared\TestApp2.Shared.csproj", "{BE6A29E8-AEB3-4AE0-902D-085839B40043}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +101,18 @@ Global
 		{C4AE7937-4643-491B-B910-25BD49C4281E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4AE7937-4643-491B-B910-25BD49C4281E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4AE7937-4643-491B-B910-25BD49C4281E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67857705-8AC3-421B-9637-2DED65187A84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67857705-8AC3-421B-9637-2DED65187A84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67857705-8AC3-421B-9637-2DED65187A84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67857705-8AC3-421B-9637-2DED65187A84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE6A29E8-AEB3-4AE0-902D-085839B40043}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE6A29E8-AEB3-4AE0-902D-085839B40043}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE6A29E8-AEB3-4AE0-902D-085839B40043}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE6A29E8-AEB3-4AE0-902D-085839B40043}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,6 +129,9 @@ Global
 		{CC2B39FE-5E78-4A25-841E-249072261BA0} = {D2624D01-D600-4CDB-843B-1A3FBDE3A7AB}
 		{A51C0625-3922-4415-B2BB-0041BD06105B} = {A9748129-6756-4A44-A3BA-4E99E1B4BD5A}
 		{C4AE7937-4643-491B-B910-25BD49C4281E} = {A9748129-6756-4A44-A3BA-4E99E1B4BD5A}
+		{67857705-8AC3-421B-9637-2DED65187A84} = {D3C8EE1F-B021-4909-B334-01373B3A2D28}
+		{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F} = {D3C8EE1F-B021-4909-B334-01373B3A2D28}
+		{BE6A29E8-AEB3-4AE0-902D-085839B40043} = {D3C8EE1F-B021-4909-B334-01373B3A2D28}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09193D87-55E9-428E-B303-D3EC67366ACD}
