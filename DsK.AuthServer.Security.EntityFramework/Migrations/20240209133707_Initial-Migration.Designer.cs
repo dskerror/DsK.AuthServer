@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DsK.AuthServer.Security.EntityFramework.Migrations
 {
     [DbContext(typeof(DsKauthServerContext))]
-    [Migration("20231017171957_InitialMigration")]
+    [Migration("20240209133707_Initial-Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -137,11 +137,11 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     b.Property<int>("ApplicationAuthenticationProviderId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ApplicationUserId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("bit");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -150,10 +150,10 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "UserId", "ApplicationAuthenticationProviderId" }, "IX_AuthProv_UserId")
+                    b.HasIndex(new[] { "ApplicationUserId", "ApplicationAuthenticationProviderId" }, "IX_AuthProv_UserId")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "ApplicationAuthenticationProviderId", "UserId", "Username" }, "IX_AuthProv_UserId_Username");
+                    b.HasIndex(new[] { "ApplicationAuthenticationProviderId", "ApplicationUserId", "Username" }, "IX_AuthProv_UserId_Username");
 
                     b.ToTable("ApplicationAuthenticationProviderUserMappings");
                 });
@@ -488,15 +488,15 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_ApplicationAuthenticationProviderUserMappings_ApplicationAuthenticationProviders");
 
-                    b.HasOne("DsK.AuthServer.Security.EntityFramework.Models.User", "User")
+                    b.HasOne("DsK.AuthServer.Security.EntityFramework.Models.ApplicationUser", "ApplicationUser")
                         .WithMany("ApplicationAuthenticationProviderUserMappings")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("ApplicationUserId")
                         .IsRequired()
                         .HasConstraintName("FK_ApplicationAuthenticationProviderUserMappings_Users");
 
                     b.Navigation("ApplicationAuthenticationProvider");
 
-                    b.Navigation("User");
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("DsK.AuthServer.Security.EntityFramework.Models.ApplicationAuthenticationProviderUserToken", b =>
@@ -661,10 +661,13 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("DsK.AuthServer.Security.EntityFramework.Models.User", b =>
+            modelBuilder.Entity("DsK.AuthServer.Security.EntityFramework.Models.ApplicationUser", b =>
                 {
                     b.Navigation("ApplicationAuthenticationProviderUserMappings");
+                });
 
+            modelBuilder.Entity("DsK.AuthServer.Security.EntityFramework.Models.User", b =>
+                {
                     b.Navigation("ApplicationAuthenticationProviderUserTokens");
 
                     b.Navigation("ApplicationUsers");

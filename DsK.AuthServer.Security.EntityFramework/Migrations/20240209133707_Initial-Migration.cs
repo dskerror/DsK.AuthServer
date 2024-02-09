@@ -207,32 +207,6 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApplicationAuthenticationProviderUserMappings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ApplicationAuthenticationProviderId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApplicationAuthenticationProviderUserMappings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ApplicationAuthenticationProviderUserMappings_ApplicationAuthenticationProviders",
-                        column: x => x.ApplicationAuthenticationProviderId,
-                        principalTable: "ApplicationAuthenticationProviders",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ApplicationAuthenticationProviderUserMappings_Users",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserPermissions",
                 columns: table => new
                 {
@@ -303,6 +277,32 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ApplicationAuthenticationProviderUserMappings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationAuthenticationProviderId = table.Column<int>(type: "int", nullable: false),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationAuthenticationProviderUserMappings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ApplicationAuthenticationProviderUserMappings_ApplicationAuthenticationProviders",
+                        column: x => x.ApplicationAuthenticationProviderId,
+                        principalTable: "ApplicationAuthenticationProviders",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ApplicationAuthenticationProviderUserMappings_Users",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "ApplicationUsers",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationAuthenticationProviders_ApplicationId",
                 table: "ApplicationAuthenticationProviders",
@@ -316,13 +316,13 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AuthProv_UserId",
                 table: "ApplicationAuthenticationProviderUserMappings",
-                columns: new[] { "UserId", "ApplicationAuthenticationProviderId" },
+                columns: new[] { "ApplicationUserId", "ApplicationAuthenticationProviderId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AuthProv_UserId_Username",
                 table: "ApplicationAuthenticationProviderUserMappings",
-                columns: new[] { "ApplicationAuthenticationProviderId", "UserId", "Username" });
+                columns: new[] { "ApplicationAuthenticationProviderId", "ApplicationUserId", "Username" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationAuthenticationProviderUserTokens_ApplicationId",
@@ -424,9 +424,6 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
                 name: "ApplicationRolePermissions");
 
             migrationBuilder.DropTable(
-                name: "ApplicationUsers");
-
-            migrationBuilder.DropTable(
                 name: "UserLogs");
 
             migrationBuilder.DropTable(
@@ -437,6 +434,9 @@ namespace DsK.AuthServer.Security.EntityFramework.Migrations
 
             migrationBuilder.DropTable(
                 name: "ApplicationAuthenticationProviders");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationUsers");
 
             migrationBuilder.DropTable(
                 name: "ApplicationPermissions");
