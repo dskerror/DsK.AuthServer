@@ -1,0 +1,39 @@
+﻿@page "/callback/{LoginToken}"
+@using TestApp2.Client.Services;
+@using TestApp2.Shared;
+@inject HttpClient Http;
+@inject ILocalStorageService _localStorageService;
+@inject AuthenticationStateProvider _authenticationStateProvider;
+
+<PageTitle>Validating Login</PageTitle>
+
+<h1>Validating Login</h1>
+
+@code {
+
+    [Parameter] public string LoginToken { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (LoginToken != null)
+        {
+
+            var model = new ValidateLoginTokenDto() { LoginToken = LoginToken };
+            var response = await Http.PostAsJsonAsync("https://localhost:7298/Security/ValidateLoginToken", model);
+            if (!response.IsSuccessStatusCode)
+                _navigationManager.NavigateTo("/noaccess");
+
+            var result = await response.Content.ReadFromJsonAsync<TokenModel>();
+
+            if (result == null)
+                _navigationManager.NavigateTo("/noaccess");
+
+            await _localStorageService.SetItemAsync("token", result.Token);
+            await _localStorageService.SetItemAsync("refreshToken", result.RefreshToken);
+            (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
+
+            _navigationManager.NavigateTo("/");
+
+        }
+    }
+}

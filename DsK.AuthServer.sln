@@ -45,11 +45,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DsK.Services.Encryption", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApp2", "TestApp2", "{D3C8EE1F-B021-4909-B334-01373B3A2D28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp2.Client", "TestApp2\TestApp2.Client\TestApp2.Client.csproj", "{67857705-8AC3-421B-9637-2DED65187A84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp2.Client", "TestApp2\TestApp2.Client\TestApp2.Client.csproj", "{67857705-8AC3-421B-9637-2DED65187A84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp2.Server", "TestApp2\TestApp2.Server\TestApp2.Server.csproj", "{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp2.Server", "TestApp2\TestApp2.Server\TestApp2.Server.csproj", "{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp2.Shared", "TestApp2\TestApp2.Shared\TestApp2.Shared.csproj", "{BE6A29E8-AEB3-4AE0-902D-085839B40043}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp2.Shared", "TestApp2\TestApp2.Shared\TestApp2.Shared.csproj", "{BE6A29E8-AEB3-4AE0-902D-085839B40043}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
