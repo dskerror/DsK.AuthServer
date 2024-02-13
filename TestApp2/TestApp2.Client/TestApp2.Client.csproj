@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -11,6 +11,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestApp2.SharedNew\TestApp2.SharedNew.csproj" />
   </ItemGroup>
 
 </Project>

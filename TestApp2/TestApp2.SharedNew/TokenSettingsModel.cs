@@ -1,4 +1,4 @@
-﻿namespace TestApp2.Shared;
+﻿namespace TestApp2.SharedNew;
 public class TokenSettingsModel
 {
     public string? Issuer { get; set; }

@@ -9,6 +9,12 @@
 @using TestApp2.Client
 @using TestApp2.Client.Layout
 
+@using TestApp2.Client.Services;
+@using TestApp2.SharedNew;
 @using Blazored.LocalStorage;
 @using Microsoft.AspNetCore.Components.Authorization;
+@using Microsoft.AspNetCore.Authorization;
 @inject NavigationManager _navigationManager
+@inject HttpClient Http;
+@inject ILocalStorageService _localStorageService;
+@inject AuthenticationStateProvider _authenticationStateProvider;

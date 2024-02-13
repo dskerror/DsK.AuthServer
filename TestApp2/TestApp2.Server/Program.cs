@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TestApp2.Server.HttpClients;
-using TestApp2.Shared;
+using TestApp2.SharedNew;
 
 internal class Program
 {

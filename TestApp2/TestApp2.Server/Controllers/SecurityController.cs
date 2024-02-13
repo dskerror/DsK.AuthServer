@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TestApp2.Server.HttpClients;
-using TestApp2.Shared;
+using TestApp2.SharedNew;
 
 namespace TestApp2.Server.Controllers;
 
