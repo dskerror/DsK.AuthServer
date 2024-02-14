@@ -23,7 +23,7 @@ public partial class Users
         SetPermissions(state);
 
         if (!_AccessView)
-            _navigationManager.NavigateTo("/NoAccess");
+            _navigationManager.NavigateTo("NoAccess");
     }
 
     private void SetPermissions(AuthenticationState state)
@@ -64,11 +64,11 @@ public partial class Users
 
     private void ViewUser(int id)
     {
-        _navigationManager.NavigateTo($"/User/{id}");
+        _navigationManager.NavigateTo($"User/{id}");
     }
 
     private void CreateUser()
     {
-        _navigationManager.NavigateTo("/User/Create");
+        _navigationManager.NavigateTo("User/Create");
     }
 }

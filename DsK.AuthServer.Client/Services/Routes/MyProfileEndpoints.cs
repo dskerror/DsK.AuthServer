@@ -5,9 +5,9 @@ public static class MyProfileEndpoints
 {
     public static string Get()
     {
-        var url = $"api/MyProfile";
+        var url = $"MyProfile";
         return url;
     }
-    public static string Put = "api/MyProfile";
-    public static string ChangePassword = "api/MyProfile/ChangePassword";
+    public static string Put = "MyProfile";
+    public static string ChangePassword = "MyProfile/ChangePassword";
 }

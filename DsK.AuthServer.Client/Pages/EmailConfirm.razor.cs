@@ -19,7 +19,7 @@ public partial class EmailConfirm
         if (result)
         {
             Snackbar.Add("Email confirmed", Severity.Success);
-            _navigationManager.NavigateTo("/login");
+            _navigationManager.NavigateTo("login");
         }
         else
             Snackbar.Add("Error.", Severity.Error);

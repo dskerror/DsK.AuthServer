@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DsK.AuthServer.Server.Controllers.Security;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class ApplicationController : ControllerBase
 {

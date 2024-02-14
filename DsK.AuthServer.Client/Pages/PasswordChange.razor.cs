@@ -29,7 +29,7 @@ public partial class PasswordChange
         if (result)
         {
             Snackbar.Add("Password changed successfully", Severity.Success);
-            _navigationManager.NavigateTo("/login");
+            _navigationManager.NavigateTo("login");
         }
         else
             Snackbar.Add("Couldn't change password", Severity.Error);

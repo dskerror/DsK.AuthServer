@@ -22,7 +22,7 @@ public partial class ApplicationCreate
         SetPermissions(state);
 
         if (!_AccessCreate)
-            _navigationManager.NavigateTo("/NoAccess");
+            _navigationManager.NavigateTo("NoAccess");
     }
 
     private void SetPermissions(AuthenticationState state)
@@ -40,7 +40,7 @@ public partial class ApplicationCreate
             else
             {
                 Snackbar.Add(result.Message, Severity.Success);
-                _navigationManager.NavigateTo($"/Application/{result.Result.Id}");
+                _navigationManager.NavigateTo($"Application/{result.Result.Id}");
             }
         else
             Snackbar.Add("An Unknown Error Has Occured", Severity.Error);

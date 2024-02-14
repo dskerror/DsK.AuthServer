@@ -4,7 +4,7 @@ using DsK.AuthServer.Security.Shared.ActionDtos;
 using Microsoft.AspNetCore.Mvc;
 namespace DsK.AuthServer.Server.Controllers.Security;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class AuthenticationController : ControllerBase
 {

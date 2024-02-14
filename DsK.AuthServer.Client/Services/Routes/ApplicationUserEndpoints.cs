@@ -5,7 +5,7 @@ public static class ApplicationUserEndpoints
 {
     public static string Get(int applicationId)
     {
-        var url = $"api/ApplicationUsers?ApplicationId={applicationId}";
+        var url = $"ApplicationUsers?ApplicationId={applicationId}";
         return url;
     }
 }

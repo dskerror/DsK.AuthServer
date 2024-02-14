@@ -47,7 +47,9 @@ builder.Services.AddTransient<IMailService, SMTPMailService>();
 
 builder.Services.AddDbContext<DsKauthServerContext>(options =>
 {
-	options.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
+	//options.UseSqlServer("Server=.;Database=SecurityTablesTest;Trusted_Connection=True;Trust Server Certificate=true");
+    options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings").GetValue<string>("cn"));
+    
 });
 
 builder.Services.AddScoped<SecurityService>();
@@ -90,11 +92,11 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-	//app.UseSwagger();
-	//app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//	app.UseSwagger();
+//	app.UseSwaggerUI();
+//}
 
 
 //app.UseHttpLogging();

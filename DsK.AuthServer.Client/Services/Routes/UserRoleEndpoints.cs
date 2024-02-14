@@ -4,10 +4,10 @@
     {
         public static string Get(int id)
         {
-            var url = $"api/userroles?UserId={id}";            
+            var url = $"userroles?UserId={id}";            
             return url;
         }
 
-        public static string Post = "api/userroles";
+        public static string Post = "userroles";
     }
 }

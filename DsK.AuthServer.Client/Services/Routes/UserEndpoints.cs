@@ -4,11 +4,11 @@
     {
         public static string Get(int id, int pageNumber, int pageSize, string searchString, string orderBy)
         {
-            var url = $"api/users?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy={orderBy}";
+            var url = $"users?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy={orderBy}";
             return url;
         }
 
-        public static string Post = "api/users";
-        public static string Put = "api/users";
+        public static string Post = "users";
+        public static string Put = "users";
     }
 }

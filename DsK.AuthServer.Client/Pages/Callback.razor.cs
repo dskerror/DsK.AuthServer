@@ -14,12 +14,12 @@ public partial class Callback
 
             if (result)
             {
-                _navigationManager.NavigateTo("/");
+                _navigationManager.NavigateTo("");
                 Snackbar.Add("Authentication successful", Severity.Success);
             }
             else
             {
-                _navigationManager.NavigateTo("/NoAccess");
+                _navigationManager.NavigateTo("NoAccess");
                 Snackbar.Add("Username and/or Password incorrect", Severity.Error);
             }
         }        

@@ -80,14 +80,14 @@ public partial class Login
 
     private void ChangePassword()
     {
-        _navigationManager.NavigateTo("/PasswordChangeRequest");
+        _navigationManager.NavigateTo("PasswordChangeRequest");
     }
 
     private void Register()
     {
         if (ApplicationAuthenticationProviderGUID != null)
-            _navigationManager.NavigateTo($"/Register/{ApplicationAuthenticationProviderGUID}");
+            _navigationManager.NavigateTo($"Register/{ApplicationAuthenticationProviderGUID}");
         else
-            _navigationManager.NavigateTo("/Register");
+            _navigationManager.NavigateTo("Register");
     }
 }

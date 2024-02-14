@@ -32,7 +32,7 @@ public partial class ApplicationAuthenticationProviderViewEdit
         SetPermissions(state);
 
         if (!_AccessView)
-            _navigationManager.NavigateTo("/NoAccess");
+            _navigationManager.NavigateTo("NoAccess");
         else
         {
             await LoadData();

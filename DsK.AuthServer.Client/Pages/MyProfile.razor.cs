@@ -40,7 +40,7 @@ public partial class MyProfile
             _loaded = true;
         } else
         {
-            _navigationManager.NavigateTo("/NoAccess");
+            _navigationManager.NavigateTo("NoAccess");
         }
     }
     private async Task Edit()

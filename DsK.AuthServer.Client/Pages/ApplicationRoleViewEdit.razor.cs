@@ -28,7 +28,7 @@ public partial class ApplicationRoleViewEdit
 
         if (!_AccessView)  //!_AccessApplicationRolesView
         {
-            _navigationManager.NavigateTo("/NoAccess");
+            _navigationManager.NavigateTo("NoAccess");
         }
         else
         {

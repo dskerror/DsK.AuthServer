@@ -25,7 +25,7 @@ public partial class ApplicationRoles
         SetPermissions(state);
 
         if (!_AccessView)
-            _navigationManager.NavigateTo("/NoAccess");
+            _navigationManager.NavigateTo("NoAccess");
     }
 
     private void SetPermissions(AuthenticationState state)
@@ -137,11 +137,11 @@ public partial class ApplicationRoles
 
     private void ViewApplicationRole(int id)
     {
-        _navigationManager.NavigateTo($"/Application/Role/{ApplicationId}/{id}");
+        _navigationManager.NavigateTo($"Application/Role/{ApplicationId}/{id}");
     }
 
     private void CreateApplicationRole()
     {
-        _navigationManager.NavigateTo($"/Application/Role/Create/{ApplicationId}");
+        _navigationManager.NavigateTo($"Application/Role/Create/{ApplicationId}");
     }
 }

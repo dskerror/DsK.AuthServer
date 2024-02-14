@@ -18,7 +18,7 @@ public partial class PasswordChangeRequest
 
         if (result)
         {
-            _navigationManager.NavigateTo("/login");
+            _navigationManager.NavigateTo("login");
             Snackbar.Add("Password change request sent to email.", Severity.Success);
         }
         else

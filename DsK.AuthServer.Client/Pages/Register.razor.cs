@@ -58,7 +58,7 @@ public partial class Register
             Snackbar.Add("Register failed.", Severity.Error);         
         else
         {
-            _navigationManager.NavigateTo($"/login/{ApplicationAuthenticationProviderGUID}");
+            _navigationManager.NavigateTo($"login/{ApplicationAuthenticationProviderGUID}");
             Snackbar.Add(result.Message, Severity.Success);
         }   
 
@@ -68,9 +68,9 @@ public partial class Register
     private void GoBackToLogin()
     {
         if (ApplicationAuthenticationProviderGUID != null)
-            _navigationManager.NavigateTo($"/Login/{ApplicationAuthenticationProviderGUID}");
+            _navigationManager.NavigateTo($"Login/{ApplicationAuthenticationProviderGUID}");
         else
-            _navigationManager.NavigateTo("/Login");
+            _navigationManager.NavigateTo("Login");
     }
 
     void TogglePasswordVisibility()

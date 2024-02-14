@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace DsK.AuthServer.Server.Controllers.Security;
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class MyProfileController : ControllerBase
 {

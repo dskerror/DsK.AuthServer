@@ -24,7 +24,7 @@ public partial class ApplicationAuthenticationProviders
         SetPermissions(state);
 
         if (!_AccessView)
-            _navigationManager.NavigateTo("/NoAccess");
+            _navigationManager.NavigateTo("NoAccess");
     }
 
     private void SetPermissions(AuthenticationState state)
@@ -136,11 +136,11 @@ public partial class ApplicationAuthenticationProviders
 
     private void ViewApplicationAuthenticationProvider(int id)
     {
-        _navigationManager.NavigateTo($"/Application/AuthenticationProvider/{ApplicationId}/{id}");
+        _navigationManager.NavigateTo($"Application/AuthenticationProvider/{ApplicationId}/{id}");
     }
 
     private void CreateApplicationAuthenticationProvider()
     {
-        _navigationManager.NavigateTo($"/Application/AuthenticationProvider/Create/{ApplicationId}");
+        _navigationManager.NavigateTo($"Application/AuthenticationProvider/Create/{ApplicationId}");
     }
 }
