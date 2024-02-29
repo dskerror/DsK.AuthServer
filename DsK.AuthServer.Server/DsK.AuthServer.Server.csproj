@@ -33,6 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DsK.AuthServer.Security.EntityFramework\DsK.AuthServer.Security.EntityFramework.csproj" />
     <ProjectReference Include="..\DsK.AuthServer.Security.Infrastructure\DsK.AuthServer.Security.Infrastructure.csproj" />
+    <ProjectReference Include="..\DsK.AuthServer.Security.Seed\DsK.AuthServer.Security.Seed.csproj" />
     <ProjectReference Include="..\DsK.AuthServer.Security.Shared\DsK.AuthServer.Security.Shared.csproj" />
     <ProjectReference Include="..\DsK.Services.Email\DsK.Services.Email.csproj" />
   </ItemGroup>

@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpLogging;
 using System.Configuration;
 using DsK.Services.Email;
+using DsK.AuthServer.Security.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,8 @@ builder.Services.AddDbContext<DsKauthServerContext>(options =>
     
 });
 
+
+
 builder.Services.AddScoped<SecurityService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
@@ -90,6 +93,16 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+//Creates Database if it doesn't exists
+using (var scope = app.Services.CreateAsyncScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DsKauthServerContext>();
+    //var x = dbContext.Database.EnsureCreated();
+
+    var seed = new Seed();
+	seed.Run(dbContext);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

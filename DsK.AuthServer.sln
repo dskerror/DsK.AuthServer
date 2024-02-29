@@ -22,14 +22,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{411C6F81-19EF-4CB7-B3B1-1F31CB6E62E0}"
 	ProjectSection(SolutionItems) = preProject
 		Instructions to implement DsK.AuthServer.docx = Instructions to implement DsK.AuthServer.docx
-		Notes.txt = Notes.txt
 		todo.txt = todo.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApp", "TestApp", "{D2624D01-D600-4CDB-843B-1A3FBDE3A7AB}"
-	ProjectSection(SolutionItems) = preProject
-		Notes.txt = Notes.txt
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp.Server", "TestApp\Server\TestApp.Server.csproj", "{EDFD0CC1-C132-4710-A5D8-AF667C864A0B}"
 EndProject
@@ -49,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp2.Client", "TestApp2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp2.Server", "TestApp2\TestApp2.Server\TestApp2.Server.csproj", "{771E1CD9-11C2-44CE-B8FC-F79C5AC7641F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp2.SharedNew", "TestApp2\TestApp2.SharedNew\TestApp2.SharedNew.csproj", "{11524529-7B68-4176-BF06-A80AE6167D4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp2.SharedNew", "TestApp2\TestApp2.SharedNew\TestApp2.SharedNew.csproj", "{11524529-7B68-4176-BF06-A80AE6167D4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
