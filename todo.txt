@@ -1,4 +1,8 @@
 --in progress--
+Verify how to make that when you deploy the app and the db gets created and seeded, the callback url is relative to the application published
+document the process to publish the application
+why does the app error when I copy and paste a specidif path in a browser tab
+Create new test app and move to its own project
 
 --pipeline--
 document changes made in testapp

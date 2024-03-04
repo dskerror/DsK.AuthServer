@@ -114,7 +114,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpLogging();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseCors("myOrigins");
 app.UseAuthorization();
 
