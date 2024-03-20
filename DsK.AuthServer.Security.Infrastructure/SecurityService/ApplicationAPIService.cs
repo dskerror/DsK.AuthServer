@@ -8,45 +8,37 @@ using System;
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<ApplicationDto>> ApplicationCreate(ApplicationCreateDto model)
+    public async Task<ApplicationDto> ApplicationCreate(ApplicationCreateDto dto)
     {
-        APIResult<ApplicationDto> result = new APIResult<ApplicationDto>();
+
         int recordsCreated = 0;
 
-        try
+        var application = new Application();
+        var applicationDto = new ApplicationDto();
+
+        application.ApplicationGuid = Guid.NewGuid();
+        application.AppApiKey = Guid.NewGuid();
+
+        Mapper.Map(dto, application);
+        db.Applications.Add(application);
+        recordsCreated = await db.SaveChangesAsync();
+        
+
+        if (recordsCreated == 1)
         {
-            var record = new Application();
-            Mapper.Map(model, record);
+            Mapper.Map(application, applicationDto);
 
-            record.ApplicationGuid = Guid.NewGuid();
-            record.AppApiKey = Guid.NewGuid();
-
-            db.Applications.Add(record);
-            recordsCreated = await db.SaveChangesAsync();
-
-            if (recordsCreated == 1)
+            var newAppAuthProvider = new ApplicationAuthenticationProviderCreateDto()
             {
-                result.Result = Mapper.Map(record, result.Result);
-                result.Message = "Record Created";
+                ApplicationId = application.Id,
+                AuthenticationProviderType = "Local",
+                Name = "Local"
+            };
 
-                var newAppAuthProvider = new ApplicationAuthenticationProviderCreateDto()
-                {
-                    ApplicationId = record.Id,
-                    AuthenticationProviderType = "Local",
-                    Name = "Local"
-                };
-
-                await ApplicationAuthenticationProvidersCreate(newAppAuthProvider);
-            }
-        }
-        catch (Exception ex)
-        {
-            result.HasError = true;
-            if (ex.InnerException.Message != null)
-                result.Message = ex.InnerException.Message;
+            await ApplicationAuthenticationProvidersCreate(newAppAuthProvider);
         }
 
-        return result;
+        return applicationDto;
     }
     public async Task<APIResult<List<ApplicationDto>>> ApplicationGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
     {
@@ -63,6 +55,8 @@ public partial class SecurityService
         pageSize = pageSize == 0 ? 10 : pageSize;
         int count = 0;
         List<Application> items;
+
+
         if (!string.IsNullOrWhiteSpace(searchString))
         {
             count = await db.Applications

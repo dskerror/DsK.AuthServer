@@ -5,6 +5,7 @@ why does the app error when I copy and paste a specidif path in a browser tab
 Create new test app and move to its own project
 
 --pipeline--
+test if paging works when using search and having lots of records (ApplicationGet)
 document changes made in testapp
 test whole application
 test all IsEnabled

@@ -1,4 +1,5 @@
-﻿using DsK.AuthServer.Security.Infrastructure;
+﻿using AutoMapper;
+using DsK.AuthServer.Security.Infrastructure;
 using DsK.AuthServer.Security.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,8 +20,24 @@ public class ApplicationController : ControllerBase
     [Authorize(Roles = $"{Access.Admin}, {Access.Application.Create}")]
     public async Task<IActionResult> Create(ApplicationCreateDto model)
     {
-        var result = await SecurityService.ApplicationCreate(model);
-        return Ok(result);
+
+        APIResult<ApplicationDto> apiResult = new APIResult<ApplicationDto>();
+        try
+        {
+
+            var serviceResult = await SecurityService.ApplicationCreate(model);
+            apiResult.Result = serviceResult;
+            apiResult.Message = "Record Created";
+        }
+        catch (Exception ex)
+        {
+            apiResult.HasError = true;
+            apiResult.Exception = ex;
+            if (ex.InnerException.Message != null)
+                apiResult.Message = ex.InnerException.Message;
+        }
+        
+        return Ok(apiResult);
     }
 
     [HttpPost("GenerateNewAPIKey")]        

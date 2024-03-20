@@ -94,14 +94,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//Creates Database if it doesn't exists
+//Creates and Seeds Database if it doesn't exists
 using (var scope = app.Services.CreateAsyncScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DsKauthServerContext>();
-    //var x = dbContext.Database.EnsureCreated();
-
-    var seed = new Seed();
-	seed.Run(dbContext);
+    var seed = new Seed(dbContext);
+	seed.Run();
 }
 
 // Configure the HTTP request pipeline.

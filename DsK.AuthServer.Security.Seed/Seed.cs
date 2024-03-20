@@ -7,7 +7,13 @@ namespace DsK.AuthServer.Security.Seed
 {
     public class Seed
     {
-        public void Run(DsKauthServerContext db)
+        private readonly DsKauthServerContext db;
+
+        public Seed(DsKauthServerContext db)
+        {
+            this.db = db;
+        }
+        public void Run()
         {
             db.Database.Migrate(); //CREATES DATABASE IF IT DOESNT EXISTS
                                    //var created = db.Database.EnsureCreated(); //CREATES TABLES IF IT DOESNT EXISTS
@@ -15,28 +21,28 @@ namespace DsK.AuthServer.Security.Seed
             //Security App
             if (db.Applications.Count() == 0)
             {
-                var newApp = CreateApplication(db);
+                var newApp = CreateApplication();
 
-                var adminPermission = CreateAppPermission(db, newApp.Id, "Admin", "Admin Permission");
-                var authAppPermissionList = CreateApplicationPermissions(db, newApp); //Create list of permissions based on Security.Shared Permissions
+                var adminPermission = CreateAppPermission( newApp.Id, "Admin", "Admin Permission");
+                var authAppPermissionList = CreateApplicationPermissions(newApp); //Create list of permissions based on Security.Shared Permissions
 
-                var adminRole = CreateApplicationRole(db, newApp.Id, "Admin", "Admin Role");
-                var userRole = CreateApplicationRole(db, newApp.Id, "User", "User Role");
+                var adminRole = CreateApplicationRole(newApp.Id, "Admin", "Admin Role");
+                var userRole = CreateApplicationRole(newApp.Id, "User", "User Role");
 
-                var applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(db, newApp, userRole, "67A09D32-7664-49F8-8E8E-471A56A2858E");
+                var applicationAuthenticationProvider = AddLocalAuthenticationProviderToApplication(newApp, userRole, "67A09D32-7664-49F8-8E8E-471A56A2858E");
 
-                AddPermissionToRole(db, adminPermission.Id, adminRole.Id);
-                var adminUser = CreateUser(db, "admin@admin.com", "Admin", "admin123");
-                var adminAppUser = AddUserToApplicationUser(db, adminUser, newApp);
-                AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, adminUser, adminAppUser);
-                AddRoleToUser(db, adminRole, adminUser);
-                AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.View, authAppPermissionList), userRole.Id);
-                AddPermissionToRole(db, GetPermissionIdByName(Access.MyProfile.Edit, authAppPermissionList), userRole.Id);
+                AddPermissionToRole(adminPermission.Id, adminRole.Id);
+                var adminUser = CreateUser("admin@admin.com", "Admin", "admin123");
+                var adminAppUser = AddUserToApplicationUser(adminUser, newApp);
+                AddAuthenticationProviderMappingToUser(applicationAuthenticationProvider, adminUser, adminAppUser);
+                AddRoleToUser(adminRole, adminUser);
+                AddPermissionToRole(GetPermissionIdByName(Access.MyProfile.View, authAppPermissionList), userRole.Id);
+                AddPermissionToRole(GetPermissionIdByName(Access.MyProfile.Edit, authAppPermissionList), userRole.Id);
 
-                var regularUser = CreateUser(db, "user@user.com", "User", "user123");
-                var regularAppUser = AddUserToApplicationUser(db, regularUser, newApp);
-                AddAuthenticationProviderMappingToUser(db, applicationAuthenticationProvider, regularUser, regularAppUser);
-                AddRoleToUser(db, userRole, regularUser);
+                var regularUser = CreateUser("user@user.com", "User", "user123");
+                var regularAppUser = AddUserToApplicationUser(regularUser, newApp);
+                AddAuthenticationProviderMappingToUser(applicationAuthenticationProvider, regularUser, regularAppUser);
+                AddRoleToUser(userRole, regularUser);
 
                 ////Test App
                 //var newTestApp = CreateTestApp(db);
@@ -66,7 +72,7 @@ namespace DsK.AuthServer.Security.Seed
             permissionList.TryGetValue(permissionName, out var value);
             return value.Id;
         }
-        private Dictionary<string, ApplicationPermission> CreateApplicationPermissions(DsKauthServerContext db, Application application)
+        private Dictionary<string, ApplicationPermission> CreateApplicationPermissions(Application application)
         {
             var permissionList = Access.GetRegisteredPermissions();
             Dictionary<string, ApplicationPermission> outputList = new Dictionary<string, ApplicationPermission>();
@@ -82,7 +88,7 @@ namespace DsK.AuthServer.Security.Seed
             return outputList;
         }
 
-        private Dictionary<string, ApplicationPermission> CreateTestAppPermissions(DsKauthServerContext db, Application application)
+        private Dictionary<string, ApplicationPermission> CreateTestAppPermissions(Application application)
         {
             var permissionList = TestApp.Shared.Access.GetRegisteredPermissions();
             Dictionary<string, ApplicationPermission> outputList = new Dictionary<string, ApplicationPermission>();
@@ -103,7 +109,7 @@ namespace DsK.AuthServer.Security.Seed
 
             return outputList;
         }
-        private Application CreateApplication(DsKauthServerContext db)
+        private Application CreateApplication()
         {
             Application newApplication = new Application()
             {
@@ -119,7 +125,7 @@ namespace DsK.AuthServer.Security.Seed
             db.SaveChanges();
             return newApplication;
         }
-        private ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(DsKauthServerContext db, Application newApplication, ApplicationRole role, string guid)
+        private ApplicationAuthenticationProvider AddLocalAuthenticationProviderToApplication(Application newApplication, ApplicationRole role, string guid)
         {
             ApplicationAuthenticationProvider applicationAuthenticationProvider =
                     new ApplicationAuthenticationProvider()
@@ -142,13 +148,13 @@ namespace DsK.AuthServer.Security.Seed
 
             return applicationAuthenticationProvider;
         }
-        private void AddRoleToUser(DsKauthServerContext db, ApplicationRole adminRole, User adminUser)
+        private void AddRoleToUser(ApplicationRole adminRole, User adminUser)
         {
             var adminUserRole = new UserRole() { Role = adminRole, User = adminUser };
             db.UserRoles.Add(adminUserRole);
             db.SaveChanges();
         }
-        private void AddAuthenticationProviderMappingToUser(DsKauthServerContext db, ApplicationAuthenticationProvider authProvider, User user, ApplicationUser appUser)
+        private void AddAuthenticationProviderMappingToUser(ApplicationAuthenticationProvider authProvider, User user, ApplicationUser appUser)
         {
             var applicationAuthenticationProviderUserMapping = new ApplicationAuthenticationProviderUserMapping()
             {
@@ -160,7 +166,7 @@ namespace DsK.AuthServer.Security.Seed
             db.ApplicationAuthenticationProviderUserMappings.Add(applicationAuthenticationProviderUserMapping);
             db.SaveChanges();
         }
-        private User CreateUser(DsKauthServerContext db, string email, string name, string password)
+        private User CreateUser(string email, string name, string password)
         {
             var ramdomSalt = SecurityHelpers.RandomizeSalt;
 
@@ -182,7 +188,7 @@ namespace DsK.AuthServer.Security.Seed
             db.SaveChanges();
             return adminUser;
         }
-        private ApplicationUser AddUserToApplicationUser(DsKauthServerContext db, User user, Application application)
+        private ApplicationUser AddUserToApplicationUser(User user, Application application)
         {
             var adminApplicationUser = new ApplicationUser()
             {
@@ -198,7 +204,7 @@ namespace DsK.AuthServer.Security.Seed
             db.SaveChanges();
             return adminApplicationUser;
         }
-        private void AddPermissionToRole(DsKauthServerContext db, int permissionId, int roleId)
+        private void AddPermissionToRole(int permissionId, int roleId)
         {
             var rolePermission = new ApplicationRolePermission()
             {
@@ -208,7 +214,7 @@ namespace DsK.AuthServer.Security.Seed
             db.ApplicationRolePermissions.Add(rolePermission);
             db.SaveChanges();
         }
-        private ApplicationRole CreateApplicationRole(DsKauthServerContext db, int applicationId, string RoleName, string RoleDescription)
+        private ApplicationRole CreateApplicationRole(int applicationId, string RoleName, string RoleDescription)
         {
             var adminRole = new ApplicationRole()
             {
@@ -221,7 +227,7 @@ namespace DsK.AuthServer.Security.Seed
             db.SaveChanges();
             return adminRole;
         }
-        private Application CreateTestApp(DsKauthServerContext db)
+        private Application CreateTestApp()
         {
             Application newApplication = new Application()
             {
@@ -236,7 +242,7 @@ namespace DsK.AuthServer.Security.Seed
             db.SaveChanges();
             return newApplication;
         }
-        private ApplicationPermission CreateAppPermission(DsKauthServerContext db, int applicationId, string permissionName, string permissionDescription)
+        private ApplicationPermission CreateAppPermission(int applicationId, string permissionName, string permissionDescription)
         {
             var permission = new ApplicationPermission()
             {

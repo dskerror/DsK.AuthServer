@@ -48,9 +48,10 @@ public partial class SecurityService
 
         var authenticationProviderList =
             await db.ApplicationAuthenticationProviders.Where(x => x.ApplicationId == applicationId).ToListAsync();
+        var applicationUser = await db.ApplicationUsers.Include(x => x.User).Where(x => x.UserId == applicationUserId && x.ApplicationId == applicationId).SingleOrDefaultAsync();
         var applicationAuthenticationProviderUserMappingsList =
-            await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.ApplicationUserId == applicationUserId).ToListAsync();
-        var applicationUser = await db.ApplicationUsers.Include(x => x.User).Where(x => x.Id == applicationUserId).SingleOrDefaultAsync();
+            await db.ApplicationAuthenticationProviderUserMappings.Where(x => x.ApplicationUserId == applicationUser.Id).ToListAsync();
+        
 
         foreach (var item in authenticationProviderList)
         {
@@ -67,7 +68,7 @@ public partial class SecurityService
 
         foreach (var item in applicationAuthenticationProviderUserMappingGridDtoList)
         {
-            var value = applicationAuthenticationProviderUserMappingsList.Where(x => x.ApplicationUserId == applicationUserId && x.ApplicationAuthenticationProviderId == item.ApplicationAuthenticationProviderId).SingleOrDefault();
+            var value = applicationAuthenticationProviderUserMappingsList.Where(x => x.ApplicationUserId == applicationUser.Id && x.ApplicationAuthenticationProviderId == item.ApplicationAuthenticationProviderId).SingleOrDefault();
             if (value != null)
             {
                 item.Id = value.Id;

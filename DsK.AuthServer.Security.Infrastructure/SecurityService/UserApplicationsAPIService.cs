@@ -3,6 +3,7 @@ using DsK.AuthServer.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Data;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DsK.AuthServer.Security.Infrastructure;
 
@@ -61,32 +62,38 @@ public partial class SecurityService
             var appAuthProvider = await db.ApplicationAuthenticationProviders.Where(x => x.AuthenticationProviderType == "Local" && x.ApplicationId == model.ApplicationId).SingleOrDefaultAsync();
             var user = await db.Users.FindAsync(model.UserId);
 
-            db.ApplicationUsers.Add(record);
-
-            var mapping = new ApplicationAuthenticationProviderUserMapping()
+            using (var transaction = db.Database.BeginTransaction())
             {
-                ApplicationAuthenticationProviderId = appAuthProvider.Id,
-                ApplicationUser = applicationUser,
-                IsEnabled = true,
-                Username = user.Email
-            };
 
-            db.ApplicationAuthenticationProviderUserMappings.Add(mapping);
+                try
+                {
+                    db.ApplicationUsers.Add(record);
+                    await db.SaveChangesAsync();
 
-            try
-            {
-                recordsModifiedCount = await db.SaveChangesAsync();
+                    var mapping = new ApplicationAuthenticationProviderUserMapping()
+                    {
+                        ApplicationAuthenticationProviderId = appAuthProvider.Id,
+                        ApplicationUser = record,
+                        IsEnabled = true,
+                        Username = user.Email
+                    };
+
+                    db.ApplicationAuthenticationProviderUserMappings.Add(mapping);
+                    recordsModifiedCount = await db.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    result.HasError = true;
+                    result.Message = ex.InnerException.Message;
+                    return result;
+                }
+
+                result.Result = recordsModifiedCount.ToString();
+                result.Message = "Record Created";
+
             }
-            catch (Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.InnerException.Message;
-                return result;
-            }
-
-            result.Result = recordsModifiedCount.ToString();
-            result.Message = "Record Created";
-
         }
         else
         {

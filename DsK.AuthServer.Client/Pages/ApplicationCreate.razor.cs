@@ -18,6 +18,7 @@ public partial class ApplicationCreate
 
     protected override async Task OnInitializedAsync()
     {
+        model.CallbackURL = "/Callback/";
         var state = await authenticationState;
         SetPermissions(state);
 
