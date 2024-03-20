@@ -6,7 +6,7 @@ public static class ApplicationAuthenticationProvidersEndpoints
 {
     public static string Get(ApplicationPagedRequest request)
     {
-        var url = $"ApplicationAuthenticationProviders?ApplicationId={request.ApplicationId}&Id={request.Id}&pageNumber={request.PageNumber}&pageSize={request.PageSize}&searchString={request.SearchString}&orderBy={request.Orderby}";
+        var url = $"ApplicationAuthenticationProviders?ApplicationId={request.ApplicationId}&Id={request.Id}&pageNumber={request.PageNumber}&pageSize={request.PageSize}&searchString={request.SearchString}&orderBy={request.OrderBy}";
         return url;
     }
     

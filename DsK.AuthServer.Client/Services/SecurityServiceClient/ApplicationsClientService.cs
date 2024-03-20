@@ -38,7 +38,7 @@ public partial class SecurityServiceClient
     public async Task<APIResult<List<ApplicationDto>>> ApplicationsGetAsync(PagedRequest request)
     {
         await PrepareBearerToken();
-        var url = Routes.ApplicationsEndpoints.Get(request.Id, request.PageNumber, request.PageSize, request.SearchString, request.Orderby);
+        var url = Routes.ApplicationsEndpoints.Get(request);
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
             return null;        

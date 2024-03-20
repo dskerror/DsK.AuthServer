@@ -1,10 +1,12 @@
-﻿namespace DsK.AuthServer.Client.Services.Routes
+﻿using DsK.AuthServer.Security.Shared;
+
+namespace DsK.AuthServer.Client.Services.Routes
 {
     public static class ApplicationsEndpoints
     {
-        public static string Get(int id, int pageNumber, int pageSize, string searchString, string orderBy)
+        public static string Get(PagedRequest r)
         {
-            var url = $"Application?Id={id}&pageNumber={pageNumber}&pageSize={pageSize}&searchString={searchString}&orderBy={orderBy}";
+            var url = $"Application?Id={r.Id}&PageNumber={r.PageNumber}&PageSize={r.PageSize}&SearchString={r.SearchString}&OrderBy={r.OrderBy}";
             return url;
         }
 

@@ -43,9 +43,12 @@ public partial class Applications
 
     private async Task LoadData(int pageNumber, int pageSize, TableState state)
     {
-        var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString() };
+        var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, OrderBy = state.ToPagedRequestString() };
         var response = await securityService.ApplicationsGetAsync(request);
-        if (!response.HasError)
+
+        if(response is null)
+            Snackbar.Add("Data couldn't be loaded", Severity.Error);
+        else if (!response.HasError)
         {
             _totalItems = response.Paging.TotalItems;
             _currentPage = response.Paging.CurrentPage;

@@ -16,7 +16,7 @@ public class ApplicationController : ControllerBase
         SecurityService = securityService;
     }
 
-    [HttpPost]        
+    [HttpPost]
     [Authorize(Roles = $"{Access.Admin}, {Access.Application.Create}")]
     public async Task<IActionResult> Create(ApplicationCreateDto model)
     {
@@ -36,11 +36,11 @@ public class ApplicationController : ControllerBase
             if (ex.InnerException.Message != null)
                 apiResult.Message = ex.InnerException.Message;
         }
-        
+
         return Ok(apiResult);
     }
 
-    [HttpPost("GenerateNewAPIKey")]        
+    [HttpPost("GenerateNewAPIKey")]
     [Authorize(Roles = $"{Access.Admin}, {Access.Application.GenerateNewAPIKey}")]
     public async Task<IActionResult> GenerateNewAPIKey(ApplicationDto model)
     {
@@ -58,9 +58,9 @@ public class ApplicationController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.Application.View}")]
-    public async Task<IActionResult> Get(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+    public async Task<IActionResult> Get([FromQuery] PagedRequest pagingRequest)
     {
-        var result = await SecurityService.ApplicationGet(id, pageNumber, pageSize, searchString, orderBy);
+        var result = await SecurityService.ApplicationGet(pagingRequest);
         return Ok(result);
     }
 

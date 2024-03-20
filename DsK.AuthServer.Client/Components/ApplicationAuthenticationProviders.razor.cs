@@ -42,7 +42,7 @@ public partial class ApplicationAuthenticationProviders
 
     private async Task LoadData(int pageNumber, int pageSize, TableState state)
     {
-        var request = new ApplicationPagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString(), ApplicationId = ApplicationId };
+        var request = new ApplicationPagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, OrderBy = state.ToPagedRequestString(), ApplicationId = ApplicationId };
         var response = await securityService.ApplicationAuthenticationProvidersGetAsync(request);
         if (!response.HasError)
         {

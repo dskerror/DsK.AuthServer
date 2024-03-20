@@ -5,7 +5,7 @@ public static class ApplicationRoleEndpoints
 {
     public static string Get(ApplicationPagedRequest request)
     {            
-        var url = $"ApplicationRoles?ApplicationId={request.ApplicationId}&Id={request.Id}&pageNumber={request.PageNumber}&pageSize={request.PageSize}&searchString={request.SearchString}&orderBy={request.Orderby}";
+        var url = $"ApplicationRoles?ApplicationId={request.ApplicationId}&Id={request.Id}&pageNumber={request.PageNumber}&pageSize={request.PageSize}&searchString={request.SearchString}&orderBy={request.OrderBy}";
         return url;
     }
 

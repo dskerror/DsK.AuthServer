@@ -42,7 +42,7 @@ public partial class Users
 
     private async Task LoadData(int pageNumber, int pageSize, TableState state)
     {
-        var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, Orderby = state.ToPagedRequestString() };
+        var request = new PagedRequest { PageSize = pageSize, PageNumber = pageNumber + 1, SearchString = _searchString, OrderBy = state.ToPagedRequestString() };
         var response = await securityService.UsersGetAsync(request);
         if (!response.HasError)
         {
