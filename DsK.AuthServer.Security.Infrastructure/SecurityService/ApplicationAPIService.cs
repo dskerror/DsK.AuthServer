@@ -46,11 +46,10 @@ public partial class SecurityService
 
         result.Paging.CurrentPage = p.PageNumber;
         p.PageNumber = p.PageNumber == 0 ? 1 : p.PageNumber;
-        p.PageSize = p.PageNumber == 0 ? 10 : p.PageNumber;
+        p.PageSize = p.PageSize == 0 ? 10 : p.PageSize;
         
         int count = 0;
         List<Application> items;
-
 
         if (!string.IsNullOrWhiteSpace(p.SearchString))
         {

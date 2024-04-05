@@ -28,9 +28,9 @@ public class UsersController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{Access.Admin}, {Access.Users.View}")]
-    public async Task<IActionResult> Get(int id, int pageNumber, int pageSize, string searchString = null, string orderBy = null)
+    public async Task<IActionResult> Get([FromQuery] PagedRequest pagingRequest)
     {
-        var result = await SecurityService.UsersGet(id, pageNumber, pageSize, searchString, orderBy);
+        var result = await SecurityService.UsersGet(pagingRequest);
         return Ok(result);
     }
 

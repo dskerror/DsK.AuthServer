@@ -103,10 +103,32 @@ public partial class SecurityService
         else
             applicationAuthenticationProvider = await db.ApplicationAuthenticationProviders.Where(u => u.ApplicationAuthenticationProviderGuid == ApplicationAuthenticationProviderGUID).Include(x => x.Application).FirstOrDefaultAsync();
 
+        if (applicationAuthenticationProvider is null)
+            return null;
+
         string key = $"{applicationAuthenticationProvider.Id.ToString()} {applicationAuthenticationProvider.Name}";
         applicationAuthenticationProvider.Password = Encryption.AesOperation.DecryptString(key, applicationAuthenticationProvider.Password);
 
         return applicationAuthenticationProvider;
+    }
+
+    public APIResult<string> ValidateApplicationAuthenticationProvider(ApplicationAuthenticationProvider applicationAuthenticationProvider)
+    {
+        var r = new APIResult<string>();
+        if (applicationAuthenticationProvider is null)
+        {
+            r.HasError = true;
+            r.Message = "This Application Authentication Provider Doesn't Exists.";
+            return r;
+        }
+        if (!applicationAuthenticationProvider.IsEnabled)
+        {
+            r.HasError = true;
+            r.Message = "This Application Authentication Provider Is Disabled";
+            return r;
+        }
+
+        return r;
     }
     public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderDto model)
     {

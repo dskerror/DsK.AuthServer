@@ -35,10 +35,11 @@ public partial class SecurityService
         APIResult<LoginResponseDto> apiResult = new APIResult<LoginResponseDto>();
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
-        if (!applicationAuthenticationProvider.IsEnabled)
-        {
-            apiResult.HasError = true;
-            apiResult.Message = "This Application Authentication Provider Is Disabled";
+        var applicationAuthenticationProviderValidation = ValidateApplicationAuthenticationProvider(applicationAuthenticationProvider);
+        if (applicationAuthenticationProviderValidation.HasError) {
+
+            apiResult.HasError = applicationAuthenticationProviderValidation.HasError;
+            apiResult.Message = applicationAuthenticationProviderValidation.Message;
             return apiResult;
         }
 
@@ -96,8 +97,16 @@ public partial class SecurityService
     {
         APIResult<string> apiResult = new APIResult<string>() { HasError = true };
         bool userAlreadyExists = false;
+
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
-        var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
+        var applicationAuthenticationProviderValidation = ValidateApplicationAuthenticationProvider(applicationAuthenticationProvider);
+
+        if (applicationAuthenticationProviderValidation.HasError)
+        {
+            apiResult.HasError = applicationAuthenticationProviderValidation.HasError;
+            apiResult.Message = applicationAuthenticationProviderValidation.Message;
+            return apiResult;
+        }
 
         if (!applicationAuthenticationProvider.RegistrationEnabled && !applicationAuthenticationProvider.ActiveDirectoryFirstLoginAutoRegister)
         {
@@ -105,6 +114,8 @@ public partial class SecurityService
             apiResult.Message = "Registration is disabled for this Application Authentication Provider";
             return apiResult;
         }
+
+        var user = db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
 
         if (user == null)
             user = await CreateUser(model, applicationAuthenticationProvider, user);

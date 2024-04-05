@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DsK.AuthServer.Security.Infrastructure\DsK.AuthServer.Security.Infrastructure.csproj" />
-    <ProjectReference Include="..\TestApp\Shared\TestApp.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

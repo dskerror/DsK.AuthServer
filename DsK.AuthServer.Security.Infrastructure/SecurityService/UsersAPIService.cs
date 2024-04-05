@@ -2,8 +2,6 @@
 using DsK.AuthServer.Security.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
-using static DsK.AuthServer.Security.Shared.Access;
-
 
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
@@ -50,55 +48,46 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<UserDto>>> UsersGet(int id, int pageNumber, int pageSize, string searchString, string orderBy)
+    public async Task<APIResult<List<UserDto>>> UsersGet(PagedRequest p)
     {
         var result = new APIResult<List<UserDto>>();
 
-        string ordering = "Id";
-        if (!string.IsNullOrWhiteSpace(orderBy))
-        {
-            string[] OrderBy = orderBy.Split(',');
-            ordering = string.Join(",", OrderBy);
-        }
-        result.Paging.CurrentPage = pageNumber;
-        pageNumber = pageNumber == 0 ? 1 : pageNumber;
-        pageSize = pageSize == 0 ? 10 : pageSize;
+        result.Paging.CurrentPage = p.PageNumber;
+        p.PageNumber = p.PageNumber == 0 ? 1 : p.PageNumber;
+        p.PageSize = p.PageSize == 0 ? 10 : p.PageSize;
+
         int count = 0;
         List<User> items;
-        if (!string.IsNullOrWhiteSpace(searchString))
+
+        if (!string.IsNullOrWhiteSpace(p.SearchString))
         {
             count = await db.Users
-                .Where(m => m.Name.Contains(searchString) || m.Email.Contains(searchString))
+                .Where(m => m.Name.Contains(p.SearchString) || m.Email.Contains(p.SearchString))
                 .CountAsync();
 
-            items = await db.Users.OrderBy(ordering)
-                .Where(m => m.Name.Contains(searchString) || m.Email.Contains(searchString))
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+            items = await db.Users.OrderBy(p.OrderBy)
+                .Where(m => m.Name.Contains(p.SearchString) || m.Email.Contains(p.SearchString))
+                .Skip((p.PageNumber - 1) * p.PageSize)
+                .Take(p.PageSize)
                 .ToListAsync();
         }
-        else if (id > 0)
+        else if (p.Id != 0)
         {
             count = await db.Users
-                .Where(u => u.Id == id)
+                .Where(u => u.Id == p.Id)
                 .CountAsync();
 
-            items = await db.Users.OrderBy(ordering)
-                .Where(u => u.Id == id)
+            items = await db.Users.OrderBy(p.OrderBy)
+                .Where(u => u.Id == p.Id)
                 .ToListAsync();
-        }
-        else if (id == -1)
-        {
-            count = await db.Users.CountAsync();
-            items = await db.Users.OrderBy(x => x.Name).ToListAsync();
         }
         else
         {
             count = await db.Users.CountAsync();
 
-            items = await db.Users.OrderBy(ordering)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+            items = await db.Users.OrderBy(p.OrderBy)
+                .Skip((p.PageNumber - 1) * p.PageSize)
+                .Take(p.PageSize)
                 .ToListAsync();
         }
         result.Paging.TotalItems = count;
