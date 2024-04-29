@@ -500,6 +500,13 @@ public partial class SecurityService
                 else
                     IsUserAuthenticated = false;
                 break;
+            case "Azure AD":
+                IsUserAuthenticated = AuthenticateUserWithDomain(model.Email, model.Password, applicationAuthenticationProvider);
+                if (IsUserAuthenticated && applicationAuthenticationProvider.ActiveDirectoryFirstLoginAutoRegister)
+                    user = await CreateADUserIfNotExists(model, user, applicationAuthenticationProvider);
+                else
+                    IsUserAuthenticated = false;
+                break;
             default: //Local
                 if (user != null)
                     IsUserAuthenticated = await AuthenticateUserWithLocalPassword(user, model.Password);
@@ -587,6 +594,26 @@ public partial class SecurityService
             return false;
         }
     }
+
+    private bool AuthenticateUserWithAzureAD(string username, string password, ApplicationAuthenticationProvider applicationAuthenticationProvider)
+    {
+        bool isValid = false;
+        try
+        {
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain,
+                                applicationAuthenticationProvider.Domain,
+                                applicationAuthenticationProvider.Username,
+                                applicationAuthenticationProvider.Password))
+                isValid = pc.ValidateCredentials(username, password);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return isValid;
+    }
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
     private bool AuthenticateUserWithDomain(string username, string password, ApplicationAuthenticationProvider applicationAuthenticationProvider)

@@ -11,6 +11,14 @@ public partial class SecurityService
     public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProvidersCreate(ApplicationAuthenticationProviderCreateDto model)
     {
         APIResult<ApplicationAuthenticationProviderDto> result = new APIResult<ApplicationAuthenticationProviderDto>();
+
+        if (!await ApplicationAuthenticationProviderNameIsValid(model.Name))
+        {
+            result.HasError = true;
+            result.Message = "Application Authentication Provider Name Is Not Valid.";
+            return result;
+        }
+        
         int recordsCreated = 0;
 
         var record = new ApplicationAuthenticationProvider();
