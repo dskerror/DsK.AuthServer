@@ -12,7 +12,7 @@ public partial class SecurityService
     {
         APIResult<ApplicationAuthenticationProviderDto> result = new APIResult<ApplicationAuthenticationProviderDto>();
 
-        if (!await ApplicationAuthenticationProviderNameIsValid(model.Name))
+        if (!await ApplicationAuthenticationProviderTypeNameIsValid(model.AuthenticationProviderType))
         {
             result.HasError = true;
             result.Message = "Application Authentication Provider Name Is Not Valid.";

@@ -15,7 +15,7 @@ public partial class SecurityService
         return result;
     }
 
-    public async Task<bool> ApplicationAuthenticationProviderNameIsValid(string applicationAuthenticationProviderTypeName)
+    public async Task<bool> ApplicationAuthenticationProviderTypeNameIsValid(string applicationAuthenticationProviderTypeName)
     {
         if (applicationAuthenticationProviderTypeName == "Local" || 
             applicationAuthenticationProviderTypeName == "Active Directory" ||

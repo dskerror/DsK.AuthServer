@@ -447,8 +447,9 @@ public partial class SecurityService
 
         var userPermissions = await GetUserPermissionsCombined(user.Id);
         var userClaims = new List<Claim>();
-        userClaims.Add(new Claim(ClaimTypes.Email, user.Email ?? ""));
+        userClaims.Add(new Claim("Email", user.Email ?? ""));
         userClaims.Add(new Claim("UserId", user.Id.ToString()));
+        userClaims.Add(new Claim("Name", user.Name));        
 
         foreach (var permission in userPermissions)
         {
