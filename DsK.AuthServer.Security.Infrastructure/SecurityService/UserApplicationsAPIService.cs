@@ -18,7 +18,7 @@ public partial class SecurityService
         var userApplications = await (from au in db.ApplicationUsers
                                       join a in db.Applications on au.ApplicationId equals a.Id
                                       where au.UserId == userId
-                                      select new { a.ApplicationName, au.UserId, au.ApplicationId }).ToListAsync();
+                                      select new { a.ApplicationName, au.UserId, au.ApplicationId, au.IsEnabled }).ToListAsync();
 
         List<UserApplicationGridDto> userApplicationGridDto = new List<UserApplicationGridDto>();
 
@@ -32,7 +32,13 @@ public partial class SecurityService
             };
 
             var lookupInuserApplications = userApplications.Where(x => x.UserId == userId && x.ApplicationId == application.Id).FirstOrDefault();
-            if (lookupInuserApplications != null) { value.IsEnabled = true; }
+            if (lookupInuserApplications != null)
+            {
+                if (lookupInuserApplications.IsEnabled)
+                    value.IsEnabled = true;
+                else 
+                    value.IsEnabled = false;
+            }
 
             userApplicationGridDto.Add(value);
         }

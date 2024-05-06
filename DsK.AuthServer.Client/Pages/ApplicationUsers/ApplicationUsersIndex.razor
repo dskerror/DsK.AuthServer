@@ -1,5 +1,6 @@
 ﻿
-<MudTable Items="@applicationsUsers" Hover="true">
+@* <MudTable Items="@applicationsUsers" Hover="true"> *@
+<MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<ApplicationUserGridDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <HeaderContent>
         <MudTh>Disabled/Enabled</MudTh>
         <MudTh>Name</MudTh>
@@ -28,7 +29,7 @@
         </MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
     </PagerContent>
 </MudTable>
 

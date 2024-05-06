@@ -14,8 +14,7 @@ public partial class ApplicationsIndex
     private MudTable<ApplicationDto> _table;
     private int _totalItems;
     private int _currentPage;
-    private string _searchString = "";
-    private bool _loaded;
+    private string _searchString = "";    
     private bool _AccessView;
     private bool _AccessCreate;
 
@@ -36,8 +35,6 @@ public partial class ApplicationsIndex
     private async Task<TableData<ApplicationDto>> ServerReload(TableState state)
     {
         await LoadData(state.Page, state.PageSize, state);
-        _loaded = true;
-        base.StateHasChanged();
         return new TableData<ApplicationDto> { TotalItems = _totalItems, Items = _pagedData };
     }
 

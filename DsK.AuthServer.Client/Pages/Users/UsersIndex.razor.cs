@@ -10,7 +10,6 @@ public partial class UsersIndex
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private IEnumerable<UserDto> _pagedData;
     private MudTable<UserDto> _table;
-    private bool _loaded;
     private int _totalItems;
     private int _currentPage;
     private string _searchString = "";
@@ -35,8 +34,6 @@ public partial class UsersIndex
     private async Task<TableData<UserDto>> ServerReload(TableState state)
     {
         await LoadData(state.Page, state.PageSize, state);
-        _loaded = true;
-        base.StateHasChanged();
         return new TableData<UserDto> { TotalItems = _totalItems, Items = _pagedData };
     }
 

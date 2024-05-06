@@ -2,12 +2,6 @@
 @using DsK.AuthServer.Security.Shared;
 @using System.Security.Claims;
 
-@if (!_loaded)
-{
-    <h3>Loading...</h3>
-    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
-}
-
 <MudTable Elevation="25" RowsPerPage="5" ServerData="@(new Func<TableState, Task<TableData<UserDto>>>(ServerReload))" Hover="true" Dense="true" Bordered="true" Striped="true" @ref="_table">
     <ToolBarContent>
         @if (_AccessCreate)
