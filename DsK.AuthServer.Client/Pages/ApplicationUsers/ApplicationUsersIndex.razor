@@ -7,7 +7,7 @@
         <MudTh>User Mappings</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="ApplicationSwitch">
+        <MudTd DataLabel="ApplicationUserSwitch">
             @if (context.UserId == 1 && context.ApplicationId == 1)
             {
                 <MudSwitch Color="Color.Success" Disabled="true" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
@@ -16,33 +16,6 @@
             {
                 <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
             }
-
-@* 
-            @if (context.UserId == 1 && context.ApplicationId == 1)
-            {
-                if (context.IsEnabled)
-                {
-                    <MudTooltip Text="Disable Role">
-                        <MudIconButton OnClick="@( async() => await IsEnabledToggle(context))"
-                                       Icon="@Icons.Material.Filled.Work"
-                                       Color="Color.Success"
-                                       Variant="Variant.Outlined">
-                        </MudIconButton>
-                    </MudTooltip>
-                }
-                else
-                {
-                    <MudTooltip Text="Enable Role">
-                        <MudIconButton OnClick="@( async() => await IsEnabledToggle(context))"
-                                       Icon="@Icons.Material.Filled.WorkOff"
-                                       Color="Color.Error"
-                                       Variant="Variant.Outlined">
-                        </MudIconButton>
-                    </MudTooltip>
-                }
-            } *@
-
-
         </MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Email">@context.Email</MudTd>

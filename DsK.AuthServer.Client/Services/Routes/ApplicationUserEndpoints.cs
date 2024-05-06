@@ -8,4 +8,6 @@ public static class ApplicationUserEndpoints
         var url = $"ApplicationUsers?ApplicationId={applicationId}";
         return url;
     }
+
+    public static string IsEnabledToggle = "Application/IsEnabledToggle";
 }

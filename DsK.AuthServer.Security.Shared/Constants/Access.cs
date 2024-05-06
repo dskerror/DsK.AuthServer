@@ -112,6 +112,7 @@ public static class Access
         public const string Create = "ApplicationUsers.Create";
         public const string Edit = "ApplicationUsers.Edit";
         public const string Delete = "ApplicationUsers.Delete";
+        public const string IsEnabledToggle = "ApplicationUsers.IsEnabledToggle";
     }
 
 

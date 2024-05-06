@@ -8,9 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\**" />
     <Compile Remove="Models\**" />
+    <Content Remove="Components\**" />
     <Content Remove="Models\**" />
+    <EmbeddedResource Remove="Components\**" />
     <EmbeddedResource Remove="Models\**" />
+    <None Remove="Components\**" />
     <None Remove="Models\**" />
   </ItemGroup>
 
@@ -42,10 +46,6 @@
     <Content Update="Pages\Users\UsersIndex.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\" />
   </ItemGroup>
 
 </Project>

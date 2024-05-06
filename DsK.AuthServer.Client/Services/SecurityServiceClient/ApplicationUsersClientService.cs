@@ -26,4 +26,15 @@ public partial class SecurityServiceClient
             return null;
         }
     }
+
+    public async Task<APIResponse<string>> ApplicationUserDisableEnableAsync(int id)
+    {
+        await PrepareBearerToken();
+        var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationUserEndpoints.IsEnabledToggle, id);
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
+        return result;
+    }
 }

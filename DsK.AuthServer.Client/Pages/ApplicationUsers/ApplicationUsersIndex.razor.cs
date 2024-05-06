@@ -53,48 +53,4 @@ public partial class ApplicationUsersIndex
             }
         }
     }
-
-
-    //private async Task IsEnabledToggle(ApplicationRoleDto context)
-    //{
-    //    string IsEnabledToggleHeader = "";
-    //    string IsEnabledToggleMessage = "";
-
-    //    if (context.IsEnabled)
-    //    {
-    //        IsEnabledToggleHeader = "Disable";
-    //        IsEnabledToggleMessage = "disable";
-    //    }
-    //    else
-    //    {
-    //        IsEnabledToggleHeader = "Enable";
-    //        IsEnabledToggleMessage = "enable";
-    //    }
-
-    //    var parameters = new DialogParameters();
-    //    parameters.Add("ContentText", $"Are you sure you want to {IsEnabledToggleMessage} this role?");
-    //    parameters.Add("ButtonText", "Yes");
-    //    var dialogresult = DialogService.Show<GenericDialog>($"{IsEnabledToggleHeader} Role", parameters);
-    //    var dialogResult = await dialogresult.Result;
-    //    if (!dialogResult.Canceled && bool.TryParse(dialogResult.Data.ToString(), out bool resultbool))
-    //    {
-    //        var result = await securityService.ApplicationRoleDisableEnableAsync(context.Id);
-
-    //        if (result != null)
-    //            if (result.HasError)
-    //                Snackbar.Add(result.Message, Severity.Error);
-    //            else
-    //            {
-    //                Snackbar.Add(result.Message, Severity.Success);
-    //                await _table.ReloadServerData();
-    //            }
-
-    //        else
-    //            Snackbar.Add("An Unknown Error Has Occured", Severity.Error);
-    //    }
-    //    else
-    //    {
-    //        Snackbar.Add("Operation Canceled", Severity.Warning);
-    //    }
-    //}
 }

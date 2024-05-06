@@ -71,22 +71,25 @@ public partial class SecurityService
         var applicationsUsers = await (from au in db.ApplicationUsers
                                       join u in db.Users on au.UserId equals u.Id
                                       where au.ApplicationId == applicationId
-                                      select new { u.Name, u.Email, au.UserId, au.ApplicationId }).ToListAsync();
+                                      select new { au.Id, u.Name, u.Email, au.UserId, au.ApplicationId }).ToListAsync();
 
         List<ApplicationUserGridDto> gridDto = new List<ApplicationUserGridDto>();
 
         foreach (var user in users)
         {
+
+            var lookupInApplicationsUsers = applicationsUsers.Where(x => x.UserId == user.Id && x.ApplicationId == applicationId).FirstOrDefault();
+
             var value = new ApplicationUserGridDto()
             {
                 ApplicationId = applicationId,
                 Email = user.Email,
                 Name = user.Name,
-                UserId = user.Id
+                UserId = user.Id,                
             };
 
-            var lookupInApplicationsUsers = applicationsUsers.Where(x => x.UserId == user.Id && x.ApplicationId == applicationId).FirstOrDefault();
-            if (lookupInApplicationsUsers != null) { value.IsEnabled = true; }
+            
+            if (lookupInApplicationsUsers != null) { value.IsEnabled = true; }            
 
             gridDto.Add(value);
         }
@@ -150,5 +153,6 @@ public partial class SecurityService
     //                      select u).FirstOrDefaultAsync();
     //    return user;
     //}
+
 }
 
