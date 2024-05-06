@@ -62,9 +62,9 @@ public partial class SecurityService
 
     //    return result;
     //}
-    public async Task<APIResult<List<ApplicationUserGridDto>>> ApplicationUsersGet(int applicationId)
+    public async Task<APIResponse<List<ApplicationUserGridDto>>> ApplicationUsersGet(int applicationId)
     {
-        APIResult<List<ApplicationUserGridDto>> result = new APIResult<List<ApplicationUserGridDto>>();
+        APIResponse<List<ApplicationUserGridDto>> result = new APIResponse<List<ApplicationUserGridDto>>();
 
         var users = await db.Users.ToListAsync();
 

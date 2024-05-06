@@ -41,9 +41,9 @@ public partial class SecurityService
 
         return true;
     }
-    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGet(int applicationId, int applicationUserId)
+    public async Task<APIResponse<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGet(int applicationId, int applicationUserId)
     {
-        var result = new APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>();
+        var result = new APIResponse<List<ApplicationAuthenticationProviderUserMappingsGridDto>>();
         List<ApplicationAuthenticationProviderUserMappingsGridDto> applicationAuthenticationProviderUserMappingGridDtoList = new List<ApplicationAuthenticationProviderUserMappingsGridDto>();
 
         var authenticationProviderList =
@@ -80,9 +80,9 @@ public partial class SecurityService
         result.Result = applicationAuthenticationProviderUserMappingGridDtoList;
         return result;
     }
-    public async Task<APIResult<string>> ApplicationAuthenticationProviderUserMappingUpdate(ApplicationAuthenticationProviderUserMappingUpdateDto model)
+    public async Task<APIResponse<string>> ApplicationAuthenticationProviderUserMappingUpdate(ApplicationAuthenticationProviderUserMappingUpdateDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
         var record = await db.ApplicationAuthenticationProviderUserMappings.FirstOrDefaultAsync(x => x.Id == model.Id);
 

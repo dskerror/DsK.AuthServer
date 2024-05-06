@@ -8,7 +8,7 @@ namespace DsK.AuthServer.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<UserPermissionGridDto>>> UserPermissionsGetAsync(int UserId)
+    public async Task<APIResponse<List<UserPermissionGridDto>>> UserPermissionsGetAsync(int UserId)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.UserPermissionEndpoints.Get(UserId));
@@ -19,7 +19,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserPermissionGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<UserPermissionGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -30,14 +30,14 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> UserPermissionChangeAsync(UserPermissionChangeDto model)
+    public async Task<APIResponse<string>> UserPermissionChangeAsync(UserPermissionChangeDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.UserPermissionEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 }

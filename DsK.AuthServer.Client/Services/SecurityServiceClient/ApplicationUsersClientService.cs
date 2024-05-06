@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 namespace DsK.AuthServer.Client.Services;
 public partial class SecurityServiceClient
 {  
-    public async Task<APIResult<List<ApplicationUserGridDto>>> ApplicationUsersGetAsync(int applicationId)
+    public async Task<APIResponse<List<ApplicationUserGridDto>>> ApplicationUsersGetAsync(int applicationId)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.ApplicationUserEndpoints.Get(applicationId));
@@ -17,7 +17,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationUserGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<ApplicationUserGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)

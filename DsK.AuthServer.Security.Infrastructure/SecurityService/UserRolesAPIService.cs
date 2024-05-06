@@ -7,9 +7,9 @@ using static DsK.AuthServer.Security.Shared.Access;
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<string>> UserRoleChange(UserRoleChangeDto model)
+    public async Task<APIResponse<string>> UserRoleChange(UserRoleChangeDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsModifiedCount = 0;
         var record = new UserRole();
         Mapper.Map(model, record);
@@ -52,9 +52,9 @@ public partial class SecurityService
         return result;
     }
 
-    public async Task<APIResult<List<UserRoleGridDto>>> UserRolesGet(int userId)
+    public async Task<APIResponse<List<UserRoleGridDto>>> UserRolesGet(int userId)
     {
-        APIResult<List<UserRoleGridDto>> result = new APIResult<List<UserRoleGridDto>>();
+        APIResponse<List<UserRoleGridDto>> result = new APIResponse<List<UserRoleGridDto>>();
         var applicationRoles = await db.ApplicationRoles
             .Include(x => x.Application)
             .ThenInclude(x => x.ApplicationUsers)

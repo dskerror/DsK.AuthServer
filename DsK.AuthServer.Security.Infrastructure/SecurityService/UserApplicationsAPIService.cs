@@ -9,9 +9,9 @@ namespace DsK.AuthServer.Security.Infrastructure;
 
 public partial class SecurityService
 {
-    public async Task<APIResult<List<UserApplicationGridDto>>> UserApplicationsGet(int userId)
+    public async Task<APIResponse<List<UserApplicationGridDto>>> UserApplicationsGet(int userId)
     {
-        APIResult<List<UserApplicationGridDto>> result = new APIResult<List<UserApplicationGridDto>>();
+        APIResponse<List<UserApplicationGridDto>> result = new APIResponse<List<UserApplicationGridDto>>();
 
         var applications = await db.Applications.ToListAsync();
 
@@ -40,9 +40,9 @@ public partial class SecurityService
         result.Result = userApplicationGridDto;
         return result;
     }
-    public async Task<APIResult<string>> UserApplicationChange(ApplicationUserChangeDto model)
+    public async Task<APIResponse<string>> UserApplicationChange(ApplicationUserChangeDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
 
         if (model.UserId == 1 & model.ApplicationId == 1)
         {

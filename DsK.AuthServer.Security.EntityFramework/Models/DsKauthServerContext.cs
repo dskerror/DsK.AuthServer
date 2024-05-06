@@ -39,9 +39,9 @@ public partial class DsKauthServerContext : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=.;Database=DsKAuthServer;Trusted_Connection=True;Trust Server Certificate=true");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=.;Database=DsKAuthServer2;Trusted_Connection=True;Trust Server Certificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -164,11 +164,11 @@ public partial class DsKauthServerContext : DbContext
 
         modelBuilder.Entity<ApplicationUser>(entity =>
         {
+            entity.HasIndex(e => new { e.ApplicationId, e.UserId }, "IX_ApplicationUsers_AppAndUser").IsUnique();
+
             entity.HasIndex(e => e.ApplicationId, "IX_ApplicationUsers_ApplicationId");
 
             entity.HasIndex(e => e.UserId, "IX_ApplicationUsers_UserId");
-
-            entity.Property(e => e.LockoutEnd).HasColumnType("date");
 
             entity.HasOne(d => d.Application).WithMany(p => p.ApplicationUsers)
                 .HasForeignKey(d => d.ApplicationId)
@@ -188,7 +188,6 @@ public partial class DsKauthServerContext : DbContext
             entity.Property(e => e.AccountCreatedDateTime).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.LastPasswordChangeDateTime).HasColumnType("datetime");
-            entity.Property(e => e.LockoutEnd).HasColumnType("date");
             entity.Property(e => e.Name).HasMaxLength(256);
             entity.Property(e => e.PasswordChangeDateTime).HasColumnType("datetime");
         });

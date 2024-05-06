@@ -8,9 +8,9 @@ using DsK.Services;
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProvidersCreate(ApplicationAuthenticationProviderCreateDto model)
+    public async Task<APIResponse<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProvidersCreate(ApplicationAuthenticationProviderCreateDto model)
     {
-        APIResult<ApplicationAuthenticationProviderDto> result = new APIResult<ApplicationAuthenticationProviderDto>();
+        APIResponse<ApplicationAuthenticationProviderDto> result = new APIResponse<ApplicationAuthenticationProviderDto>();
 
         if (!await ApplicationAuthenticationProviderTypeNameIsValid(model.AuthenticationProviderType))
         {
@@ -48,9 +48,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
+    public async Task<APIResponse<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
     {
-        var result = new APIResult<List<ApplicationAuthenticationProviderDto>>();
+        var result = new APIResponse<List<ApplicationAuthenticationProviderDto>>();
 
         string ordering = "Id";
         if (!string.IsNullOrWhiteSpace(Orderby))
@@ -120,9 +120,9 @@ public partial class SecurityService
         return applicationAuthenticationProvider;
     }
 
-    public APIResult<string> ValidateApplicationAuthenticationProvider(ApplicationAuthenticationProvider applicationAuthenticationProvider)
+    public APIResponse<string> ValidateApplicationAuthenticationProvider(ApplicationAuthenticationProvider applicationAuthenticationProvider)
     {
-        var r = new APIResult<string>();
+        var r = new APIResponse<string>();
         if (applicationAuthenticationProvider is null)
         {
             r.HasError = true;
@@ -138,9 +138,9 @@ public partial class SecurityService
 
         return r;
     }
-    public async Task<APIResult<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderDto model)
+    public async Task<APIResponse<string>> ApplicationAuthenticationProvidersUpdate(ApplicationAuthenticationProviderDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
 
         int recordsUpdated = 0;
         var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == model.Id);
@@ -166,9 +166,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> ApplicationAuthenticationProvidersDelete(int id)
+    public async Task<APIResponse<string>> ApplicationAuthenticationProvidersDelete(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsDeleted = 0;
         var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -200,9 +200,9 @@ public partial class SecurityService
         result.Result = recordsDeleted.ToString();
         return result;
     }
-    public async Task<APIResult<string>> ApplicationAuthenticationProviderIsEnabledToggle(int id)
+    public async Task<APIResponse<string>> ApplicationAuthenticationProviderIsEnabledToggle(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
 
         var record = await db.ApplicationAuthenticationProviders.FirstOrDefaultAsync(x => x.Id == id);
@@ -230,9 +230,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<ApplicationAuthenticationProviderValidateDto>> ValidateApplicationAuthenticationProviderGuid(string applicationAuthenticationProviderGuid)
+    public async Task<APIResponse<ApplicationAuthenticationProviderValidateDto>> ValidateApplicationAuthenticationProviderGuid(string applicationAuthenticationProviderGuid)
     {
-        var result = new APIResult<ApplicationAuthenticationProviderValidateDto>();
+        var result = new APIResponse<ApplicationAuthenticationProviderValidateDto>();
 
         try
         {

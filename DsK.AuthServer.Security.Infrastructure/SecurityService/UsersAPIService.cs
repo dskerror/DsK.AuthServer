@@ -6,9 +6,9 @@ using System.Linq.Dynamic.Core;
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<UserDto>> UserCreate(UserCreateDto model)
+    public async Task<APIResponse<UserDto>> UserCreate(UserCreateDto model)
     {
-        APIResult<UserDto> result = new APIResult<UserDto>();
+        APIResponse<UserDto> result = new APIResponse<UserDto>();
         int recordsCreated = 0;
 
         var record = new User();
@@ -48,9 +48,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<UserDto>>> UsersGet(PagedRequest p)
+    public async Task<APIResponse<List<UserDto>>> UsersGet(PagedRequest p)
     {
-        var result = new APIResult<List<UserDto>>();
+        var result = new APIResponse<List<UserDto>>();
 
         result.Paging.CurrentPage = p.PageNumber;
         p.PageNumber = p.PageNumber == 0 ? 1 : p.PageNumber;
@@ -94,9 +94,9 @@ public partial class SecurityService
         result.Result = Mapper.Map<List<User>, List<UserDto>>(items);
         return result;
     }
-    public async Task<APIResult<string>> UserUpdate(UserDto model)
+    public async Task<APIResponse<string>> UserUpdate(UserDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
         var record = await db.Users.FirstOrDefaultAsync(x => x.Id == model.Id);
 
@@ -118,9 +118,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> UserDelete(int id)
+    public async Task<APIResponse<string>> UserDelete(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsDeleted = 0;
         var record = db.Users.Attach(new User { Id = id });
         record.State = EntityState.Deleted;

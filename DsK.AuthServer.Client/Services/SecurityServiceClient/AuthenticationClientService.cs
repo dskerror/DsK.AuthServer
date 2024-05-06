@@ -7,13 +7,13 @@ namespace DsK.AuthServer.Client.Services;
 
 public partial class SecurityServiceClient
 {   
-    public async Task<APIResult<LoginResponseDto>> LoginAsync(LoginRequestDto model)
+    public async Task<APIResponse<LoginResponseDto>> LoginAsync(LoginRequestDto model)
     {   
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Login, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<LoginResponseDto>>();        
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<LoginResponseDto>>();        
 
         return result;
     }
@@ -42,13 +42,13 @@ public partial class SecurityServiceClient
         (_authenticationStateProvider as CustomAuthenticationStateProvider).Notify();
         return true;
     }
-    public async Task<APIResult<string>> RegisterAsync(RegisterRequestDto model)
+    public async Task<APIResponse<string>> RegisterAsync(RegisterRequestDto model)
     {
         var response = await _httpClient.PostAsJsonAsync(Routes.AuthenticationEndpoints.Register, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
     public async Task<bool> PasswordChangeRequestAsync(PasswordChangeRequestDto model)

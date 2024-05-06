@@ -1,21 +1,34 @@
 using Blazored.LocalStorage;
 using DsK.AuthServer.Client;
 using DsK.AuthServer.Client.Services;
+using DsK.AuthServer.Client.Services.Tokens;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using MudBlazor.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+
+#region HttpClient and Retry Refresh Token
+//Service to implement refresh token and retry when response is 401
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7045/") });
-
 string serverlessBaseURI = builder.Configuration["ApiUrl"];
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(serverlessBaseURI) });
+//builder.Services.AddSingleton<ITokenService, TokenService>();
+//builder.Services.AddTransient<TokenRefreshHandler>();
+//builder.Services.AddHttpClient("AuthorizedClient", client =>
+//{
+//    client.BaseAddress = new Uri(serverlessBaseURI);  // Set the default base URL here
+//})
+//.AddHttpMessageHandler<TokenRefreshHandler>();
+#endregion
+
 
 builder.Services.AddScoped<SecurityServiceClient>();
 

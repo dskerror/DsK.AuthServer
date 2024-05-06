@@ -3,9 +3,9 @@
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<List<ApplicationAuthenticationProviderTypeDto>>> ApplicationAuthenticationProvidersGet()
+    public async Task<APIResponse<List<ApplicationAuthenticationProviderTypeDto>>> ApplicationAuthenticationProvidersGet()
     {
-        var result = new APIResult<List<ApplicationAuthenticationProviderTypeDto>>();
+        var result = new APIResponse<List<ApplicationAuthenticationProviderTypeDto>>();
         
         var list = new List<ApplicationAuthenticationProviderTypeDto>();
         list.Add(new ApplicationAuthenticationProviderTypeDto() { Name = "Local" });

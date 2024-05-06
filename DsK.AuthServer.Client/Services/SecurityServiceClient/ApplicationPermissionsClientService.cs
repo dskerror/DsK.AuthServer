@@ -5,17 +5,17 @@ using Newtonsoft.Json;
 namespace DsK.AuthServer.Client.Services;
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<ApplicationPermissionDto>> ApplicationPermissionCreateAsync(ApplicationPermissionCreateDto model)
+    public async Task<APIResponse<ApplicationPermissionDto>> ApplicationPermissionCreateAsync(ApplicationPermissionCreateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationPermissionEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationPermissionDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<ApplicationPermissionDto>>();
         return result;
     }
-    public async Task<APIResult<List<ApplicationPermissionDto>>> ApplicationPermissionsGetAsync(ApplicationPagedRequest request)
+    public async Task<APIResponse<List<ApplicationPermissionDto>>> ApplicationPermissionsGetAsync(ApplicationPagedRequest request)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.ApplicationPermissionEndpoints.Get(request));
@@ -26,7 +26,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationPermissionDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<ApplicationPermissionDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -36,11 +36,11 @@ public partial class SecurityServiceClient
             return null;
         }
     }
-    public async Task<APIResult<ApplicationPermissionDto>> ApplicationPermissionGetAsync(int id)
+    public async Task<APIResponse<ApplicationPermissionDto>> ApplicationPermissionGetAsync(int id)
     {
         await PrepareBearerToken();
         var result = await ApplicationPermissionsGetAsync(new ApplicationPagedRequest() { Id = id });
-        var newResult = new APIResult<ApplicationPermissionDto>
+        var newResult = new APIResponse<ApplicationPermissionDto>
         {
             Exception = result.Exception,
             HasError = result.HasError,
@@ -50,35 +50,35 @@ public partial class SecurityServiceClient
 
         return newResult;
     }
-    public async Task<APIResult<ApplicationPermissionDto>> ApplicationPermissionEditAsync(ApplicationPermissionUpdateDto model)
+    public async Task<APIResponse<ApplicationPermissionDto>> ApplicationPermissionEditAsync(ApplicationPermissionUpdateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationPermissionEndpoints.Put, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationPermissionDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<ApplicationPermissionDto>>();
         return result;
     }
 
-    public async Task<APIResult<string>> ApplicationPermissionDeleteAsync(int id)
+    public async Task<APIResponse<string>> ApplicationPermissionDeleteAsync(int id)
     {
         await PrepareBearerToken();
         var response = await _httpClient.DeleteAsync(Routes.ApplicationPermissionEndpoints.Delete(id));
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
-    public async Task<APIResult<string>> ApplicationPermissionDisableEnableAsync(int id)
+    public async Task<APIResponse<string>> ApplicationPermissionDisableEnableAsync(int id)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationPermissionEndpoints.IsEnabledToggle, id);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 }

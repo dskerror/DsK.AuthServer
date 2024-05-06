@@ -8,9 +8,9 @@ using static DsK.AuthServer.Security.Shared.Access;
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<string>> UserPermissionChange(UserPermissionChangeDto model)
+    public async Task<APIResponse<string>> UserPermissionChange(UserPermissionChangeDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsModifiedCount = 0;
 
         var record = new UserPermission();
@@ -95,9 +95,9 @@ public partial class SecurityService
         //return new APIResult(finalList);
         return finalList;
     }
-    public async Task<APIResult<List<UserPermissionGridDto>>> GetUserPermissions(int userId)
+    public async Task<APIResponse<List<UserPermissionGridDto>>> GetUserPermissions(int userId)
     {
-        APIResult<List<UserPermissionGridDto>> result = new APIResult<List<UserPermissionGridDto>>();
+        APIResponse<List<UserPermissionGridDto>> result = new APIResponse<List<UserPermissionGridDto>>();
         //var applicationPermissions = await db.ApplicationPermissions.Include(x => x.Application).ToListAsync();
         var applicationPermissions = await db.ApplicationPermissions
             .Include(x => x.Application)

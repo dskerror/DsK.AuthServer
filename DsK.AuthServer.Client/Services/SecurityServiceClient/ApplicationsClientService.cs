@@ -5,37 +5,37 @@ using Newtonsoft.Json;
 namespace DsK.AuthServer.Client.Services;
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<ApplicationDto>> ApplicationCreateAsync(ApplicationCreateDto model)
+    public async Task<APIResponse<ApplicationDto>> ApplicationCreateAsync(ApplicationCreateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationsEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<ApplicationDto>>();
         return result;
     }
-    public async Task<APIResult<ApplicationDto>> ApplicationEditAsync(ApplicationUpdateDto model)
+    public async Task<APIResponse<ApplicationDto>> ApplicationEditAsync(ApplicationUpdateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationsEndpoints.Put, model);
         if (!response.IsSuccessStatusCode)        
             return null;
         
-        var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<ApplicationDto>>();
         return result;
     }
-    public async Task<APIResult<string>> ApplicationGenerateNewAPIKeyAsync(ApplicationDto model)
+    public async Task<APIResponse<string>> ApplicationGenerateNewAPIKeyAsync(ApplicationDto model)
     {   
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationsEndpoints.GenerateNewAPIKey, model);
 
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
-    public async Task<APIResult<List<ApplicationDto>>> ApplicationsGetAsync(PagedRequest request)
+    public async Task<APIResponse<List<ApplicationDto>>> ApplicationsGetAsync(PagedRequest request)
     {
         await PrepareBearerToken();
         var url = Routes.ApplicationsEndpoints.Get(request);
@@ -47,7 +47,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<ApplicationDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -57,10 +57,10 @@ public partial class SecurityServiceClient
             return null;
         }
     }
-    public async Task<APIResult<ApplicationDto>> ApplicationGetAsync(int id)
+    public async Task<APIResponse<ApplicationDto>> ApplicationGetAsync(int id)
     {
         var result = await ApplicationsGetAsync(new PagedRequest() { Id = id });
-        var newResult = new APIResult<ApplicationDto>
+        var newResult = new APIResponse<ApplicationDto>
         {
             Exception = result.Exception,
             HasError = result.HasError,
@@ -70,24 +70,24 @@ public partial class SecurityServiceClient
 
         return newResult;
     }
-    public async Task<APIResult<string>> ApplicationDeleteAsync(int id)
+    public async Task<APIResponse<string>> ApplicationDeleteAsync(int id)
     {
         await PrepareBearerToken();
         var response = await _httpClient.DeleteAsync(Routes.ApplicationsEndpoints.Delete(id));
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
-    public async Task<APIResult<string>> ApplicationDisableEnableAsync(int id)
+    public async Task<APIResponse<string>> ApplicationDisableEnableAsync(int id)
     {        
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationsEndpoints.IsEnabledToggle, id);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 }

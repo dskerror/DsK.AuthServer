@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace DsK.AuthServer.Client.Services;
 public partial class SecurityServiceClient
 {  
-    public async Task<APIResult<UserDto>> MyProfileEditAsync(UserDto model)
+    public async Task<APIResponse<UserDto>> MyProfileEditAsync(UserDto model)
     {
         MyProfileUpdateDto mapping = new MyProfileUpdateDto()
         {
@@ -17,7 +17,7 @@ public partial class SecurityServiceClient
         if (!response.IsSuccessStatusCode)        
             return null;
         
-        var result = await response.Content.ReadFromJsonAsync<APIResult<UserDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<UserDto>>();
         return result;
     }
     public async Task<bool> MyProfileChangePasswordAsync(MyProfileChangePasswordDto model)
@@ -30,7 +30,7 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<bool>();
         return result;
     }
-    public async Task<APIResult<UserDto>> MyProfileGetAsync()
+    public async Task<APIResponse<UserDto>> MyProfileGetAsync()
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.MyProfileEndpoints.Get());
@@ -42,7 +42,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<UserDto>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<UserDto>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)

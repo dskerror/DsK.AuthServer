@@ -6,7 +6,7 @@ namespace DsK.AuthServer.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGetAsync(int ApplicationId, int ApplicationRoleId)
+    public async Task<APIResponse<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGetAsync(int ApplicationId, int ApplicationRoleId)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.ApplicationRolePermissionsEndpoints.Get(ApplicationId, ApplicationRoleId));
@@ -17,7 +17,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationRolePermissionGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<ApplicationRolePermissionGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -27,7 +27,7 @@ public partial class SecurityServiceClient
             return null;
         }
     }
-    public async Task<APIResult<string>> ApplicationRolePermissionChangeAsync(int roleId, int permissionId, bool permissionEnabled)
+    public async Task<APIResponse<string>> ApplicationRolePermissionChangeAsync(int roleId, int permissionId, bool permissionEnabled)
     {
         await PrepareBearerToken();
         var model = new ApplicationRolePermissionChangeDto()
@@ -40,7 +40,7 @@ public partial class SecurityServiceClient
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 }

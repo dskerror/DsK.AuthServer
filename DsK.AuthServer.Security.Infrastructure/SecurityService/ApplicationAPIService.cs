@@ -40,9 +40,9 @@ public partial class SecurityService
 
         return applicationDto;
     }
-    public async Task<APIResult<List<ApplicationDto>>> ApplicationGet(PagedRequest p)
+    public async Task<APIResponse<List<ApplicationDto>>> ApplicationGet(PagedRequest p)
     {
-        var result = new APIResult<List<ApplicationDto>>();
+        var result = new APIResponse<List<ApplicationDto>>();
 
         result.Paging.CurrentPage = p.PageNumber;
         p.PageNumber = p.PageNumber == 0 ? 1 : p.PageNumber;
@@ -86,9 +86,9 @@ public partial class SecurityService
         result.Result = Mapper.Map<List<Application>, List<ApplicationDto>>(items);
         return result;
     }
-    public async Task<APIResult<string>> ApplicationUpdate(ApplicationUpdateDto model)
+    public async Task<APIResponse<string>> ApplicationUpdate(ApplicationUpdateDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
 
         int recordsUpdated = 0;
         var record = await db.Applications.FirstOrDefaultAsync(x => x.Id == model.Id);
@@ -111,9 +111,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> ApplicationDelete(int id)
+    public async Task<APIResponse<string>> ApplicationDelete(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
 
         int recordsDeleted = 0;
 
@@ -140,9 +140,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> ApplicationGenerateNewAPIKey(int id)
+    public async Task<APIResponse<string>> ApplicationGenerateNewAPIKey(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
 
         var record = await db.Applications.FirstOrDefaultAsync(x => x.Id == id);
@@ -162,9 +162,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> ApplicationIsEnabledToggle(int id)
+    public async Task<APIResponse<string>> ApplicationIsEnabledToggle(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
 
         if (id == 1)

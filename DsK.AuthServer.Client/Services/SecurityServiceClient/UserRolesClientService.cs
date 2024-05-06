@@ -8,7 +8,7 @@ namespace DsK.AuthServer.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<UserRoleGridDto>>> UserRolesGetAsync(int UserId)
+    public async Task<APIResponse<List<UserRoleGridDto>>> UserRolesGetAsync(int UserId)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.UserRolesEndpoints.Get(UserId));
@@ -19,7 +19,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserRoleGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<UserRoleGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -30,7 +30,7 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> UserRoleChangeAsync(int userId, int roleId, bool isEnabled)
+    public async Task<APIResponse<string>> UserRoleChangeAsync(int userId, int roleId, bool isEnabled)
     {
         await PrepareBearerToken();
         var model = new UserRoleChangeDto()
@@ -43,7 +43,7 @@ public partial class SecurityServiceClient
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 }

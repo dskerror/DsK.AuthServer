@@ -6,16 +6,16 @@ using System.Linq.Dynamic.Core;
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<UserDto>> MyProfileGet(int id)
+    public async Task<APIResponse<UserDto>> MyProfileGet(int id)
     {
-        var result = new APIResult<UserDto>();
+        var result = new APIResponse<UserDto>();
         var user = await db.Users.FindAsync(id);
         result.Result = Mapper.Map<User, UserDto>(user);
         return result;
     }
-    public async Task<APIResult<string>> MyProfileUpdate(int userId, MyProfileUpdateDto model)
+    public async Task<APIResponse<string>> MyProfileUpdate(int userId, MyProfileUpdateDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
         var record = await db.Users.FirstOrDefaultAsync(x => x.Id == userId);
 

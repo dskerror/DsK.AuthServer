@@ -30,9 +30,9 @@ public partial class SecurityService
 
         return token;
     }
-    public async Task<APIResult<LoginResponseDto>> Login(LoginRequestDto model)
+    public async Task<APIResponse<LoginResponseDto>> Login(LoginRequestDto model)
     {
-        APIResult<LoginResponseDto> apiResult = new APIResult<LoginResponseDto>();
+        APIResponse<LoginResponseDto> apiResult = new APIResponse<LoginResponseDto>();
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
 
         var applicationAuthenticationProviderValidation = ValidateApplicationAuthenticationProvider(applicationAuthenticationProvider);
@@ -93,9 +93,9 @@ public partial class SecurityService
 
         return apiResult;
     }
-    public async Task<APIResult<string>> Register(RegisterRequestDto model, string origin)
+    public async Task<APIResponse<string>> Register(RegisterRequestDto model, string origin)
     {
-        APIResult<string> apiResult = new APIResult<string>() { HasError = true };
+        APIResponse<string> apiResult = new APIResponse<string>() { HasError = true };
         bool userAlreadyExists = false;
 
         var applicationAuthenticationProvider = await ApplicationAuthenticationProviderGet(model.ApplicationAuthenticationProviderGUID);
@@ -331,9 +331,9 @@ public partial class SecurityService
         //todo: send email
         return false;
     }
-    public async Task<APIResult<ApplicationAuthenticationProviderUserTokenDto>> RefreshToken(TokenModel model)
+    public async Task<APIResponse<ApplicationAuthenticationProviderUserTokenDto>> RefreshToken(TokenModel model)
     {
-        APIResult<ApplicationAuthenticationProviderUserTokenDto> result = new APIResult<ApplicationAuthenticationProviderUserTokenDto>();
+        APIResponse<ApplicationAuthenticationProviderUserTokenDto> result = new APIResponse<ApplicationAuthenticationProviderUserTokenDto>();
 
         var claimsPrincipal = ValidateToken(model.Token);
         if (claimsPrincipal == null)

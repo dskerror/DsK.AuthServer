@@ -5,18 +5,18 @@ using Newtonsoft.Json;
 namespace DsK.AuthServer.Client.Services;
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<string>> ApplicationAuthenticationProviderUserMappingEditAsync(ApplicationAuthenticationProviderUserMappingUpdateDto model)
+    public async Task<APIResponse<string>> ApplicationAuthenticationProviderUserMappingEditAsync(ApplicationAuthenticationProviderUserMappingUpdateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Put, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 
-    public async Task<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGetAsync(int applicationId, int applicationUserId)
+    public async Task<APIResponse<List<ApplicationAuthenticationProviderUserMappingsGridDto>>> ApplicationAuthenticationProviderUserMappingsGetAsync(int applicationId, int applicationUserId)
     {
         await PrepareBearerToken();
         var url = Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Get(applicationId, applicationUserId);
@@ -28,7 +28,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationAuthenticationProviderUserMappingsGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<ApplicationAuthenticationProviderUserMappingsGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -54,14 +54,14 @@ public partial class SecurityServiceClient
         return result;
     }
 
-    public async Task<APIResult<string>> ApplicationAuthenticationProviderUserMappingUpdate(ApplicationAuthenticationProviderUpdateDto model)
+    public async Task<APIResponse<string>> ApplicationAuthenticationProviderUserMappingUpdate(ApplicationAuthenticationProviderUpdateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationAuthenticationProviderUserMappingsEndpoints.Put, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 

@@ -7,9 +7,9 @@ using System.Data;
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<ApplicationRoleDto>> ApplicationRoleCreate(ApplicationRoleCreateDto model)
+    public async Task<APIResponse<ApplicationRoleDto>> ApplicationRoleCreate(ApplicationRoleCreateDto model)
     {
-        APIResult<ApplicationRoleDto> result = new APIResult<ApplicationRoleDto>();
+        APIResponse<ApplicationRoleDto> result = new APIResponse<ApplicationRoleDto>();
         int recordsCreated = 0;
 
         var record = new ApplicationRole();
@@ -35,9 +35,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<ApplicationRoleDto>>> ApplicationRolesGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
+    public async Task<APIResponse<List<ApplicationRoleDto>>> ApplicationRolesGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
     {
-        var result = new APIResult<List<ApplicationRoleDto>>();
+        var result = new APIResponse<List<ApplicationRoleDto>>();
 
         string ordering = "Id";
         if (!string.IsNullOrWhiteSpace(Orderby))
@@ -98,9 +98,9 @@ public partial class SecurityService
         result.Result = Mapper.Map<List<ApplicationRole>, List<ApplicationRoleDto>>(items);
         return result;
     }
-    public async Task<APIResult<string>> ApplicationRoleUpdate(ApplicationRoleUpdateDto model)
+    public async Task<APIResponse<string>> ApplicationRoleUpdate(ApplicationRoleUpdateDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
         var record = await db.ApplicationRoles.FirstOrDefaultAsync(x => x.Id == model.Id);
 
@@ -122,9 +122,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> ApplicationRoleDelete(int id)
+    public async Task<APIResponse<string>> ApplicationRoleDelete(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsDeleted = 0;
         var record = db.ApplicationRoles.Attach(new ApplicationRole { Id = id });
         record.State = EntityState.Deleted;
@@ -142,9 +142,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> ApplicationRoleIsEnabledToggle(int id)
+    public async Task<APIResponse<string>> ApplicationRoleIsEnabledToggle(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
 
         var record = await db.ApplicationRoles.FirstOrDefaultAsync(x => x.Id == id);

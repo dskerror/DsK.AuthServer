@@ -5,27 +5,27 @@ using Newtonsoft.Json;
 namespace DsK.AuthServer.Client.Services;
 public partial class SecurityServiceClient
 {  
-    public async Task<APIResult<UserDto>> UserCreateAsync(UserCreateDto model)
+    public async Task<APIResponse<UserDto>> UserCreateAsync(UserCreateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.UserEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)        
             return null;
         
-        var result = await response.Content.ReadFromJsonAsync<APIResult<UserDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<UserDto>>();
         return result;
     }
-    public async Task<APIResult<UserDto>> UserEditAsync(UserDto model)
+    public async Task<APIResponse<UserDto>> UserEditAsync(UserDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.UserEndpoints.Put, model);
         if (!response.IsSuccessStatusCode)        
             return null;
         
-        var result = await response.Content.ReadFromJsonAsync<APIResult<UserDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<UserDto>>();
         return result;
     }
-    public async Task<APIResult<List<UserDto>>> UsersGetAsync(PagedRequest request)
+    public async Task<APIResponse<List<UserDto>>> UsersGetAsync(PagedRequest request)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.UserEndpoints.Get(request.Id, request.PageNumber, request.PageSize, request.SearchString, request.OrderBy));
@@ -37,7 +37,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<UserDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -46,11 +46,11 @@ public partial class SecurityServiceClient
             return null;
         }
     }
-    public async Task<APIResult<UserDto>> UserGetAsync(int id)
+    public async Task<APIResponse<UserDto>> UserGetAsync(int id)
     {
         await PrepareBearerToken();
         var result = await UsersGetAsync(new PagedRequest() { Id = id});
-        var newResult = new APIResult<UserDto>
+        var newResult = new APIResponse<UserDto>
         {
             Exception = result.Exception,
             HasError = result.HasError,

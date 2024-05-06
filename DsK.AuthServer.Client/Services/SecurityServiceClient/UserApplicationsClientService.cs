@@ -9,7 +9,7 @@ namespace DsK.AuthServer.Client.Services;
 
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<List<UserApplicationGridDto>>> UserApplicationsGetAsync(int UserId)
+    public async Task<APIResponse<List<UserApplicationGridDto>>> UserApplicationsGetAsync(int UserId)
     {
         await PrepareBearerToken();
         var response = await _httpClient.GetAsync(Routes.UserApplicationsEndpoints.Get(UserId));
@@ -22,7 +22,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<UserApplicationGridDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<UserApplicationGridDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -33,7 +33,7 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<string>> UserApplicationChangeAsync(int userId, int applicationId, bool isEnabled)
+    public async Task<APIResponse<string>> UserApplicationChangeAsync(int userId, int applicationId, bool isEnabled)
     {
         await PrepareBearerToken();
         var model = new ApplicationUserChangeDto()
@@ -46,7 +46,7 @@ public partial class SecurityServiceClient
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 }

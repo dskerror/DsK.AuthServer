@@ -11,7 +11,7 @@ public partial class ApplicationUser
 
     public int UserId { get; set; }
 
-    public DateTime? LockoutEnd { get; set; }
+    public DateOnly? LockoutEnd { get; set; }
 
     public bool LockoutEnabled { get; set; }
 

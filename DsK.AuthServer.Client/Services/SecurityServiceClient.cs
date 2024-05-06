@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Net.Http.Json;
 using System.Linq.Dynamic.Core.Tokenizer;
+using DsK.AuthServer.Client.Services.Tokens;
 
 namespace DsK.AuthServer.Client.Services;
 public partial class SecurityServiceClient
@@ -59,7 +60,7 @@ public partial class SecurityServiceClient
             return string.Empty;
         }
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<TokenModel>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<TokenModel>>();
         if (result.Result == null || result.HasError == true)
         {
             await _localStorageService.RemoveItemAsync("token");

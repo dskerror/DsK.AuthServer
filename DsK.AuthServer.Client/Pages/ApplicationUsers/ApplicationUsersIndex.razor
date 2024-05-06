@@ -1,0 +1,67 @@
+﻿
+<MudTable Items="@applicationsUsers" Hover="true">
+    <HeaderContent>
+        <MudTh>Disabled/Enabled</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>User Mappings</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ApplicationSwitch">
+            @if (context.UserId == 1 && context.ApplicationId == 1)
+            {
+                <MudSwitch Color="Color.Success" Disabled="true" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
+            }
+            else
+            {
+                <MudSwitch Color="Color.Success" Disabled="!_AccessEdit" @bind-Checked="@context.IsEnabled" @oninput="(e)=>ToggleApplicationSwitch(e,context.UserId)" />
+            }
+
+@* 
+            @if (context.UserId == 1 && context.ApplicationId == 1)
+            {
+                if (context.IsEnabled)
+                {
+                    <MudTooltip Text="Disable Role">
+                        <MudIconButton OnClick="@( async() => await IsEnabledToggle(context))"
+                                       Icon="@Icons.Material.Filled.Work"
+                                       Color="Color.Success"
+                                       Variant="Variant.Outlined">
+                        </MudIconButton>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudTooltip Text="Enable Role">
+                        <MudIconButton OnClick="@( async() => await IsEnabledToggle(context))"
+                                       Icon="@Icons.Material.Filled.WorkOff"
+                                       Color="Color.Error"
+                                       Variant="Variant.Outlined">
+                        </MudIconButton>
+                    </MudTooltip>
+                }
+            } *@
+
+
+        </MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="User Mappings">
+            @if (@context.IsEnabled)
+            {
+                <MudIconButton OnClick="() => ViewApplicationUserMappings(context.ApplicationId, context.UserId)"
+                               Icon="@Icons.Material.Filled.Edit" Color="Color.Success" Variant="Variant.Outlined" />
+            }
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private void ViewApplicationUserMappings(int ApplicationId, int UserId)
+    {
+        _navigationManager.NavigateTo($"Application/{ApplicationId}/AuthenticationProviderUserMappings/{UserId}");
+    }
+}

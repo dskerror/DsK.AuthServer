@@ -21,7 +21,7 @@ public class ApplicationController : ControllerBase
     public async Task<IActionResult> Create(ApplicationCreateDto model)
     {
 
-        APIResult<ApplicationDto> apiResult = new APIResult<ApplicationDto>();
+        APIResponse<ApplicationDto> apiResult = new APIResponse<ApplicationDto>();
         try
         {
 

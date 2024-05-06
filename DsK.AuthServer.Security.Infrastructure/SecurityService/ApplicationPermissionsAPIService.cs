@@ -7,9 +7,9 @@ using System.Linq.Dynamic.Core;
 namespace DsK.AuthServer.Security.Infrastructure;
 public partial class SecurityService
 {
-    public async Task<APIResult<ApplicationPermissionDto>> ApplicationPermissionCreate(ApplicationPermissionCreateDto model)
+    public async Task<APIResponse<ApplicationPermissionDto>> ApplicationPermissionCreate(ApplicationPermissionCreateDto model)
     {
-        APIResult<ApplicationPermissionDto> result = new APIResult<ApplicationPermissionDto>();
+        APIResponse<ApplicationPermissionDto> result = new APIResponse<ApplicationPermissionDto>();
         int recordsCreated = 0;
 
         var record = new ApplicationPermission();
@@ -35,9 +35,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<List<ApplicationPermissionDto>>> ApplicationPermissionsGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
+    public async Task<APIResponse<List<ApplicationPermissionDto>>> ApplicationPermissionsGet(int ApplicationId, int Id, int PageNumber, int PageSize, string SearchString, string Orderby)
     {
-        var result = new APIResult<List<ApplicationPermissionDto>>();
+        var result = new APIResponse<List<ApplicationPermissionDto>>();
 
         string ordering = "Id";
         if (!string.IsNullOrWhiteSpace(Orderby))
@@ -85,9 +85,9 @@ public partial class SecurityService
         result.Result = Mapper.Map<List<ApplicationPermission>, List<ApplicationPermissionDto>>(items);
         return result;
     }
-    public async Task<APIResult<string>> ApplicationPermissionUpdate(ApplicationPermissionUpdateDto model)
+    public async Task<APIResponse<string>> ApplicationPermissionUpdate(ApplicationPermissionUpdateDto model)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
         var record = await db.ApplicationPermissions.FirstOrDefaultAsync(x => x.Id == model.Id);
 
@@ -115,9 +115,9 @@ public partial class SecurityService
 
         return result;
     }
-    public async Task<APIResult<string>> ApplicationPermissionDelete(int id)
+    public async Task<APIResponse<string>> ApplicationPermissionDelete(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsDeleted = 0;
         var record = db.ApplicationPermissions.Attach(new ApplicationPermission { Id = id });
         record.State = EntityState.Deleted;
@@ -135,9 +135,9 @@ public partial class SecurityService
         return result;
     }
 
-    public async Task<APIResult<string>> ApplicationPermissionIsEnabledToggle(int id)
+    public async Task<APIResponse<string>> ApplicationPermissionIsEnabledToggle(int id)
     {
-        APIResult<string> result = new APIResult<string>();
+        APIResponse<string> result = new APIResponse<string>();
         int recordsUpdated = 0;
 
         var record = await db.ApplicationPermissions.FirstOrDefaultAsync(x => x.Id == id);

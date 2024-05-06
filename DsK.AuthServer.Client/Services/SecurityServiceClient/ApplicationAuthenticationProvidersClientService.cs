@@ -5,24 +5,24 @@ using Newtonsoft.Json;
 namespace DsK.AuthServer.Client.Services;
 public partial class SecurityServiceClient
 {
-    public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProviderCreateAsync(ApplicationAuthenticationProviderCreateDto model)
+    public async Task<APIResponse<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProviderCreateAsync(ApplicationAuthenticationProviderCreateDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationAuthenticationProvidersEndpoints.Post, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationAuthenticationProviderDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<ApplicationAuthenticationProviderDto>>();
         return result;
     }
-    public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProviderEditAsync(ApplicationAuthenticationProviderDto model)
+    public async Task<APIResponse<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProviderEditAsync(ApplicationAuthenticationProviderDto model)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PutAsJsonAsync(Routes.ApplicationAuthenticationProvidersEndpoints.Put, model);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<ApplicationAuthenticationProviderDto>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<ApplicationAuthenticationProviderDto>>();
         return result;
     }
 
@@ -44,7 +44,7 @@ public partial class SecurityServiceClient
         var result = await response.Content.ReadFromJsonAsync<bool>();
         return result;
     }
-    public async Task<APIResult<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGetAsync(ApplicationPagedRequest request)
+    public async Task<APIResponse<List<ApplicationAuthenticationProviderDto>>> ApplicationAuthenticationProvidersGetAsync(ApplicationPagedRequest request)
     {
         await PrepareBearerToken();
         var url = Routes.ApplicationAuthenticationProvidersEndpoints.Get(request);
@@ -56,7 +56,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<List<ApplicationAuthenticationProviderDto>>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<List<ApplicationAuthenticationProviderDto>>>(responseAsString);
             return responseObject;
         }
         catch (Exception ex)
@@ -78,7 +78,7 @@ public partial class SecurityServiceClient
 
         try
         {
-            var responseObject = JsonConvert.DeserializeObject<APIResult<ApplicationAuthenticationProviderValidateDto>>(responseAsString);
+            var responseObject = JsonConvert.DeserializeObject<APIResponse<ApplicationAuthenticationProviderValidateDto>>(responseAsString);
             return responseObject.Result;
         }
         catch (Exception ex)
@@ -89,10 +89,10 @@ public partial class SecurityServiceClient
         }
     }
 
-    public async Task<APIResult<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProviderGetAsync(int id)
+    public async Task<APIResponse<ApplicationAuthenticationProviderDto>> ApplicationAuthenticationProviderGetAsync(int id)
     {
         var result = await ApplicationAuthenticationProvidersGetAsync(new ApplicationPagedRequest() { Id = id });
-        var newResult = new APIResult<ApplicationAuthenticationProviderDto>
+        var newResult = new APIResponse<ApplicationAuthenticationProviderDto>
         {
             Exception = result.Exception,
             HasError = result.HasError,
@@ -103,24 +103,24 @@ public partial class SecurityServiceClient
         return newResult;
     }
 
-    public async Task<APIResult<string>> ApplicationAuthenticationProviderDeleteAsync(int id)
+    public async Task<APIResponse<string>> ApplicationAuthenticationProviderDeleteAsync(int id)
     {
         await PrepareBearerToken();
         var response = await _httpClient.DeleteAsync(Routes.ApplicationAuthenticationProvidersEndpoints.Delete(id));
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
-    public async Task<APIResult<string>> ApplicationAuthenticationProviderDisableEnableAsync(int id)
+    public async Task<APIResponse<string>> ApplicationAuthenticationProviderDisableEnableAsync(int id)
     {
         await PrepareBearerToken();
         var response = await _httpClient.PostAsJsonAsync(Routes.ApplicationAuthenticationProvidersEndpoints.IsEnabledToggle, id);
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var result = await response.Content.ReadFromJsonAsync<APIResult<string>>();
+        var result = await response.Content.ReadFromJsonAsync<APIResponse<string>>();
         return result;
     }
 }

@@ -7,9 +7,9 @@ namespace DsK.AuthServer.Security.Infrastructure
 {
     public partial class SecurityService
     {
-        public async Task<APIResult<string>> ApplicationRolePermissionChange(ApplicationRolePermissionChangeDto model)
+        public async Task<APIResponse<string>> ApplicationRolePermissionChange(ApplicationRolePermissionChangeDto model)
         {
-            APIResult<string> result = new APIResult<string>();
+            APIResponse<string> result = new APIResponse<string>();
             int recordsModifiedCount = 0;
             var record = new ApplicationRolePermission();
             Mapper.Map(model, record);
@@ -52,10 +52,10 @@ namespace DsK.AuthServer.Security.Infrastructure
         }
 
 
-        public async Task<APIResult<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGet(int ApplicationId, int ApplicationRoleId)
+        public async Task<APIResponse<List<ApplicationRolePermissionGridDto>>> ApplicationRolePermissionsGet(int ApplicationId, int ApplicationRoleId)
         {
 
-            APIResult<List<ApplicationRolePermissionGridDto>> result = new APIResult<List<ApplicationRolePermissionGridDto>>();
+            APIResponse<List<ApplicationRolePermissionGridDto>> result = new APIResponse<List<ApplicationRolePermissionGridDto>>();
             var permissionList = await db.ApplicationPermissions.Where(x => x.ApplicationId == ApplicationId).ToListAsync();
 
 
