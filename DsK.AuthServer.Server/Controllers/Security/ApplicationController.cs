@@ -72,6 +72,7 @@ public class ApplicationController : ControllerBase
         return Ok(result);
     }
 
+    //todo: implement ApplicationController delete
     //[HttpDelete]
     //[Authorize(Roles = $"{Access.Admin}, {Access.Application.Delete}")]
     //public async Task<IActionResult> Delete(int id)

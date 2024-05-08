@@ -87,4 +87,8 @@ public partial class ApplicationUsersIndex
             }
         }
     }
+    private void ViewApplicationUserMappings(int ApplicationId, int UserId)
+    {
+        _navigationManager.NavigateTo($"Application/{ApplicationId}/AuthenticationProviderUserMappings/{UserId}");
+    }
 }

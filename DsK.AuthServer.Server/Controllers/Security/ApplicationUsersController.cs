@@ -19,6 +19,7 @@ public class ApplicationUsersController : ControllerBase
     [Authorize(Roles = $"{Access.Admin}, {Access.ApplicationUsers.View}")]
     public async Task<IActionResult> Get(int applicationId)
     {
+        //todo : see how to limit who can access a particular application information
         var result = await SecurityService.ApplicationUsersGet(applicationId);
         return Ok(result);
     }

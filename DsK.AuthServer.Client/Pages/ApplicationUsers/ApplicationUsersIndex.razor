@@ -32,10 +32,3 @@
         <MudTablePager PageSizeOptions="new int[]{5, 10, 50, 100}" />
     </PagerContent>
 </MudTable>
-
-@code {
-    private void ViewApplicationUserMappings(int ApplicationId, int UserId)
-    {
-        _navigationManager.NavigateTo($"Application/{ApplicationId}/AuthenticationProviderUserMappings/{UserId}");
-    }
-}
